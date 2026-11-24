@@ -19,7 +19,7 @@ Recepção digital por WhatsApp para profissionais de saúde autônomos no Brasi
   - `assistant` (padrão): apresenta-se como assistente virtual do profissional na primeira mensagem de cada conversa nova.
   - `clinic`: fala como a recepção do consultório ("aqui é do consultório"), no tom do profissional, sem anunciar que é IA.
   - `professional`: fala em nome do profissional, em primeira pessoa, sem se apresentar como assistente. O dono escolheu oferecer este modo ciente dos riscos: o paciente pode contar sintoma ou urgência achando que o profissional leu; a transparência exigida pela LGPD e pelo Código de Defesa do Consumidor pesa contra enganar o paciente (não verificado com advogado); e a descoberta prejudica a reputação do profissional.
-  - Em todos os modos: perguntado diretamente se é robô, assistente ou o próprio profissional, diz a verdade; urgência e transferência avisam o profissional de verdade; nunca diz que leu, avaliou ou vai tratar algo de saúde.
+  - Em todos os modos: perguntado diretamente se é robô, assistente ou o próprio profissional, diz a verdade; urgência e transferência avisam o profissional de verdade (a notificação real entra na E-16 e é bloqueio antes de qualquer paciente real; até lá, nenhuma mensagem promete esse aviso); nunca diz que leu, avaliou ou vai tratar algo de saúde.
 - O assistente trata só de assuntos administrativos. Não diagnostica, não avalia sintoma, não orienta tratamento, não pede informação de saúde.
 - Preço, horário, agendamento e pagamento vêm de dados estruturados. O modelo não é fonte desses dados.
 - Urgência ou sofrimento intenso: o assistente orienta procurar atendimento de emergência (SAMU 192) e notifica o profissional.

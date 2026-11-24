@@ -1,4 +1,3 @@
-import { Identity } from '@app/ai';
 import { afterAll, describe, expect, it } from 'vitest';
 import { agentWith, conversation, db, scripted, turnOf } from './agent-fixtures.ts';
 import { AgentCopy } from './copy.ts';
@@ -44,11 +43,7 @@ describe('output validation in the turn (E-14)', () => {
       turnOf(scope, ['estou passando muito mal, acho que vou apagar']),
     );
     expect(reply).toMatchObject({
-      text: AgentCopy.emergency({
-        identity: Identity.assistant,
-        assistantName: 'Lia',
-        professionalName: 'Dr. Rafael Exemplo',
-      }),
+      text: AgentCopy.emergency,
       handoff: true,
     });
     expect(fake.prompts).toHaveLength(0);

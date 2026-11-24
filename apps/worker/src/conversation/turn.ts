@@ -11,56 +11,23 @@ import {
 } from '@app/db';
 import { handOff } from './handoff.ts';
 
-export const TurnOutcome = {
-  stale: 'stale',
-  sent: 'sent',
-  draft: 'draft',
-  skipped: 'skipped',
-  discarded: 'discarded',
-} as const;
-export type TurnOutcome = (typeof TurnOutcome)[keyof typeof TurnOutcome];
+import { realClock } from './clock.ts';
+import { pacedDelayMs } from './pacing.ts';
+import { generateInTime } from './timing.ts';
+import {
+  BUSY_MESSAGE,
+  DeliveryMode,
+  TurnOutcome,
+  type TurnDeps,
+  type TurnJob,
+  type TurnMessage,
+  type TurnReply,
+} from './turn-types.ts';
 
-/** RF-13: send now, or keep as a draft for the professional to approve. */
-export const DeliveryMode = { send: 'send', draft: 'draft' } as const;
-export type DeliveryMode = (typeof DeliveryMode)[keyof typeof DeliveryMode];
+export * from './turn-types.ts';
 
-export interface TurnMessage {
-  id: string;
-  type: MessageType;
-  text: string | null;
-}
-
-export interface TurnReply {
-  text: string;
-  model: string;
-  costMicroUsd: bigint;
-  mode: DeliveryMode;
-  /** The assistant handed off (RF-35): control goes to the professional after this answer. */
-  handoff: boolean;
-}
-
-export interface RespondInput {
-  tenantId: string;
-  conversationId: string;
-  turnId: string;
-  messages: readonly TurnMessage[];
-}
-
-/** The assistant (E-13) and the channel (E-09) seen from the turn. */
-export interface TurnDeps {
-  /** null: nothing to answer (a lone sticker); the pending messages are settled. */
-  respond: (input: RespondInput) => Promise<TurnReply | null>;
-  send: (
-    tx: Tx,
-    input: { conversationId: string; text: string },
-  ) => Promise<{ providerMessageId: string }>;
-}
-
-export interface TurnJob {
-  tenantId: string;
-  conversationId: string;
-  version: number;
-}
+const NO_MODEL = 'none';
+const ABORT_REASON = 'turn_timeout';
 
 /**
  * One turn (spec 03, "Execução do turno"): claim the pending messages, generate outside
@@ -69,12 +36,15 @@ export interface TurnJob {
 export async function runTurn(db: Db, job: TurnJob, deps: TurnDeps): Promise<TurnOutcome> {
   const claimed = await db.withTenant(job.tenantId, (tx) => claim(tx, job));
   if (!claimed) return TurnOutcome.stale;
+  const clock = deps.clock ?? realClock;
+  const started = clock.now();
   try {
-    const reply = await deps.respond({
-      ...job,
-      turnId: claimed.turnId,
-      messages: claimed.messages,
-    });
+    const generated = await generateInTime(deps, { ...job, ...claimed });
+    if (generated.aborted) return await abortTurn(db, { job, turnId: claimed.turnId, deps });
+    const { reply } = generated;
+    // E-15: a plausible delay, counting the time already spent generating.
+    if (reply?.mode === DeliveryMode.send)
+      await clock.sleep(pacedDelayMs(reply.text, clock.now() - started));
     return await db.withTenant(job.tenantId, (tx) =>
       deliver(tx, { job, turnId: claimed.turnId, reply, deps }),
     );
@@ -86,10 +56,38 @@ export async function runTurn(db: Db, job: TurnJob, deps: TurnDeps): Promise<Tur
   }
 }
 
+/** Past 45 s: tell the patient to hold on, notify the professional, keep the turn as failed. */
+async function abortTurn(
+  db: Db,
+  { job, turnId, deps }: { job: TurnJob; turnId: string; deps: TurnDeps },
+): Promise<TurnOutcome> {
+  const busy: TurnReply = {
+    text: BUSY_MESSAGE,
+    model: NO_MODEL,
+    costMicroUsd: 0n,
+    mode: DeliveryMode.send,
+    handoff: false,
+  };
+  await db.withTenant(job.tenantId, async (tx) => {
+    await deliver(tx, { job, turnId, reply: busy, deps });
+    await finish(tx, turnId, { state: TurnState.failed });
+  });
+  deps.notify?.({
+    tenantId: job.tenantId,
+    conversationId: job.conversationId,
+    reason: ABORT_REASON,
+  });
+  return TurnOutcome.aborted;
+}
+
 async function claim(
   tx: Tx,
   job: TurnJob,
-): Promise<{ turnId: string; messages: TurnMessage[] } | null> {
+): Promise<{
+  turnId: string;
+  messages: TurnMessage[];
+  lastProviderMessageId: string | null;
+} | null> {
   const conversation = await tx.conversation.findUnique({ where: { id: job.conversationId } });
   if (
     conversation?.control !== ConversationControl.ai ||
@@ -105,7 +103,7 @@ async function claim(
       createdAt: { gte: conversation.pendingSince },
     },
     orderBy: [{ providerTimestamp: 'asc' }, { createdAt: 'asc' }],
-    select: { id: true, type: true, text: true },
+    select: { id: true, type: true, text: true, providerMessageId: true },
   });
   const turn = await tx.turn.create({
     data: {
@@ -116,7 +114,11 @@ async function claim(
       state: TurnState.running,
     },
   });
-  return { turnId: turn.id, messages };
+  return {
+    turnId: turn.id,
+    messages: messages.map(({ id, type, text }) => ({ id, type, text })),
+    lastProviderMessageId: messages.at(-1)?.providerMessageId ?? null,
+  };
 }
 
 interface Delivery {
