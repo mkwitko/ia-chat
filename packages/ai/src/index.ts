@@ -8,6 +8,7 @@ export {
   type GenerateResult,
 } from './gateway.ts';
 export {
+  JudgeKind,
   JUDGE_TIMEOUT_MS,
   type JudgeAnswers,
   type JudgeQuestion,
@@ -28,3 +29,13 @@ export {
   type AgentService,
   type AgentState,
 } from './agent/prompt.ts';
+export { JUDGE_QUESTIONS, JUDGE_THRESHOLDS, JudgeQuestionId } from './agent/judgments.ts';
+export {
+  timesIn,
+  factsFromToolOutputs,
+  validateReply,
+  Violation,
+  type ReplyRules,
+  type ToolFacts,
+  type ToolOutput,
+} from './agent/validate.ts';

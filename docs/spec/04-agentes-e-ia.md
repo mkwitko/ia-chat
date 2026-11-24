@@ -118,6 +118,8 @@ Determinística, antes do envio:
 | Tamanho acima de 900 caracteres | Regerar pedindo concisão |
 | Texto vazio ou com marcação de sistema | Regerar |
 
+Implementação (E-14, 24/11/2026): `validateReply` em `packages/ai/src/agent/validate.ts`, função pura usada pelo agente. Horários permitidos: os que vieram de ferramenta neste turno e os que o próprio tenant escreveu no cadastro (horário de atendimento, base de conhecimento, instruções). Datas citadas ainda não são conferidas (entra com a agenda, E-19). Reprovou, uma nova tentativa recebe a lista do que foi barrado; reprovou de novo, a conversa vai para o profissional com o aviso fixo. Depois das regras, o Jev confere orientação clínica na resposta (limiar 0,85) e urgência na mensagem do paciente (0,50); fora do ar, valem só as regras.
+
 ## Juízos tipados (Jev)
 
 Decisão de 24/11/2026: adotar o Jev (TypeSafe) como modelo de juízo, atrás do AI Gateway, na tarefa `judge`. Ele não gera texto: recebe um estado e perguntas, e devolve respostas tipadas com probabilidade (sim ou não, escolha entre opções, nota em escala). Não substitui o modelo de conversa.
