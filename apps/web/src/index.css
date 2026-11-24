@@ -1,0 +1,145 @@
+@import 'tailwindcss';
+
+/* Tokens from DESIGN.md. Dark follows the device (prefers-color-scheme), no toggle. */
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+:root {
+  --bg: #f5f7f8;
+  --surface: #ffffff;
+  --surface-2: #eef2f4;
+  --ink: #13191c;
+  --ink-2: #5a676d;
+  --line: #e1e7ea;
+  --brand: #0b6e7a;
+  --brand-ink: #ffffff;
+  --brand-soft: #e1f1f3;
+  --attention: #b8480f;
+  --attention-soft: #fcebdf;
+  --approval: #6a4bc4;
+  --approval-soft: #eee9fb;
+  --ok: #1f7a3e;
+  --danger: #b42318;
+  --danger-soft: #fde8e6;
+  --radius: 10px;
+  color-scheme: light;
+
+  /* shadcn/ui variable names, pointed at our tokens. */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-ink);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--ink-2);
+  --accent: var(--brand-soft);
+  --accent-foreground: var(--ink);
+  --destructive: var(--danger);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--brand);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1214;
+    --surface: #171c1f;
+    --surface-2: #1f2629;
+    --ink: #e8edef;
+    --ink-2: #9aa7ad;
+    --line: #2a3236;
+    --brand: #4fc1cc;
+    --brand-ink: #06282c;
+    --brand-soft: #163338;
+    --attention: #f29a62;
+    --attention-soft: #3a2418;
+    --approval: #b29cf2;
+    --approval-soft: #2a2340;
+    --ok: #6bd18f;
+    --danger: #ff8a80;
+    --danger-soft: #3d1c1a;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 24px;
+  --text-xl: 22px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 28px;
+  --text-2xl--line-height: 34px;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-attention: var(--attention);
+  --color-attention-soft: var(--attention-soft);
+  --color-approval: var(--approval);
+  --color-approval-soft: var(--approval-soft);
+  --color-ok: var(--ok);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-brand-soft: var(--brand-soft);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: var(--radius);
+  --radius-xl: 16px;
+  --radius-2xl: 18px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  h1 {
+    @apply font-bold;
+  }
+  h2 {
+    @apply font-semibold;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
