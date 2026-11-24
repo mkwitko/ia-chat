@@ -1,4 +1,4 @@
-# DESIGN.md — painel (proposta para aprovação)
+# DESIGN.md — Consultório Aberto, painel (proposta para aprovação)
 
 Status: **proposta**, E-08, 24/11/2026. Depois de aprovada, a tela de login e a casca do painel são construídas com estes tokens, e este arquivo é revisado a partir do que foi construído.
 
@@ -29,7 +29,7 @@ Estratégia: neutros levemente frios, **uma cor de marca** e cores de estado que
 | `--danger` | `#B42318` | `#FF8A80` | Urgência, erro, desconectado, ação destrutiva |
 | `--danger-soft` | `#FDE8E6` | `#3D1C1A` | Faixa de alerta |
 
-- A cor de marca é provisória até a marca existir. Fica num token só, para a troca ser uma linha.
+- O azul-petróleo é a cor de marca do Consultório Aberto (`docs/brand.md`). Fica num token só, para a troca ser uma linha.
 - Verde de WhatsApp não entra: o painel não pode parecer o WhatsApp nem ser confundido com ele.
 - Estado nunca depende só de cor (RN-55): todo selo tem texto ("Precisa de você", "Com o assistente", "Aguardando aprovação") e um ícone de forma diferente.
 - Contraste AA conferido em todos os pares de texto acima, nos dois temas.

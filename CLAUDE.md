@@ -1,4 +1,4 @@
-# Recepção Inteligente — SaaS multi-tenant de atendimento por WhatsApp
+# Consultório Aberto — SaaS multi-tenant de atendimento por WhatsApp
 
 Assistente de IA no WhatsApp para profissionais de saúde autônomos no Brasil. Atende pacientes, agenda, lembra, cobra. Cliente piloto: um quiropraxista.
 

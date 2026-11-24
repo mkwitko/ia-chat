@@ -32,12 +32,12 @@ O profissional mantém o controle: começa em "aprovar antes de enviar", assume 
 - PWA mobile-first (360 px primeiro), React, Vite, Tailwind, componentes acessíveis sem estilo pronto e tokens próprios.
 - Textos em português do Brasil, segunda pessoa, sem termo de software; "assistente", nunca "bot" ou "IA" sozinha.
 - Quatro estados em toda tela: carregando, vazio, erro, com dados.
-- Nome e marca: **em aberto** (nome provisório "Recepção Inteligente"); o dono vai definir.
+- Nome: **Consultório Aberto** (dono, 24/11/2026). Marca completa em `docs/brand.md`.
 - Planos: Essencial, Agenda, Pro e Clínica, com franquia mensal de conversas; implantação de R$ 497 (hipótese).
 
 ## Brand Commitments
 
-- Nome, logo e cor de marca: por definir pelo dono.
+- Nome **Consultório Aberto**; cor de marca azul-petróleo; promessa, voz e brief do logo em `docs/brand.md`. Logo ainda por desenhar.
 - Direção visual escolhida pelo dono em 24/11/2026: **o padrão da categoria, feito com capricho**. Régua de acabamento e de jeito de app: **Nubank / Inter** (clareza, poucos elementos por tela, texto direto em português) e **WhatsApp Business** (lista de conversas e bolhas que o profissional já conhece). Familiaridade vale mais que originalidade.
 
 ## Evidence on Hand

@@ -1,4 +1,4 @@
-# Especificação — Recepção Inteligente com IA para Profissionais de Saúde
+# Especificação — Consultório Aberto: recepção com IA para profissionais de saúde
 
 Data de referência: 24/11/2026. Status: v1.0, fechada para implementação. Mudanças a partir daqui entram no mesmo PR do código que as motiva.
 
