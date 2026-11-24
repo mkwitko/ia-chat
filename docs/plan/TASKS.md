@@ -74,13 +74,13 @@ Necessárias a partir de E-06. Vão num `.env` local, nunca no repositório.
 
 ### E-01 Repositório
 Spec: `CLAUDE.md`, `02-arquitetura.md`.
-- [ ] `git init`, pnpm workspace com `apps/{api,worker,web,site}` e `packages/{core,channels,ai,db}`
-- [ ] TypeScript estrito compartilhado, ESLint, Prettier, Vitest
-- [ ] `.npmrc`: lockfile obrigatório, scripts de instalação bloqueados, idade mínima de publicação
-- [ ] CI: instalar, lint, tipos, testes, auditoria de dependências
-- [ ] `docker-compose.yml` de desenvolvimento com Postgres
-- [ ] `.gitignore` incluindo `.env`, `.remember/` e `.playwright-mcp/`
-- [ ] `.env.example` e validação de variáveis de ambiente com Zod na inicialização
+- [x] `git init`, pnpm workspace com `apps/{api,worker,web,site}` e `packages/{core,channels,ai,db}`
+- [x] TypeScript estrito compartilhado, ESLint, Prettier, Vitest
+- [x] `pnpm-workspace.yaml` (no pnpm 12 o `.npmrc` só guarda registro e autenticação): lockfile obrigatório, scripts de instalação bloqueados, idade mínima de publicação
+- [x] CI: instalar, lint, tipos, testes, auditoria de dependências
+- [x] `docker-compose.yml` de desenvolvimento com Postgres
+- [x] `.gitignore` incluindo `.env`, `.remember/` e `.playwright-mcp/`
+- [x] `.env.example` e validação de variáveis de ambiente com Zod na inicialização
 
 ### E-02 Banco e isolamento
 Spec: `02-arquitetura.md` (multi-tenancy, RN-01 a RN-06).
