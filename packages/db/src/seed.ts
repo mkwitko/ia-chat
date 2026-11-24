@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   ChannelKind,
   ChannelStatus,
@@ -27,7 +28,9 @@ interface Ids {
  * Used by the dev seed and by the isolation test.
  */
 export async function seedTenant(db: Db, name: string = SEED_TENANT_NAME): Promise<string> {
-  const tenant = await db.client.tenant.create({ data: { name, plan: Plan.agenda } });
+  const tenant = await db.client.tenant.create({
+    data: { name, slug: `seed-${randomUUID()}`, plan: Plan.agenda },
+  });
   await db.withTenant(tenant.id, async (tx) => {
     const ids = await seedSetup(tx, tenant.id);
     await seedConversation(tx, ids);

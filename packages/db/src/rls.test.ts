@@ -13,6 +13,13 @@ const PLATFORM_TABLES = new Set([
   '_prisma_migrations', // migration bookkeeping, no app access
   'tenants', // the tenant itself; managed by auth (E-04)
   'specialty_policies', // global catalog, read-only for the app
+  // Better Auth (E-04): read before a tenant is chosen. The API guard checks membership.
+  'users',
+  'sessions',
+  'accounts',
+  'verifications',
+  'memberships',
+  'invitations',
 ]);
 
 const PERMISSION_DENIED = 'permission denied';
