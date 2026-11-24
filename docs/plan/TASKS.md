@@ -116,14 +116,14 @@ Spec: `06-seguranca-e-lgpd.md` (RN-33, RN-34).
 
 ### E-06 AI Gateway
 Spec: `04-agentes-e-ia.md` (AI Gateway, juízos tipados).
-- [ ] Interface `generate`, `judge`, `transcribe` sobre o Vercel AI SDK
-- [ ] Tabela de roteamento `tarefa → [principal, reserva]` em configuração
-- [ ] Tabela de preços versionada por data e cálculo de custo
-- [ ] Gravação em `ai_usage` de toda chamada
-- [ ] **(teste primeiro)** Tetos por turno, conversa e tenant
-- [ ] **(teste primeiro)** Reserva em timeout, erro e limite de taxa; `judge` devolve nulo sem lançar erro
-- [ ] Provedor de desenvolvimento com Workers AI
-- [ ] Marcação de blocos de cache e esforço de raciocínio baixo nas tarefas de conversa
+- [x] Interface `generate`, `judge`, `transcribe` sobre o Vercel AI SDK
+- [x] Tabela de roteamento `tarefa → [principal, reserva]` em configuração
+- [x] Tabela de preços versionada por data e cálculo de custo
+- [x] Gravação em `ai_usage` de toda chamada
+- [x] **(teste primeiro)** Tetos por turno, conversa e tenant
+- [x] **(teste primeiro)** Reserva em timeout, erro e limite de taxa; `judge` devolve nulo sem lançar erro
+- [x] Provedor de desenvolvimento com Workers AI
+- [x] Marcação de blocos de cache e esforço de raciocínio baixo nas tarefas de conversa
 - [ ] Langfuse com nome e telefone mascarados
 
 ### E-07 Avaliação

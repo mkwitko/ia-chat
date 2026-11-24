@@ -34,6 +34,8 @@ interface AgentDefinition {
 | Agente | Passos | Timeout | Teto de custo | Falha |
 |---|---|---|---|---|
 | `conversation` | 5 | 40 s | US$ 0,05 por turno; US$ 0,30 por conversa | Tenta outro modelo uma vez; depois transfere para humano |
+
+Teto mensal de IA por tenant: US$ 15 como padrão conservador, ajustável por cliente (hipótese adotada na E-06; rever com o custo real do piloto).
 | `quality_review` | 1 | 120 s | US$ 0,02 por conversa avaliada | Pula e registra |
 | `insights` | 3 | 300 s | US$ 0,20 por relatório | Pula e registra |
 
