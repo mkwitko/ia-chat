@@ -2,7 +2,8 @@ import { createAccessControl } from 'better-auth/plugins/access';
 import { defaultStatements, memberAc, ownerAc } from 'better-auth/plugins/organization/access';
 
 // RN-34: owner, professional, receptionist. Receptionist does not see billing
-// nor change integrations. Billing is the owner's (hypothesis H-10).
+// nor change integrations. Billing is the owner's (hypothesis H-10). Assistant settings
+// (autonomy, identity) speak to patients: receptionist only reads them (hypothesis H-14).
 
 export const Role = {
   owner: 'owner',
@@ -18,6 +19,7 @@ const statement = {
   ...defaultStatements,
   billing: [Action.read, Action.manage],
   integrations: [Action.read, Action.manage],
+  assistant: [Action.read, Action.manage],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -27,14 +29,17 @@ export const roles = {
     ...ownerAc.statements,
     billing: [Action.read, Action.manage],
     integrations: [Action.read, Action.manage],
+    assistant: [Action.read, Action.manage],
   }),
   [Role.professional]: ac.newRole({
     ...memberAc.statements,
     integrations: [Action.read, Action.manage],
+    assistant: [Action.read, Action.manage],
   }),
   [Role.receptionist]: ac.newRole({
     ...memberAc.statements,
     integrations: [Action.read],
+    assistant: [Action.read],
   }),
 };
 
@@ -45,6 +50,8 @@ export const Permission = {
   billingManage: { billing: [Action.manage] },
   integrationsRead: { integrations: [Action.read] },
   integrationsManage: { integrations: [Action.manage] },
+  assistantRead: { assistant: [Action.read] },
+  assistantManage: { assistant: [Action.manage] },
 } as const satisfies Record<string, PermissionRequest>;
 
 export function isRole(value: string): value is Role {

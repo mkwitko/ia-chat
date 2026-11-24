@@ -4,4 +4,5 @@ export const Route = {
   agenda: '/agenda',
   today: '/hoje',
   more: '/mais',
+  assistant: '/mais/assistente',
 } as const;

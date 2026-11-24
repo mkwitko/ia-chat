@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router';
+import { AssistantScreen } from './app/assistant/assistant-screen';
 import { LoginPage } from './app/login/login-page';
 import { AgendaScreen, ConversationsScreen, TodayScreen } from './app/screens/main-screens';
 import { MoreScreen } from './app/screens/more-screen';
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { path: Route.agenda, element: <AgendaScreen /> },
       { path: Route.today, element: <TodayScreen /> },
       { path: Route.more, element: <MoreScreen /> },
+      { path: Route.assistant, element: <AssistantScreen /> },
     ],
   },
   { path: '*', element: <Navigate to={Route.conversations} replace /> },
