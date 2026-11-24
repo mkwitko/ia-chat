@@ -1,7 +1,16 @@
-import { BudgetExceededError, conversationBlocks, modelKey, Task, type AiGateway } from '@app/ai';
+import {
+  BudgetExceededError,
+  JUDGE_QUESTIONS,
+  JUDGE_THRESHOLDS,
+  JudgeKind,
+  JudgeQuestionId,
+  modelKey,
+  type AiGateway,
+} from '@app/ai';
 import { Autonomy, type Db } from '@app/db';
 import { HANDOFF_NOTICE } from '../conversation/handoff.ts';
 import { DeliveryMode, type RespondInput, type TurnReply } from '../conversation/turn.ts';
+import { generateChecked } from './checked.ts';
 import { loadAgentInput, type AgentInput } from './context.ts';
 import { AgentCopy } from './copy.ts';
 import { prefilter, PrefilterKind } from './prefilter.ts';
@@ -30,7 +39,10 @@ export function createConversationAgent(
     let input = await deps.db.withTenant(turn.tenantId, (tx) =>
       loadAgentInput(tx, turn.conversationId, now),
     );
-    const filtered = await applyPrefilter(deps.db, turn, input);
+    const prefiltered = await applyPrefilter(deps.db, turn, input);
+    // null (nothing to answer) is a decision too; only undefined goes on to the judge.
+    const filtered =
+      prefiltered === undefined ? await judgedUrgency(deps.gateway, turn) : prefiltered;
     if (filtered !== undefined) return filtered && introducedAfter(filtered, input);
     if (input.autonomy === Autonomy.off)
       return introducedAfter(fixed(AgentCopy.away, false), input);
@@ -40,6 +52,26 @@ export function createConversationAgent(
     );
     return generate(deps, { turn, input });
   };
+}
+
+/** Jev complements the word list (spec 04); unavailable or below the threshold: go on. */
+async function judgedUrgency(
+  gateway: AiGateway,
+  turn: RespondInput,
+): Promise<TurnReply | undefined> {
+  const mensagem = turn.messages
+    .map((message) => message.text ?? '')
+    .join('\n')
+    .trim();
+  if (!mensagem) return undefined;
+  const { urgent } = await gateway.judge(turn, {
+    state: { mensagem },
+    questions: { urgent: JUDGE_QUESTIONS[JudgeQuestionId.urgent] },
+  });
+  const isUrgent =
+    urgent?.kind === JudgeKind.noul &&
+    urgent.probability >= JUDGE_THRESHOLDS[JudgeQuestionId.urgent];
+  return isUrgent ? fixed(AgentCopy.emergency, true) : undefined;
 }
 
 /** undefined: go on to the model. null or a reply: the pre-filter decided. */
@@ -67,21 +99,16 @@ async function generate(
 ): Promise<TurnReply> {
   const effects: ToolEffects = { handoff: false };
   try {
-    const result = await deps.gateway.generate({
-      task: Task.conversation,
+    const tools = essentialTools({
+      db: deps.db,
       tenantId: turn.tenantId,
-      conversationId: turn.conversationId,
-      turnId: turn.turnId,
-      system: conversationBlocks(input.profile, input.state),
-      messages: input.history,
-      tools: essentialTools({
-        db: deps.db,
-        tenantId: turn.tenantId,
-        contactId: input.contactId,
-        effects,
-      }),
-      personalNames: input.personalNames,
+      contactId: input.contactId,
+      effects,
     });
+    const checked = await generateChecked({ gateway: deps.gateway, turn, input, tools });
+    // Spec 04: failed the checks twice; the professional answers instead.
+    if (!checked.ok) return fixed(HANDOFF_NOTICE, true);
+    const { result } = checked;
     return {
       text: identified(result.text, input),
       model: modelKey(result.model),

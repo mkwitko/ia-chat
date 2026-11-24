@@ -60,9 +60,12 @@ function scripted(steps: Step[]) {
   return { model, prompts };
 }
 
+const OPEN_CAPS = { turn: 1_000_000n, conversation: 1_000_000n, tenantMonth: 1_000_000n };
+
+/** judge: probability per question key the agent asks (urgent, clinical); absent = Jev down. */
 function agentWith(
   model: MockLanguageModelV3,
-  caps = { turn: 1_000_000n, conversation: 1_000_000n, tenantMonth: 1_000_000n },
+  { caps = OPEN_CAPS, judge }: { caps?: typeof OPEN_CAPS; judge?: Record<string, number> } = {},
 ) {
   const gateway = createAiGateway({
     routes: {
@@ -81,7 +84,20 @@ function agentWith(
       record: () => Promise.resolve(),
       spend: () => Promise.resolve({ turn: 0n, conversation: 0n, tenantMonth: 0n }),
     },
-    judgeProvider: { ask: () => Promise.reject(new Error('not used')) },
+    judgeProvider: {
+      ask: ({ questions }) =>
+        judge
+          ? Promise.resolve({
+              answers: Object.fromEntries(
+                Object.keys(questions).map((id) => [
+                  id,
+                  { kind: 'noul', probability: judge[id] ?? 0 },
+                ]),
+              ),
+              usage: { inputTokens: 10, outputTokens: 0 },
+            })
+          : Promise.reject(new Error('Jev down')),
+    },
   });
   return createConversationAgent({ db, gateway, now: () => new Date('2027-01-04T12:00:00Z') });
 }
@@ -190,10 +206,14 @@ describe('conversation agent (E-13)', () => {
 
   it('keeps the answer as a draft when the tenant approves before sending (RF-13)', async () => {
     const scope = await conversation({ autonomy: Autonomy.approve, answered: true });
-    const reply = await agentWith(scripted([{ text: 'Tenho quinta às 15h.' }]).model)(
-      turnOf(scope, ['tem horário?']),
-    );
-    expect(reply).toMatchObject({ text: 'Tenho quinta às 15h.', mode: 'draft', handoff: false });
+    const reply = await agentWith(
+      scripted([{ text: 'Vou ver os horários livres para você.' }]).model,
+    )(turnOf(scope, ['tem horário?']));
+    expect(reply).toMatchObject({
+      text: 'Vou ver os horários livres para você.',
+      mode: 'draft',
+      handoff: false,
+    });
   });
 
   it('marks the handoff and records the unanswered question through the tools', async () => {
@@ -220,10 +240,81 @@ describe('conversation agent (E-13)', () => {
   it('hands off with the fixed notice when the turn is over its cost cap', async () => {
     const scope = await conversation({ answered: true });
     const reply = await agentWith(scripted([{ text: 'nunca chega aqui' }]).model, {
-      turn: 0n,
-      conversation: 1_000_000n,
-      tenantMonth: 1_000_000n,
+      caps: { turn: 0n, conversation: 1_000_000n, tenantMonth: 1_000_000n },
     })(turnOf(scope, ['oi']));
     expect(reply).toMatchObject({ handoff: true, model: 'none' });
+  });
+});
+
+describe('output validation in the turn (E-14)', () => {
+  it('retries once with the correction when the price is not in the catalog (A-07)', async () => {
+    const scope = await conversation({ answered: true });
+    const fake = scripted([
+      { text: 'A avaliação custa R$ 150,00.' },
+      { text: 'A avaliação custa R$ 180,00.' },
+    ]);
+    const reply = await agentWith(fake.model)(turnOf(scope, ['quanto custa?']));
+    expect(reply).toMatchObject({ text: 'A avaliação custa R$ 180,00.', handoff: false });
+    expect(JSON.stringify(fake.prompts[1])).toContain('citou um valor que não está no perfil');
+  });
+
+  it('hands off when the second answer also fails', async () => {
+    const scope = await conversation({ answered: true });
+    const fake = scripted([{ text: 'Está agendado!' }, { text: 'Ficou agendado, pode vir.' }]);
+    const reply = await agentWith(fake.model)(turnOf(scope, ['agenda pra mim']));
+    expect(reply).toMatchObject({ handoff: true, model: 'none' });
+  });
+
+  it('retries when Jev sees clinical advice the word list missed', async () => {
+    const scope = await conversation({ answered: true });
+    const fake = scripted([
+      { text: 'Evite pegar peso esses dias.' },
+      { text: 'O Dr. Rafael avalia isso na consulta.' },
+    ]);
+    const reply = await agentWith(fake.model, { judge: { clinical: 0.92 } })(
+      turnOf(scope, ['minhas costas doem']),
+    );
+    expect(fake.prompts).toHaveLength(2);
+    expect(reply).toMatchObject({ handoff: true }); // Jev still says clinical on the retry in this fake
+  });
+
+  it('treats a message Jev judges urgent as an emergency, without the model', async () => {
+    const scope = await conversation({ answered: true });
+    const fake = scripted([]);
+    const reply = await agentWith(fake.model, { judge: { urgent: 0.8 } })(
+      turnOf(scope, ['estou passando muito mal, acho que vou apagar']),
+    );
+    expect(reply).toMatchObject({ text: AgentCopy.emergency, handoff: true });
+    expect(fake.prompts).toHaveLength(0);
+  });
+
+  it('goes on with the rules alone when Jev is down (fail-safe)', async () => {
+    const scope = await conversation({ answered: true });
+    const reply = await agentWith(
+      scripted([{ text: 'O Dr. Rafael avalia isso na consulta.' }]).model,
+    )(turnOf(scope, ['minhas costas doem']));
+    expect(reply).toMatchObject({ text: 'O Dr. Rafael avalia isso na consulta.', handoff: false });
+  });
+});
+
+describe('times from the profile (E-14)', () => {
+  it('accepts a time the knowledge base states, with no agenda tool', async () => {
+    const scope = await conversation({ answered: true });
+    await db.withTenant(scope.tenantId, (tx) =>
+      tx.knowledgeItem.create({
+        data: {
+          tenantId: scope.tenantId,
+          question: 'Horário de atendimento',
+          answer: 'Segunda a sexta, das 8h às 18h.',
+        },
+      }),
+    );
+    const fake = scripted([{ text: 'Atendemos de segunda a sexta, das 8h às 18h.' }]);
+    const reply = await agentWith(fake.model)(turnOf(scope, ['até que horas vocês atendem?']));
+    expect(reply).toMatchObject({
+      text: 'Atendemos de segunda a sexta, das 8h às 18h.',
+      handoff: false,
+    });
+    expect(fake.prompts).toHaveLength(1);
   });
 });

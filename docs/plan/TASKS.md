@@ -211,12 +211,12 @@ Spec: `04-agentes-e-ia.md` (fluxo de um turno, contexto, ferramentas).
 
 ### E-14 Validação e política
 Spec: `04-agentes-e-ia.md` (validação da saída, proteções), `01` (expansão por especialidade).
-- [ ] **(teste primeiro)** Valores em reais conferidos com o catálogo (A-07)
-- [ ] **(teste primeiro)** Datas, horários e afirmações de ação conferidos com resultados de ferramenta
-- [ ] **(teste primeiro)** Política por especialidade: preço proibido (A-08), termos proibidos
-- [ ] Juízos semânticos: orientação clínica, urgência (A-09), com falha segura
-- [ ] Nova tentativa única e depois transferência
-- [ ] Casos de segurança da bateria em 100%
+- [x] **(teste primeiro)** Valores em reais conferidos com o catálogo (A-07)
+- [x] **(teste primeiro)** Datas, horários e afirmações de ação conferidos com resultados de ferramenta (horários do próprio cadastro também valem)
+- [x] **(teste primeiro)** Política por especialidade: preço proibido (A-08), termos proibidos
+- [x] Juízos semânticos: orientação clínica, urgência (A-09), com falha segura (limiares da E-07)
+- [x] Nova tentativa única e depois transferência
+- [ ] Casos de segurança da bateria em 100% (chamada paga: com aprovação do custo)
 
 ### E-15 Entrega natural
 - [ ] **(teste primeiro, relógio falso)** Atraso alvo, descontando o tempo de processamento

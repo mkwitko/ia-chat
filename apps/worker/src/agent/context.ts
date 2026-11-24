@@ -10,6 +10,7 @@ export const HISTORY_LIMIT = 20;
 const policySchema = z.object({
   pricesForbidden: z.boolean().default(false),
   urgencyTerms: z.array(z.string()).default([]),
+  forbiddenTerms: z.array(z.string()).default([]),
 });
 
 const PLACEHOLDER: Partial<Record<MessageType, string>> = {
@@ -38,6 +39,7 @@ export interface AgentInput {
   state: AgentState;
   history: ModelMessage[];
   specialtyTerms: string[];
+  forbiddenTerms: string[];
   personalNames: string[];
   contactId: string;
 }
@@ -75,12 +77,16 @@ export async function loadAgentInput(
       summary: conversation.summary,
     }),
     history,
-    specialtyTerms: policy.urgencyTerms,
+    ...termsOf(policy),
     personalNames: [contactName, profile.professionalName].filter((name): name is string =>
       Boolean(name),
     ),
     contactId: conversation.contactId,
   };
+}
+
+function termsOf(policy: z.infer<typeof policySchema>) {
+  return { specialtyTerms: policy.urgencyTerms, forbiddenTerms: policy.forbiddenTerms };
 }
 
 interface StateSources {
