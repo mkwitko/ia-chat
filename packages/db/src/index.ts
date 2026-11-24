@@ -62,3 +62,21 @@ export {
   setControl,
   type ControlChange,
 } from './conversation/control.ts';
+export {
+  bookAppointment,
+  cancelAppointment,
+  listUpcoming,
+  rescheduleAppointment,
+  type BookRequest,
+  type CancelRequest,
+  type MoveRequest,
+} from './agenda/appointments.ts';
+export { loadScope, slotsIn } from './agenda/availability.ts';
+export { recordOffers, wasOfferedBefore } from './agenda/offers.ts';
+export {
+  AgendaError,
+  MAX_FUTURE_APPOINTMENTS,
+  isExclusionViolation,
+  type AgendaResult,
+  type AppointmentView,
+} from './agenda/types.ts';

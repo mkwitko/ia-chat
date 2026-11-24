@@ -1,7 +1,8 @@
 // Appointments, reminders and patient deposits.
 
-/// `during` is a tstzrange; Prisma cannot read or write it, so appointments go
-/// through typed raw SQL (E-20). The exclusion constraint also lands in E-20.
+/// No two live appointments of a professional overlap: the exclusion constraint
+/// `appointments_no_overlap` (migration agenda) is the arbiter (A-10). It is not in this schema
+/// because Prisma cannot express it.
 model Appointment {
   id             String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenantId       String                   @map("tenant_id") @db.Uuid
@@ -9,8 +10,12 @@ model Appointment {
   contactId      String                   @map("contact_id") @db.Uuid
   serviceId      String                   @map("service_id") @db.Uuid
   locationId     String?                  @map("location_id") @db.Uuid
-  during         Unsupported("tstzrange")
+  startsAt       DateTime                 @map("starts_at") @db.Timestamptz
+  endsAt         DateTime                 @map("ends_at") @db.Timestamptz
   status         AppointmentStatus        @default(scheduled)
+  createdBy      AppointmentCreator       @default(human) @map("created_by")
+  /// One tool call per turn and action: a retried call returns the first result (E-20).
+  idempotencyKey String?                  @map("idempotency_key")
   googleEventId  String?                  @map("google_event_id")
   createdAt      DateTime                 @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
@@ -26,7 +31,13 @@ model Appointment {
 
   @@unique([tenantId, id])
   @@index([tenantId, professionalId])
+  @@index([tenantId, contactId])
   @@map("appointments")
+}
+
+enum AppointmentCreator {
+  ai
+  human
 }
 
 enum AppointmentStatus {

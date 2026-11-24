@@ -15,7 +15,7 @@ import { loadAgentInput, type AgentInput } from './context.ts';
 import { AgentCopy } from './copy.ts';
 import { prefilter, PrefilterKind } from './prefilter.ts';
 import { refreshSummary } from './summary.ts';
-import { essentialTools, type ToolEffects } from './tools.ts';
+import { conversationTools, type ToolEffects } from './tools.ts';
 
 // Spec 04, "Fluxo de um turno": pre-filters, context, one model call with tools, limits.
 
@@ -104,12 +104,19 @@ async function generate(
 ): Promise<TurnReply> {
   const effects: ToolEffects = { handoff: false };
   try {
-    const tools = essentialTools({
-      db: deps.db,
-      tenantId: turn.tenantId,
-      contactId: input.contactId,
-      effects,
-    });
+    const tools = conversationTools(
+      {
+        db: deps.db,
+        tenantId: turn.tenantId,
+        contactId: input.contactId,
+        conversationId: turn.conversationId,
+        turnId: turn.turnId,
+        now: deps.now?.() ?? new Date(),
+        timezone: input.timezone,
+        effects,
+      },
+      input.plan,
+    );
     const checked = await generateChecked({ gateway: deps.gateway, turn, input, tools });
     // Spec 04: failed the checks twice; the professional answers instead.
     if (!checked.ok) return fixed(AgentCopy.handoffNotice(input.profile), true);

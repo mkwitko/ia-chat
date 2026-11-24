@@ -263,17 +263,18 @@ Spec: `01-produto-e-planos.md` (RF-13).
 
 ### E-19 Disponibilidade
 Spec: `05-agenda-e-pagamentos.md`.
-- [ ] **(teste primeiro)** `availableSlots` como função pura: regras, bloqueios, agendamentos, ocupação externa, duração, antecedência
-- [ ] Casos: fuso, virada de dia, serviço maior que a janela, feriado
-- [ ] Seleção de até 6 opções espalhadas
+- [x] **(teste primeiro)** `availableSlots` como função pura: regras, bloqueios, agendamentos, ocupação externa, duração, antecedência
+- [x] Casos: fuso, virada de dia, serviço maior que a janela, feriado
+- [x] Seleção de até 6 opções espalhadas
 
 ### E-20 Agendamentos
-- [ ] Migration com `btree_gist` e exclusion constraint
-- [ ] **(teste primeiro)** Dois agendamentos simultâneos no mesmo horário: um entra, o outro recebe `slot_taken` (A-10)
-- [ ] Ferramentas consultar, agendar, remarcar, cancelar e listar
-- [ ] **(teste primeiro)** Exigência de confirmação conferida pelo código e pelo juízo; idempotência por turno
-- [ ] **(teste primeiro)** Remarcação atômica (A-14); antecedência mínima de cancelamento
-- [ ] Bateria: casos de agenda em 95% ou mais; A-11
+- [x] Migration com `btree_gist` e exclusion constraint
+- [x] **(teste primeiro)** Dois agendamentos simultâneos no mesmo horário: um entra, o outro recebe `slot_taken` (A-10)
+- [x] Ferramentas consultar, agendar, remarcar, cancelar e listar
+- [x] **(teste primeiro)** Exigência de confirmação conferida pelo código; idempotência por turno
+- [ ] Exigência de confirmação conferida pelo juízo (Jev): pede chamadas pagas; não executado
+- [x] **(teste primeiro)** Remarcação atômica (A-14); antecedência mínima de cancelamento
+- [ ] Bateria: casos de agenda em 95% ou mais; A-11 (pede chamadas pagas; não executada. A parte de A-11 com ferramenta forçada a falhar está coberta em `agenda-tools.test.ts`)
 
 ### E-21 Google Calendar
 - [ ] OAuth, escolha do calendário, tokens cifrados

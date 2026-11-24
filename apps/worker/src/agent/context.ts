@@ -1,5 +1,5 @@
 import type { AgentProfile, AgentState } from '@app/ai';
-import { MessageAuthor, MessageType, type IdentityMode, type Tx } from '@app/db';
+import { MessageAuthor, MessageType, type IdentityMode, type Plan, type Tx } from '@app/db';
 import type { ModelMessage } from 'ai';
 import * as z from 'zod';
 
@@ -35,6 +35,8 @@ const LOCALE = 'pt-BR';
 export interface AgentInput {
   tenantId: string;
   autonomy: string;
+  plan: Plan;
+  timezone: string;
   profile: AgentProfile;
   state: AgentState;
   history: ModelMessage[];
@@ -67,7 +69,7 @@ export async function loadAgentInput(
   const contactName = conversation.contact.name ?? undefined;
   return {
     tenantId: tenant.id,
-    autonomy: tenant.autonomy,
+    ...settingsOf(tenant),
     profile,
     state: buildState({
       now,
@@ -83,6 +85,10 @@ export async function loadAgentInput(
     ),
     contactId: conversation.contactId,
   };
+}
+
+function settingsOf(tenant: { autonomy: string; plan: Plan; timezone: string }) {
+  return { autonomy: tenant.autonomy, plan: tenant.plan, timezone: tenant.timezone };
 }
 
 function termsOf(policy: z.infer<typeof policySchema>) {
@@ -107,7 +113,7 @@ function buildState({
   return {
     now: now.toLocaleString(LOCALE, { ...DATE_TIME, timeZone: timezone }),
     contactName,
-    appointments: [], // ponytail: the Essencial plan has no agenda; E-19 fills this from appointments
+    appointments: [], // ponytail: the model lists them with a tool, so any time it cites comes from a tool output
     done: [],
     firstMessage,
     summary: summary ?? undefined,
