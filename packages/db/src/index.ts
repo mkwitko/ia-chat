@@ -35,3 +35,18 @@ export function createDb(connectionString: string, pool: PoolOptions = {}): Db {
     },
   };
 }
+
+export {
+  DEFAULT_QUEUE_OPTIONS,
+  QUEUES,
+  QUEUE_SCHEMA,
+  deadLetterName,
+  type QueueDefinition,
+} from './queue/definitions.ts';
+export {
+  sendTenantJob,
+  watchDeadLetters,
+  workTenantQueue,
+  type DeadLetter,
+  type TenantJob,
+} from './queue/tenant-job.ts';
