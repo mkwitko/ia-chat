@@ -37,6 +37,8 @@ model Conversation {
   pauseExpiresAt   DateTime?           @map("pause_expires_at") @db.Timestamptz
   windowExpiresAt  DateTime?           @map("window_expires_at") @db.Timestamptz
   turnVersion      Int                 @default(0) @map("turn_version")
+  /// First patient message not yet answered (E-11): the 20 s grouping cap counts from it.
+  pendingSince     DateTime?           @map("pending_since") @db.Timestamptz
   unreadCount      Int                 @default(0) @map("unread_count")
   lastMessageAt    DateTime?           @map("last_message_at") @db.Timestamptz
   createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz

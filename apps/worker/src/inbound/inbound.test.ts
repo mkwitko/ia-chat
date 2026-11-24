@@ -154,7 +154,7 @@ describe('applying inbound events', () => {
       status('wamid.OUTA', 'delivered'),
       status('wamid.OUTB', 'failed', '131047'),
     ];
-    const alerts = await db.withTenant(tenantId, (tx) =>
+    const { alerts } = await db.withTenant(tenantId, (tx) =>
       applyInboundEvents(tx, { tenantId, channelId, events }),
     );
     expect(alerts).toEqual([{ providerMessageId: 'wamid.OUTB', code: '131047' }]); // RF-25

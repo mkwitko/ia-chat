@@ -3,6 +3,7 @@ import type { Db } from '@app/db';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { createAuth, type Auth } from './auth/auth.ts';
 import { registerAuthRoutes } from './auth/routes.ts';
+import { registerControlRoutes } from './conversations/control-routes.ts';
 import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
 import type { ApiEnv } from './env.ts';
@@ -35,6 +36,7 @@ export function buildApp({ env, db, email, enqueueInbound }: AppDeps): FastifyIn
   app.decorate('db', db);
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
+  registerControlRoutes(app);
   const { META_APP_SECRET: appSecret, META_VERIFY_TOKEN: verifyToken } = env;
   if (appSecret && verifyToken && enqueueInbound) {
     registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });

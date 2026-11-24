@@ -192,6 +192,13 @@ Impede resposta atrasada depois que o humano assumiu ou que o paciente escreveu 
 - A mesma verificação vale para mensagens agendadas ligadas à conversa.
 - Efeitos de ferramentas já executados (um agendamento criado) não são desfeitos pelo descarte. O turno seguinte recebe no contexto o que foi feito.
 
+Implementação (E-11 e E-12, 24/11/2026):
+
+- `conversations.pending_since` guarda a primeira mensagem do paciente ainda sem resposta. Cada mensagem agenda o job `conversation.turn` para `min(6 s, pending_since + 20 s − agora)`, com chave `(conversa, versão)`. Um job de versão antiga encontra outra versão e não roda.
+- O turno reivindica todas as mensagens do paciente desde `pending_since`, gera a resposta fora de transação e só envia sob `select ... for update`. Descartado, `pending_since` continua, e o turno seguinte responde a tudo.
+- O agendamento do turno acontece depois do commit da transação que gravou a mensagem, para o job nunca ver a versão antiga.
+- `setControl` (em `@app/db`) é o único caminho de troca de controle: sobe a versão, zera `pending_since`, cancela follow-ups ao ir para `human` e grava `audit_log`. A API (`POST /api/conversations/:id/control`) e o worker (eco, transferência, expiração) usam a mesma função.
+
 ### Eventos perdidos
 
 - Estado `disconnected` do canal ou ausência de qualquer webhook por período anormal em horário comercial gera alerta ao operador e aviso ao profissional para abrir o app.

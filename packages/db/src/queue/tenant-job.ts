@@ -32,15 +32,19 @@ export interface TenantWorker {
   db: Db;
   queue: string;
   options?: WorkOptions;
-  handler: (tx: Tx, data: TenantJob['data'], job: Job<unknown>) => Promise<void>;
+  /** May return work to run after the transaction commits (e.g. queueing follow-up jobs). */
+  handler: (tx: Tx, data: TenantJob['data'], job: Job<unknown>) => Promise<AfterCommit | undefined>;
 }
+
+export type AfterCommit = () => Promise<void>;
 
 /** Each job runs inside withTenant for its own tenant. A throw makes pg-boss retry it. */
 export async function workTenantQueue({ boss, db, queue, options = {}, handler }: TenantWorker) {
   return boss.work(queue, options, async (jobs) => {
     for (const job of jobs) {
       const { tenantId, data } = envelopeSchema.parse(job.data);
-      await db.withTenant(tenantId, (tx) => handler(tx, data, job));
+      const afterCommit = await db.withTenant(tenantId, (tx) => handler(tx, data, job));
+      await afterCommit?.();
     }
   });
 }

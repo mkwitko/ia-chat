@@ -4,18 +4,38 @@ import {
   QUEUES,
   QUEUE_SCHEMA,
   RECONCILE_QUEUE,
+  TURN_QUEUE,
+  HANDOFF_REMINDER_QUEUE,
   createDb,
+  sendTenantJob,
   watchDeadLetters,
   workTenantQueue,
 } from '@app/db';
 import { PgBoss } from 'pg-boss';
 import pino from 'pino';
+import { remindHandoff } from './conversation/reminder-job.ts';
+import type { TurnRequest } from './conversation/schedule.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
 
 const QUEUE_ERROR = 'queue error';
 const DEAD_LETTER = 'job exhausted its retries';
+// E-11: one job per (conversation, version); an older version finds a newer one and skips.
+// ponytail: conversation.turn has no consumer until the agent exists (E-13); jobs wait there.
+async function scheduleTurn(tenantId: string, request: TurnRequest): Promise<void> {
+  await sendTenantJob({
+    boss,
+    queue: TURN_QUEUE.name,
+    job: { tenantId, data: { conversationId: request.conversationId, version: request.version } },
+    options: {
+      startAfter: new Date(Date.now() + request.delayMs),
+      singletonKey: `${request.conversationId}:${String(request.version)}`,
+    },
+  });
+}
+
 const SHUTDOWN_SIGNALS = ['SIGTERM', 'SIGINT'] as const;
+const HANDOFF_UNANSWERED = 'handoff still unanswered: remind the professional';
 const STALE_MESSAGES = 'outbound messages without delivery status after 1 hour';
 // RF-26: every morning, in the clinics' time zone.
 const RECONCILE_CRON = '0 7 * * *';
@@ -55,6 +75,18 @@ await workTenantQueue({
       alert: (fields, message) => {
         log.error(fields, message);
       },
+      scheduleTurn,
+    }),
+});
+
+await workTenantQueue({
+  boss,
+  db,
+  queue: HANDOFF_REMINDER_QUEUE.name,
+  // ponytail: an error log until push notifications exist (E-16).
+  handler: (tx, data, job) =>
+    remindHandoff(tx, data, (conversationId) => {
+      log.error({ conversationId, jobId: job.id }, HANDOFF_UNANSWERED);
     }),
 });
 

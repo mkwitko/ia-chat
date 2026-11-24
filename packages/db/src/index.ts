@@ -41,6 +41,8 @@ export {
   DEFAULT_QUEUE_OPTIONS,
   INBOUND_QUEUE,
   RECONCILE_QUEUE,
+  TURN_QUEUE,
+  HANDOFF_REMINDER_QUEUE,
   QUEUES,
   QUEUE_SCHEMA,
   deadLetterName,
@@ -50,6 +52,13 @@ export {
   sendTenantJob,
   watchDeadLetters,
   workTenantQueue,
+  type AfterCommit,
   type DeadLetter,
   type TenantJob,
 } from './queue/tenant-job.ts';
+export {
+  ActorType,
+  ControlReason,
+  setControl,
+  type ControlChange,
+} from './conversation/control.ts';
