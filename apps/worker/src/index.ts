@@ -13,6 +13,7 @@ import {
 } from '@app/db';
 import { PgBoss } from 'pg-boss';
 import pino from 'pino';
+import { startTurnWorker } from './agent/wiring.ts';
 import { remindHandoff } from './conversation/reminder-job.ts';
 import type { TurnRequest } from './conversation/schedule.ts';
 import { processInboundEvent } from './inbound/job.ts';
@@ -95,10 +96,26 @@ await boss.work(RECONCILE_QUEUE.name, async () => {
   for (const stale of await findStaleMessages(db, new Date())) log.error(stale, STALE_MESSAGES);
 });
 
+const turns = await startTurnWorker({
+  boss,
+  db,
+  nodeEnv: env.NODE_ENV,
+  source: process.env,
+  log: {
+    warn: (fields, message) => {
+      log.warn(fields, message);
+    },
+    info: (fields, message) => {
+      log.info(fields, message);
+    },
+  },
+});
+
 for (const signal of SHUTDOWN_SIGNALS) {
   process.once(signal, () => {
-    void boss
-      .stop()
+    void turns
+      .shutdown()
+      .then(() => boss.stop())
       .then(() => db.client.$disconnect())
       .then(() => {
         process.exit(0);

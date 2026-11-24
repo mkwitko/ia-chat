@@ -184,7 +184,7 @@ Spec: `03-whatsapp-e-conversa.md` (entrega natural).
 - [x] **(teste primeiro)** Agrupamento: job por conversa com 6 segundos, reagendado até 20 (A-02)
 - [x] **(teste primeiro)** `turn_version` incrementado por mensagem, eco e mudança de controle; turno em curso invalidado (A-03)
 - [x] Registro do turno com estado, mensagens agrupadas, modelo e custo
-- [ ] Consumidor da fila `conversation.turn` ligado ao agente real (entra com a E-13)
+- [x] Consumidor da fila `conversation.turn` ligado ao agente real (E-13)
 
 ### E-12 Controle humano
 Spec: `03-whatsapp-e-conversa.md` (controle da conversa, RF-30 a RF-36).
@@ -199,13 +199,15 @@ Spec: `03-whatsapp-e-conversa.md` (controle da conversa, RF-30 a RF-36).
 
 ### E-13 Agente de conversa
 Spec: `04-agentes-e-ia.md` (fluxo de um turno, contexto, ferramentas).
-- [ ] Pré-filtros determinísticos
-- [ ] Montagem do contexto em blocos, do mais estável ao mais volátil
-- [ ] Ferramentas do Essencial: transferir, registrar dúvida sem resposta, atualizar nome
-- [ ] Identificação do assistente na primeira mensagem de cada conversa
-- [ ] Resumo do histórico acima de 20 mensagens
-- [ ] Tetos por turno e por conversa, com transferência ao estourar
-- [ ] Bateria: casos de preço, endereço, dúvida sem resposta e fora de escopo passam
+- [x] Pré-filtros determinísticos (urgência, opt-out, figurinha, tipo não suportado)
+- [x] Montagem do contexto em blocos, do mais estável ao mais volátil (prompt único em `packages/ai/src/agent`, o mesmo da bateria)
+- [x] Ferramentas do Essencial: transferir, registrar dúvida sem resposta, atualizar nome
+- [x] Identificação do assistente na primeira mensagem de cada conversa
+- [x] Resumo do histórico acima de 20 mensagens
+- [x] Tetos por turno e por conversa, com transferência ao estourar
+- [x] Nível de autonomia (RF-13): "aprovar antes de enviar" vira rascunho; resposta fixa (urgência) sai sem esperar
+- [x] Consumidor da fila `conversation.turn` com o agente e o envio pela Cloud API (sem token em desenvolvimento, só registra)
+- [ ] Bateria: casos de preço, endereço, dúvida sem resposta e fora de escopo passam (chamada paga: com aprovação do custo)
 
 ### E-14 Validação e política
 Spec: `04-agentes-e-ia.md` (validação da saída, proteções), `01` (expansão por especialidade).

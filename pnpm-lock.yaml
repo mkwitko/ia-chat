@@ -289,6 +289,9 @@ importers:
 
   apps/worker:
     dependencies:
+      '@app/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@app/channels':
         specifier: workspace:*
         version: link:../../packages/channels
@@ -298,6 +301,9 @@ importers:
       '@app/db':
         specifier: workspace:*
         version: link:../../packages/db
+      ai:
+        specifier: 7.0.173
+        version: 7.0.173(zod@4.6.7)
       pg-boss:
         specifier: 12.38.2
         version: 12.38.2(@opentelemetry/api@1.9.1)
