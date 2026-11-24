@@ -47,7 +47,7 @@ export function createConversationAgent(
     const prefiltered = await applyPrefilter(deps.db, turn, input);
     // null (nothing to answer) is a decision too; only undefined goes on to the judge.
     const filtered =
-      prefiltered === undefined ? await judgedUrgency(deps.gateway, turn, input) : prefiltered;
+      prefiltered === undefined ? await judgedUrgency(deps.gateway, turn) : prefiltered;
     if (filtered !== undefined) return filtered && introducedAfter(filtered, input);
     if (input.autonomy === Autonomy.off)
       return introducedAfter(fixed(AgentCopy.away(input.profile), false), input);
@@ -63,7 +63,6 @@ export function createConversationAgent(
 async function judgedUrgency(
   gateway: AiGateway,
   turn: RespondInput,
-  input: AgentInput,
 ): Promise<TurnReply | undefined> {
   const mensagem = turn.messages
     .map((message) => message.text ?? '')
@@ -77,7 +76,7 @@ async function judgedUrgency(
   const isUrgent =
     urgent?.kind === JudgeKind.noul &&
     urgent.probability >= JUDGE_THRESHOLDS[JudgeQuestionId.urgent];
-  return isUrgent ? fixed(AgentCopy.emergency(input.profile), true) : undefined;
+  return isUrgent ? fixed(AgentCopy.emergency, true) : undefined;
 }
 
 /** undefined: go on to the model. null or a reply: the pre-filter decided. */
@@ -87,7 +86,7 @@ async function applyPrefilter(
   input: AgentInput,
 ): Promise<TurnReply | null | undefined> {
   const { kind } = prefilter(turn.messages, input.specialtyTerms);
-  if (kind === PrefilterKind.urgency) return fixed(AgentCopy.emergency(input.profile), true);
+  if (kind === PrefilterKind.urgency) return fixed(AgentCopy.emergency, true);
   if (kind === PrefilterKind.ignore) return null;
   if (kind === PrefilterKind.unsupported) return fixed(AgentCopy.unsupported, false);
   if (kind === PrefilterKind.optOut) {

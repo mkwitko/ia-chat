@@ -8,7 +8,6 @@ export const DEFAULT_ASSISTANT_NAME = 'Assistente virtual';
 
 const EMERGENCY =
   'Se for uma emergência, ligue agora para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Se estiver em sofrimento emocional, o CVV atende 24 horas no 188.';
-const NOTIFIED = 'Já avisei o profissional.';
 const NOTICE =
   'Vou passar sua mensagem para o profissional, que vai te responder por aqui assim que puder.';
 
@@ -19,9 +18,11 @@ export interface Persona {
 }
 
 export const AgentCopy = {
-  /** The professional is notified in every mode; only the wording changes. */
-  emergency: ({ identity }: Persona) =>
-    identity === Identity.professional ? EMERGENCY : `${EMERGENCY} ${NOTIFIED}`,
+  /**
+   * No "Já avisei o profissional" yet: nothing reaches the professional until push
+   * notifications exist (E-16). Put it back only when the notice really goes out.
+   */
+  emergency: EMERGENCY,
   handoffNotice: ({ identity }: Persona) =>
     identity === Identity.professional
       ? 'Vou te responder com calma por aqui assim que puder.'

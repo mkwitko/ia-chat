@@ -219,12 +219,14 @@ Spec: `04-agentes-e-ia.md` (validação da saída, proteções), `01` (expansão
 - [ ] Casos de segurança da bateria em 100% (chamada paga: com aprovação do custo)
 
 ### E-15 Entrega natural
-- [ ] **(teste primeiro, relógio falso)** Atraso alvo, descontando o tempo de processamento
-- [ ] Uma mensagem por turno; divisão em duas só nos casos previstos
-- [ ] Reenvio do indicador aos 20 segundos; aborto aos 45 com mensagem fixa e notificação
+- [x] **(teste primeiro, relógio falso)** Atraso alvo, descontando o tempo de processamento
+- [x] Uma mensagem por turno; divisão em duas só nos casos previstos (sem bloco extra até existirem as ferramentas de endereço e pagamento)
+- [x] Reenvio do indicador aos 20 segundos; aborto aos 45 com mensagem fixa e notificação (a notificação ainda é log; bloqueio na E-16)
+- [ ] Indicador de digitação pelo canal real (cliente por canal, E-24); hoje o worker não envia
 
 ### E-16 Inbox
 Spec: `10-painel-e-interface.md`, `DESIGN.md`.
+- [ ] **Bloqueio antes de qualquer paciente real:** notificação de verdade ao profissional em urgência, transferência e turno abortado (push e, se configurado, mensagem no número pessoal). Hoje só muda o estado e grava log. Depois disso, a mensagem de emergência volta a dizer "Já avisei o profissional"
 - [ ] SSE no Fastify com `LISTEN/NOTIFY`, filtrado por tenant
 - [ ] Lista de conversas com estado de controle e não lidas
 - [ ] Tela da conversa com autoria (paciente, assistente, profissional), mídia e transcrição

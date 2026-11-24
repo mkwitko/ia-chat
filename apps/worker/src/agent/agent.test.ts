@@ -13,7 +13,7 @@ describe('conversation agent (E-13)', () => {
     const fake = scripted([]);
     const reply = await agentWith(fake.model)(turnOf(scope, ['to com dor no peito agora']));
     expect(reply).toMatchObject({
-      text: `${AgentCopy.emergency({ identity: Identity.assistant, assistantName: 'Lia', professionalName: 'Dr. Rafael Exemplo' })} Aqui é Lia, assistente virtual do consultório de Dr. Rafael Exemplo.`,
+      text: `${AgentCopy.emergency} Aqui é Lia, assistente virtual do consultório de Dr. Rafael Exemplo.`,
       handoff: true,
       mode: 'send',
       model: 'none',
@@ -55,9 +55,8 @@ describe('conversation agent (E-13)', () => {
       'Oi! Aqui é do consultório de Dra. Ana Exemplo.',
     );
     expect(AgentCopy.identification({ ...persona, identity: Identity.professional })).toBeNull();
-    expect(AgentCopy.emergency({ ...persona, identity: Identity.professional })).not.toContain(
-      'avisei o profissional',
-    );
+    // No mode promises a notice the professional does not get yet (E-16).
+    expect(AgentCopy.emergency).not.toContain('avisei o profissional');
   });
 
   it('speaks as the professional without any introduction in that mode', async () => {
