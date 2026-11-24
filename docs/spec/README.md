@@ -66,6 +66,8 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | H-08 | Tem ou aceita abrir conta no Mercado Pago | Sinal Pix só com confirmação manual | Perguntar que conta usa para receber Pix hoje |
 | H-09 | Câmbio de R$ 5,50 por dólar | Muda custos em reais | Atualizar na planilha |
 | H-10 | Só o dono vê e altera cobrança; profissional altera integrações; recepcionista só lê integrações (RN-34, padrão conservador adotado na E-04) | Ajustar a tabela de papéis em `apps/api/src/auth/access.ts` | Perguntar ao piloto quando houver equipe |
+| H-11 | Em urgência, a recepção pode dar orientação básica de segurança junto do encaminhamento ao SAMU ou CVV (não ficar sozinho, pedir que alguém acompanhe, não dirigir, não movimentar quem caiu); qualquer outra orientação de saúde segue proibida | Ajustar prompt e avaliador se o profissional discordar | Validar com o piloto |
+| H-12 | Modelos provisórios da E-07: Luna na conversa com Haiku de reserva (mesmo preço), Terra na escalada, Sol na avaliação de qualidade | Trocar a tabela de roteamento (`AI_ROUTES`, sem deploy) | Rodada final da bateria com cada caso duas vezes, quando houver crédito no gateway |
 
 ## Pendências que bloqueiam prazo
 

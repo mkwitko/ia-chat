@@ -1,6 +1,7 @@
 // E-07: runs the evaluation battery on the candidate models and writes docs/eval/<date>.md.
 //   pnpm eval                              all candidates, all cases, Jev
-//   pnpm eval --models haiku,luna --cases agendar,urgencia-01 --skip-judge
+//   pnpm eval --models haiku,luna --cases agendar,urgencia-01 --skip-judge --max-usd 0.5
+// Every run costs money: estimate it and get the owner's ok first.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { DEFAULT_CAPS } from '../src/budget.ts';
@@ -13,17 +14,17 @@ import { DEFAULT_ROUTES } from '../src/routing.ts';
 import { startTracing } from '../src/tracing.ts';
 import { typeSafeJudge } from '../src/typesafe-judge.ts';
 import { CANDIDATES } from './candidates.ts';
-import { runConversation } from './conversation.ts';
+import { runConversation, type ConversationResult } from './conversation.ts';
 import { CASES } from './data/cases.ts';
 import { evaluateJudge } from './judge-eval.ts';
 import { memoryUsageStore } from './memory-store.ts';
 import { createMeter } from './meter.ts';
 import { mapPool } from './pool.ts';
 import { renderReport } from './report.ts';
+import { createSpendGuard, MICRO_PER_USD } from './spend-guard.ts';
 import { summarize } from './summary.ts';
 
 const CONCURRENCY = 6;
-const MICRO = 1_000_000;
 const COST_DIGITS = 4;
 const REPORT_DIR = new URL('../../../docs/eval/', import.meta.url);
 const { values } = parseArgs({
@@ -33,6 +34,7 @@ const { values } = parseArgs({
     'skip-judge': { type: 'boolean' },
     label: { type: 'string' },
     repeat: { type: 'string' },
+    'max-usd': { type: 'string' },
   },
 });
 
@@ -57,6 +59,12 @@ const selected = filters
 // --repeat N runs each case N times: five cases per category are few against run-to-run noise.
 const cases = Array.from({ length: Number(values.repeat ?? 1) }, () => selected).flat();
 
+// Paid calls: always capped (default US$ 1). Raise it only with the owner's ok.
+const DEFAULT_MAX_USD = 1;
+const guard = createSpendGuard(Number(values['max-usd'] ?? DEFAULT_MAX_USD), () =>
+  store.entries.reduce((total, entry) => total + entry.costMicroUsd, meter.total()),
+);
+
 // Models run side by side; each one keeps its own pool of conversations.
 const perModel = await Promise.all(
   models.map(async (model) => {
@@ -70,7 +78,10 @@ const perModel = await Promise.all(
     });
     const tenantId = crypto.randomUUID(); // one tenant per model: the monthly cap stays per model
     return mapPool(cases, CONCURRENCY, async (item) => {
+      const stop = guard.stopReason();
+      if (stop) return skipped(item.id, model, stop);
       const result = await runConversation({ gateway, resolver, meter, tenantId }, item, model);
+      guard.observe(result.failures);
       const status = result.failures.length ? 'FALHOU' : 'ok    ';
       const reasons = result.failures.length ? ' — ' + result.failures.join('; ') : '';
       console.log(`${status} ${label(model)} ${item.id}${reasons}`);
@@ -94,7 +105,7 @@ const markdown = renderReport({
   summaries,
   results,
   judge,
-  harnessCostUsd: Number(meter.total()) / MICRO,
+  harnessCostUsd: Number(meter.total()) / MICRO_PER_USD,
 });
 mkdirSync(REPORT_DIR, { recursive: true });
 const suffix = values.label ? '-' + values.label : '';
@@ -107,6 +118,20 @@ for (const s of summaries)
 if (judge) console.log(`Jev: ${judge.passed ? 'passou' : 'não passou'}`);
 console.log(`relatório: ${file.pathname}`);
 await tracing?.shutdown();
+
+function skipped(caseId: string, model: ModelRef, reason: string): ConversationResult {
+  const failures = [`não rodou: ${reason}`];
+  return {
+    caseId,
+    model,
+    conversationId: caseId,
+    lines: [],
+    log: [],
+    failures,
+    grade: null,
+    latenciesMs: [],
+  };
+}
 
 function label(model: ModelRef): string {
   return `${model.provider}/${model.model}`.padEnd('anthropic/claude-sonnet-5.5'.length);

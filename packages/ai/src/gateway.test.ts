@@ -17,7 +17,14 @@ import { dbUsageStore } from './usage-store.ts';
 const db = createDb(process.env.DATABASE_URL ?? '');
 afterAll(() => db.client.$disconnect());
 
-const ROUTES = DEFAULT_ROUTES;
+// Fixed routes: the test checks the mechanics, not the production model choice.
+const ROUTES = {
+  ...DEFAULT_ROUTES,
+  [Task.conversation]: {
+    primary: { provider: Provider.anthropic, model: 'claude-haiku-5.5' },
+    fallback: { provider: Provider.openai, model: 'gpt-6-luna' },
+  },
+};
 const usage = {
   inputTokens: { total: 1_000, noCache: 400, cacheRead: 600, cacheWrite: 0 },
   outputTokens: { total: 200, text: 200, reasoning: 0 },
