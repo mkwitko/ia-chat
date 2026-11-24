@@ -18,7 +18,7 @@ Go ou Rust não trariam ganho perceptível aqui.
 
 - **A carga é de espera, não de CPU.** Cada turno passa segundos aguardando o LLM e milissegundos no nosso código. Com 3.000 clientes no perfil médio, são cerca de 17 milhões de mensagens por mês, perto de 7 por segundo em média e algumas dezenas no pico. Um processo Node atende milhares de requisições por segundo desse tipo.
 - **O gargalo real é Postgres e provedores externos.** Trocar a linguagem não mexe nisso.
-- **O que se perderia:** Vercel AI SDK, Better Auth (só existe em TypeScript), Drizzle, pg-boss, schemas Zod compartilhados entre API, ferramentas do agente e painel.
+- **O que se perderia:** Vercel AI SDK, Better Auth (só existe em TypeScript), Prisma, pg-boss, schemas Zod compartilhados entre API, ferramentas do agente e painel.
 - **Segurança:** Node também é seguro quanto a memória. Os riscos deste produto são isolamento entre clientes, autorização, segredos e cadeia de dependências, e nenhum deles muda com Rust. A cadeia de dependências do npm é o ponto fraco real; a mitigação está em E-01.
 - **Quando reavaliar:** se surgir um serviço de mídia ou voz em tempo real com muito processamento. Nesse caso, isola-se só esse serviço em Go, sem reescrever o resto.
 
@@ -97,7 +97,7 @@ MVP = Fases 1 a 3. Fase 0 corre em paralelo desde já.
 | Etapa | O quê | Pronto quando |
 |---|---|---|
 | E-01 | Monorepo pnpm (`apps/api`, `apps/worker`, `apps/web`, `packages/core`, `channels`, `ai`, `db`), TypeScript estrito, lint, testes, CI. Dependências: lockfile obrigatório, idade mínima de publicação, scripts de instalação bloqueados, auditoria no CI | CI verde em um PR vazio |
-| E-02 | Postgres local em Docker, Drizzle, migrations SQL, papéis de banco separados, `withTenant` | Teste de integração prova que `SET` vaza entre transações no pooler e `set_config(..., true)` não |
+| E-02 | Postgres local em Docker, Prisma, migrations SQL, papéis de banco separados, `withTenant` | Teste de integração prova que `SET` vaza entre transações no pooler e `set_config(..., true)` não |
 | E-03 | Schema do núcleo ([02](../spec/02-arquitetura.md)) com RLS em todas as tabelas | Teste gerado por tabela: tenant A não lê nem altera tenant B (A-18) |
 | E-04 | Better Auth com organizações, papéis e sessão; cadastro de tenant | Login, criação de tenant e convite funcionando por teste de API |
 | E-05 | pg-boss no worker: job com atraso, chave única, nova tentativa, `tenant_id` no payload | Job agendado executa uma vez sob dois workers concorrentes |
@@ -174,7 +174,7 @@ Da pesquisa em [../research/05-github-pecas-reaproveitaveis.md](../research/05-g
 | Chatwoot | MIT, exceto `enterprise/` | Estudar: tratamento de `smb_message_echoes`, Embedded Signup e transferência do bot para humano | E-09, E-12, E-24 |
 | `open-bsp-api` | Unlicense | Estudar: schema multi-tenant com coexistência | E-03, E-09 |
 | `Hiberius/whatsapp-receptionist` | MIT | Estudar: transferência e proteções. O próprio autor admite que o RLS dele não roda em execução; é o erro que E-03 testa | E-12, E-14 |
-| `cellajs/cella` | MIT | Estudar: `set_config` local por transação para RLS com Drizzle | E-02 |
+| `cellajs/cella` | MIT | Estudar: `set_config` local por transação para RLS (o padrão vale para Prisma) | E-02 |
 | pg-boss (`singletonKey`, políticas de fila) e `@pg-boss/dashboard` | MIT | Usar | E-05, E-11, E-27 |
 | `promptfoo` | MIT | Usar: avaliação e testes de ataque em CI | E-07 |
 | `getsentry/vitest-evals` | Apache-2.0 | Usar: avaliações dentro do Vitest | E-07 |
@@ -184,7 +184,7 @@ Da pesquisa em [../research/05-github-pecas-reaproveitaveis.md](../research/05-g
 Ajustes que a pesquisa trouxe:
 
 - **Identidade do contato.** O Chatwoot duplicou contatos por causa do nono dígito e do BSUID. Regra em [03](../spec/03-whatsapp-e-conversa.md), teste em E-09.
-- **Fixar a versão do Drizzle** (a 1.0 ainda era candidata a lançamento).
+- **Fixar a versão do Prisma.** O Drizzle saiu em 24/11/2026, por decisão do dono.
 - **Sem SDK oficial do Asaas para Node:** cliente próprio, fino, com tipos Zod (E-25).
 - **Áudio:** chamar o `ffmpeg` direto; `fluent-ffmpeg` está arquivado.
 - **Evitar:** Evalite (descontinuado), `date-holidays` (dados com licença de compartilhamento obrigatório), Typebot (licença FSL).

@@ -13,6 +13,15 @@ trustPolicy: no-downgrade
 blockExoticSubdeps: true
 # Install scripts are blocked; any dependency that needs one must be listed here after review.
 strictDepBuilds: true
-allowBuilds: {}
+allowBuilds:
+  # Node version check only.
+  prisma: false
+  # Downloads the schema engine binary (needed by prisma migrate) from Prisma's CDN.
+  '@prisma/engines': true
 # Exact versions in package.json.
 savePrefix: ''
+# Patched transitive deps of the Prisma 7.9.1 CLI (pnpm audit). Remove when Prisma ships them.
+overrides:
+  mysql2: 3.24.6
+  effect: 3.22.1
+  deepmerge-ts: 8.0.2

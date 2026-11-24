@@ -11,7 +11,7 @@ Assistente de IA no WhatsApp para profissionais de saúde autônomos no Brasil. 
 ## Stack (decidida; não reabrir sem motivo novo)
 
 - TypeScript estrito, Node LTS, pnpm, monorepo: `apps/api` (Fastify), `apps/worker`, `apps/web` (painel: React, Vite, Tailwind, React Query), `apps/site` (site público: Astro, estático), `packages/{core,channels,ai,db}`.
-- Postgres em servidor próprio com backup contínuo no R2 (RN-10 a RN-16), Drizzle, migrations SQL à mão para RLS e constraints. Nada específico de Supabase ou Neon.
+- Postgres em servidor próprio com backup contínuo no R2 (RN-10 a RN-16), Prisma (com `@prisma/adapter-pg`), migrations SQL à mão para RLS e constraints. Nada específico de Supabase ou Neon.
 - Em desenvolvimento, o AI Gateway pode usar o Workers AI gratuito. A bateria de avaliação roda sempre nos modelos candidatos de produção.
 - Fila: pg-boss. Sem Redis.
 - Autenticação: Better Auth com organizações.

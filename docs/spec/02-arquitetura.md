@@ -60,9 +60,11 @@ Requisitos do Postgres próprio. São dados de saúde e de agenda, então nenhum
 
 `ponytail:` um único servidor é ponto único de falha. Aceito no piloto por causa de RN-10 a RN-16; réplica em espera entra junto com o gatilho de migração.
 
-### ORM: Drizzle
+### ORM: Prisma
 
-- Drizzle na versão estável atual. Prisma estava em release candidate na pesquisa.
+- Prisma 7 na versão estável, com o gerador `prisma-client` e o adaptador `@prisma/adapter-pg`. Troca do Drizzle pelo Prisma decidida pelo dono em 24/11/2026, na E-02.
+- O Prisma não modela `tstzrange` nem exclusion constraint. A coluna `appointments.during` fica `Unsupported("tstzrange")` no schema, e a leitura e a escrita do intervalo passam por SQL cru tipado (`$queryRaw`) dentro de `withTenant` (E-20).
+- `withTenant` usa transação interativa do Prisma (`$transaction(async (tx) => ...)`); a primeira instrução é o `set_config`.
 - Policies de RLS, exclusion constraint e extensões ficam em migrations SQL escritas à mão, versionadas junto.
 - Toda consulta de negócio roda dentro de `withTenant(tenantId, fn)`, que abre transação e executa `select set_config('app.tenant_id', $1, true)`. Não usar `SET` de sessão: o pool de conexões reaproveita conexões entre requisições, com ou sem PgBouncer.
 

@@ -84,11 +84,11 @@ Spec: `CLAUDE.md`, `02-arquitetura.md`.
 
 ### E-02 Banco e isolamento
 Spec: `02-arquitetura.md` (multi-tenancy, RN-01 a RN-06).
-- [ ] Papéis: `app_migrator` (dono) e `app_runtime` (sem `BYPASSRLS`, não dono)
-- [ ] Drizzle com versão fixada; pasta de migrations SQL
-- [ ] **(teste primeiro)** `withTenant(tenantId, fn)` com `set_config('app.tenant_id', $1, true)`
-- [ ] **(teste primeiro)** Teste que prova que `SET` de sessão vaza entre transações no pool e `set_config` local não
-- [ ] Função auxiliar que falha se uma consulta de negócio rodar fora de `withTenant`
+- [x] Papéis: `app_migrator` (dono) e `app_runtime` (sem `BYPASSRLS`, não dono)
+- [x] Prisma com versão fixada; pasta de migrations SQL
+- [x] **(teste primeiro)** `withTenant(tenantId, fn)` com `set_config('app.tenant_id', $1, true)`
+- [x] **(teste primeiro)** Teste que prova que `SET` de sessão vaza entre transações no pool e `set_config` local não
+- [x] Função auxiliar que falha se uma consulta de negócio rodar fora de `withTenant`
 
 ### E-03 Schema do núcleo
 Spec: `02-arquitetura.md` (modelo de dados), `03` (RF-23b).
