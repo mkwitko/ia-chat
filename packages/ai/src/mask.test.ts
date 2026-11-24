@@ -14,6 +14,12 @@ describe('maskPersonalData', () => {
     );
   });
 
+  it('masks a name only as a whole word, accents included', () => {
+    expect(maskPersonalData('Ana marcou para a semana; Ána não', ['Ana'])).toBe(
+      '[nome] marcou para a semana; Ána não',
+    );
+  });
+
   it('keeps times, prices and dates readable', () => {
     const text = 'Sessão às 14:30 de 04/01/2027 custa R$ 180,00';
     expect(maskPersonalData(text, [])).toBe(text);

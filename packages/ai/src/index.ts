@@ -18,5 +18,6 @@ export { Provider, type ModelRef } from './models.ts';
 export { PRICE_TABLE } from './prices.ts';
 export { gatewayModelResolver, MissingCredentialError } from './providers.ts';
 export { DEFAULT_ROUTES, Task, routeTable } from './routing.ts';
+export { startTracing, type Tracing } from './tracing.ts';
 export { typeSafeJudge } from './typesafe-judge.ts';
 export { dbUsageStore } from './usage-store.ts';

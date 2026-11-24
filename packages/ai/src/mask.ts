@@ -9,12 +9,14 @@ const REGEX_SPECIAL = /[.*+?^${}()|[\]\\]/g;
 export function maskPersonalData(text: string, names: readonly string[]): string {
   const byLength = [...names].filter(Boolean).sort((a, b) => b.length - a.length);
   const masked = byLength.reduce(
-    (current, name) => current.replace(new RegExp(escape(name), 'gi'), NAME_MASK),
+    (current, name) => current.replace(wholeWord(name), NAME_MASK),
     text,
   );
   return masked.replace(BR_PHONE, PHONE_MASK);
 }
 
-function escape(value: string): string {
-  return value.replace(REGEX_SPECIAL, String.raw`\$&`);
+// A letter on either side means the name is part of another word ("Ana" in "semana").
+function wholeWord(name: string): RegExp {
+  const escaped = name.replace(REGEX_SPECIAL, String.raw`\$&`);
+  return new RegExp(String.raw`(?<!\p{L})${escaped}(?!\p{L})`, 'giu');
 }

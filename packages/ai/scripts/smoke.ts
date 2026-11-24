@@ -12,12 +12,16 @@ import { createAiGateway } from '../src/gateway.ts';
 import { PRICE_TABLE } from '../src/prices.ts';
 import { gatewayModelResolver, type ModelResolver } from '../src/providers.ts';
 import { Task, routeTable } from '../src/routing.ts';
+import { startTracing } from '../src/tracing.ts';
 import { typeSafeJudge } from '../src/typesafe-judge.ts';
 import { dbUsageStore } from '../src/usage-store.ts';
 
 const SERVICE_UNAVAILABLE = 503;
 const { DATABASE_URL } = parseEnv(process.env);
 const env = aiEnvSchema.parse(process.env);
+const tracing = startTracing(env, 'development');
+const FICTITIOUS_NAME = 'Joana Exemplo';
+const FICTITIOUS_PHONE = '(11) 90000-0001';
 const db = createDb(DATABASE_URL);
 const routes = routeTable(env.AI_ROUTES);
 const real = gatewayModelResolver(env);
@@ -31,7 +35,13 @@ const request = {
   task: Task.conversation,
   tenantId: tenant.id,
   system: [{ text: 'Responda em uma frase curta, em português.', cache: true }],
-  messages: [{ role: 'user' as const, content: 'Diga olá.' }],
+  messages: [
+    {
+      role: 'user' as const,
+      content: `Sou ${FICTITIOUS_NAME}, meu telefone é ${FICTITIOUS_PHONE}. Diga olá usando meu nome.`,
+    },
+  ],
+  personalNames: [FICTITIOUS_NAME],
 };
 
 const live = createAiGateway({ ...deps, resolver: real, judgeProvider: judgeDown });
@@ -75,7 +85,7 @@ if (env.TYPESAFE_API_KEY) {
   const answers = await jev.judge(
     { tenantId: tenant.id },
     {
-      state: { message: 'Estou com muita dor no peito agora' },
+      state: { message: `${FICTITIOUS_NAME} aqui: estou com muita dor no peito agora` },
       questions: {
         urgent: { kind: 'noul', instructions: 'A mensagem descreve uma emergência médica?' },
       },
@@ -90,3 +100,5 @@ console.log(
   rows.map((r) => `${r.task} ${r.model} ${String(r.costMicroUsd)}`),
 );
 await db.client.$disconnect();
+await tracing?.shutdown();
+console.log('traces:', tracing ? 'sent to Langfuse' : 'off (no LANGFUSE keys)');

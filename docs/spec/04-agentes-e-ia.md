@@ -219,7 +219,7 @@ Residência de dados: nenhum provedor processa de ponta a ponta no Brasil. Trata
 
 - `quality_review` avalia em lote uma amostra (padrão 10% das conversas, 100% das que tiveram transferência ou reprovação na validação): resposta sem fonte, tom, oportunidade perdida de agendar.
 - Indicadores por tenant: taxa de agendamento por conversa, taxa de transferência, perguntas sem resposta, respostas descartadas, custo por conversa, tempo até a primeira resposta.
-- Traços no Langfuse com telefone e nome mascarados.
+- Traços no Langfuse com telefone e nome mascarados. A máscara roda no nosso processo, antes do envio: telefone por padrão; nome pela lista de nomes que cada chamada declara (nome completo e cada parte), guardada por 10 minutos. Cobre a entrada e a saída das observações e os atributos `gen_ai.*` do AI SDK, que a máscara do SDK do Langfuse não alcança. Metadados de traço levam só ids. Um traço por chamada de tarefa, nomeado pela tarefa, com a conversa como sessão.
 - `insights` gera resumo mensal a partir de consultas SQL. Todo número exibido vem de consulta; o modelo só redige.
 
 ## Tom de voz

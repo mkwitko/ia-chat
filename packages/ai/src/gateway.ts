@@ -5,16 +5,20 @@ import {
   type SystemModelMessage,
   type ToolSet,
 } from 'ai';
+import { propagateAttributes } from '@langfuse/tracing';
 import { assertWithinBudget, type Caps } from './budget.ts';
 import { withFallback } from './fallback.ts';
 import { judge, type JudgeProvider, type JudgeQuestions, type JudgeRequest } from './judge.ts';
 import { modelKey, type ModelRef } from './models.ts';
 import { costMicroUsd, priceFor, type PriceEntry, type TokenUsage } from './pricing.ts';
 import { NO_RETENTION, type ModelResolver } from './providers.ts';
+import { traceAttributes } from './trace-attributes.ts';
+import { traceMasker } from './trace-masking.ts';
 import { Task, type RouteTable } from './routing.ts';
 import { transcribe, type TranscribeRequest } from './transcribe.ts';
 import { JEV_MODEL } from './typesafe-judge.ts';
 import type { UsageStore } from './usage-store.ts';
+import { tokenUsage, usageColumns } from './usage.ts';
 
 const JUDGE_TASK = 'judge';
 const JUDGE_PROVIDER = 'typesafe';
@@ -43,6 +47,8 @@ export interface GenerateRequest extends CallScope {
   messages: readonly ModelMessage[];
   tools?: ToolSet;
   maxSteps?: number;
+  /** Names that appear in this call (contact, professional); masked in traces. */
+  personalNames?: readonly string[];
 }
 
 export interface GenerateResult {
@@ -92,22 +98,13 @@ async function generate({ deps, now }: Context, request: GenerateRequest) {
     await deps.store.spend({ tenantId, conversationId, turnId, monthStart }),
   );
 
+  traceMasker.remember(request.personalNames ?? []);
   // ponytail: a fallback after a write tool already ran could repeat it; E-13/E-20 make
   // write tools idempotent per turn before any write tool exists.
-  const { value, model } = await withFallback(deps.routes[task], (ref, abortSignal) =>
-    generateText({
-      model: deps.resolver.language(ref),
-      instructions: systemMessages(request.system),
-      messages: [...request.messages],
-      ...(request.tools ? { tools: request.tools } : {}),
-      stopWhen: stepCountIs(request.maxSteps ?? DEFAULT_MAX_STEPS),
-      maxRetries: 0,
-      abortSignal,
-      providerOptions: {
-        gateway: NO_RETENTION,
-        ...(CONVERSATION_TASKS.has(task) ? { openai: LOW_REASONING } : {}),
-      },
-    }),
+  const { value, model } = await propagateAttributes(traceAttributes(task, request), () =>
+    withFallback(deps.routes[task], (ref, abortSignal) =>
+      callModel(deps, request, { ref, abortSignal }),
+    ),
   );
   const usage = tokenUsage(value.usage);
   const cost = costMicroUsd(priceFor(deps.prices, modelKey(model), now()), usage);
@@ -132,7 +129,9 @@ async function judgeAndRecord<Q extends JudgeQuestions>(
   scope: CallScope,
   request: JudgeRequest<Q>,
 ) {
-  const result = await judge(deps.judgeProvider, request);
+  const result = await propagateAttributes(traceAttributes(JUDGE_TASK, scope), () =>
+    judge(deps.judgeProvider, request),
+  );
   if (!result.usage) return result.answers;
   const model = { provider: JUDGE_PROVIDER, model: JEV_MODEL } as unknown as ModelRef;
   const usage = {
@@ -146,41 +145,34 @@ async function judgeAndRecord<Q extends JudgeQuestions>(
   return result.answers;
 }
 
+interface Attempt {
+  ref: ModelRef;
+  abortSignal: AbortSignal;
+}
+
+function callModel(deps: GatewayDeps, request: GenerateRequest, { ref, abortSignal }: Attempt) {
+  return generateText({
+    model: deps.resolver.language(ref),
+    instructions: systemMessages(request.system),
+    messages: [...request.messages],
+    ...(request.tools ? { tools: request.tools } : {}),
+    stopWhen: stepCountIs(request.maxSteps ?? DEFAULT_MAX_STEPS),
+    maxRetries: 0,
+    abortSignal,
+    providerOptions: {
+      gateway: NO_RETENTION,
+      ...(CONVERSATION_TASKS.has(request.task) ? { openai: LOW_REASONING } : {}),
+    },
+    telemetry: { functionId: request.task },
+  });
+}
+
 function systemMessages(blocks: readonly CacheableBlock[]): SystemModelMessage[] {
   return blocks.map(({ text, cache }) => ({
     role: 'system',
     content: text,
     ...(cache ? { providerOptions: CACHE_MARKER } : {}),
   }));
-}
-
-interface SdkUsage {
-  inputTokens: number | undefined;
-  inputTokenDetails: {
-    noCacheTokens?: number | undefined;
-    cacheReadTokens?: number | undefined;
-    cacheWriteTokens?: number | undefined;
-  };
-  outputTokens: number | undefined;
-}
-
-function tokenUsage(usage: SdkUsage): TokenUsage {
-  const cacheRead = usage.inputTokenDetails.cacheReadTokens ?? 0;
-  const cacheWrite = usage.inputTokenDetails.cacheWriteTokens ?? 0;
-  const noCacheInput =
-    usage.inputTokenDetails.noCacheTokens ?? (usage.inputTokens ?? 0) - cacheRead - cacheWrite;
-  return { noCacheInput, cacheRead, cacheWrite, output: usage.outputTokens ?? 0 };
-}
-
-function usageColumns(model: ModelRef, usage: TokenUsage, cost: bigint) {
-  return {
-    provider: model.provider,
-    model: model.model,
-    inputTokens: usage.noCacheInput + usage.cacheRead + usage.cacheWrite,
-    cachedInputTokens: usage.cacheRead,
-    outputTokens: usage.output,
-    costMicroUsd: cost,
-  };
 }
 
 function startOfMonth(date: Date): Date {

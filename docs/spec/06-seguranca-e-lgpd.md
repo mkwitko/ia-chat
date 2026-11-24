@@ -6,7 +6,7 @@ Fontes: [pesquisa 01](../research/01-meta-whatsapp-compliance.md). Esta seção 
 
 - O profissional é o **controlador** dos dados dos pacientes. Nós somos **operador** (nv quanto ao detalhamento no guia da ANPD).
 - Somos controladores dos dados dos nossos clientes (cadastro, cobrança).
-- Provedores de LLM, transcrição, banco e armazenamento são suboperadores, inclusive o intermediário Vercel AI Gateway. A lista é pública e versionada.
+- Provedores de LLM, transcrição, banco e armazenamento são suboperadores, inclusive o intermediário Vercel AI Gateway e o Langfuse Cloud (região UE, recebe traços já mascarados). A lista é pública e versionada.
 
 ## Dados de saúde
 

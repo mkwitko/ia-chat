@@ -124,7 +124,7 @@ Spec: `04-agentes-e-ia.md` (AI Gateway, juízos tipados).
 - [x] **(teste primeiro)** Reserva em timeout, erro e limite de taxa; `judge` devolve nulo sem lançar erro
 - [x] Provedores pelo Vercel AI Gateway (uma chave); Workers AI descartado
 - [x] Marcação de blocos de cache e esforço de raciocínio baixo nas tarefas de conversa
-- [ ] Langfuse com nome e telefone mascarados
+- [x] Langfuse com nome e telefone mascarados
 
 ### E-07 Avaliação
 Spec: `04-agentes-e-ia.md` (avaliação).
