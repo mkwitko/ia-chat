@@ -14,7 +14,7 @@ const ACTION_BY_TOOL: Readonly<Record<string, ActionKind>> = {
   remarcar: ActionKind.rescheduled,
   cancelar: ActionKind.cancelled,
 };
-const TIME_KEYS = new Set(['inicio', 'novo_inicio', 'start']);
+const TIME_KEYS = new Set(['inicio', 'fim', 'novo_inicio', 'start']);
 const CENTS_KEYS = new Set(['valor_centavos', 'price_cents', 'priceCents']);
 const ERROR_KEY = 'erro';
 const ISO_TIME = /T(\d{2}:\d{2})/;

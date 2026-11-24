@@ -88,9 +88,9 @@ Todas têm schema Zod, validam `tenant_id` pelo contexto (nunca por argumento do
 | Ferramenta | Plano | Efeito |
 |---|---|---|
 | `consultar_horarios(servico, a_partir_de, periodo?)` | Agenda | Lê disponibilidade calculada; devolve até 6 opções |
-| `agendar(servico, inicio, nome_paciente)` | Agenda | Cria agendamento; falha com `slot_taken` se houver conflito |
-| `remarcar(agendamento, novo_inicio)` | Agenda | Transação: cria o novo e cancela o antigo |
-| `cancelar(agendamento, motivo?)` | Agenda | Cancela; respeita antecedência mínima configurada |
+| `agendar(servico, inicio, nome_paciente, confirmado)` | Agenda | Cria agendamento; falha com `slot_taken` se houver conflito |
+| `remarcar(agendamento, novo_inicio, confirmado)` | Agenda | Transação: cria o novo e cancela o antigo |
+| `cancelar(agendamento, motivo?, confirmado)` | Agenda | Cancela; respeita antecedência mínima configurada |
 | `listar_agendamentos_do_paciente()` | Agenda | Só os do contato atual |
 | `criar_cobranca_sinal(agendamento)` | Pro | Cria cobrança Pix; devolve código copia e cola |
 | `consultar_pagamento(agendamento)` | Pro | Lê status gravado pelo webhook |

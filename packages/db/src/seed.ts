@@ -118,14 +118,17 @@ async function seedConversation(tx: Tx, ids: Ids): Promise<void> {
 async function seedSchedule(tx: Tx, ids: Ids): Promise<void> {
   const { tenantId, contactId } = ids;
   const { startsAt, endsAt } = FIXTURE.appointment;
-  // Prisma cannot write tstzrange (see schema), so this one is raw SQL.
-  const [appointment] = await tx.$queryRaw<{ id: string }[]>`
-    insert into appointments (tenant_id, professional_id, contact_id, service_id, location_id, during)
-    values (${tenantId}::uuid, ${ids.professionalId}::uuid, ${contactId}::uuid,
-            ${ids.serviceId}::uuid, ${ids.locationId}::uuid, tstzrange(${startsAt}::timestamptz, ${endsAt}::timestamptz))
-    returning id`;
-  if (!appointment) throw new Error('appointment insert returned nothing');
-  const appointmentId = appointment.id;
+  const { id: appointmentId } = await tx.appointment.create({
+    data: {
+      tenantId,
+      professionalId: ids.professionalId,
+      contactId,
+      serviceId: ids.serviceId,
+      locationId: ids.locationId,
+      startsAt: new Date(startsAt),
+      endsAt: new Date(endsAt),
+    },
+  });
   await tx.scheduledMessage.create({
     data: {
       tenantId,

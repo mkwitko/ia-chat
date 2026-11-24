@@ -31,6 +31,7 @@ export {
   type AgentState,
 } from './agent/prompt.ts';
 export { JUDGE_QUESTIONS, JUDGE_THRESHOLDS, JudgeQuestionId } from './agent/judgments.ts';
+export { ActionKind } from './agent/facts.ts';
 export {
   timesIn,
   factsFromToolOutputs,

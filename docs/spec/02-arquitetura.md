@@ -63,7 +63,7 @@ Requisitos do Postgres próprio. São dados de saúde e de agenda, então nenhum
 ### ORM: Prisma
 
 - Prisma 7 na versão estável, com o gerador `prisma-client` e o adaptador `@prisma/adapter-pg`. Troca do Drizzle pelo Prisma decidida pelo dono em 24/11/2026, na E-02.
-- O Prisma não modela `tstzrange` nem exclusion constraint. A coluna `appointments.during` fica `Unsupported("tstzrange")` no schema, e a leitura e a escrita do intervalo passam por SQL cru tipado (`$queryRaw`) dentro de `withTenant` (E-20).
+- O Prisma não modela `tstzrange` nem exclusion constraint. `appointments` guarda `starts_at`/`ends_at` (`timestamptz`) e a constraint `appointments_no_overlap` usa `tstzrange(starts_at, ends_at)` na expressão, só na migration (E-20); o Prisma lê e grava as duas colunas normalmente.
 - `withTenant` usa transação interativa do Prisma (`$transaction(async (tx) => ...)`); a primeira instrução é o `set_config`.
 - Policies de RLS, exclusion constraint e extensões ficam em migrations SQL escritas à mão, versionadas junto.
 - Toda consulta de negócio roda dentro de `withTenant(tenantId, fn)`, que abre transação e executa `select set_config('app.tenant_id', $1, true)`. Não usar `SET` de sessão: o pool de conexões reaproveita conexões entre requisições, com ou sem PgBouncer.
@@ -116,7 +116,7 @@ Requisitos do Postgres próprio. São dados de saúde e de agenda, então nenhum
 | `messages` | direção, autor (patient, ai, human, system), tipo, texto, mídia, `provider_message_id` único, status |
 | `inbound_events` | payload bruto do webhook, hash, processado em |
 | `turns` | conversa, versão, mensagens agrupadas, estado, modelo, custo |
-| `appointments` | profissional, contato, serviço, `during tstzrange`, status, `google_event_id` |
+| `appointments` | profissional, contato, serviço, `starts_at`, `ends_at`, status, `google_event_id` |
 | `scheduled_messages` | tipo (lembrete, confirmação, follow-up), template, quando, estado |
 | `payments` | agendamento, valor, provedor (`mercado_pago` ou `pix_manual`), `provider_charge_id`, status, pago em. O Asaas é só da nossa assinatura |
 | `ai_usage` | tenant, conversa, turno, tarefa, modelo, tokens (entrada, cache, saída), custo em micro-dólares |

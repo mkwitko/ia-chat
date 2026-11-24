@@ -1,0 +1,90 @@
+import {
+  MINUTES_PER_DAY,
+  MS_PER_MINUTE,
+  availableSlots,
+  type AvailabilityRule,
+  type Interval,
+} from '@app/core';
+import { AppointmentStatus } from '../../generated/prisma/enums.ts';
+import type { Tx } from '../index.ts';
+import { AgendaFailure, AgendaError } from './types.ts';
+
+const MINUTES_PER_HOUR = 60;
+const NOT_CANCELLED = { not: AppointmentStatus.cancelled };
+
+export interface AgendaScope {
+  timezone: string;
+  cancelNoticeMinutes: number;
+  professionalId: string;
+  locationId: string | null;
+}
+
+/** The tenant's agenda owner. ponytail: first professional; multi-professional arrives with the Clínica plan. */
+export async function loadScope(tx: Tx): Promise<AgendaScope> {
+  const tenant = await tx.tenant.findFirstOrThrow();
+  const professional = await tx.professional.findFirst({ orderBy: { createdAt: 'asc' } });
+  if (!professional) throw new AgendaFailure(AgendaError.noProfessional);
+  const location = await tx.location.findFirst({ orderBy: { createdAt: 'asc' } });
+  return {
+    timezone: tenant.timezone,
+    cancelNoticeMinutes: tenant.cancelNoticeMinutes,
+    professionalId: professional.id,
+    locationId: location?.id ?? null,
+  };
+}
+
+const minuteOf = (time: Date): number =>
+  time.getUTCHours() * MINUTES_PER_HOUR + time.getUTCMinutes();
+
+export interface SlotWindow {
+  professionalId: string;
+  timezone: string;
+  durationMinutes: number;
+  from: Date;
+  to: Date;
+  now: Date;
+}
+
+/** Reads the inputs of `availableSlots` for one professional. */
+export async function slotsIn(tx: Tx, window: SlotWindow): Promise<Interval[]> {
+  const { professionalId, from, to } = window;
+  const longest = window.durationMinutes * MS_PER_MINUTE;
+  const [rules, timeOffs, booked] = await Promise.all([
+    tx.availabilityRule.findMany({ where: { professionalId } }),
+    tx.timeOff.findMany({ where: { professionalId, startsAt: { lt: to }, endsAt: { gt: from } } }),
+    tx.appointment.findMany({
+      where: {
+        professionalId,
+        status: NOT_CANCELLED,
+        startsAt: { lt: new Date(to.getTime() + longest) },
+        endsAt: { gt: from },
+      },
+    }),
+  ]);
+  return availableSlots({
+    rules: rules.map(toRule),
+    timeOffs: timeOffs.map((off) => ({ start: off.startsAt, end: off.endsAt })),
+    appointments: booked.map((one) => ({ start: one.startsAt, end: one.endsAt })),
+    // ponytail: external_busy arrives with the Google sync (E-21); it is an input here already.
+    externalBusy: [],
+    ...window,
+  });
+}
+
+function toRule(rule: {
+  weekday: number;
+  startTime: Date;
+  endTime: Date;
+  slotIntervalMinutes: number;
+  minNoticeMinutes: number;
+  maxAdvanceDays: number;
+}): AvailabilityRule {
+  return {
+    weekday: rule.weekday,
+    startMinute: minuteOf(rule.startTime),
+    endMinute: minuteOf(rule.endTime) || MINUTES_PER_DAY,
+    slotIntervalMinutes: rule.slotIntervalMinutes,
+    minNoticeMinutes: rule.minNoticeMinutes,
+    maxAdvanceDays: rule.maxAdvanceDays,
+  };
+}

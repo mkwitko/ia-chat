@@ -42,6 +42,8 @@ model Conversation {
   /// Summary of the history older than the last 20 messages (spec 04, "Contexto do prompt").
   summary          String?
   summaryUntil     DateTime?           @map("summary_until") @db.Timestamptz
+  /// Slots the assistant offered, checked before a booking (E-20). Array of {professionalId, serviceId, startsAt, offeredAt}.
+  offeredSlots     Json                @default("[]") @map("offered_slots")
   unreadCount      Int                 @default(0) @map("unread_count")
   lastMessageAt    DateTime?           @map("last_message_at") @db.Timestamptz
   createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz
