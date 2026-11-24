@@ -109,11 +109,10 @@ Spec: `06-seguranca-e-lgpd.md` (RN-33, RN-34).
 - [x] **(teste primeiro)** Recepcionista não acessa cobrança nem integrações; usuário de um tenant não acessa outro
 
 ### E-05 Fila
-- [ ] pg-boss no worker com esquema próprio
-- [ ] Envelope de job com `tenantId` obrigatório e entrada em `withTenant`
-- [ ] **(teste primeiro)** Job com atraso e chave única executa uma vez com dois workers
-- [ ] Política de novas tentativas e fila de falhas com alerta
-- [ ] Painel do pg-boss protegido, só para o operador
+- [x] pg-boss no worker com esquema próprio, instalado pelo papel de migração (`pnpm db:migrate`); o papel do app só cria objetos no esquema `pgboss` (partições de estatística da manutenção)
+- [x] Envelope de job com `tenantId` obrigatório e entrada em `withTenant`
+- [x] **(teste primeiro)** Job com atraso e chave única executa uma vez com dois workers
+- [x] Política de novas tentativas e fila de falhas com alerta
 
 ### E-06 AI Gateway
 Spec: `04-agentes-e-ia.md` (AI Gateway, juízos tipados).
@@ -335,6 +334,7 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 - [ ] Custo real por cliente e por conversa, comparado à planilha
 - [ ] Conversas com falha, descarte ou reprovação na validação
 - [ ] Acesso a um tenant com motivo, prazo e auditoria (RN-35)
+- [ ] Painel do pg-boss (`@pg-boss/dashboard`) só para o operador (movido de E-05: o papel de operador nasce aqui)
 
 ### E-28 Piloto
 - [ ] Configurar a conta do piloto junto com ele e medir o tempo gasto
