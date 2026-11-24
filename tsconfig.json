@@ -17,5 +17,11 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["apps/*/src", "packages/*/src", "*.config.ts", "packages/*/*.config.ts"]
+  "include": [
+    "apps/*/src",
+    "packages/*/src",
+    "*.config.ts",
+    "packages/*/*.config.ts",
+    "packages/*/scripts"
+  ]
 }
