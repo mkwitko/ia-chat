@@ -92,13 +92,13 @@ Spec: `02-arquitetura.md` (multi-tenancy, RN-01 a RN-06).
 
 ### E-03 Schema do núcleo
 Spec: `02-arquitetura.md` (modelo de dados), `03` (RF-23b).
-- [ ] Tabelas de tenant, usuários, profissionais, canais, serviços, disponibilidade, bloqueios, locais, base de conhecimento
-- [ ] Tabelas de contatos, conversas, mensagens, eventos de entrada, turnos
-- [ ] Tabelas de agendamentos, mensagens agendadas, pagamentos, uso de IA, contadores, auditoria, políticas de especialidade
-- [ ] Policy RLS e índice por `tenant_id` em todas
-- [ ] Índices únicos de contato por BSUID e por telefone normalizado
-- [ ] **(teste primeiro)** Teste gerado a partir do catálogo do banco: para cada tabela, tenant A não lê nem altera tenant B. Tabela nova sem policy quebra o teste
-- [ ] Dados de exemplo para desenvolvimento, todos fictícios
+- [x] Tabelas de tenant, profissionais, canais, serviços, disponibilidade, bloqueios, locais, base de conhecimento (usuários e vínculos vêm com o Better Auth em E-04)
+- [x] Tabelas de contatos, conversas, mensagens, eventos de entrada, turnos
+- [x] Tabelas de agendamentos, mensagens agendadas, pagamentos, uso de IA, contadores, auditoria, políticas de especialidade
+- [x] Policy RLS e índice por `tenant_id` em todas
+- [x] Índices únicos de contato por BSUID e por telefone normalizado
+- [x] **(teste primeiro)** Teste gerado a partir do catálogo do banco: para cada tabela, tenant A não lê nem altera tenant B. Tabela nova sem policy quebra o teste
+- [x] Dados de exemplo para desenvolvimento, todos fictícios
 
 ### E-04 Autenticação
 Spec: `06-seguranca-e-lgpd.md` (RN-33, RN-34).

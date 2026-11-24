@@ -103,7 +103,7 @@ Requisitos do Postgres próprio. São dados de saúde e de agenda, então nenhum
 | Tabela | Campos principais |
 |---|---|
 | `tenants` | plano, status, fuso, `specialty_policy_id`, limites |
-| `users`, `memberships` | usuários do painel e papel por tenant |
+| `users`, `memberships` | usuários do painel e papel por tenant. Formato definido pelo Better Auth (E-04) |
 | `professionals` | nome, tom de voz, exemplos de mensagens, `google_calendar_id` |
 | `channels` | `phone_number_id`, WABA, modo de coexistência, estado da conexão |
 | `services` | nome, duração, preço em centavos, visível ao paciente |
@@ -118,11 +118,13 @@ Requisitos do Postgres próprio. São dados de saúde e de agenda, então nenhum
 | `turns` | conversa, versão, mensagens agrupadas, estado, modelo, custo |
 | `appointments` | profissional, contato, serviço, `during tstzrange`, status, `google_event_id` |
 | `scheduled_messages` | tipo (lembrete, confirmação, follow-up), template, quando, estado |
-| `payments` | agendamento, valor, `asaas_charge_id`, status, pago em |
+| `payments` | agendamento, valor, provedor (`mercado_pago` ou `pix_manual`), `provider_charge_id`, status, pago em. O Asaas é só da nossa assinatura |
 | `ai_usage` | tenant, conversa, turno, tarefa, modelo, tokens (entrada, cache, saída), custo em micro-dólares |
 | `usage_counters` | tenant, mês, conversas, mensagens por categoria |
 | `audit_log` | quem, o quê, antes, depois, quando |
 | `specialty_policies` | regras por especialidade |
+
+Tabelas de plataforma, sem `tenant_id` e sem RLS, numa lista explícita do teste de isolamento: `tenants`, `specialty_policies` (catálogo global, só leitura para a aplicação) e as tabelas de autenticação. Toda referência entre tabelas de negócio é FK composta `(tenant_id, x_id) → (tenant_id, id)`, para que o banco recuse ligação entre tenants. `audit_log` só aceita inserir e ler pelo papel da aplicação.
 
 Dinheiro sempre em centavos inteiros. Horários sempre `timestamptz`; o fuso do tenant é usado só para exibir e interpretar.
 

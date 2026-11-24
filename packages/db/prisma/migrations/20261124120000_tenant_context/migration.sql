@@ -1,5 +1,11 @@
--- Migration bookkeeping is not the app's business.
-revoke all on table _prisma_migrations from app_runtime;
+-- Migration bookkeeping is not the app's business. (Absent in Prisma's shadow database.)
+do $$
+begin
+  if to_regclass('_prisma_migrations') is not null then
+    revoke all on table _prisma_migrations from app_runtime;
+  end if;
+end
+$$;
 
 -- Tenant of the current transaction, set by withTenant via set_config(..., true).
 -- RLS policies call this, so a business query outside withTenant fails loudly
