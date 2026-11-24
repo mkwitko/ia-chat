@@ -23,7 +23,8 @@
     "packages/*/eval",
     "*.config.ts",
     "packages/*/*.config.ts",
-    "packages/*/scripts"
+    "packages/*/scripts",
+    "apps/*/scripts"
   ],
   "exclude": ["apps/web"]
 }

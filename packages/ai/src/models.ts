@@ -3,6 +3,8 @@ export const Provider = {
   anthropic: 'anthropic',
   openai: 'openai',
   google: 'google',
+  /** Development only (free tier): never routed in production. */
+  groq: 'groq',
 } as const;
 
 export type Provider = (typeof Provider)[keyof typeof Provider];

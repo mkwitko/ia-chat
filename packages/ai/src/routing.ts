@@ -34,6 +34,19 @@ export const DEFAULT_ROUTES: RouteTable = {
   transcribe: { primary: TRANSCRIBE },
 };
 
+// AI_DEV_PROVIDER=groq: free models to try the whole flow locally. Not for choosing models
+// nor for the evaluation battery, which always runs the production candidates.
+const GROQ_LARGE = { provider: Provider.groq, model: 'openai/gpt-oss-120b' };
+const GROQ_SMALL = { provider: Provider.groq, model: 'openai/gpt-oss-20b' };
+export const GROQ_DEV_ROUTES: RouteTable = {
+  conversation: { primary: GROQ_LARGE },
+  conversation_escalated: { primary: GROQ_LARGE },
+  summarize: { primary: GROQ_SMALL },
+  quality_review: { primary: GROQ_LARGE },
+  insights: { primary: GROQ_LARGE },
+  transcribe: { primary: { provider: Provider.groq, model: 'whisper-large-v3-turbo' } },
+};
+
 const modelRefSchema = z.object({ provider: z.enum(Provider), model: z.string().min(1) });
 const routeSchema = z.object({ primary: modelRefSchema, fallback: modelRefSchema.optional() });
 const overrideSchema = z.partialRecord(z.enum(Task), routeSchema);

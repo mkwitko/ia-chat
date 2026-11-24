@@ -17,7 +17,8 @@
     "db:seed": "pnpm --filter @app/db seed",
     "ai:smoke": "pnpm --filter @app/ai smoke",
     "eval": "pnpm --filter @app/ai eval",
-    "web:dev": "pnpm --filter @app/web dev"
+    "web:dev": "pnpm --filter @app/web dev",
+    "dev:patient": "node --env-file-if-exists=.env apps/api/scripts/simulate-patient.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

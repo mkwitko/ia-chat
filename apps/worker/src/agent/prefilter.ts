@@ -59,8 +59,8 @@ export function prefilter(
   specialtyTerms: readonly string[],
 ): { kind: PrefilterKind } {
   const texts = messages.map((message) => normalize(message.text ?? ''));
-  const urgency = [...URGENCY_TERMS, ...specialtyTerms.map(normalize)];
-  if (texts.some((value) => urgency.some((term) => value.includes(term))))
+  const urgency = [...URGENCY_TERMS, ...specialtyTerms.map(normalize)].map(loosePattern);
+  if (texts.some((value) => urgency.some((pattern) => pattern.test(value))))
     return { kind: PrefilterKind.urgency };
   if (texts.some(isOptOut)) return { kind: PrefilterKind.optOut };
   if (messages.every((message) => message.type === MessageType.sticker))
@@ -69,6 +69,15 @@ export function prefilter(
     (message) => READABLE.has(message.type) || message.type === MessageType.audio,
   );
   return { kind: readable ? PrefilterKind.model : PrefilterKind.unsupported };
+}
+
+const WORDS_BETWEEN = 2;
+const REGEX_SPECIAL = /[.*+?^${}()|[\]\\]/g;
+
+/** "dor no peito" also matches "dor forte no peito": up to two words between the term's words. */
+function loosePattern(term: string): RegExp {
+  const words = term.split(' ').map((word) => word.replace(REGEX_SPECIAL, String.raw`\$&`));
+  return new RegExp(words.join(String.raw`(?: \S+){0,` + String(WORDS_BETWEEN) + '} '));
 }
 
 function isOptOut(value: string): boolean {

@@ -149,7 +149,7 @@ describe('conversation agent (E-13)', () => {
     const fake = scripted([]);
     const reply = await agentWith(fake.model)(turnOf(scope, ['to com dor no peito agora']));
     expect(reply).toMatchObject({
-      text: AgentCopy.emergency,
+      text: `${AgentCopy.emergency} Aqui é Lia, assistente virtual do consultório de Dr. Rafael Exemplo.`,
       handoff: true,
       mode: 'send',
       model: 'none',
@@ -161,7 +161,7 @@ describe('conversation agent (E-13)', () => {
     const scope = await conversation();
     const fake = scripted([]);
     expect(await agentWith(fake.model)(turnOf(scope, ['SAIR']))).toMatchObject({
-      text: AgentCopy.optOutConfirmation,
+      text: `${AgentCopy.optOutConfirmation} Aqui é Lia, assistente virtual do consultório de Dr. Rafael Exemplo.`,
     });
     const contact = await db.withTenant(scope.tenantId, (tx) =>
       tx.contact.findUniqueOrThrow({ where: { id: scope.contactId } }),
@@ -173,13 +173,19 @@ describe('conversation agent (E-13)', () => {
 
   it('introduces the assistant in the first answer and sends the catalog in the prompt', async () => {
     const scope = await conversation();
-    const fake = scripted([{ text: 'A avaliação custa R$ 180,00.' }]);
+    const fake = scripted([{ text: 'Oi! A avaliação custa R$ 180,00.' }]);
     const reply = await agentWith(fake.model)(turnOf(scope, ['oi']));
     expect(reply?.text).toBe(
-      `${AgentCopy.identification('Lia', 'Dr. Rafael Exemplo')} A avaliação custa R$ 180,00.`,
+      'Oi! Aqui é Lia, assistente virtual do consultório de Dr. Rafael Exemplo. A avaliação custa R$ 180,00.',
     );
     expect(JSON.stringify(fake.prompts[0])).toContain('Avaliação (id:');
     expect(JSON.stringify(fake.prompts[0])).toContain('R$ 180,00');
+  });
+
+  it('uses a plain introduction while the tenant keeps the default assistant name', () => {
+    expect(AgentCopy.identification('Assistente virtual', 'Dra. Ana Exemplo')).toBe(
+      'Oi! Sou a assistente virtual do consultório de Dra. Ana Exemplo.',
+    );
   });
 
   it('keeps the answer as a draft when the tenant approves before sending (RF-13)', async () => {

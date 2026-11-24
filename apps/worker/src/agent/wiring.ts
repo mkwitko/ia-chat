@@ -3,7 +3,9 @@ import {
   createAiGateway,
   DEFAULT_CAPS,
   dbUsageStore,
+  devModelResolver,
   gatewayModelResolver,
+  GROQ_DEV_ROUTES,
   PRICE_TABLE,
   routeTable,
   startTracing,
@@ -47,13 +49,16 @@ export async function startTurnWorker({
 }: TurnWiring): Promise<{ shutdown: () => Promise<void> }> {
   const env = workerEnvSchema.parse(source);
   const tracing = startTracing(env, nodeEnv);
-  if (!env.VERCEL_API_KEY) {
+  const dev = env.AI_DEV_PROVIDER !== undefined;
+  if (!dev && !env.VERCEL_API_KEY) {
     log.warn({}, NO_AI_KEY);
     return { shutdown: async () => tracing?.shutdown() };
   }
   const gateway = createAiGateway({
-    routes: routeTable(env.AI_ROUTES),
-    resolver: gatewayModelResolver(env),
+    routes: dev ? GROQ_DEV_ROUTES : routeTable(env.AI_ROUTES),
+    resolver: dev
+      ? devModelResolver(env, nodeEnv === NodeEnv.production)
+      : gatewayModelResolver(env),
     prices: PRICE_TABLE,
     caps: DEFAULT_CAPS,
     store: dbUsageStore(db),
