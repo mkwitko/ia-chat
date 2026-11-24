@@ -16,11 +16,20 @@ create extension if not exists btree_gist;
 alter table appointments add constraint appointments_no_overlap
   exclude using gist (
     professional_id with =,
-    during with &&
-  ) where (status in ('confirmed', 'held'));
+    tstzrange(starts_at, ends_at) with &&
+  ) where (status <> 'cancelled');
 ```
 
-- `agendar` faz o insert direto. Violação da constraint vira o erro `slot_taken`, e o assistente oferece outro horário.
+Implementação (E-20, 25/11/2026): o intervalo é `starts_at`/`ends_at` (`timestamptz`, legíveis pelo Prisma) e a constraint usa `tstzrange` só na expressão. Ela vale para tudo que não está cancelado; o status `held` ainda não existe e entra com o sinal Pix (Fase 4), quando a cláusula `where` for revista.
+
+- `agendar` confere `availableSlots` e faz o insert. Horário já ocupado, ou violação da constraint (código 23P01, corrida entre dois pacientes), vira o erro `slot_taken`, e o assistente oferece outro horário. O insert é a decisão final.
+- **Confirmação (código, não prompt):** `agendar` e `remarcar` só executam com `confirmado = true` e para um horário que `consultar_horarios` ofereceu numa rodada anterior da conversa (as ofertas ficam em `conversations.offered_slots`). Oferta e agendamento no mesmo turno são recusados: o paciente ainda não respondeu. `cancelar` exige `confirmado = true`. Hipótese: o padrão mais conservador custa uma mensagem a mais quando o paciente já chega dizendo o horário.
+- **Idempotência:** cada chamada de escrita leva a chave `turno:ferramenta:alvo` (`appointments.idempotency_key`, única por tenant); repetir a chamada no mesmo turno devolve o primeiro resultado.
+- **Remarcação** cancela o antigo e grava o novo na mesma transação; se o novo falhar, nada muda (A-14). Vale a mesma antecedência mínima do cancelamento.
+- **Antecedência mínima de cancelamento:** `tenants.cancel_notice_minutes` (padrão 1440, hipótese de 24 horas). Dentro do prazo a ferramenta devolve `cancelamento_fora_do_prazo` e o turno marca a transferência para o profissional (RF-44). O motivo do cancelamento não é gravado (pode conter dado de saúde).
+- Limite de agendamentos futuros por paciente (RF-45): 2, constante `MAX_FUTURE_APPOINTMENTS`; configurável fica para depois.
+- Profissional: o primeiro do tenant (o piloto tem um); vários entram com o plano Clínica.
+
 - Não há bloqueio de horário enquanto o assistente apenas lista opções. `held` só existe quando há sinal Pix pendente, com expiração (padrão 30 minutos); um job libera o horário vencido.
 
 ### Cálculo de disponibilidade
@@ -31,6 +40,8 @@ Função pura `availableSlots(rules, timeOff, appointments, externalBusy, servic
 2. Remove `time_off`, agendamentos `confirmed` e `held`, e períodos ocupados vindos do Google.
 3. Fatia pela duração do serviço mais o intervalo configurado.
 4. Aplica antecedência mínima (padrão 2 horas) e máxima (padrão 30 dias).
+
+Implementação (E-19): `availableSlots` e `pickSpread` estão em `packages/core/src/agenda`, sem banco. Os horários saem de uma grade a partir do início da janela (duração mais intervalo); um agendamento fora da grade bloqueia os horários que toca, mas não desloca a grade. `external_busy` é entrada somente leitura (a tabela e a sincronização são da E-21; até lá a lista é vazia). Os horários devolvidos às ferramentas levam o fuso do tenant (`2027-01-04T09:00:00-03:00`).
 
 Por ser função pura, é o alvo principal dos testes unitários: mudança de horário de verão em outros fusos, virada de dia, serviço mais longo que a janela, feriado cadastrado como bloqueio.
 
