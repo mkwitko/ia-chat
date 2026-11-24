@@ -1,6 +1,7 @@
+import { createGroq } from '@ai-sdk/groq';
 import { createGateway, type LanguageModel, type TranscriptionModel } from 'ai';
 import type { AiEnv } from './env.ts';
-import { modelKey, type ModelRef } from './models.ts';
+import { modelKey, Provider, type ModelRef } from './models.ts';
 
 export interface ModelResolver {
   language(ref: ModelRef): LanguageModel;
@@ -14,6 +15,8 @@ export class MissingCredentialError extends Error {
 }
 
 const GATEWAY_KEY = 'VERCEL_API_KEY';
+const GROQ_KEY = 'GROQ_API_KEY';
+const DEV_IN_PRODUCTION = 'AI_DEV_PROVIDER is for development only; remove it in production';
 
 /** Ask the gateway to route only to providers that do not retain prompts (spec 04, privacy). */
 export const NO_RETENTION = { zeroDataRetention: true } as const;
@@ -25,5 +28,21 @@ export function gatewayModelResolver(env: AiEnv): ModelResolver {
   return {
     language: (ref) => gateway(modelKey(ref)),
     transcription: (ref) => gateway.transcriptionModel(modelKey(ref)),
+  };
+}
+
+/**
+ * Development: Groq models go straight to Groq (free tier); anything else still uses the
+ * Vercel gateway, created only if a route asks for it.
+ */
+export function devModelResolver(env: AiEnv, production: boolean): ModelResolver {
+  if (production) throw new Error(DEV_IN_PRODUCTION);
+  if (!env.GROQ_API_KEY) throw new MissingCredentialError(GROQ_KEY);
+  const groq = createGroq({ apiKey: env.GROQ_API_KEY });
+  const gateway = () => gatewayModelResolver(env);
+  return {
+    language: (ref) => (ref.provider === Provider.groq ? groq(ref.model) : gateway().language(ref)),
+    transcription: (ref) =>
+      ref.provider === Provider.groq ? groq.transcription(ref.model) : gateway().transcription(ref),
   };
 }

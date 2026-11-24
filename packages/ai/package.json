@@ -5,6 +5,7 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
+    "@ai-sdk/groq": "4.0.85",
     "@app/core": "workspace:*",
     "@app/db": "workspace:*",
     "@langfuse/otel": "6.1.1",

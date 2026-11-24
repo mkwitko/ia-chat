@@ -79,6 +79,8 @@ Implementação (E-13, 24/11/2026):
 - A ferramenta de transferência só marca a intenção. O turno troca o controle sob a trava de envio, depois de mandar o aviso ao paciente (RF-35); senão a própria troca descartaria o aviso.
 - Identificação: se a primeira resposta da conversa não trouxer o nome do assistente, a frase de apresentação é acrescentada no início, de forma determinística.
 
+- Desenvolvimento sem custo: `AI_DEV_PROVIDER=groq` troca as rotas para modelos gratuitos do Groq (`openai/gpt-oss-120b`, `gpt-oss-20b`, `whisper-large-v3-turbo`), com custo registrado zero. Recusado em produção. Serve para testar o fluxo; a escolha de modelo e a bateria continuam nos candidatos de produção. `pnpm dev:patient "mensagem"` simula um paciente pelo webhook assinado.
+
 ## Ferramentas
 
 Todas têm schema Zod, validam `tenant_id` pelo contexto (nunca por argumento do modelo) e devolvem resultado estruturado. O modelo só pode afirmar que algo foi feito se a ferramenta devolveu sucesso.

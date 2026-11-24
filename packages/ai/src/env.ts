@@ -8,6 +8,10 @@ export const aiEnvSchema = z.object({
   VERCEL_API_KEY: optionalKey,
   /** Jev (TypeSafe), outside the gateway. */
   TYPESAFE_API_KEY: optionalKey,
+  /** Groq free tier, for development only (AI_DEV_PROVIDER=groq). */
+  GROQ_API_KEY: optionalKey,
+  /** Routes every task to a free development provider. Refused in production. */
+  AI_DEV_PROVIDER: z.enum(['groq']).optional(),
   /** Optional JSON with per-task route overrides. */
   AI_ROUTES: z.string().optional(),
   /** Langfuse tracing; off when the keys are empty. */

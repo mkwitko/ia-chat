@@ -8,6 +8,8 @@ describe('deterministic pre-filters (spec 04, "Fluxo de um turno")', () => {
   it('catches urgency in any message, with typos and without accents', () => {
     for (const message of [
       'to com dor no peito agora',
+      'to com uma dor forte no peito agora',
+      'muita falta de ar mesmo',
       'Estou com FALTA DE AR',
       'meu pai desmaiou',
       'acordei com a boca torta',

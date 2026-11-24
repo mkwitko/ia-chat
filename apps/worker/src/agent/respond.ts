@@ -12,6 +12,9 @@ import { essentialTools, type ToolEffects } from './tools.ts';
 
 const NO_MODEL = 'none';
 const NO_COST = 0n;
+const VIRTUAL = 'assistente virtual';
+// The intro already greets: drop the model's own "Oi!" or "Olá," at the start.
+const LEADING_GREETING = /^(?:oi|olá|ola|bom dia|boa tarde|boa noite)[!,.]?\s*/i;
 
 export interface AgentDeps {
   db: Db;
@@ -28,8 +31,9 @@ export function createConversationAgent(
       loadAgentInput(tx, turn.conversationId, now),
     );
     const filtered = await applyPrefilter(deps.db, turn, input);
-    if (filtered !== undefined) return filtered;
-    if (input.autonomy === Autonomy.off) return fixed(AgentCopy.away, false);
+    if (filtered !== undefined) return filtered && introducedAfter(filtered, input);
+    if (input.autonomy === Autonomy.off)
+      return introducedAfter(fixed(AgentCopy.away, false), input);
     await refreshSummary(deps.db, deps.gateway, turn);
     input = await deps.db.withTenant(turn.tenantId, (tx) =>
       loadAgentInput(tx, turn.conversationId, now),
@@ -94,8 +98,22 @@ async function generate(
 
 /** Spec 04, "Identificação": the first answer of a conversation always introduces the assistant. */
 function identified(text: string, input: AgentInput): string {
-  if (!input.state.firstMessage || text.includes(input.profile.assistantName)) return text;
-  return `${AgentCopy.identification(input.profile.assistantName, input.profile.professionalName)} ${text}`;
+  if (!input.state.firstMessage || text.toLowerCase().includes(VIRTUAL)) return text;
+  const intro = AgentCopy.identification(
+    input.profile.assistantName,
+    input.profile.professionalName,
+  );
+  return `${intro} ${text.replace(LEADING_GREETING, '')}`;
+}
+
+/** Fixed answers keep their message first (SAMU before anything) and introduce the assistant after. */
+function introducedAfter(reply: TurnReply, input: AgentInput): TurnReply {
+  if (!input.state.firstMessage) return reply;
+  const intro = AgentCopy.identification(
+    input.profile.assistantName,
+    input.profile.professionalName,
+  ).replace(LEADING_GREETING, '');
+  return { ...reply, text: `${reply.text} ${intro}` };
 }
 
 /** Deterministic answers skip approval: an emergency message must not wait for a draft. */

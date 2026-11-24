@@ -63,6 +63,15 @@ export const PRICE_TABLE: readonly PriceEntry[] = [
     cacheWrite: 250_000,
     output: 1_500_000,
   },
+  // Groq free tier, development only: real usage is recorded at zero cost.
+  ...['openai/gpt-oss-120b', 'openai/gpt-oss-20b'].map((model) => ({
+    model: `groq/${model}`,
+    effectiveFrom: SINCE,
+    input: 0,
+    cacheRead: 0,
+    cacheWrite: 0,
+    output: 0,
+  })),
   // Jev (outside the gateway): input only, output free.
   {
     model: 'typesafe/jev-latest',
@@ -77,4 +86,5 @@ export const PRICE_TABLE: readonly PriceEntry[] = [
 /** Transcription is billed per minute of audio, in micro-dollars (US$ 0.000075 per second). */
 export const TRANSCRIPTION_PRICE_PER_MINUTE: Readonly<Record<string, number>> = {
   'openai/gpt-transcribe': 4_500,
+  'groq/whisper-large-v3-turbo': 0, // free tier, development only
 };
