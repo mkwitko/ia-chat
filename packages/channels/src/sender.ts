@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { createCloudClient } from '@app/channels';
-import { ChannelKind } from '@app/db';
-import type { TurnDeps } from '../conversation/turn.ts';
+import { ChannelKind, type Tx } from '@app/db';
+import { createCloudClient } from './cloud-api/client.ts';
 
 const DEV_PREFIX = 'dev.';
 const DEV_SENT = 'dev sender: message not sent to WhatsApp';
@@ -15,7 +14,13 @@ export interface SenderConfig {
   log: (fields: object, message: string) => void;
 }
 
-export function createChannelSender(config: SenderConfig): TurnDeps['send'] {
+/** Sends one text to the patient of a conversation. Used by the worker and by the panel. */
+export type ChannelSend = (
+  tx: Tx,
+  input: { conversationId: string; text: string },
+) => Promise<{ providerMessageId: string }>;
+
+export function createChannelSender(config: SenderConfig): ChannelSend {
   return async (tx, { conversationId, text }) => {
     const conversation = await tx.conversation.findUniqueOrThrow({
       where: { id: conversationId },

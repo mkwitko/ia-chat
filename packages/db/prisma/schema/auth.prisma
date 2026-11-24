@@ -15,6 +15,7 @@ model User {
   accounts    Account[]
   memberships Membership[]
   invitations Invitation[]
+  pushSubscriptions PushSubscription[]
 
   @@map("users")
 }

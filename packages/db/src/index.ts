@@ -43,6 +43,7 @@ export {
   RECONCILE_QUEUE,
   TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,
+  DRAFT_REMINDER_QUEUE,
   QUEUES,
   QUEUE_SCHEMA,
   deadLetterName,
@@ -62,6 +63,14 @@ export {
   setControl,
   type ControlChange,
 } from './conversation/control.ts';
+export {
+  lockConversation,
+  recordOutbound,
+  turnMayDeliver,
+  type LockedConversation,
+  type OutboundRecord,
+} from './conversation/send-lock.ts';
+export { findPendingDraft, type PendingDraft } from './conversation/draft.ts';
 export {
   bookAppointment,
   cancelAppointment,

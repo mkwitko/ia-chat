@@ -8,6 +8,7 @@
     "./fixtures": "./src/fixtures/cloud-webhooks.ts"
   },
   "dependencies": {
+    "@app/db": "workspace:*",
     "zod": "4.6.7"
   }
 }

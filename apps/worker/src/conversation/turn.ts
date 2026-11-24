@@ -1,15 +1,15 @@
 import {
   ConversationControl,
   MessageAuthor,
-  MessageDirection,
-  MessageStatus,
-  MessageType,
-  Prisma,
+  lockConversation,
+  recordOutbound,
+  turnMayDeliver,
   TurnState,
   type Db,
   type Tx,
 } from '@app/db';
 import { handOff } from './handoff.ts';
+import { NotifyReason } from '../notify/reasons.ts';
 
 import { realClock } from './clock.ts';
 import { pacedDelayMs } from './pacing.ts';
@@ -21,13 +21,13 @@ import {
   type TurnDeps,
   type TurnJob,
   type TurnMessage,
+  ReminderKind,
   type TurnReply,
 } from './turn-types.ts';
 
 export * from './turn-types.ts';
 
 const NO_MODEL = 'none';
-const ABORT_REASON = 'turn_timeout';
 
 /**
  * One turn (spec 03, "Execução do turno"): claim the pending messages, generate outside
@@ -45,9 +45,11 @@ export async function runTurn(db: Db, job: TurnJob, deps: TurnDeps): Promise<Tur
     // E-15: a plausible delay, counting the time already spent generating.
     if (reply?.mode === DeliveryMode.send)
       await clock.sleep(pacedDelayMs(reply.text, clock.now() - started));
-    return await db.withTenant(job.tenantId, (tx) =>
+    const outcome = await db.withTenant(job.tenantId, (tx) =>
       deliver(tx, { job, turnId: claimed.turnId, reply, deps }),
     );
+    await notifyProfessional({ job, turnId: claimed.turnId, outcome, reply, deps });
+    return outcome;
   } catch (error) {
     await db.withTenant(job.tenantId, (tx) =>
       finish(tx, claimed.turnId, { state: TurnState.failed }),
@@ -75,9 +77,33 @@ async function abortTurn(
   deps.notify?.({
     tenantId: job.tenantId,
     conversationId: job.conversationId,
-    reason: ABORT_REASON,
+    reason: NotifyReason.turnTimeout,
   });
   return TurnOutcome.aborted;
+}
+
+/** After the commit, so a notice never announces an answer that was discarded. */
+async function notifyProfessional(input: {
+  job: TurnJob;
+  turnId: string;
+  outcome: TurnOutcome;
+  reply: TurnReply | null;
+  deps: TurnDeps;
+}): Promise<void> {
+  const { job, turnId, outcome, reply, deps } = input;
+  const reason = noticeReason(outcome, reply);
+  if (!reason) return;
+  const { tenantId, conversationId } = job;
+  deps.notify?.({ tenantId, conversationId, reason });
+  // Nobody answers a handoff or approves a draft: the reminder jobs ask again later.
+  const kind = reason === NotifyReason.draftPending ? ReminderKind.draft : ReminderKind.handoff;
+  await deps.scheduleReminder?.({ tenantId, conversationId, turnId, kind });
+}
+
+function noticeReason(outcome: TurnOutcome, reply: TurnReply | null): NotifyReason | null {
+  if (outcome === TurnOutcome.draft) return NotifyReason.draftPending;
+  if (outcome !== TurnOutcome.sent || !reply?.handoff) return null;
+  return reply.urgent ? NotifyReason.urgency : NotifyReason.handoff;
 }
 
 async function claim(
@@ -130,10 +156,8 @@ interface Delivery {
 
 /** Send lock (spec 03, "Trava de envio"): control 'ai' and the same turn_version, row locked. */
 async function deliver(tx: Tx, { job, turnId, reply, deps }: Delivery): Promise<TurnOutcome> {
-  const [locked] = await tx.$queryRaw<{ control: ConversationControl; turn_version: number }[]>(
-    Prisma.sql`select control, turn_version from conversations where id = ${job.conversationId}::uuid for update`,
-  );
-  if (locked?.control !== ConversationControl.ai || locked.turn_version !== job.version) {
+  const locked = await lockConversation(tx, job.conversationId);
+  if (!turnMayDeliver(locked, job.version)) {
     await finish(tx, turnId, { state: TurnState.discarded, reply });
     return TurnOutcome.discarded;
   }
@@ -164,23 +188,12 @@ async function sendReply(
     conversationId: job.conversationId,
     text: reply.text,
   });
-  const conversation = await tx.conversation.update({
-    where: { id: job.conversationId },
-    data: { pendingSince: null, unreadCount: 0, lastMessageAt: new Date() },
-  });
-  await tx.message.create({
-    data: {
-      tenantId: job.tenantId,
-      channelId: conversation.channelId,
-      conversationId: job.conversationId,
-      direction: MessageDirection.outbound,
-      author: MessageAuthor.ai,
-      type: MessageType.text,
-      text: reply.text,
-      providerMessageId,
-      providerTimestamp: new Date(),
-      status: MessageStatus.sent,
-    },
+  await recordOutbound(tx, {
+    tenantId: job.tenantId,
+    conversationId: job.conversationId,
+    author: MessageAuthor.ai,
+    text: reply.text,
+    providerMessageId,
   });
 }
 

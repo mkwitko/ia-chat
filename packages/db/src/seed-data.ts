@@ -38,4 +38,10 @@ export const FIXTURE = {
   usage: { month: new Date('2027-01-01'), conversations: 1 },
   audit: { actorType: 'system', action: 'seed', entity: 'tenant' },
   inboundProvider: 'cloud_api',
+  userName: 'Pessoa Fictícia',
+  pushSubscription: {
+    endpoint: 'https://push.example.test/',
+    p256dh: 'p256dh-fake',
+    auth: 'auth-fake',
+  },
 } as const;

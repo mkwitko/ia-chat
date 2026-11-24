@@ -1,4 +1,5 @@
 import type { MessageType, Tx } from '@app/db';
+import type { NotifyReason } from '../notify/reasons.ts';
 import type { Clock } from './clock.ts';
 
 /** Spec 03: sent when generation passes 45 s; the professional is notified. */
@@ -18,6 +19,10 @@ export type TurnOutcome = (typeof TurnOutcome)[keyof typeof TurnOutcome];
 export const DeliveryMode = { send: 'send', draft: 'draft' } as const;
 export type DeliveryMode = (typeof DeliveryMode)[keyof typeof DeliveryMode];
 
+/** What a delayed reminder job checks: an unanswered handoff or an unapproved draft. */
+export const ReminderKind = { handoff: 'handoff', draft: 'draft' } as const;
+export type ReminderKind = (typeof ReminderKind)[keyof typeof ReminderKind];
+
 export interface TurnMessage {
   id: string;
   type: MessageType;
@@ -31,6 +36,8 @@ export interface TurnReply {
   mode: DeliveryMode;
   /** The assistant handed off (RF-35): control goes to the professional after this answer. */
   handoff: boolean;
+  /** Emergency answer: the professional is told right away (spec 10, "Notificações"). */
+  urgent?: boolean;
 }
 
 export interface RespondInput {
@@ -54,8 +61,15 @@ export interface TurnDeps {
     conversationId: string;
     providerMessageId: string;
   }) => Promise<void>;
-  /** Tells the professional (push in E-16; a log until then). */
-  notify?: (input: { tenantId: string; conversationId: string; reason: string }) => void;
+  /** Tells the professional (Web Push, E-16). Never carries message content (RN-38). */
+  notify?: (input: { tenantId: string; conversationId: string; reason: NotifyReason }) => void;
+  /** Queues the delayed reminder (RF-36 for handoffs, RF-13 for drafts). */
+  scheduleReminder?: (input: {
+    tenantId: string;
+    conversationId: string;
+    turnId: string;
+    kind: ReminderKind;
+  }) => Promise<void>;
   clock?: Clock;
 }
 

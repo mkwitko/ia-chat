@@ -55,8 +55,8 @@ describe('conversation agent (E-13)', () => {
       'Oi! Aqui é do consultório de Dra. Ana Exemplo.',
     );
     expect(AgentCopy.identification({ ...persona, identity: Identity.professional })).toBeNull();
-    // No mode promises a notice the professional does not get yet (E-16).
-    expect(AgentCopy.emergency).not.toContain('avisei o profissional');
+    // The push notice (E-16) goes out with the emergency answer, so the copy may say so.
+    expect(AgentCopy.emergency).toContain('Já avisei o profissional');
   });
 
   it('speaks as the professional without any introduction in that mode', async () => {

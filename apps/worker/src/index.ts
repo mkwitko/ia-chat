@@ -6,6 +6,7 @@ import {
   RECONCILE_QUEUE,
   TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,
+  DRAFT_REMINDER_QUEUE,
   createDb,
   sendTenantJob,
   watchDeadLetters,
@@ -14,7 +15,8 @@ import {
 import { PgBoss } from 'pg-boss';
 import pino from 'pino';
 import { startTurnWorker } from './agent/wiring.ts';
-import { remindHandoff } from './conversation/reminder-job.ts';
+import { remindDraft, remindHandoff, tenantOf } from './conversation/reminder-job.ts';
+import { NotifyReason, startNotifier } from './notify/index.ts';
 import type { TurnRequest } from './conversation/schedule.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
@@ -36,7 +38,7 @@ async function scheduleTurn(tenantId: string, request: TurnRequest): Promise<voi
 }
 
 const SHUTDOWN_SIGNALS = ['SIGTERM', 'SIGINT'] as const;
-const HANDOFF_UNANSWERED = 'handoff still unanswered: remind the professional';
+const REMINDER_FAILED = 'reminder push failed';
 const STALE_MESSAGES = 'outbound messages without delivery status after 1 hour';
 // RF-26: every morning, in the clinics' time zone.
 const RECONCILE_CRON = '0 7 * * *';
@@ -80,15 +82,35 @@ await workTenantQueue({
     }),
 });
 
+const appLog = {
+  warn: (fields: object, message: string) => {
+    log.warn(fields, message);
+  },
+  info: (fields: object, message: string) => {
+    log.info(fields, message);
+  },
+};
+const notifier = startNotifier({ db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
+const remind = (tenantId: string, reason: NotifyReason) => (conversationId: string) => {
+  notifier({ tenantId, conversationId, reason }).catch((error: unknown) => {
+    log.error({ tenantId, error: String(error) }, REMINDER_FAILED);
+  });
+};
+
+// RF-36 and RF-13: the reminders push the professional again (spec 10, "Notificações").
 await workTenantQueue({
   boss,
   db,
   queue: HANDOFF_REMINDER_QUEUE.name,
-  // ponytail: an error log until push notifications exist (E-16).
   handler: (tx, data, job) =>
-    remindHandoff(tx, data, (conversationId) => {
-      log.error({ conversationId, jobId: job.id }, HANDOFF_UNANSWERED);
-    }),
+    remindHandoff(tx, data, remind(tenantOf(job), NotifyReason.handoffReminder)),
+});
+await workTenantQueue({
+  boss,
+  db,
+  queue: DRAFT_REMINDER_QUEUE.name,
+  handler: (tx, data, job) =>
+    remindDraft(tx, data, remind(tenantOf(job), NotifyReason.draftReminder)),
 });
 
 await boss.schedule(RECONCILE_QUEUE.name, RECONCILE_CRON, null, { tz: RECONCILE_TZ });
@@ -99,16 +121,10 @@ await boss.work(RECONCILE_QUEUE.name, async () => {
 const turns = await startTurnWorker({
   boss,
   db,
+  notifier,
   nodeEnv: env.NODE_ENV,
   source: process.env,
-  log: {
-    warn: (fields, message) => {
-      log.warn(fields, message);
-    },
-    info: (fields, message) => {
-      log.info(fields, message);
-    },
-  },
+  log: appLog,
 });
 
 for (const signal of SHUTDOWN_SIGNALS) {

@@ -1,0 +1,34 @@
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Control, useSetControl } from './inbox-api';
+import { ConversationCopy as Copy } from './inbox-copy';
+import { ensureOnline } from './online';
+
+/** DESIGN.md: fixed bar, "Assumir" with the assistant, "Devolver ao assistente" with you. */
+export function ControlBar({
+  conversationId,
+  control,
+}: Readonly<{ conversationId: string; control: Control }>) {
+  const set = useSetControl(conversationId);
+  const mine = control === Control.human;
+  const change = () => {
+    if (!ensureOnline()) return;
+    set.mutate(mine ? Control.ai : Control.human, {
+      onError: () => toast.error(Copy.controlFailed),
+    });
+  };
+  return (
+    <div
+      role="group"
+      aria-label={Copy.controlLabel}
+      className="flex items-center justify-between gap-3 border-b bg-card px-4 py-2"
+    >
+      <p className="text-sm text-muted-foreground">
+        {mine ? Copy.handBackHint : Copy.takeOverHint}
+      </p>
+      <Button variant={mine ? 'outline' : 'default'} disabled={set.isPending} onClick={change}>
+        {mine ? Copy.handBack : Copy.takeOver}
+      </Button>
+    </div>
+  );
+}

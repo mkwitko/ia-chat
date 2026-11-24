@@ -7,7 +7,7 @@ import { Identity } from '@app/ai';
 export const DEFAULT_ASSISTANT_NAME = 'Assistente virtual';
 
 const EMERGENCY =
-  'Se for uma emergência, ligue agora para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Se estiver em sofrimento emocional, o CVV atende 24 horas no 188.';
+  'Já avisei o profissional. Se for uma emergência, ligue agora para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Se estiver em sofrimento emocional, o CVV atende 24 horas no 188.';
 const NOTICE =
   'Vou passar sua mensagem para o profissional, que vai te responder por aqui assim que puder.';
 
@@ -18,10 +18,7 @@ export interface Persona {
 }
 
 export const AgentCopy = {
-  /**
-   * No "Já avisei o profissional" yet: nothing reaches the professional until push
-   * notifications exist (E-16). Put it back only when the notice really goes out.
-   */
+  /** Says the professional was told: the push notice (E-16) goes out with this answer. */
   emergency: EMERGENCY,
   handoffNotice: ({ identity }: Persona) =>
     identity === Identity.professional
