@@ -9,14 +9,15 @@
   "scripts": {
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json && tsc -p apps/web/tsconfig.json",
     "test": "vitest run",
     "audit": "pnpm audit --audit-level moderate",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm audit",
     "db:migrate": "pnpm --filter @app/db migrate:deploy",
     "db:seed": "pnpm --filter @app/db seed",
     "ai:smoke": "pnpm --filter @app/ai smoke",
-    "eval": "pnpm --filter @app/ai eval"
+    "eval": "pnpm --filter @app/ai eval",
+    "web:dev": "pnpm --filter @app/web dev"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

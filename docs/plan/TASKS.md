@@ -139,12 +139,12 @@ Spec: `04-agentes-e-ia.md` (avaliação).
 
 ### E-08 Direção visual
 Spec: `10-painel-e-interface.md`, `IMPLEMENTACAO.md` (painel e identidade visual).
-- [ ] Coletar referências por tela no Mobbin, Refero Styles e Supahero
-- [ ] Definir a direção com a skill `impeccable` e gravar `DESIGN.md`
-- [ ] Tokens no Tailwind; componentes de base acessíveis
-- [ ] Casca do painel mobile-first, instalável (PWA)
-- [ ] Tela de login seguindo os tokens
-- [ ] Sua aprovação do `DESIGN.md` e das duas telas
+- [x] Coletar referências por tela (Nubank/Inter e WhatsApp Business, escolha do dono; Mobbin fora por ser pago)
+- [x] Definir a direção com a skill `impeccable` e gravar `DESIGN.md` (padrão da categoria; marca Consultório Aberto em `docs/brand.md`)
+- [x] Tokens no Tailwind; componentes de base acessíveis (shadcn/ui sobre Radix, tema trocado pelos tokens)
+- [x] Casca do painel mobile-first, instalável (PWA)
+- [x] Tela de login seguindo os tokens
+- [x] Sua aprovação do `DESIGN.md` e das duas telas (24/11/2026)
 
 ---
 

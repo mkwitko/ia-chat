@@ -12,7 +12,14 @@ const STRING_LITERAL = String.raw`Literal[raw=/^['"]/]`;
 
 export default tseslint.config(
   {
-    ignores: ['docs/**', '**/dist/**', '.remember/**', '.playwright-mcp/**', '**/generated/**'],
+    ignores: [
+      'docs/**',
+      '**/dist/**',
+      '.remember/**',
+      '.playwright-mcp/**',
+      '**/generated/**',
+      'apps/web/public/**',
+    ],
   },
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,

@@ -7,3 +7,5 @@ coverage/
 .remember/
 .playwright-mcp/
 generated/
+.impeccable/hook.cache.json
+.impeccable/questions/
