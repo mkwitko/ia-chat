@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consultório Aberto</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one column that reads like a clinic's day: a conversation, then the agenda it fills, then plans. */
+:root {
+  --ground: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #14232a;
+  --muted: #52646b;
+  --line: #d5dfdd;
+  --accent: #0e6b6f;
+  --accent-soft: #dcefee;
+  --signal: #b4532a;
+  --signal-soft: #f8e6dc;
+  --bubble-in: #ffffff;
+  --bubble-out: #dcefee;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --step-3: clamp(2.1rem, 1.5rem + 3vw, 3.4rem);
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0f1719; --surface: #162226; --ink: #e6efee; --muted: #9db0b3; --line: #2a3a3f;
+    --accent: #5cc3c0; --accent-soft: #1d3a3c; --signal: #f0a07a; --signal-soft: #3d2a20;
+    --bubble-in: #1d2b30; --bubble-out: #1d3a3c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0f1719; --surface: #162226; --ink: #e6efee; --muted: #9db0b3; --line: #2a3a3f;
+  --accent: #5cc3c0; --accent-soft: #1d3a3c; --signal: #f0a07a; --signal-soft: #3d2a20;
+  --bubble-in: #1d2b30; --bubble-out: #1d3a3c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--ground); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0);
+  line-height: 1.55; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 1040px; margin: 0 auto; padding-block: 2.5rem 4rem; display: grid; gap: 4.5rem; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; margin: 0; text-wrap: balance; }
+h1 { font-size: var(--step-3); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: var(--step-2); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: var(--step-1); font-weight: 500; }
+p { margin: 0; }
+.eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.lede { font-size: var(--step-1); color: var(--muted); max-width: 34ch; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Hero: the promise beside a real conversation */
+.hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 3rem; align-items: center; }
+.hero-copy { display: grid; gap: 1.25rem; }
+.facts { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; color: var(--muted); font-size: 0.95rem; }
+.facts strong { color: var(--ink); font-weight: 600; }
+.phone {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 1rem; display: grid; gap: 0.6rem;
+  max-width: 380px; width: 100%; justify-self: center;
+}
+.phone-head { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); padding: 0 0.25rem 0.5rem; border-bottom: 1px solid var(--line); }
+.msg { max-width: 85%; padding: 0.55rem 0.8rem; border-radius: 12px; font-size: 0.92rem; line-height: 1.4; }
+.msg small { display: block; font-size: 0.7rem; color: var(--muted); margin-top: 0.2rem; text-align: right; }
+.in { background: var(--bubble-in); border: 1px solid var(--line); justify-self: start; border-bottom-left-radius: 4px; }
+.out { background: var(--bubble-out); justify-self: end; border-bottom-right-radius: 4px; }
+.event { justify-self: center; font-size: 0.75rem; color: var(--accent); background: var(--accent-soft); padding: 0.25rem 0.7rem; border-radius: 999px; font-weight: 600; }
+
+/* Sections */
+section { display: grid; gap: 1.75rem; }
+.section-head { display: grid; gap: 0.6rem; max-width: 60ch; }
+.section-head p { color: var(--muted); }
+
+.day { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.moment { border-top: 2px solid var(--ink); padding-top: 1rem; display: grid; gap: 0.5rem; align-content: start; }
+.moment .when { font-size: 0.85rem; color: var(--muted); }
+.moment p { color: var(--muted); font-size: 0.95rem; }
+
+.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem 3rem; }
+.feature-group { display: grid; gap: 0.75rem; align-content: start; }
+.feature-group ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.55rem; }
+.feature-group li { padding-left: 1.1rem; position: relative; color: var(--muted); font-size: 0.97rem; }
+.feature-group li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.feature-group li strong { color: var(--ink); font-weight: 600; }
+
+.levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.level { padding: 1.25rem; display: grid; gap: 0.4rem; align-content: start; }
+.level + .level { border-left: 1px solid var(--line); }
+.level p { color: var(--muted); font-size: 0.93rem; }
+.tag { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--signal); }
+
+/* Plans */
+.plans-wrap { overflow-x: auto; }
+.plans { width: 100%; min-width: 720px; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.plans th, .plans td { text-align: left; padding: 0.9rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 0.95rem; }
+.plans thead th { font-family: var(--font-display); font-size: var(--step-1); font-weight: 700; }
+.plans thead th .price { display: block; font-family: var(--font-body); font-size: 1.6rem; font-weight: 600; margin-top: 0.35rem; }
+.plans thead th .price span { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+.plans tbody th { color: var(--muted); font-weight: 500; width: 22%; }
+.plans tr:last-child td, .plans tr:last-child th { border-bottom: 0; }
+.plans .featured { background: var(--accent-soft); }
+.yes { color: var(--accent); font-weight: 600; }
+.no { color: var(--muted); }
+.soon { font-size: 0.75rem; color: var(--signal); font-weight: 600; }
+
+.setup { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 2rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.75rem; align-items: start; }
+.setup .price-big { font-family: var(--font-display); font-size: var(--step-3); font-weight: 700; }
+.setup ol { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; color: var(--muted); }
+
+.quota { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+.meter { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; display: grid; gap: 0.9rem; }
+.bar { height: 10px; border-radius: 999px; background: var(--line); position: relative; overflow: hidden; }
+.bar span { position: absolute; inset: 0 auto 0 0; width: 84%; background: var(--signal); border-radius: inherit; }
+.marks { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+.alert { background: var(--signal-soft); color: var(--ink); border-radius: 10px; padding: 0.7rem 0.9rem; font-size: 0.9rem; }
+.rules { display: grid; gap: 1rem; }
+.rule { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1rem; }
+.rule b { font-family: var(--font-display); font-size: var(--step-1); color: var(--accent); }
+.rule p { color: var(--muted); }
+
+.addons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.addon { border-top: 1px solid var(--line); padding-top: 0.9rem; display: grid; gap: 0.35rem; }
+.addon p { color: var(--muted); font-size: 0.93rem; }
+
+.footnote { color: var(--muted); font-size: 0.85rem; max-width: 70ch; display: grid; gap: 0.5rem; border-top: 1px solid var(--line); padding-top: 1.5rem; }
+
+@media (max-width: 760px) {
+  main { gap: 3.5rem; padding-block: 1.5rem 3rem; }
+  .hero, .setup, .quota { grid-template-columns: minmax(0, 1fr); }
+  .day, .features, .addons { grid-template-columns: minmax(0, 1fr); }
+  .levels { grid-template-columns: minmax(0, 1fr); }
+  .level + .level { border-left: 0; border-top: 1px solid var(--line); }
+}
+.roi { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 2rem; background: var(--ink); color: var(--ground); border-radius: var(--radius); padding: 2rem; align-items: center; }
+.roi .eyebrow { color: var(--accent-soft); }
+.roi h2 { color: var(--ground); }
+.roi p { color: color-mix(in srgb, var(--ground) 80%, transparent); }
+.roi .math { display: grid; gap: 0.75rem; }
+.roi .row { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid color-mix(in srgb, var(--ground) 20%, transparent); padding-bottom: 0.5rem; font-variant-numeric: tabular-nums; }
+.roi .total { font-family: var(--font-display); font-size: var(--step-2); font-weight: 700; color: var(--ground); }
+.roi small { color: color-mix(in srgb, var(--ground) 65%, transparent); font-size: 0.8rem; }
+.compare-wrap { overflow-x: auto; }
+.compare { width: 100%; min-width: 760px; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; font-size: 0.92rem; }
+.compare th, .compare td { text-align: left; padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.compare thead th { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+.compare tbody th { color: var(--muted); font-weight: 500; width: 20%; }
+.compare .ours { background: var(--accent-soft); font-weight: 600; }
+.compare tr:last-child td, .compare tr:last-child th { border-bottom: 0; }
+@media print { main { display: block; padding-bottom: 0; } main > * + * { margin-top: 3.5rem; } .compare-wrap, .plans-wrap { overflow: visible; } .compare, .plans { min-width: 0; font-size: 0.78rem; } .compare th, .compare td { padding: 0.5rem 0.45rem; } tr { break-inside: avoid; } thead { display: table-row-group; } .plans, .compare { overflow: visible; } .setup, .quota, .founder, .roi { break-inside: avoid; } .setup { margin-top: 1.5rem; } .plans thead th { white-space: nowrap; } }
+.neutral { color: var(--muted); }
+.founder { display: grid; gap: 0.75rem; border: 2px solid var(--accent); border-radius: var(--radius); padding: 1.75rem; background: var(--surface); }
+.founder h2 { color: var(--accent); }
+@media (max-width: 760px) { .roi { grid-template-columns: minmax(0, 1fr); } }
+</style>
+
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Consultório Aberto · para profissionais de saúde autônomos</p>
+      <h1>Seu paciente respondido no WhatsApp em segundos, mesmo durante a sessão.</h1>
+      <p class="lede">Seu consultório atende mesmo quando você está atendendo. Um assistente no seu tom informa preço e endereço, marca, remarca e lembra a consulta. Você assume a conversa quando quiser.</p>
+      <div class="facts">
+        <span><strong>Até 30 segundos</strong> para a primeira resposta, a qualquer hora</span>
+        <span><strong>Sem app</strong> para o paciente instalar</span>
+        <span><strong>Sua agenda Google</strong> sempre em dia</span>
+      </div>
+    </div>
+    <div class="phone" aria-label="Exemplo de conversa">
+      <div class="phone-head"><span>Paciente: Joana</span><span class="num">terça, 21:47</span></div>
+      <p class="msg in">oi! quanto é a avaliação? tem horário essa semana?<small class="num">21:47</small></p>
+      <p class="msg out">Oi, Joana! Aqui é a Lia, assistente do Dr. Rafael. A avaliação custa R$ 180 e dura 1 hora. Tenho quinta às 15h ou sexta às 9h. Qual prefere?<small class="num">21:47</small></p>
+      <p class="msg in">quinta 15h</p>
+      <p class="msg out">Prontinho, avaliação marcada para quinta, 07/01, às 15h. Te mando um lembrete um dia antes.<small class="num">21:48</small></p>
+      <span class="event">Agendado na sua agenda Google</span>
+    </div>
+  </header>
+
+  <section aria-labelledby="dia">
+    <div class="section-head">
+      <p class="eyebrow">No seu dia</p>
+      <h2 id="dia">Você atende o paciente da maca. O assistente atende o do celular.</h2>
+    </div>
+    <div class="day">
+      <div class="moment">
+        <span class="when">Durante a sessão</span>
+        <h3>Ninguém fica esperando</h3>
+        <p>Dúvidas de preço, horário, endereço e estacionamento são respondidas na hora, com o que você cadastrou.</p>
+      </div>
+      <div class="moment">
+        <span class="when">Entre um paciente e outro</span>
+        <h3>Você vê só o que precisa de você</h3>
+        <p>O painel no celular mostra primeiro as conversas que pediram você. Um toque e a conversa é sua.</p>
+      </div>
+      <div class="moment">
+        <span class="when">À noite</span>
+        <h3>A agenda de amanhã chega sozinha</h3>
+        <p>Você recebe a lista do dia seguinte. Os pacientes recebem o lembrete e confirmam a presença.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="funcoes">
+    <div class="section-head">
+      <p class="eyebrow">Funcionalidades</p>
+      <h2 id="funcoes">O que o assistente faz por você</h2>
+    </div>
+    <div class="features">
+      <div class="feature-group">
+        <h3>Atendimento</h3>
+        <ul>
+          <li><strong>Responde no seu tom,</strong> a partir de exemplos de mensagens suas.</li>
+          <li><strong>Entende áudio:</strong> o paciente manda áudio e recebe resposta em texto.</li>
+          <li><strong>Preço, endereço e instruções de chegada</strong> exatamente como você cadastrou.</li>
+          <li><strong>Não sabe? Não inventa.</strong> Avisa que você vai responder e guarda a pergunta para você completar a base.</li>
+        </ul>
+      </div>
+      <div class="feature-group">
+        <h3>Agenda</h3>
+        <ul>
+          <li><strong>Mostra os horários livres</strong> conforme suas regras e a sua agenda Google.</li>
+          <li><strong>Marca, remarca e cancela</strong> só depois de o paciente confirmar.</li>
+          <li><strong>Confirmação e lembrete</strong> antes de cada consulta.</li>
+          <li><strong>Modo férias:</strong> avisa os pacientes e só oferece horários depois da volta.</li>
+        </ul>
+      </div>
+      <div class="feature-group">
+        <h3>Você no controle</h3>
+        <ul>
+          <li><strong>Assuma a qualquer momento:</strong> se você responde pelo celular, o assistente para.</li>
+          <li><strong>Painel no celular</strong> com conversas, agenda e o resumo do dia, instalável na tela inicial.</li>
+          <li><strong>Simulador:</strong> teste o assistente antes de ligar para os pacientes.</li>
+          <li><strong>Você escolhe como ele se apresenta:</strong> como assistente virtual, como a recepção do consultório ou falando em seu nome.</li>
+        </ul>
+      </div>
+      <div class="feature-group">
+        <h3>Cuidado com o paciente</h3>
+        <ul>
+          <li><strong>Nunca dá orientação clínica</strong> nem pede informação de saúde.</li>
+          <li><strong>Urgência:</strong> orienta ligar para o SAMU 192 e avisa você na hora.</li>
+          <li><strong>Pede para falar com você?</strong> A conversa passa para você e chega uma notificação.</li>
+          <li><strong>Dados protegidos</strong> conforme a LGPD, sem uso para treinar modelos de IA.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="niveis">
+    <div class="section-head">
+      <p class="eyebrow">Autonomia</p>
+      <h2 id="niveis">Você decide quanto o assistente faz sozinho</h2>
+      <p>Todo cliente começa em "aprovar antes de enviar". Quando ganhar confiança, você libera.</p>
+    </div>
+    <div class="levels">
+      <div class="level">
+        <span class="tag">Começo</span>
+        <h3>Aprovar antes de enviar</h3>
+        <p>O assistente escreve a resposta e você envia, edita ou descarta com um toque.</p>
+      </div>
+      <div class="level">
+        <span class="tag">Quando confiar</span>
+        <h3>Automático</h3>
+        <p>O assistente responde sozinho e chama você só quando precisa.</p>
+      </div>
+      <div class="level">
+        <span class="tag">Sempre disponível</span>
+        <h3>Desligado</h3>
+        <p>Sem assistente: ficam o painel de conversas, a mensagem de ausência, as confirmações e os lembretes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="roi" aria-labelledby="conta">
+    <div class="hero-copy">
+      <p class="eyebrow">Faça a conta</p>
+      <h2 id="conta">Um paciente que desiste porque ninguém respondeu já paga o mês.</h2>
+      <p>Quem manda mensagem para um consultório quase sempre manda para outros ao mesmo tempo. Quem responde primeiro, marca.</p>
+    </div>
+    <div class="math" aria-label="Exemplo de conta">
+      <div class="row"><span>Avaliações perdidas por mês sem resposta rápida</span><span>2</span></div>
+      <div class="row"><span>Valor de cada avaliação (exemplo)</span><span>R$ 180</span></div>
+      <div class="row"><span>Receita recuperada no mês</span><span class="total">R$ 360</span></div>
+      <div class="row"><span>Plano Agenda</span><span>R$ 297</span></div>
+      <small>Exemplo com números ilustrativos. Troque pelos seus: quantas mensagens chegam fora do horário e quanto vale uma consulta.</small>
+    </div>
+  </section>
+
+  <section aria-labelledby="comparar">
+    <div class="section-head">
+      <p class="eyebrow">Comparação</p>
+      <h2 id="comparar">Feito para o profissional que atende sozinho</h2>
+      <p>As outras opções do mercado miram clínicas grandes, uma especialidade só, ou qualquer tipo de empresa.</p>
+    </div>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr><th scope="col"></th><th scope="col" class="ours">Consultório Aberto</th><th scope="col">Cloudia</th><th scope="col">Clinicorp</th><th scope="col">Simples Dental</th><th scope="col">Botconversa</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Para quem é</th><td class="ours">Profissional de saúde autônomo, qualquer especialidade</td><td>Clínicas médicas, odontológicas e de estética</td><td>Dentistas e clínicas odontológicas</td><td>Dentistas</td><td>Empresas em geral, sem foco em saúde</td></tr>
+          <tr><th scope="row">Preço no site</th><td class="ours">Sim: de R$ 197 a R$ 697 por mês</td><td class="neutral">Não divulgado; contato comercial</td><td>Sistema a partir de R$ 149,90; agente de IA sob consulta</td><td>Sistema a partir de R$ 149,90; secretária IA cobrada à parte</td><td>R$ 199 com a API oficial</td></tr>
+          <tr><th scope="row">Começar</th><td class="ours">Implantação junto com você e teste no simulador antes de ligar</td><td>Implantação guiada após contato comercial</td><td>Demonstração</td><td>Teste de 7 dias</td><td>Autoatendimento</td></tr>
+          <tr><th scope="row">Você aprova antes de enviar</th><td class="ours">Sim, é o padrão no começo</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td></tr>
+          <tr><th scope="row">Preço e horário só do seu cadastro</th><td class="ours">Sim: toda resposta é conferida antes de sair</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td></tr>
+          <tr><th scope="row">Urgência de saúde</th><td class="ours">Orienta SAMU 192 na hora e passa a conversa para você</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td><td class="neutral">Não divulgado</td><td class="neutral">Não se aplica</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="founder" aria-labelledby="fundador">
+    <p class="eyebrow">Primeiros consultórios</p>
+    <h2 id="fundador">Condição de fundador</h2>
+    <p>Os primeiros profissionais entram com condição especial em troca de nos ajudar a melhorar o produto com a experiência do dia a dia. Fale com a gente para saber as vagas e os valores.</p>
+  </section>
+
+  <section aria-labelledby="planos">
+    <div class="section-head">
+      <p class="eyebrow">Planos</p>
+      <h2 id="planos">Mensalidade com franquia de conversas</h2>
+      <p>Uma conversa é a troca de mensagens com um paciente sem pausa maior que 24 horas. Não importa quantas mensagens ela tenha.</p>
+    </div>
+    <div class="plans-wrap">
+      <table class="plans">
+        <thead>
+          <tr>
+            <th scope="col"><span class="eyebrow">Por mês</span></th>
+            <th scope="col">Essencial<span class="price num">R$ 197<span> /mês</span></span></th>
+            <th scope="col" class="featured">Agenda<span class="price num">R$ 297<span> /mês</span></span></th>
+            <th scope="col">Pro<span class="price num">R$ 497<span> /mês</span></span></th>
+            <th scope="col">Clínica<span class="price num">R$ 697<span> /mês</span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Conversas incluídas</th><td class="num">300</td><td class="featured num">500</td><td class="num">1.000</td><td class="num">1.000 + pacote por profissional</td></tr>
+          <tr><th scope="row">Conversa além da franquia</th><td class="num">R$ 0,40</td><td class="featured num">R$ 0,40</td><td class="num">R$ 0,35</td><td class="num">R$ 0,35</td></tr>
+          <tr><th scope="row">Atendimento no seu tom, áudio, preço e endereço</th><td class="yes">Incluído</td><td class="featured yes">Incluído</td><td class="yes">Incluído</td><td class="yes">Incluído</td></tr>
+          <tr><th scope="row">Painel de conversas e passagem para você</th><td class="yes">Incluído</td><td class="featured yes">Incluído</td><td class="yes">Incluído</td><td class="yes">Incluído</td></tr>
+          <tr><th scope="row">Agenda Google: marcar, remarcar, cancelar</th><td class="no">Não</td><td class="featured yes">Incluído</td><td class="yes">Incluído</td><td class="yes">Incluído</td></tr>
+          <tr><th scope="row">Confirmação e lembrete de consulta</th><td class="no">Não</td><td class="featured yes">Incluído</td><td class="yes">Incluído</td><td class="yes">Incluído</td></tr>
+          <tr><th scope="row">Sinal por Pix, lista de espera, retorno de pacientes, relatório de qualidade</th><td class="no">Não</td><td class="featured no">Não</td><td class="yes">Incluído <span class="soon">em breve</span></td><td class="yes">Incluído <span class="soon">em breve</span></td></tr>
+          <tr><th scope="row">Vários profissionais, equipe e permissões</th><td class="no">Não</td><td class="featured no">Não</td><td class="no">Não</td><td class="yes">Incluído <span class="soon">em breve</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="setup">
+      <div>
+        <p class="eyebrow">Implantação, paga uma vez</p>
+        <p class="price-big num">R$ 497</p>
+        <p class="lede">Deixamos o assistente pronto com você, em vez de entregar um sistema vazio.</p>
+      </div>
+      <ol>
+        <li>Cadastro dos seus serviços, valores, horários e regras de agenda.</li>
+        <li>Endereço, instruções de chegada e respostas às perguntas mais comuns.</li>
+        <li>Ajuste do tom de voz com exemplos de mensagens suas.</li>
+        <li>Conexão do seu WhatsApp e da sua agenda Google.</li>
+        <li>Teste no simulador junto com você antes de atender pacientes.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="franquia">
+    <div class="section-head">
+      <p class="eyebrow">Franquia mensal</p>
+      <h2 id="franquia">Sem susto na fatura, e nenhum paciente sem resposta</h2>
+    </div>
+    <div class="quota">
+      <div class="meter" aria-label="Exemplo de uso da franquia no plano Agenda">
+        <div class="marks"><span>Uso em novembro, plano Agenda</span><span class="num">420 de 500</span></div>
+        <div class="bar" role="img" aria-label="84% da franquia usada"><span></span></div>
+        <p class="alert">Você usou 84% das conversas do mês. Pelo ritmo atual, o mês fecha perto de 560. As conversas a mais custam R$ 0,40 cada, até o teto que você definiu.</p>
+      </div>
+      <div class="rules">
+        <div class="rule"><b class="num">80%</b><p>Você recebe um aviso no painel e no WhatsApp.</p></div>
+        <div class="rule"><b class="num">100%</b><p>O atendimento continua. Cada conversa a mais entra na fatura seguinte, pelo valor do seu plano.</p></div>
+        <div class="rule"><b>Teto</b><p>Você define quanto aceita pagar de excedente. Passou dele, o assistente avisa o paciente que você vai responder em breve e notifica você.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="extras">
+    <div class="section-head">
+      <p class="eyebrow">Módulos à parte</p>
+      <h2 id="extras">Para quando você precisar de mais</h2>
+    </div>
+    <div class="addons">
+      <div class="addon"><h3>Resposta em áudio</h3><p>O assistente responde por áudio. Pacote de minutos, sob consulta.</p></div>
+      <div class="addon"><h3>Documentos</h3><p>Base de conhecimento grande, com PDFs seus. Valor por faixa de páginas, sob consulta.</p></div>
+      <div class="addon"><h3>Profissional adicional</h3><p>Mais um profissional com agenda própria, no plano Clínica.</p></div>
+    </div>
+  </section>
+
+  <footer class="footnote">
+    <p>As mensagens que você envia ativamente pelo WhatsApp oficial, como lembretes, têm custo da Meta, pago direto por você no seu cartão. No cadastro mostramos a estimativa para o seu volume.</p>
+    <p>Valores de lançamento, em validação com os primeiros profissionais. Itens marcados "em breve" ainda estão em desenvolvimento.</p>
+    <p>Comparação feita com as informações públicas dos sites oficiais (cloudia.com.br, clinicorp.com, simplesdental.com, botconversa.com.br), consultados em 24/11/2026. "Não divulgado" quer dizer que o site não informa, não que o recurso não exista. Marcas citadas pertencem aos seus donos.</p>
+  </footer>
+</main>
+
+</body>
+</html>
