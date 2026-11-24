@@ -1,0 +1,99 @@
+// Appointments, reminders and patient deposits.
+
+/// `during` is a tstzrange; Prisma cannot read or write it, so appointments go
+/// through typed raw SQL (E-20). The exclusion constraint also lands in E-20.
+model Appointment {
+  id             String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String                   @map("tenant_id") @db.Uuid
+  professionalId String                   @map("professional_id") @db.Uuid
+  contactId      String                   @map("contact_id") @db.Uuid
+  serviceId      String                   @map("service_id") @db.Uuid
+  locationId     String?                  @map("location_id") @db.Uuid
+  during         Unsupported("tstzrange")
+  status         AppointmentStatus        @default(scheduled)
+  googleEventId  String?                  @map("google_event_id")
+  createdAt      DateTime                 @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  professional Professional @relation("Appointment_professional", fields: [tenantId, professionalId], references: [tenantId, id], onDelete: Restrict)
+  contact      Contact      @relation("Appointment_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
+  service      Service      @relation("Appointment_service", fields: [tenantId, serviceId], references: [tenantId, id], onDelete: Restrict)
+  location     Location?    @relation("Appointment_location", fields: [tenantId, locationId], references: [tenantId, id], onDelete: Restrict)
+
+  scheduledMessages ScheduledMessage[] @relation("ScheduledMessage_appointment")
+  payments          Payment[]          @relation("Payment_appointment")
+
+  @@unique([tenantId, id])
+  @@index([tenantId, professionalId])
+  @@map("appointments")
+}
+
+enum AppointmentStatus {
+  scheduled
+  confirmed
+  cancelled
+  completed
+  no_show
+}
+
+model ScheduledMessage {
+  id             String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String                @map("tenant_id") @db.Uuid
+  contactId      String                @map("contact_id") @db.Uuid
+  appointmentId  String?               @map("appointment_id") @db.Uuid
+  conversationId String?               @map("conversation_id") @db.Uuid
+  kind           ScheduledMessageKind
+  templateName   String?               @map("template_name")
+  sendAt         DateTime              @map("send_at") @db.Timestamptz
+  state          ScheduledMessageState @default(scheduled)
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  contact      Contact       @relation("ScheduledMessage_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
+  appointment  Appointment?  @relation("ScheduledMessage_appointment", fields: [tenantId, appointmentId], references: [tenantId, id], onDelete: Restrict)
+  conversation Conversation? @relation("ScheduledMessage_conversation", fields: [tenantId, conversationId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, sendAt])
+  @@map("scheduled_messages")
+}
+
+enum ScheduledMessageKind {
+  reminder
+  confirmation
+  follow_up
+}
+
+enum ScheduledMessageState {
+  scheduled
+  sent
+  cancelled
+  failed
+}
+
+/// Patient deposit (Fase 4). The money goes to the professional's own account.
+model Payment {
+  id               String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId         String        @map("tenant_id") @db.Uuid
+  appointmentId    String?       @map("appointment_id") @db.Uuid
+  amountCents      Int           @map("amount_cents")
+  provider         String
+  providerChargeId String?       @map("provider_charge_id")
+  status           PaymentStatus @default(pending)
+  paidAt           DateTime?     @map("paid_at") @db.Timestamptz
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  appointment Appointment? @relation("Payment_appointment", fields: [tenantId, appointmentId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, appointmentId])
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  pending
+  held
+  paid
+  expired
+  refunded
+}

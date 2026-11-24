@@ -1,0 +1,62 @@
+// Platform tables: no tenant_id, no RLS.
+
+model Tenant {
+  id                String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name              String
+  plan              Plan         @default(essencial)
+  status            TenantStatus @default(trial)
+  timezone          String       @default("America/Sao_Paulo")
+  specialtyPolicyId String?      @map("specialty_policy_id") @db.Uuid
+  limits            Json         @default("{}")
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  specialtyPolicy SpecialtyPolicy? @relation(fields: [specialtyPolicyId], references: [id], onDelete: Restrict)
+
+  professionals     Professional[]
+  channels          Channel[]
+  services          Service[]
+  availabilityRules AvailabilityRule[]
+  timeOffs          TimeOff[]
+  locations         Location[]
+  knowledgeItems    KnowledgeItem[]
+  contacts          Contact[]
+  conversations     Conversation[]
+  messages          Message[]
+  inboundEvents     InboundEvent[]
+  turns             Turn[]
+  appointments      Appointment[]
+  scheduledMessages ScheduledMessage[]
+  payments          Payment[]
+  aiUsages          AiUsage[]
+  usageCounters     UsageCounter[]
+  auditLogs         AuditLog[]
+
+  @@map("tenants")
+}
+
+/// Global catalog of rules per specialty (council rules). Read-only for the app.
+model SpecialtyPolicy {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  specialty String   @unique
+  rules     Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenants Tenant[]
+
+  @@map("specialty_policies")
+}
+
+enum Plan {
+  essencial
+  agenda
+  pro
+  clinica
+}
+
+enum TenantStatus {
+  trial
+  active
+  restricted
+  cancelled
+}

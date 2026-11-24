@@ -25,3 +25,5 @@ overrides:
   mysql2: 3.24.6
   effect: 3.22.1
   deepmerge-ts: 8.0.2
+  # Lint-only path (pnpm audit).
+  eslint-plugin-sonarjs>minimatch: 11.0.9

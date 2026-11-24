@@ -1,0 +1,168 @@
+// Contacts, conversations and messages.
+
+/// RF-23b: resolved by bsuid first, then by phone_key (E.164 with the Brazilian
+/// mobile ninth digit removed, so both forms are the same contact).
+model Contact {
+  id        String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  bsuid     String?
+  phoneE164 String?   @map("phone_e164")
+  phoneKey  String?   @map("phone_key")
+  name      String?
+  consents  Json      @default("{}")
+  optOutAt  DateTime? @map("opt_out_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  conversations     Conversation[]     @relation("Conversation_contact")
+  appointments      Appointment[]      @relation("Appointment_contact")
+  scheduledMessages ScheduledMessage[] @relation("ScheduledMessage_contact")
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, bsuid])
+  @@unique([tenantId, phoneKey])
+  @@map("contacts")
+}
+
+model Conversation {
+  id               String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId         String              @map("tenant_id") @db.Uuid
+  channelId        String              @map("channel_id") @db.Uuid
+  contactId        String              @map("contact_id") @db.Uuid
+  control          ConversationControl @default(ai)
+  controlReason    String?             @map("control_reason")
+  controlChangedAt DateTime            @default(now()) @map("control_changed_at") @db.Timestamptz
+  pauseExpiresAt   DateTime?           @map("pause_expires_at") @db.Timestamptz
+  windowExpiresAt  DateTime?           @map("window_expires_at") @db.Timestamptz
+  turnVersion      Int                 @default(0) @map("turn_version")
+  unreadCount      Int                 @default(0) @map("unread_count")
+  lastMessageAt    DateTime?           @map("last_message_at") @db.Timestamptz
+  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  channel Channel @relation("Conversation_channel", fields: [tenantId, channelId], references: [tenantId, id], onDelete: Restrict)
+  contact Contact @relation("Conversation_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
+
+  messages          Message[]          @relation("Message_conversation")
+  turns             Turn[]             @relation("Turn_conversation")
+  scheduledMessages ScheduledMessage[] @relation("ScheduledMessage_conversation")
+  aiUsages          AiUsage[]          @relation("AiUsage_conversation")
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, channelId, contactId])
+  @@index([tenantId, lastMessageAt(sort: Desc)])
+  @@map("conversations")
+}
+
+enum ConversationControl {
+  ai
+  human
+}
+
+model Message {
+  id                String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId          String           @map("tenant_id") @db.Uuid
+  conversationId    String           @map("conversation_id") @db.Uuid
+  channelId         String           @map("channel_id") @db.Uuid
+  direction         MessageDirection
+  author            MessageAuthor
+  type              MessageType
+  text              String?
+  media             Json?
+  providerMessageId String?          @map("provider_message_id")
+  providerTimestamp DateTime?        @map("provider_timestamp") @db.Timestamptz
+  status            MessageStatus
+  errorCode         String?          @map("error_code")
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  conversation Conversation @relation("Message_conversation", fields: [tenantId, conversationId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, channelId, providerMessageId])
+  @@index([tenantId, conversationId, providerTimestamp])
+  @@map("messages")
+}
+
+enum MessageDirection {
+  inbound
+  outbound
+}
+
+enum MessageAuthor {
+  patient
+  ai
+  human
+  system
+}
+
+enum MessageType {
+  text
+  audio
+  image
+  document
+  sticker
+  location
+  interactive_reply
+  template
+  unsupported
+}
+
+enum MessageStatus {
+  received
+  pending
+  sent
+  delivered
+  read
+  failed
+}
+
+model InboundEvent {
+  id          String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  channelId   String?   @map("channel_id") @db.Uuid
+  provider    String
+  payload     Json
+  payloadHash String    @map("payload_hash")
+  receivedAt  DateTime  @default(now()) @map("received_at") @db.Timestamptz
+  processedAt DateTime? @map("processed_at") @db.Timestamptz
+  error       String?
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  channel Channel? @relation("InboundEvent_channel", fields: [tenantId, channelId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, payloadHash])
+  @@map("inbound_events")
+}
+
+model Turn {
+  id             String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  version        Int
+  messageIds     String[]  @default([]) @map("message_ids") @db.Uuid
+  state          TurnState @default(pending)
+  model          String?
+  costMicroUsd   BigInt    @default(0) @map("cost_micro_usd")
+  startedAt      DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  finishedAt     DateTime? @map("finished_at") @db.Timestamptz
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  conversation Conversation @relation("Turn_conversation", fields: [tenantId, conversationId], references: [tenantId, id], onDelete: Restrict)
+
+  aiUsages AiUsage[] @relation("AiUsage_turn")
+
+  @@unique([tenantId, id])
+  @@index([tenantId, conversationId, version])
+  @@map("turns")
+}
+
+enum TurnState {
+  pending
+  running
+  draft
+  sent
+  discarded
+  failed
+}

@@ -8,7 +8,7 @@ try {
 }
 
 export default defineConfig({
-  schema: 'prisma/schema.prisma',
+  schema: 'prisma/schema',
   migrations: { path: 'prisma/migrations' },
   // Migrations run as the owner role (RN-02).
   datasource: { url: env('MIGRATION_DATABASE_URL') },

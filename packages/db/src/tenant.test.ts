@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterEach, describe, expect, it } from 'vitest';
-import { createDb, type Db } from './index.ts';
+import { TENANT_CONTEXT_MISSING, TENANT_SETTING, createDb, type Db } from './index.ts';
+import { INVALID_TENANT_ID } from './tenant-context.ts';
 
 const url = process.env.DATABASE_URL ?? '';
 if (!url) throw new Error('DATABASE_URL is required for integration tests');
@@ -18,7 +19,7 @@ afterEach(async () => {
 
 async function currentSetting(db: Db): Promise<string | null> {
   const rows = await db.client.$queryRaw<{ v: string | null }[]>`
-    select current_setting('app.tenant_id', true) as v`;
+    select current_setting(${TENANT_SETTING}, true) as v`;
   return rows[0]?.v ?? null;
 }
 
@@ -27,7 +28,7 @@ describe('tenant context on a pooled connection', () => {
     const db = singleConnectionDb();
     const tenantA = randomUUID();
     await db.client.$transaction(async (tx) => {
-      await tx.$executeRawUnsafe(`set app.tenant_id = '${tenantA}'`);
+      await tx.$executeRawUnsafe(`set ${TENANT_SETTING} = '${tenantA}'`);
     });
     expect(await currentSetting(db)).toBe(tenantA);
   });
@@ -63,7 +64,7 @@ describe('business query outside withTenant', () => {
   it('fails instead of running without a tenant', async () => {
     const db = singleConnectionDb();
     await expect(db.client.$queryRaw`select app_current_tenant()`).rejects.toThrow(
-      /tenant context missing/,
+      TENANT_CONTEXT_MISSING,
     );
   });
 
@@ -71,7 +72,7 @@ describe('business query outside withTenant', () => {
     const db = singleConnectionDb();
     await db.withTenant(randomUUID(), () => Promise.resolve(undefined));
     await expect(db.client.$queryRaw`select app_current_tenant()`).rejects.toThrow(
-      /tenant context missing/,
+      TENANT_CONTEXT_MISSING,
     );
   });
 
@@ -79,7 +80,7 @@ describe('business query outside withTenant', () => {
     const db = singleConnectionDb();
     await expect(
       db.withTenant("x'; drop table y; --", () => Promise.resolve(undefined)),
-    ).rejects.toThrow(/UUID/);
+    ).rejects.toThrow(INVALID_TENANT_ID);
   });
 });
 
