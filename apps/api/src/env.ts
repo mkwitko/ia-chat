@@ -13,6 +13,10 @@ export const apiEnvSchema = baseEnvSchema.extend({
   WEB_ORIGIN: z.url(),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+  /** Meta app secret: signs every WhatsApp webhook (RF-20). Without it the webhook is off. */
+  META_APP_SECRET: z.string().min(1).optional(),
+  /** Token we choose and type in the Meta app to confirm the webhook URL. */
+  META_VERIFY_TOKEN: z.string().min(1).optional(),
 });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;

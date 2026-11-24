@@ -37,9 +37,24 @@ model Channel {
 
   conversations Conversation[] @relation("Conversation_channel")
   inboundEvents InboundEvent[] @relation("InboundEvent_channel")
+  routes        ChannelRoute[] @relation("ChannelRoute_channel")
 
   @@unique([tenantId, id])
   @@map("channels")
+}
+
+/// Platform table (no RLS): a webhook arrives before any tenant is known, identified only
+/// by the provider account (Cloud API phone_number_id or WABA id). One account, one channel.
+model ChannelRoute {
+  accountId String   @id @map("account_id")
+  tenantId  String   @map("tenant_id") @db.Uuid
+  channelId String   @map("channel_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  channel Channel @relation("ChannelRoute_channel", fields: [tenantId, channelId], references: [tenantId, id], onDelete: Cascade)
+
+  @@index([tenantId, channelId])
+  @@map("channel_routes")
 }
 
 enum ChannelKind {
@@ -51,6 +66,7 @@ enum ChannelStatus {
   pending
   connected
   disconnected
+  restricted
 }
 
 model Service {

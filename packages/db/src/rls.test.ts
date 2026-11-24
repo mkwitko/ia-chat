@@ -13,6 +13,7 @@ const PLATFORM_TABLES = new Set([
   '_prisma_migrations', // migration bookkeeping, no app access
   'tenants', // the tenant itself; managed by auth (E-04)
   'specialty_policies', // global catalog, read-only for the app
+  'channel_routes', // webhook routing by provider account, read before the tenant is known (E-09)
   // Better Auth (E-04): read before a tenant is chosen. The API guard checks membership.
   'users',
   'sessions',

@@ -1,4 +1,5 @@
 export const HttpStatus = {
+  ok: 200,
   unauthorized: 401,
   forbidden: 403,
   internalError: 500,

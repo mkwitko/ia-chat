@@ -3,5 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "exports": "./src/index.ts"
+  "exports": {
+    ".": "./src/index.ts",
+    "./fixtures": "./src/fixtures/cloud-webhooks.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  }
 }

@@ -4,6 +4,7 @@ import { INVALID_TENANT_ID, TENANT_SETTING, isUuid } from './tenant-context.ts';
 
 export { TENANT_CONTEXT_MISSING, TENANT_SETTING } from './tenant-context.ts';
 export * from '../generated/prisma/enums.ts';
+export { Prisma } from '../generated/prisma/client.ts';
 
 export type Tx = Prisma.TransactionClient;
 
@@ -38,6 +39,8 @@ export function createDb(connectionString: string, pool: PoolOptions = {}): Db {
 
 export {
   DEFAULT_QUEUE_OPTIONS,
+  INBOUND_QUEUE,
+  RECONCILE_QUEUE,
   QUEUES,
   QUEUE_SCHEMA,
   deadLetterName,

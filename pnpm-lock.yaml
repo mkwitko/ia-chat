@@ -208,6 +208,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@app/channels':
+        specifier: workspace:*
+        version: link:../../packages/channels
       '@app/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -220,6 +223,9 @@ importers:
       fastify:
         specifier: 5.12.8
         version: 5.12.8
+      pg-boss:
+        specifier: 12.38.2
+        version: 12.38.2(@opentelemetry/api@1.9.1)
       zod:
         specifier: 4.6.7
         version: 4.6.7
@@ -283,6 +289,9 @@ importers:
 
   apps/worker:
     dependencies:
+      '@app/channels':
+        specifier: workspace:*
+        version: link:../../packages/channels
       '@app/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -295,6 +304,9 @@ importers:
       pino:
         specifier: 10.4.0
         version: 10.4.0
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
 
   packages/ai:
     dependencies:
@@ -329,7 +341,11 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
-  packages/channels: {}
+  packages/channels:
+    dependencies:
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
 
   packages/core:
     dependencies:
