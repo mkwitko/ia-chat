@@ -42,6 +42,7 @@ model Tenant {
   aiUsages          AiUsage[]
   usageCounters     UsageCounter[]
   auditLogs         AuditLog[]
+  pushSubscriptions PushSubscription[]
 
   @@map("tenants")
 }

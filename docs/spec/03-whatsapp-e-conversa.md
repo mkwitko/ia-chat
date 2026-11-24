@@ -226,3 +226,9 @@ Implementação (E-11 e E-12, 24/11/2026):
 5. Histórico sincronizado pela coexistência não é usado para gerar respostas. Fica disponível só como contexto do inbox.
 
 Enquanto não formos Tech Provider verificados, o piloto pode entrar pelo limite de 10 onboardings por semana, por um BSP ou pela conexão por QR code, com o termo de ciência (RF-27).
+
+Implementação do inbox (E-16 e E-18b, 25/11/2026):
+
+- `lockConversation`, `turnMayDeliver` e `recordOutbound` (em `@app/db`) são a trava de envio de todos os caminhos: turno do worker, mensagem do painel e decisão sobre rascunho. O rascunho só vale com `turn_version` igual ao da conversa e `control = 'ai'`, conferidos sob o lock; rascunho velho volta 409.
+- Tempo real: gatilhos no banco fazem `pg_notify('inbox_changes', {t, c})` (só ids) em `conversations`, `messages` e `turns`; a API escuta numa conexão própria e entrega por SSE (`GET /api/events`) apenas ao tenant do usuário.
+- Aviso ao profissional: Web Push (`push_subscriptions`, chaves VAPID no `.env`), sem conteúdo de mensagem. Rascunho parado e transferência sem resposta agendam jobs de lembrete.

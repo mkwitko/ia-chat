@@ -1,3 +1,4 @@
+import { createChannelSender, type ChannelSend } from '@app/channels';
 import { NodeEnv } from '@app/core';
 import type { Db } from '@app/db';
 import Fastify, { type FastifyInstance } from 'fastify';
@@ -5,6 +6,10 @@ import { registerAssistantSettingsRoutes } from './assistant/settings-routes.ts'
 import { createAuth, type Auth } from './auth/auth.ts';
 import { registerAuthRoutes } from './auth/routes.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
+import { registerInboxRoutes } from './conversations/inbox-routes.ts';
+import { registerPushRoutes } from './push/push-routes.ts';
+import { registerEventsRoute } from './realtime/events-route.ts';
+import { createInboxHub } from './realtime/inbox-hub.ts';
 import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
 import type { ApiEnv } from './env.ts';
@@ -25,12 +30,14 @@ export interface AppDeps {
   email?: EmailSender;
   /** Queues stored webhook batches for the worker; without it the webhook is off. */
   enqueueInbound?: EnqueueInbound;
+  /** Sends the professional's messages. Defaults to the Cloud API (records only in dev without token). */
+  send?: ChannelSend;
 }
 
 // Logs never carry message content nor auth headers (RN-38).
 const REDACTED_PATHS = ['req.headers.cookie', 'req.headers.authorization'];
 
-export function buildApp({ env, db, email, enqueueInbound }: AppDeps): FastifyInstance {
+export function buildApp({ env, db, email, enqueueInbound, send }: AppDeps): FastifyInstance {
   const app = Fastify({
     logger: env.NODE_ENV !== NodeEnv.test && { redact: REDACTED_PATHS },
   });
@@ -39,6 +46,21 @@ export function buildApp({ env, db, email, enqueueInbound }: AppDeps): FastifyIn
   registerAuthRoutes(app);
   registerControlRoutes(app);
   registerAssistantSettingsRoutes(app);
+  registerInboxRoutes(app, {
+    send:
+      send ??
+      createChannelSender({
+        accessToken: env.META_ACCESS_TOKEN,
+        devFallback: env.NODE_ENV !== NodeEnv.production,
+        log: (fields, message) => {
+          app.log.info(fields, message);
+        },
+      }),
+  });
+  registerPushRoutes(app, { publicKey: env.PUSH_VAPID_PUBLIC_KEY });
+  const hub = createInboxHub(env.DATABASE_URL, app.log);
+  registerEventsRoute(app, hub);
+  app.addHook('onClose', () => hub.close());
   const { META_APP_SECRET: appSecret, META_VERIFY_TOKEN: verifyToken } = env;
   if (appSecret && verifyToken && enqueueInbound) {
     registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });

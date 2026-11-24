@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
+import type { ChannelSend } from '@app/channels';
 import { createDb, type Db } from '@app/db';
 import { buildApp } from './app.ts';
 import { AUTH_BASE_PATH } from './auth/auth.ts';
@@ -29,6 +30,7 @@ export interface TestContext {
 export interface TestAppOptions {
   env?: Record<string, string>;
   enqueueInbound?: EnqueueInbound;
+  send?: ChannelSend;
 }
 
 export async function startTestApp(
@@ -43,6 +45,7 @@ export async function startTestApp(
     db,
     email: outbox,
     ...(options.enqueueInbound ? { enqueueInbound: options.enqueueInbound } : {}),
+    ...(options.send ? { send: options.send } : {}),
   });
   register(app);
   await app.ready();
@@ -122,4 +125,18 @@ export async function joinAs(
   const invitationId = lastLinkTo(ctx.outbox, email).split('/').pop();
   await authPost(ctx, { path: '/organization/accept-invitation', body: { invitationId }, cookie });
   return cookie;
+}
+
+/** A fictitious conversation (own channel and contact) in the tenant. */
+export async function newConversation(ctx: TestContext, tenantId: string): Promise<string> {
+  return ctx.db.withTenant(tenantId, async (tx) => {
+    const channel = await tx.channel.create({ data: { tenantId, kind: 'cloud_api' } });
+    const contact = await tx.contact.create({
+      data: { tenantId, bsuid: `BR.${randomUUID()}`, name: 'Paciente Fictício' },
+    });
+    const conversation = await tx.conversation.create({
+      data: { tenantId, channelId: channel.id, contactId: contact.id },
+    });
+    return conversation.id;
+  });
 }

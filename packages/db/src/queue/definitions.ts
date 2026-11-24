@@ -37,10 +37,14 @@ export const TURN_QUEUE: QueueDefinition = { name: 'conversation.turn' };
 /** E-12 (RF-36): reminds the professional of a handoff nobody answered. */
 export const HANDOFF_REMINDER_QUEUE: QueueDefinition = { name: 'conversation.handoff_reminder' };
 
+/** E-18b (RF-13): a draft nobody approved; the professional is reminded, nothing is sent. */
+export const DRAFT_REMINDER_QUEUE: QueueDefinition = { name: 'conversation.draft_reminder' };
+
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
   INBOUND_QUEUE,
   RECONCILE_QUEUE,
   TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,
+  DRAFT_REMINDER_QUEUE,
 ];

@@ -76,7 +76,7 @@ async function judgedUrgency(
   const isUrgent =
     urgent?.kind === JudgeKind.noul &&
     urgent.probability >= JUDGE_THRESHOLDS[JudgeQuestionId.urgent];
-  return isUrgent ? fixed(AgentCopy.emergency, true) : undefined;
+  return isUrgent ? urgentReply() : undefined;
 }
 
 /** undefined: go on to the model. null or a reply: the pre-filter decided. */
@@ -86,7 +86,7 @@ async function applyPrefilter(
   input: AgentInput,
 ): Promise<TurnReply | null | undefined> {
   const { kind } = prefilter(turn.messages, input.specialtyTerms);
-  if (kind === PrefilterKind.urgency) return fixed(AgentCopy.emergency, true);
+  if (kind === PrefilterKind.urgency) return urgentReply();
   if (kind === PrefilterKind.ignore) return null;
   if (kind === PrefilterKind.unsupported) return fixed(AgentCopy.unsupported, false);
   if (kind === PrefilterKind.optOut) {
@@ -146,6 +146,10 @@ function introducedAfter(reply: TurnReply, input: AgentInput): TurnReply {
   const intro = AgentCopy.identification(input.profile);
   if (!input.state.firstMessage || !intro) return reply;
   return { ...reply, text: `${reply.text} ${intro.replace(LEADING_GREETING, '')}` };
+}
+
+function urgentReply(): TurnReply {
+  return { ...fixed(AgentCopy.emergency, true), urgent: true };
 }
 
 /** Deterministic answers skip approval: an emergency message must not wait for a draft. */

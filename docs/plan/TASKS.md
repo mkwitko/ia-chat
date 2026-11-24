@@ -221,19 +221,19 @@ Spec: `04-agentes-e-ia.md` (validação da saída, proteções), `01` (expansão
 ### E-15 Entrega natural
 - [x] **(teste primeiro, relógio falso)** Atraso alvo, descontando o tempo de processamento
 - [x] Uma mensagem por turno; divisão em duas só nos casos previstos (sem bloco extra até existirem as ferramentas de endereço e pagamento)
-- [x] Reenvio do indicador aos 20 segundos; aborto aos 45 com mensagem fixa e notificação (a notificação ainda é log; bloqueio na E-16)
+- [x] Reenvio do indicador aos 20 segundos; aborto aos 45 com mensagem fixa e notificação (a notificação é Web Push, E-16)
 - [ ] Indicador de digitação pelo canal real (cliente por canal, E-24); hoje o worker não envia
 
 ### E-16 Inbox
 Spec: `10-painel-e-interface.md`, `DESIGN.md`.
-- [ ] **Bloqueio antes de qualquer paciente real:** notificação de verdade ao profissional em urgência, transferência e turno abortado (push e, se configurado, mensagem no número pessoal). Hoje só muda o estado e grava log. Depois disso, a mensagem de emergência volta a dizer "Já avisei o profissional"
-- [ ] SSE no Fastify com `LISTEN/NOTIFY`, filtrado por tenant
-- [ ] Lista de conversas com estado de controle e não lidas
-- [ ] Tela da conversa com autoria (paciente, assistente, profissional), mídia e transcrição
-- [ ] Botões assumir e devolver; envio de mensagem pelo painel
-- [ ] Notificação push do PWA
-- [ ] Tela "Hoje" e faixa de alerta no topo
-- [ ] Os quatro estados de cada tela (carregando, vazio, erro, com dados), conferidos em 360 px e 1280 px
+- [x] **Bloqueio antes de qualquer paciente real:** Web Push ao profissional em urgência, transferência, turno abortado, rascunho e lembretes (chaves VAPID no `.env`; em produção o worker não sobe sem elas). A mensagem de emergência voltou a dizer "Já avisei o profissional". Mensagem no número pessoal: fora por ora (exige modelo aprovado pela Meta, E-24)
+- [x] SSE no Fastify com `LISTEN/NOTIFY`, filtrado por tenant
+- [x] Lista de conversas com estado de controle e não lidas
+- [x] Tela da conversa com autoria (paciente, assistente, profissional); mídia e transcrição mostram aviso até existir o armazenamento de mídia (pendente)
+- [x] Botões assumir e devolver; envio de mensagem pelo painel
+- [x] Notificação push do PWA (service worker, assinatura por usuário e tenant, faixa de alerta para ativar)
+- [x] Tela "Hoje" (o que precisa de você; atendimentos do dia esperam a agenda) e faixa de alerta no topo
+- [x] Os quatro estados de cada tela (carregando, vazio, erro, com dados), conferidos em 360 px e 1280 px
 - [ ] Revisão das telas com `impeccable`
 
 ### E-17 Configurações e simulador
@@ -251,8 +251,8 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 
 ### E-18b Níveis de autonomia
 Spec: `01-produto-e-planos.md` (RF-13).
-- [ ] **(teste primeiro)** Em "aprovar", a resposta vira rascunho e nada sai sem toque do profissional
-- [ ] Aprovar, editar e descartar no inbox; lembrete se ficar sem aprovação
+- [x] **(teste primeiro)** Em "aprovar", a resposta vira rascunho e nada sai sem toque do profissional
+- [x] Aprovar, editar e descartar no inbox; lembrete se ficar sem aprovação
 - [ ] **(teste primeiro)** Em "desligado", nenhuma chamada de LLM; mensagem fixa de ausência
 - [x] Cliente novo começa em "aprovar" (padrão do banco desde a E-13)
 - [x] Tela "Mais > Assistente": autonomia, identidade (com prévia da primeira mensagem e aviso no modo "como você") e nome, com auditoria; recepcionista só vê (H-14)

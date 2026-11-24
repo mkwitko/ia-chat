@@ -17,6 +17,10 @@ export const apiEnvSchema = baseEnvSchema.extend({
   META_APP_SECRET: z.string().min(1).optional(),
   /** Token we choose and type in the Meta app to confirm the webhook URL. */
   META_VERIFY_TOKEN: z.string().min(1).optional(),
+  /** System-user token that sends messages. Empty in development: the panel only records. */
+  META_ACCESS_TOKEN: z.string().min(1).optional(),
+  /** Web Push public key (VAPID), handed to the panel so the browser can subscribe (E-16). */
+  PUSH_VAPID_PUBLIC_KEY: z.string().min(1).optional(),
 });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;

@@ -4,7 +4,9 @@ export const HttpStatus = {
   unauthorized: 401,
   forbidden: 403,
   notFound: 404,
+  conflict: 409,
   internalError: 500,
+  badGateway: 502,
 } as const;
 
 export const ErrorCode = {
@@ -15,6 +17,8 @@ export const ErrorCode = {
   authFailure: 'auth_failure',
   invalidRequest: 'invalid_request',
   notFound: 'not_found',
+  staleDraft: 'stale_draft',
+  sendFailed: 'send_failed',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

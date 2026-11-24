@@ -70,6 +70,8 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | H-12 | Modelos provisórios da E-07: Luna na conversa com Haiku de reserva (mesmo preço), Terra na escalada, Sol na avaliação de qualidade | Trocar a tabela de roteamento (`AI_ROUTES`, sem deploy) | Rodada final da bateria com cada caso duas vezes, quando houver crédito no gateway |
 | H-13 | Modo de identidade `professional` (o assistente fala em nome do profissional) é aceitável para o cliente e para o paciente, com a regra de dizer a verdade quando perguntado | Remover o modo ou exigir aviso no perfil do WhatsApp | Revisão jurídica (LGPD, CDC, conselho da especialidade) antes de oferecer o modo em escala |
 | H-14 | Autonomia, identidade e nome do assistente falam com o paciente: dono e profissional alteram, recepcionista só vê (padrão conservador adotado na tela "Assistente") | Ajustar `assistant` em `apps/api/src/auth/access.ts` | Perguntar ao piloto quando houver equipe |
+| H-15 | Rascunho não aprovado em 30 minutos gera um lembrete único por push; nada é enviado sozinho (RF-13). Tempo fixo no código até haver configuração por cliente | Tornar configurável por tenant | Validar com o piloto |
+| H-16 | Enviar mensagem pelo painel assume a conversa (spec 10); o texto do push nunca traz conteúdo da mensagem, só o motivo e o link (RN-38) | Perguntar ao piloto se prefere ver o nome do paciente | Validar com o piloto |
 
 ## Pendências que bloqueiam prazo
 

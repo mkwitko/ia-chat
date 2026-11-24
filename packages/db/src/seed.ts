@@ -112,6 +112,13 @@ async function seedConversation(tx: Tx, ids: Ids): Promise<void> {
     data: { tenantId, conversationId, turnId: turn.id, ...FIXTURE.aiUsage },
   });
   await tx.usageCounter.create({ data: { tenantId, ...FIXTURE.usage } });
+  const user = await tx.user.create({
+    data: { name: FIXTURE.userName, email: `seed-${randomUUID()}@exemplo.test` },
+  });
+  const { endpoint, ...keys } = FIXTURE.pushSubscription;
+  await tx.pushSubscription.create({
+    data: { tenantId, userId: user.id, endpoint: `${endpoint}${tenantId}`, ...keys },
+  });
   await tx.auditLog.create({ data: { tenantId, entityId: tenantId, ...FIXTURE.audit } });
 }
 
