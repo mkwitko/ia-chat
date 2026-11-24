@@ -1,0 +1,55 @@
+// Usage, cost and audit.
+
+model AiUsage {
+  id                String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  conversationId    String?  @map("conversation_id") @db.Uuid
+  turnId            String?  @map("turn_id") @db.Uuid
+  task              String
+  provider          String
+  model             String
+  inputTokens       Int      @default(0) @map("input_tokens")
+  cachedInputTokens Int      @default(0) @map("cached_input_tokens")
+  outputTokens      Int      @default(0) @map("output_tokens")
+  costMicroUsd      BigInt   @default(0) @map("cost_micro_usd")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  conversation Conversation? @relation("AiUsage_conversation", fields: [tenantId, conversationId], references: [tenantId, id], onDelete: Restrict)
+  turn         Turn?         @relation("AiUsage_turn", fields: [tenantId, turnId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, createdAt])
+  @@map("ai_usage")
+}
+
+model UsageCounter {
+  id                 String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId           String   @map("tenant_id") @db.Uuid
+  month              DateTime @db.Date
+  conversations      Int      @default(0)
+  messagesByCategory Json     @default("{}") @map("messages_by_category")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@unique([tenantId, month])
+  @@map("usage_counters")
+}
+
+/// Append-only (RN-07): the app role may insert and read, never update or delete.
+model AuditLog {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  actorType String   @map("actor_type")
+  actorId   String?  @map("actor_id")
+  action    String
+  entity    String
+  entityId  String?  @map("entity_id")
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId, createdAt])
+  @@map("audit_log")
+}

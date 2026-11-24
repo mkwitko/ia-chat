@@ -1,4 +1,4 @@
 import { parseEnv } from '@app/core';
 
-const env = parseEnv(process.env);
-console.log(`worker starting (${env.NODE_ENV})`);
+// Fails fast on a bad environment. The server/worker and its logger arrive in E-04/E-05.
+parseEnv(process.env);

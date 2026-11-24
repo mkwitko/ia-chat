@@ -15,6 +15,8 @@ const PLATFORM_TABLES = new Set([
   'specialty_policies', // global catalog, read-only for the app
 ]);
 
+const PERMISSION_DENIED = 'permission denied';
+
 const db = createDb(url);
 
 interface TableInfo {
@@ -100,7 +102,7 @@ describe('tenant isolation (catalog-driven)', () => {
           .withTenant(tenantA, (tx) => tx.$executeRawUnsafe(sql))
           .catch((e: unknown) => {
             // audit_log: the app role may not update or delete at all.
-            if (/permission denied/.test(String(e))) return 0;
+            if (String(e).includes(PERMISSION_DENIED)) return 0;
             throw e;
           });
         expect(affected, `${t.name}: ${sql}`).toBe(0);

@@ -1,0 +1,14 @@
+// Core data model: docs/spec/02-arquitetura.md (modelo de dados).
+// Every business table has tenant_id + forced RLS (hand-written SQL in the migrations).
+// Money in integer cents, instants in timestamptz.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../../generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}

@@ -1,0 +1,148 @@
+// What the professional configures: services, hours, places, knowledge.
+
+model Professional {
+  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  name             String
+  toneOfVoice      String?  @map("tone_of_voice")
+  messageExamples  String[] @default([]) @map("message_examples")
+  googleCalendarId String?  @map("google_calendar_id")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  availabilityRules AvailabilityRule[] @relation("AvailabilityRule_professional")
+  timeOffs          TimeOff[]          @relation("TimeOff_professional")
+  appointments      Appointment[]      @relation("Appointment_professional")
+
+  @@unique([tenantId, id])
+  @@map("professionals")
+}
+
+model Channel {
+  id             String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String        @map("tenant_id") @db.Uuid
+  kind           ChannelKind
+  status         ChannelStatus @default(pending)
+  displayPhone   String?       @map("display_phone")
+  phoneNumberId  String?       @map("phone_number_id")
+  wabaId         String?       @map("waba_id")
+  coexistence    Boolean       @default(false)
+  gatewaySession String?       @map("gateway_session")
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  conversations Conversation[] @relation("Conversation_channel")
+  inboundEvents InboundEvent[] @relation("InboundEvent_channel")
+
+  @@unique([tenantId, id])
+  @@map("channels")
+}
+
+enum ChannelKind {
+  cloud_api
+  qr_gateway
+}
+
+enum ChannelStatus {
+  pending
+  connected
+  disconnected
+}
+
+model Service {
+  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  name             String
+  durationMinutes  Int      @map("duration_minutes")
+  priceCents       Int      @map("price_cents")
+  visibleToPatient Boolean  @default(true) @map("visible_to_patient")
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  appointments Appointment[] @relation("Appointment_service")
+
+  @@unique([tenantId, id])
+  @@map("services")
+}
+
+/// Weekly wall-clock rule, interpreted in the tenant's timezone.
+model AvailabilityRule {
+  id                  String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId            String   @map("tenant_id") @db.Uuid
+  professionalId      String   @map("professional_id") @db.Uuid
+  weekday             Int      @db.SmallInt
+  startTime           DateTime @map("start_time") @db.Time(0)
+  endTime             DateTime @map("end_time") @db.Time(0)
+  slotIntervalMinutes Int      @default(0) @map("slot_interval_minutes")
+  minNoticeMinutes    Int      @default(120) @map("min_notice_minutes")
+  maxAdvanceDays      Int      @default(60) @map("max_advance_days")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  professional Professional @relation("AvailabilityRule_professional", fields: [tenantId, professionalId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, professionalId])
+  @@map("availability_rules")
+}
+
+model TimeOff {
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  professionalId String   @map("professional_id") @db.Uuid
+  startsAt       DateTime @map("starts_at") @db.Timestamptz
+  endsAt         DateTime @map("ends_at") @db.Timestamptz
+  reason         String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  professional Professional @relation("TimeOff_professional", fields: [tenantId, professionalId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, professionalId, startsAt])
+  @@map("time_off")
+}
+
+model Location {
+  id                  String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId            String   @map("tenant_id") @db.Uuid
+  name                String
+  address             String
+  arrivalInstructions String?  @map("arrival_instructions")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  appointments Appointment[] @relation("Appointment_location")
+
+  @@unique([tenantId, id])
+  @@map("locations")
+}
+
+model KnowledgeItem {
+  id        String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId  String          @map("tenant_id") @db.Uuid
+  question  String
+  answer    String?
+  source    KnowledgeSource @default(manual)
+  active    Boolean         @default(true)
+  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId, active])
+  @@map("knowledge_items")
+}
+
+enum KnowledgeSource {
+  manual
+  unanswered
+  history
+}

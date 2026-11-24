@@ -1,9 +1,11 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, type Prisma } from '../generated/prisma/client.ts';
+import { INVALID_TENANT_ID, TENANT_SETTING, isUuid } from './tenant-context.ts';
+
+export { TENANT_CONTEXT_MISSING, TENANT_SETTING } from './tenant-context.ts';
+export * from '../generated/prisma/enums.ts';
 
 export type Tx = Prisma.TransactionClient;
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export interface Db {
   /**
@@ -16,14 +18,18 @@ export interface Db {
   client: PrismaClient;
 }
 
-export function createDb(connectionString: string, pool: { max?: number } = {}): Db {
+export interface PoolOptions {
+  max?: number;
+}
+
+export function createDb(connectionString: string, pool: PoolOptions = {}): Db {
   const client = new PrismaClient({ adapter: new PrismaPg({ connectionString, ...pool }) });
   return {
     client,
     async withTenant(tenantId, fn) {
-      if (!UUID.test(tenantId)) throw new Error('withTenant: tenantId must be a UUID');
+      if (!isUuid(tenantId)) throw new Error(INVALID_TENANT_ID);
       return client.$transaction(async (tx) => {
-        await tx.$queryRaw`select set_config('app.tenant_id', ${tenantId}, true)`;
+        await tx.$queryRaw`select set_config(${TENANT_SETTING}, ${tenantId}, true)`;
         return fn(tx);
       });
     },

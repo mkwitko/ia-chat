@@ -29,6 +29,18 @@ Assistente de IA no WhatsApp para profissionais de saúde autônomos no Brasil. 
 - Dinheiro em centavos inteiros. Horário em `timestamptz`.
 - Nunca usar dados reais de pacientes em desenvolvimento ou teste.
 
+## Código limpo
+
+O lint (`eslint.config.js`) barra no CI o que dá para medir; o resto é revisão.
+
+- Arquivo com até 200 linhas (testes e dados fictícios, 300); função com até 40; complexidade cognitiva até 10; até 3 parâmetros (acima disso, objeto).
+- Sem string ou número solto: comparação, `case`, nome de configuração, mensagem de erro e valor de domínio vêm de `const` nomeada ou de enum do Prisma. Dados fictícios ficam num `const` próprio (`seed-data.ts`).
+- Schema do Prisma em arquivos por domínio (`packages/db/prisma/schema/`).
+- Tipos: `unknown` em vez de `any`; validar na fronteira com Zod e confiar no tipo dali para dentro; `satisfies` em vez de `as`; uniões discriminadas para estados; `switch` exaustivo com `never`.
+- Funções pequenas que fazem uma coisa; retorno antecipado em vez de `if` aninhado; nomes que dizem a intenção.
+- Sem `console` no código da aplicação (só em `scripts/`); log estruturado.
+- Referências: [clean-code-typescript](https://github.com/labs42io/clean-code-typescript) e a skill `typescript-best-practices` do Cursor (lida em 24/11/2026, não instalada).
+
 ## Forma de trabalhar
 
 - Lógica com regra começa pelo teste. Uma etapa só termina com o "Pronto quando" verificado por comando executado.
