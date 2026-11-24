@@ -1,5 +1,7 @@
 // Panel copy in pt-BR (RN-56): second person, no software jargon, "assistente" never "bot".
 
+import { Route } from './routes';
+
 export const PRODUCT_NAME = 'Consultório Aberto';
 
 export const LoginCopy = {
@@ -43,7 +45,7 @@ export const EmptyCopy = {
 export const MoreCopy = {
   title: 'Mais',
   items: [
-    { label: 'Assistente', hint: 'Autonomia, tom de voz e base de conhecimento' },
+    { label: 'Assistente', hint: 'Autonomia, apresentação e tom de voz', to: Route.assistant },
     { label: 'Serviços e local', hint: 'Valores, duração e endereço' },
     { label: 'Conexões', hint: 'WhatsApp e Google Agenda' },
     { label: 'Plano e uso', hint: 'Conversas do mês e fatura' },

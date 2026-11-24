@@ -106,3 +106,20 @@ export async function createTenant(ctx: TestContext, cookie: string): Promise<st
   const { id } = response.json<{ id: string }>();
   return id;
 }
+
+/** Signs up a new user and joins them to the tenant with the given role. Returns their cookie. */
+export async function joinAs(
+  ctx: TestContext,
+  { ownerCookie, tenantId, role }: { ownerCookie: string; tenantId: string; role: string },
+): Promise<string> {
+  const email = uniqueEmail();
+  const cookie = await signUpVerified(ctx, email);
+  await authPost(ctx, {
+    path: '/organization/invite-member',
+    body: { email, role, organizationId: tenantId },
+    cookie: ownerCookie,
+  });
+  const invitationId = lastLinkTo(ctx.outbox, email).split('/').pop();
+  await authPost(ctx, { path: '/organization/accept-invitation', body: { invitationId }, cookie });
+  return cookie;
+}

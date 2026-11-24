@@ -69,6 +69,7 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | H-11 | Em urgência, a recepção pode dar orientação básica de segurança junto do encaminhamento ao SAMU ou CVV (não ficar sozinho, pedir que alguém acompanhe, não dirigir, não movimentar quem caiu); qualquer outra orientação de saúde segue proibida | Ajustar prompt e avaliador se o profissional discordar | Validar com o piloto |
 | H-12 | Modelos provisórios da E-07: Luna na conversa com Haiku de reserva (mesmo preço), Terra na escalada, Sol na avaliação de qualidade | Trocar a tabela de roteamento (`AI_ROUTES`, sem deploy) | Rodada final da bateria com cada caso duas vezes, quando houver crédito no gateway |
 | H-13 | Modo de identidade `professional` (o assistente fala em nome do profissional) é aceitável para o cliente e para o paciente, com a regra de dizer a verdade quando perguntado | Remover o modo ou exigir aviso no perfil do WhatsApp | Revisão jurídica (LGPD, CDC, conselho da especialidade) antes de oferecer o modo em escala |
+| H-14 | Autonomia, identidade e nome do assistente falam com o paciente: dono e profissional alteram, recepcionista só vê (padrão conservador adotado na tela "Assistente") | Ajustar `assistant` em `apps/api/src/auth/access.ts` | Perguntar ao piloto quando houver equipe |
 
 ## Pendências que bloqueiam prazo
 
