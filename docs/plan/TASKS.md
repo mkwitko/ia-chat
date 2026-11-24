@@ -144,7 +144,7 @@ Spec: `10-painel-e-interface.md`, `IMPLEMENTACAO.md` (painel e identidade visual
 - [x] Tokens no Tailwind; componentes de base acessíveis (shadcn/ui sobre Radix, tema trocado pelos tokens)
 - [x] Casca do painel mobile-first, instalável (PWA)
 - [x] Tela de login seguindo os tokens
-- [ ] Sua aprovação do `DESIGN.md` e das duas telas
+- [x] Sua aprovação do `DESIGN.md` e das duas telas (24/11/2026)
 
 ---
 

@@ -1,6 +1,6 @@
-# DESIGN.md — Consultório Aberto, painel (proposta para aprovação)
+# DESIGN.md — Consultório Aberto, painel
 
-Status: proposta aprovada na prévia (E-08, 24/11/2026); login e casca do painel construídos com estes tokens em `apps/web`. Aguarda a aprovação final das duas telas.
+Status: proposta aprovada na prévia (E-08, 24/11/2026); login e casca do painel construídos com estes tokens em `apps/web`. Aprovado pelo dono, com as telas de login e da casca, em 24/11/2026.
 
 Direção: **o padrão da categoria, feito com capricho** (escolha do dono). Régua: Nubank / Inter na clareza e no texto; WhatsApp Business na lista de conversas e nas bolhas. Quem usa esses apps sabe onde está tudo no primeiro segundo. Familiaridade vale mais que originalidade. O que é da casa fica nos detalhes: o estado de cada conversa legível de longe, os horários sempre alinhados e o texto em português direto.
 
