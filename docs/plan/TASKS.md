@@ -181,19 +181,21 @@ Spec: `03-whatsapp-e-conversa.md` (duas formas de conexão, motor).
 
 ### E-11 Turnos
 Spec: `03-whatsapp-e-conversa.md` (entrega natural).
-- [ ] **(teste primeiro)** Agrupamento: job por conversa com 6 segundos, reagendado até 20 (A-02)
-- [ ] **(teste primeiro)** `turn_version` incrementado por mensagem, eco e mudança de controle; turno em curso invalidado (A-03)
-- [ ] Registro do turno com estado, mensagens agrupadas, modelo e custo
+- [x] **(teste primeiro)** Agrupamento: job por conversa com 6 segundos, reagendado até 20 (A-02)
+- [x] **(teste primeiro)** `turn_version` incrementado por mensagem, eco e mudança de controle; turno em curso invalidado (A-03)
+- [x] Registro do turno com estado, mensagens agrupadas, modelo e custo
+- [ ] Consumidor da fila `conversation.turn` ligado ao agente real (entra com a E-13)
 
 ### E-12 Controle humano
 Spec: `03-whatsapp-e-conversa.md` (controle da conversa, RF-30 a RF-36).
-- [ ] **(teste primeiro)** Máquina de estados `ai` e `human` com motivos e auditoria
-- [ ] **(teste primeiro)** Trava de envio em transação com `select for update` (A-04)
-- [ ] Eco do dono muda o controle na mesma transação da mensagem
-- [ ] **(teste primeiro)** Em `human`, nenhuma chamada de LLM (A-05)
-- [ ] Devolução ao assistente sem responder ao histórico (A-06); expiração opcional
-- [ ] Transferência: mensagem ao paciente, notificação e novo aviso se não atendida
-- [ ] Suspensão dos jobs de follow-up da conversa
+- [x] **(teste primeiro)** Máquina de estados `ai` e `human` com motivos e auditoria
+- [x] **(teste primeiro)** Trava de envio em transação com `select for update` (A-04)
+- [x] Eco do dono muda o controle na mesma transação da mensagem
+- [x] **(teste primeiro)** Em `human`, nenhuma chamada de LLM (A-05)
+- [x] Devolução ao assistente sem responder ao histórico (A-06); expiração opcional
+- [x] Transferência: muda o controle, devolve o aviso ao paciente e o lembrete enquanto ninguém responde (o envio do aviso entra com a ferramenta da E-13; o push, com a E-16)
+- [x] Suspensão dos jobs de follow-up da conversa
+- [x] Rota da API para "Assumir" e "Devolver ao assistente" (os botões entram no inbox, E-16)
 
 ### E-13 Agente de conversa
 Spec: `04-agentes-e-ia.md` (fluxo de um turno, contexto, ferramentas).

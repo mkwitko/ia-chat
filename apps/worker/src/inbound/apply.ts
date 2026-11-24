@@ -1,5 +1,16 @@
 import { ChannelState, InboundKind, type InboundEvent } from '@app/channels';
-import { ChannelStatus, MessageAuthor, MessageDirection, MessageStatus, type Tx } from '@app/db';
+import {
+  ActorType,
+  ChannelStatus,
+  ControlReason,
+  ConversationControl,
+  MessageAuthor,
+  MessageDirection,
+  MessageStatus,
+  setControl,
+  type Tx,
+} from '@app/db';
+import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts';
 import { resolveContact } from './contacts.ts';
 import { contentColumns } from './message-row.ts';
 
@@ -41,60 +52,104 @@ export interface InboundScope {
 
 /**
  * Applies normalized events inside the tenant transaction. Safe to run again (A-01).
- * Returns the delivery failures that need the operator (RF-25).
+ * Returns the delivery failures that need the operator (RF-25) and the turns to schedule.
  */
+export interface InboundResult {
+  alerts: DeliveryAlert[];
+  /** Turns to schedule after the transaction commits (E-11). */
+  turns: TurnRequest[];
+}
+
 export async function applyInboundEvents(
   tx: Tx,
   { tenantId, channelId, events }: InboundScope,
-): Promise<DeliveryAlert[]> {
+): Promise<InboundResult> {
   const ordered = [...events].sort((a, b) => a.at.getTime() - b.at.getTime()); // RF-23: provider time
-  const alerts: DeliveryAlert[] = [];
-  for (const event of ordered) {
-    if (event.kind === InboundKind.status) {
-      await applyStatus(tx, channelId, event);
-      if (event.error && ALERT_ERROR_CODES.has(event.error.code))
-        alerts.push({ providerMessageId: event.providerMessageId, code: event.error.code });
-    } else if (event.kind === InboundKind.channelState)
-      await tx.channel.update({
-        where: { id: channelId },
-        data: { status: CHANNEL_STATUS[event.state] },
-      });
-    else await storeMessage(tx, { tenantId, channelId, event });
+  const result: InboundResult = { alerts: [], turns: [] };
+  for (const event of ordered) await applyOne(tx, { tenantId, channelId, event, result });
+  return result;
+}
+
+interface ApplyOne {
+  tenantId: string;
+  channelId: string;
+  event: InboundEvent;
+  result: InboundResult;
+}
+
+async function applyOne(tx: Tx, { tenantId, channelId, event, result }: ApplyOne): Promise<void> {
+  if (event.kind === InboundKind.channelState) {
+    await tx.channel.update({
+      where: { id: channelId },
+      data: { status: CHANNEL_STATUS[event.state] },
+    });
+    return;
   }
-  return alerts;
+  if (event.kind !== InboundKind.status) {
+    const turn = await storeMessage(tx, { tenantId, channelId, event });
+    if (turn) result.turns.push(turn);
+    return;
+  }
+  await applyStatus(tx, channelId, event);
+  if (event.error && ALERT_ERROR_CODES.has(event.error.code))
+    result.alerts.push({ providerMessageId: event.providerMessageId, code: event.error.code });
+}
+
+interface StoreMessage {
+  tenantId: string;
+  channelId: string;
+  event: ConversationEvent;
 }
 
 async function storeMessage(
   tx: Tx,
-  { tenantId, channelId, event }: { tenantId: string; channelId: string; event: ConversationEvent },
-) {
+  { tenantId, channelId, event }: StoreMessage,
+): Promise<TurnRequest | null> {
   const contact = await resolveContact(tx, tenantId, event.contact);
   const conversation = await tx.conversation.upsert({
     where: { tenantId_channelId_contactId: { tenantId, channelId, contactId: contact.id } },
     create: { tenantId, channelId, contactId: contact.id },
     update: {},
   });
-  const fromPatient = event.kind === InboundKind.message;
+  // One clock for the row and the turn window: the turn claims messages by created_at.
+  const now = new Date();
   const { count } = await tx.message.createMany({
-    data: messageRow({ tenantId, channelId, conversationId: conversation.id, event }),
+    data: {
+      ...messageRow({ tenantId, channelId, conversationId: conversation.id, event }),
+      createdAt: now,
+    },
     skipDuplicates: true, // unique (tenant, channel, provider_message_id): RF-22
   });
-  if (count === 0) return;
+  if (count === 0) return null;
+  const updated = await touchConversation(tx, conversation, event);
+  if (event.kind === InboundKind.message) return onPatientMessage(tx, updated, now);
+  // RF-30: the owner answered from the phone; same transaction as the message.
+  await setControl(tx, {
+    tenantId,
+    conversationId: conversation.id,
+    to: ConversationControl.human,
+    reason: ControlReason.ownerEcho,
+    actor: { type: ActorType.user },
+  });
+  return null;
+}
+
+async function touchConversation(
+  tx: Tx,
+  conversation: { id: string; lastMessageAt: Date | null },
+  event: ConversationEvent,
+) {
   const latest =
     conversation.lastMessageAt && conversation.lastMessageAt > event.at
       ? conversation.lastMessageAt
       : event.at;
-  await tx.conversation.update({
+  const patient =
+    event.kind === InboundKind.message
+      ? { unreadCount: { increment: 1 }, windowExpiresAt: new Date(event.at.getTime() + WINDOW_MS) }
+      : {};
+  return tx.conversation.update({
     where: { id: conversation.id },
-    data: {
-      lastMessageAt: latest,
-      ...(fromPatient
-        ? {
-            unreadCount: { increment: 1 },
-            windowExpiresAt: new Date(event.at.getTime() + WINDOW_MS),
-          }
-        : {}),
-    },
+    data: { lastMessageAt: latest, ...patient },
   });
 }
 
