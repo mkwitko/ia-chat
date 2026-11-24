@@ -128,13 +128,14 @@ Spec: `04-agentes-e-ia.md` (AI Gateway, juízos tipados).
 
 ### E-07 Avaliação
 Spec: `04-agentes-e-ia.md` (avaliação).
-- [ ] Tenant fictício com serviços, preços, agenda e base de conhecimento
-- [ ] Simulador de paciente com persona e objetivo
-- [ ] 80 casos em português cobrindo a lista da especificação
-- [ ] Casos rotulados para cada pergunta de juízo
-- [ ] Verificações automáticas por caso; nota de tom por modelo avaliador
-- [ ] Comando único que roda a bateria e gera relatório por modelo, com custo
-- [ ] Rodar nos candidatos e registrar na especificação o modelo de conversa, o de reserva e se o Jev passou em português
+- [x] Tenant fictício com serviços, preços, agenda e base de conhecimento
+- [x] Simulador de paciente com persona e objetivo
+- [x] 80 casos em português cobrindo a lista da especificação
+- [x] Casos rotulados para cada pergunta de juízo
+- [x] Verificações automáticas por caso; nota de tom por modelo avaliador
+- [x] Comando único que roda a bateria e gera relatório por modelo, com custo (`pnpm eval`, com teto `--max-usd`)
+- [x] Rodar nos candidatos e registrar na especificação o modelo de conversa, o de reserva e se o Jev passou em português (escolha provisória, H-12)
+- [ ] Rodada final com cada caso duas vezes (`pnpm eval --models luna,haiku --repeat 2`), incluindo reservas baratas (Qwen 3.8 Flash, Mistral Small, Gemini 3.1 Flash-Lite), com aprovação do custo; pendente de crédito no gateway
 
 ### E-08 Direção visual
 Spec: `10-painel-e-interface.md`, `IMPLEMENTACAO.md` (painel e identidade visual).

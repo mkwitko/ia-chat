@@ -13,20 +13,24 @@ export const Task = {
 export type Task = (typeof Task)[keyof typeof Task];
 export type RouteTable = Record<Task, Route>;
 
-// Candidates from spec 04, ids from the Vercel AI Gateway catalog (24/11/2026).
-// The final choice comes from the evaluation (E-07).
+// Provisional choice from the E-07 battery of 24/11/2026 (spec 04, "Resultado da avaliação"):
+// fallbacks on another provider, so an OpenAI outage does not stop the service. The
+// conversation fallback is Haiku (same price as Luna) by the owner's choice: an outage does
+// not multiply the bill; the model-independent guards cover its weaker safety score.
+// Confirm with the final run (each case twice) when the gateway has credit.
 const HAIKU = { provider: Provider.anthropic, model: 'claude-haiku-5.5' };
 const SONNET = { provider: Provider.anthropic, model: 'claude-sonnet-5.5' };
 const LUNA = { provider: Provider.openai, model: 'gpt-6-luna' };
 const TERRA = { provider: Provider.openai, model: 'gpt-6.1-terra' };
+const SOL = { provider: Provider.openai, model: 'gpt-6.2-sol' };
 const TRANSCRIBE = { provider: Provider.openai, model: 'gpt-transcribe' };
 
 export const DEFAULT_ROUTES: RouteTable = {
-  conversation: { primary: HAIKU, fallback: LUNA },
-  conversation_escalated: { primary: SONNET, fallback: TERRA },
-  summarize: { primary: HAIKU, fallback: LUNA },
-  quality_review: { primary: SONNET },
-  insights: { primary: SONNET },
+  conversation: { primary: LUNA, fallback: HAIKU },
+  conversation_escalated: { primary: TERRA, fallback: SONNET },
+  summarize: { primary: LUNA, fallback: HAIKU },
+  quality_review: { primary: SOL, fallback: SONNET },
+  insights: { primary: SOL, fallback: SONNET },
   transcribe: { primary: TRANSCRIBE },
 };
 

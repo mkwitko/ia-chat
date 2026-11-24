@@ -15,7 +15,8 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm audit",
     "db:migrate": "pnpm --filter @app/db migrate:deploy",
     "db:seed": "pnpm --filter @app/db seed",
-    "ai:smoke": "pnpm --filter @app/ai smoke"
+    "ai:smoke": "pnpm --filter @app/ai smoke",
+    "eval": "pnpm --filter @app/ai eval"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

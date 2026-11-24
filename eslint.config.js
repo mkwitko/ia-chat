@@ -58,7 +58,7 @@ export default tseslint.config(
   },
   {
     // Tests and fixtures read better with literal data inline.
-    files: ['**/*.test.ts', '**/seed*.ts'],
+    files: ['**/*.test.ts', '**/seed*.ts', '**/eval/data/**'],
     rules: {
       'max-lines': [
         'error',
@@ -70,6 +70,6 @@ export default tseslint.config(
     },
   },
   // CLI scripts talk to the terminal.
-  { files: ['**/scripts/**'], rules: { 'no-console': 'off' } },
+  { files: ['**/scripts/**', '**/eval/run*.ts'], rules: { 'no-console': 'off' } },
   { files: ['**/*.js'], extends: [tseslint.configs.disableTypeChecked] },
 );
