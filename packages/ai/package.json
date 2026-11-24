@@ -17,6 +17,7 @@
     "zod": "4.6.7"
   },
   "scripts": {
-    "smoke": "node --env-file-if-exists=../../.env scripts/smoke.ts"
+    "smoke": "node --env-file-if-exists=../../.env scripts/smoke.ts",
+    "eval": "node --env-file-if-exists=../../.env eval/run.ts"
   }
 }

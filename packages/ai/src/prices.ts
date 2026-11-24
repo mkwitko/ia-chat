@@ -38,6 +38,31 @@ export const PRICE_TABLE: readonly PriceEntry[] = [
     cacheWrite: 1_250_000,
     output: 5_000_000,
   },
+  {
+    model: 'openai/gpt-6.2-sol',
+    effectiveFrom: SINCE,
+    input: 2_000_000,
+    cacheRead: 100_000,
+    cacheWrite: 2_500_000,
+    output: 10_000_000,
+  },
+  // Google caches implicitly: no cache write price, billed as plain input.
+  {
+    model: 'google/gemini-3.8-flash',
+    effectiveFrom: SINCE,
+    input: 750_000,
+    cacheRead: 75_000,
+    cacheWrite: 750_000,
+    output: 3_750_000,
+  },
+  {
+    model: 'google/gemini-3.1-flash-lite',
+    effectiveFrom: SINCE,
+    input: 250_000,
+    cacheRead: 30_000,
+    cacheWrite: 250_000,
+    output: 1_500_000,
+  },
   // Jev (outside the gateway): input only, output free.
   {
     model: 'typesafe/jev-latest',

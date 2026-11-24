@@ -53,6 +53,8 @@ export interface GenerateRequest extends CallScope {
 
 export interface GenerateResult {
   text: string;
+  /** Assistant and tool messages of this call, to append to the history of the next turn. */
+  messages: readonly ModelMessage[];
   toolCalls: readonly unknown[];
   usage: TokenUsage;
   model: ModelRef;
@@ -117,6 +119,7 @@ async function generate({ deps, now }: Context, request: GenerateRequest) {
   });
   return {
     text: value.text,
+    messages: value.responseMessages,
     toolCalls: value.toolCalls,
     usage,
     model,
