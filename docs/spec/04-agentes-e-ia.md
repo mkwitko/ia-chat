@@ -72,6 +72,13 @@ Blocos 1 a 4 são marcados para cache. Preços aparecem no prompt para dar fluid
 
 O cache mais barato expira em 5 minutos. Paciente costuma demorar mais que isso. O modelo financeiro assume cache perdido em boa parte dos turnos. Verificar se o provedor escolhido oferece TTL de 1 hora e se compensa.
 
+Implementação (E-13, 24/11/2026):
+
+- O prompt de produção fica em `packages/ai/src/agent` (`conversationBlocks`) e recebe um perfil tipado. A bateria da E-07 monta o perfil da clínica fictícia e chama a mesma função: avaliar é sempre avaliar o prompt de produção.
+- Nível de autonomia e nome do assistente ficam no tenant (`autonomy`, padrão `approve`; `assistant_name`). Em `approve`, o turno grava `turns.draft_text` e não envia; a aprovação entra com o inbox (E-16). Respostas fixas (urgência, opt-out) saem sem esperar aprovação.
+- A ferramenta de transferência só marca a intenção. O turno troca o controle sob a trava de envio, depois de mandar o aviso ao paciente (RF-35); senão a própria troca descartaria o aviso.
+- Identificação: se a primeira resposta da conversa não trouxer o nome do assistente, a frase de apresentação é acrescentada no início, de forma determinística.
+
 ## Ferramentas
 
 Todas têm schema Zod, validam `tenant_id` pelo contexto (nunca por argumento do modelo) e devolvem resultado estruturado. O modelo só pode afirmar que algo foi feito se a ferramenta devolveu sucesso.

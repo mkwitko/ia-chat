@@ -16,7 +16,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { applyInboundEvents } from '../inbound/apply.ts';
 import { handOff, needsHandoffReminder } from './handoff.ts';
 import { turnDelayMs, type TurnRequest } from './schedule.ts';
-import { runTurn, TurnOutcome, type TurnDeps } from './turn.ts';
+import { DeliveryMode, runTurn, TurnOutcome, type TurnDeps } from './turn.ts';
 
 // E-11 (A-02, A-03) and E-12 (A-04, A-05, A-06, RF-30, RF-31, RF-35, RF-36), with a fake
 // assistant: no model is called in these tests.
@@ -73,7 +73,13 @@ function fakeAssistant(during: () => Promise<unknown> = () => Promise.resolve())
     respond: async ({ messages }) => {
       seen.push(messages.map((message) => message.text ?? ''));
       await during();
-      return { text: 'ok', model: 'fake', costMicroUsd: 0n };
+      return {
+        text: 'ok',
+        model: 'fake',
+        costMicroUsd: 0n,
+        mode: DeliveryMode.send,
+        handoff: false,
+      };
     },
     send: (_tx, { text }) => {
       sent.push(text);

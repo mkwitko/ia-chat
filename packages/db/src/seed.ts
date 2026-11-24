@@ -6,6 +6,7 @@ import {
   MessageDirection,
   MessageStatus,
   MessageType,
+  Autonomy,
   Plan,
   ScheduledMessageKind,
   type Db,
@@ -29,7 +30,8 @@ interface Ids {
  */
 export async function seedTenant(db: Db, name: string = SEED_TENANT_NAME): Promise<string> {
   const tenant = await db.client.tenant.create({
-    data: { name, slug: `seed-${randomUUID()}`, plan: Plan.agenda },
+    // Automatic on the dev tenant: there is no screen to approve drafts until E-16.
+    data: { name, slug: `seed-${randomUUID()}`, plan: Plan.agenda, autonomy: Autonomy.auto },
   });
   await db.withTenant(tenant.id, async (tx) => {
     const ids = await seedSetup(tx, tenant.id);

@@ -9,6 +9,10 @@ model Tenant {
   plan              Plan         @default(essencial)
   status            TenantStatus @default(trial)
   timezone          String       @default("America/Sao_Paulo")
+  /// How the assistant introduces itself (spec 04, "Identificação").
+  assistantName     String       @default("Assistente virtual") @map("assistant_name")
+  /// RF-13: a new client starts approving every answer before it goes out.
+  autonomy          Autonomy     @default(approve)
   specialtyPolicyId String?      @map("specialty_policy_id") @db.Uuid
   limits            Json         @default("{}")
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
@@ -57,6 +61,12 @@ enum Plan {
   agenda
   pro
   clinica
+}
+
+enum Autonomy {
+  auto
+  approve
+  off
 }
 
 enum TenantStatus {

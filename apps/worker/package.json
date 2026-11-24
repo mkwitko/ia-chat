@@ -5,9 +5,11 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
+    "@app/ai": "workspace:*",
     "@app/channels": "workspace:*",
     "@app/core": "workspace:*",
     "@app/db": "workspace:*",
+    "ai": "7.0.173",
     "pg-boss": "12.38.2",
     "pino": "10.4.0",
     "zod": "4.6.7"
