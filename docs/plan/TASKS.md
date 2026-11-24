@@ -64,7 +64,7 @@ Não é código. Quem faz é você; começa já.
 ### E-00g Chaves e acessos para desenvolver
 Necessárias a partir de E-06. Vão num `.env` local, nunca no repositório.
 - [ ] Chaves de API dos provedores de IA candidatos (dois de conversa, o de juízo, o de transcrição)
-- [ ] Conta Cloudflare com Workers AI e R2
+- [ ] Conta Cloudflare com R2; chave do Vercel AI Gateway
 - [ ] Langfuse e Sentry
 - [ ] Assinatura do Mobbin por um trimestre, para E-08
 
@@ -116,15 +116,15 @@ Spec: `06-seguranca-e-lgpd.md` (RN-33, RN-34).
 
 ### E-06 AI Gateway
 Spec: `04-agentes-e-ia.md` (AI Gateway, juízos tipados).
-- [ ] Interface `generate`, `judge`, `transcribe` sobre o Vercel AI SDK
-- [ ] Tabela de roteamento `tarefa → [principal, reserva]` em configuração
-- [ ] Tabela de preços versionada por data e cálculo de custo
-- [ ] Gravação em `ai_usage` de toda chamada
-- [ ] **(teste primeiro)** Tetos por turno, conversa e tenant
-- [ ] **(teste primeiro)** Reserva em timeout, erro e limite de taxa; `judge` devolve nulo sem lançar erro
-- [ ] Provedor de desenvolvimento com Workers AI
-- [ ] Marcação de blocos de cache e esforço de raciocínio baixo nas tarefas de conversa
-- [ ] Langfuse com nome e telefone mascarados
+- [x] Interface `generate`, `judge`, `transcribe` sobre o Vercel AI SDK
+- [x] Tabela de roteamento `tarefa → [principal, reserva]` em configuração
+- [x] Tabela de preços versionada por data e cálculo de custo
+- [x] Gravação em `ai_usage` de toda chamada
+- [x] **(teste primeiro)** Tetos por turno, conversa e tenant
+- [x] **(teste primeiro)** Reserva em timeout, erro e limite de taxa; `judge` devolve nulo sem lançar erro
+- [x] Provedores pelo Vercel AI Gateway (uma chave); Workers AI descartado
+- [x] Marcação de blocos de cache e esforço de raciocínio baixo nas tarefas de conversa
+- [x] Langfuse com nome e telefone mascarados
 
 ### E-07 Avaliação
 Spec: `04-agentes-e-ia.md` (avaliação).

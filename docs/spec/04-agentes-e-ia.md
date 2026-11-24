@@ -34,6 +34,8 @@ interface AgentDefinition {
 | Agente | Passos | Timeout | Teto de custo | Falha |
 |---|---|---|---|---|
 | `conversation` | 5 | 40 s | US$ 0,05 por turno; US$ 0,30 por conversa | Tenta outro modelo uma vez; depois transfere para humano |
+
+Teto mensal de IA por tenant: US$ 15 como padrão conservador, ajustável por cliente (hipótese adotada na E-06; rever com o custo real do piloto).
 | `quality_review` | 1 | 120 s | US$ 0,02 por conversa avaliada | Pula e registra |
 | `insights` | 3 | 300 s | US$ 0,20 por relatório | Pula e registra |
 
@@ -144,7 +146,7 @@ Regras:
 
 ## AI Gateway interno
 
-Módulo `packages/ai`, fino, sobre o Vercel AI SDK. Sem gateway externo no início; menos um ponto de falha e de custo.
+Módulo `packages/ai`, fino, sobre o Vercel AI SDK. Os modelos são chamados pelo Vercel AI Gateway (decisão do dono em 24/11/2026, na E-06): uma chave só para todos os provedores, preço de tabela do provedor sem acréscimo, pedido de não retenção (`zeroDataRetention`) em toda chamada. Custos aceitos: um salto e um ponto de falha a mais, e a Vercel entra na lista de suboperadores ([06](06-seguranca-e-lgpd.md)). Roteamento, reserva, tetos e medição continuam no nosso módulo. O Jev fica fora do gateway, com chave própria.
 
 ```ts
 type TaskType = 'conversation' | 'conversation_escalated' | 'judge' | 'summarize' | 'quality_review' | 'insights' | 'transcribe' | 'embed' | 'tts'
@@ -191,7 +193,7 @@ Preços por milhão de tokens (entrada / cache lido / saída), conforme a pesqui
 | Conversa escalada | Claude Sonnet 5.5 (2,00 / 0,10 / 10,00) | GPT-6.1 Terra (1,00 / 0,05 / 5,00) | Ver gatilhos abaixo |
 | Resumo de histórico | Modelo de conversa | — | |
 | Avaliação de qualidade | Modelo intermediário em modo batch (−50%) | — | Amostragem |
-| Transcrição | Groq Whisper turbo (US$ 0,00067 por minuto) | gpt-4o-mini-transcribe | |
+| Transcrição | `openai/gpt-transcribe` pelo gateway (US$ 0,0045 por minuto) | — | O Groq Whisper turbo custa US$ 0,00067 por minuto mas não está no gateway; reavaliar na E-10 com o volume de áudio do piloto |
 | Embeddings | Adiado | — | Só com o módulo de documentos |
 | Síntese de voz | Adiado | — | Módulo de voz |
 | Áudio em tempo real | Fora do escopo | — | Telefonia |
@@ -217,7 +219,7 @@ Residência de dados: nenhum provedor processa de ponta a ponta no Brasil. Trata
 
 - `quality_review` avalia em lote uma amostra (padrão 10% das conversas, 100% das que tiveram transferência ou reprovação na validação): resposta sem fonte, tom, oportunidade perdida de agendar.
 - Indicadores por tenant: taxa de agendamento por conversa, taxa de transferência, perguntas sem resposta, respostas descartadas, custo por conversa, tempo até a primeira resposta.
-- Traços no Langfuse com telefone e nome mascarados.
+- Traços no Langfuse com telefone e nome mascarados. A máscara roda no nosso processo, antes do envio: telefone por padrão; nome pela lista de nomes que cada chamada declara (nome completo e cada parte), guardada por 10 minutos. Cobre a entrada e a saída das observações e os atributos `gen_ai.*` do AI SDK, que a máscara do SDK do Langfuse não alcança. Metadados de traço levam só ids. Um traço por chamada de tarefa, nomeado pela tarefa, com a conversa como sessão.
 - `insights` gera resumo mensal a partir de consultas SQL. Todo número exibido vem de consulta; o modelo só redige.
 
 ## Tom de voz

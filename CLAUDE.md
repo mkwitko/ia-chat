@@ -12,10 +12,10 @@ Assistente de IA no WhatsApp para profissionais de saúde autônomos no Brasil. 
 
 - TypeScript estrito, Node LTS, pnpm, monorepo: `apps/api` (Fastify), `apps/worker`, `apps/web` (painel: React, Vite, Tailwind, React Query), `apps/site` (site público: Astro, estático), `packages/{core,channels,ai,db}`.
 - Postgres em servidor próprio com backup contínuo no R2 (RN-10 a RN-16), Prisma (com `@prisma/adapter-pg`), migrations SQL à mão para RLS e constraints. Nada específico de Supabase ou Neon.
-- Em desenvolvimento, o AI Gateway pode usar o Workers AI gratuito. A bateria de avaliação roda sempre nos modelos candidatos de produção.
+- Provedores de IA via Vercel AI Gateway (uma chave, `VERCEL_API_KEY`), atrás do nosso `packages/ai`. O Jev (TypeSafe) fica fora do gateway, com chave própria. A bateria de avaliação roda sempre nos modelos candidatos de produção.
 - Fila: pg-boss. Sem Redis.
 - Autenticação: Better Auth com organizações.
-- IA: Vercel AI SDK atrás do AI Gateway interno (`packages/ai`).
+- IA: Vercel AI SDK atrás do AI Gateway interno (`packages/ai`), que chama os modelos pelo Vercel AI Gateway.
 - WhatsApp: dois adaptadores atrás de `ChannelAdapter`: Cloud API oficial (padrão) e conexão por QR code via gateway externo em contêiner (WAHA com motor GOWS no piloto), acessado por HTTP e webhooks. Não embutir Baileys. O domínio nunca sabe qual está em uso.
 - Pagamentos: Asaas para a nossa assinatura (`BillingProvider`); Mercado Pago por OAuth ou chave Pix com confirmação manual para o sinal do paciente (`DepositProvider`). Nunca guardamos dinheiro de paciente.
 

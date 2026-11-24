@@ -14,7 +14,8 @@
     "audit": "pnpm audit --audit-level moderate",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm audit",
     "db:migrate": "pnpm --filter @app/db migrate:deploy",
-    "db:seed": "pnpm --filter @app/db seed"
+    "db:seed": "pnpm --filter @app/db seed",
+    "ai:smoke": "pnpm --filter @app/ai smoke"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
