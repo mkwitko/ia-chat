@@ -35,7 +35,7 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | Banco | Postgres em servidor próprio no Brasil, backup contínuo (WAL) no R2, schema compartilhado, `tenant_id` + RLS | Mais barato no início; Postgres puro permite migrar para gerenciado depois. Requisitos RN-10 a RN-16 em [02](02-arquitetura.md) |
 | Juízos | Jev (TypeSafe) para decisões tipadas com probabilidade: urgência, confirmação, validação semântica, confiança da resposta | US$ 0,042 por milhão de tokens; falha segura; sujeito a passar na avaliação em português |
 | Autonomia | Três níveis por cliente: automático, aprovar antes de enviar, desligado | Um só produto; não há robô de menu separado |
-| ORM | Drizzle; RLS e constraints em migration SQL | SQL avançado sem atrito |
+| ORM | Prisma 7 com adaptador `pg`; RLS, constraints e tipos que o Prisma não modela em migration SQL | Decisão do dono em 24/11/2026, na E-02 |
 | Execução | Fastify em contêineres (API e worker) em servidor no Brasil, na mesma rede privada do Postgres; fila pg-boss | BullMQ não roda em Workers; Redis fica para quando a fila pedir |
 | Conhecimento | Base inteira no prompt em cache; pgvector só acima de ~15 mil tokens | Base de profissional solo é pequena |
 | Pagamentos | Assinatura: Asaas. Sinal Pix do paciente: Mercado Pago por OAuth na conta do próprio profissional, ou chave Pix dele com confirmação manual | O dinheiro do paciente não passa pela nossa conta. Ver [pesquisa 06](../research/06-pagamentos.md) |

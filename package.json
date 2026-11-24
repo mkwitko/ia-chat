@@ -12,7 +12,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "audit": "pnpm audit --audit-level moderate",
-    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm audit"
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm audit",
+    "db:migrate": "pnpm --filter @app/db migrate:deploy"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
