@@ -5,6 +5,7 @@ import { buildApp } from './app.ts';
 import { AUTH_BASE_PATH } from './auth/auth.ts';
 import { parseApiEnv } from './env.ts';
 import { MemoryOutbox } from './email/outbox.ts';
+import type { EnqueueInbound } from './webhooks/store.ts';
 
 // Test-only helpers: a real app on the dev database, with a fake mailbox.
 
@@ -25,13 +26,24 @@ export interface TestContext {
   outbox: MemoryOutbox;
 }
 
+export interface TestAppOptions {
+  env?: Record<string, string>;
+  enqueueInbound?: EnqueueInbound;
+}
+
 export async function startTestApp(
   register: (app: FastifyInstance) => void = () => undefined,
+  options: TestAppOptions = {},
 ): Promise<TestContext> {
-  const env = parseApiEnv(TEST_ENV);
+  const env = parseApiEnv({ ...TEST_ENV, ...options.env });
   const db = createDb(env.DATABASE_URL);
   const outbox = new MemoryOutbox();
-  const app = buildApp({ env, db, email: outbox });
+  const app = buildApp({
+    env,
+    db,
+    email: outbox,
+    ...(options.enqueueInbound ? { enqueueInbound: options.enqueueInbound } : {}),
+  });
   register(app);
   await app.ready();
   return { app, db, outbox };

@@ -113,6 +113,15 @@ type MessageContent =
 | RF-25 | Evento de status atualiza a mensagem. `failed` com erro de janela expirada ou de pagamento gera alerta ao operador |
 | RF-26 | Reconciliação diária: mensagens enviadas sem status após 1 hora são listadas para o operador |
 
+Implementação (E-09, 24/11/2026):
+
+- **Roteamento.** O webhook chega sem tenant, só com o `phone_number_id` (ou o id da WABA, em `account_update`). A tabela de plataforma `channel_routes` (sem RLS, só leitura e inclusão pelo app) liga cada conta da Meta a um único canal. Conta sem rota: responde 200 e registra aviso, sem gravar nada.
+- **Corpo bruto por tenant.** Uma entrega pode trazer números de tenants diferentes. Cada tenant grava em `inbound_events` só o trecho do próprio número, nunca o corpo inteiro. A reentrega tem o mesmo hash e não é enfileirada de novo.
+- **Processamento.** Job `inbound.process` (pg-boss) dentro de `withTenant`: resolve o contato (RF-23b), grava a mensagem com `skipDuplicates` na chave única (RF-22), ordena pelo horário do provedor (RF-23) e só deixa o status avançar (lida não volta a entregue).
+- **Eco do dono.** Gravado como mensagem do profissional (`human`, de saída). A troca do controle para `human` na mesma transação é da E-12.
+- **Envio a BSUID (nv).** Quando o paciente esconde o telefone, o cliente envia para o BSUID. Confirmar com o número de teste da Meta.
+- **Alertas (RF-25 e RF-26).** Falha com erro 131047 (janela expirada) ou 131042 (pagamento) gera log de erro para o operador; reconciliação diária às 7h de São Paulo lista mensagens de saída sem status há mais de 1 hora, por tenant, sem conteúdo.
+
 Tratamento por tipo de conteúdo:
 
 | Tipo | Conduta |

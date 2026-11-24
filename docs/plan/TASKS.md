@@ -152,15 +152,16 @@ Spec: `10-painel-e-interface.md`, `IMPLEMENTACAO.md` (painel e identidade visual
 
 ### E-09 Adaptador oficial
 Spec: `03-whatsapp-e-conversa.md` (abstração de canal, RF-20 a RF-26).
-- [ ] Interface `ChannelAdapter` e tipos `InboundEvent` em `packages/channels`
-- [ ] Rota de webhook: grava o corpo bruto em `inbound_events` e responde 200
-- [ ] **(teste primeiro)** Verificação de assinatura sobre o corpo bruto
-- [ ] Normalização de mensagem, eco do dono, status e estado do canal, com payloads reais gravados
-- [ ] **(teste primeiro)** Idempotência por `provider_message_id` (A-01)
-- [ ] **(teste primeiro)** Resolução de contato por BSUID e telefone com nono dígito (RF-23b)
-- [ ] Envio de texto e de template; leitura e indicador de digitação
-- [ ] Atualização de status e alerta em falha de entrega
-- [ ] Reconciliação diária de mensagens sem status
+- [x] Interface `ChannelAdapter` e tipos `InboundEvent` em `packages/channels`
+- [x] Rota de webhook: grava o corpo bruto em `inbound_events` e responde 200 (roteamento por `channel_routes`, trecho bruto só do próprio tenant)
+- [x] **(teste primeiro)** Verificação de assinatura sobre o corpo bruto
+- [x] Normalização de mensagem, eco do dono, status e estado do canal, com fixtures no formato da documentação da Meta
+- [ ] Gravar payloads reais do número de teste da Meta e rodar os mesmos testes sobre eles (depende das contas da Fase 0)
+- [x] **(teste primeiro)** Idempotência por `provider_message_id` (A-01, parte da mensagem; o turno único é da E-11)
+- [x] **(teste primeiro)** Resolução de contato por BSUID e telefone com nono dígito (RF-23b)
+- [x] Envio de texto e de template; leitura e indicador de digitação (cliente da Cloud API, testado com Graph simulado)
+- [x] Atualização de status e alerta em falha de entrega
+- [x] Reconciliação diária de mensagens sem status
 
 ### E-09b Adaptador por QR code
 Spec: `03-whatsapp-e-conversa.md` (duas formas de conexão, motor).

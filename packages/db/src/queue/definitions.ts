@@ -25,5 +25,11 @@ export function deadLetterName(queue: string): string {
   return `${queue}${DEAD_LETTER_SUFFIX}`;
 }
 
+/** E-09: a stored webhook batch (inbound_events) waiting to become messages and statuses. */
+export const INBOUND_QUEUE: QueueDefinition = { name: 'inbound.process' };
+
+/** E-09 (RF-26): daily list of outbound messages with no delivery status after an hour. */
+export const RECONCILE_QUEUE: QueueDefinition = { name: 'messages.reconcile' };
+
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
-export const QUEUES: readonly QueueDefinition[] = [];
+export const QUEUES: readonly QueueDefinition[] = [INBOUND_QUEUE, RECONCILE_QUEUE];
