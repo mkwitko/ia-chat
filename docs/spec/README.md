@@ -65,6 +65,7 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | H-07 | Sessões têm duração fixa por serviço e sem sobreposição | Precisa de regra de capacidade | Levantar serviços e durações |
 | H-08 | Tem ou aceita abrir conta no Mercado Pago | Sinal Pix só com confirmação manual | Perguntar que conta usa para receber Pix hoje |
 | H-09 | Câmbio de R$ 5,50 por dólar | Muda custos em reais | Atualizar na planilha |
+| H-10 | Só o dono vê e altera cobrança; profissional altera integrações; recepcionista só lê integrações (RN-34, padrão conservador adotado na E-04) | Ajustar a tabela de papéis em `apps/api/src/auth/access.ts` | Perguntar ao piloto quando houver equipe |
 
 ## Pendências que bloqueiam prazo
 

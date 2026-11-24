@@ -102,11 +102,11 @@ Spec: `02-arquitetura.md` (modelo de dados), `03` (RF-23b).
 
 ### E-04 Autenticação
 Spec: `06-seguranca-e-lgpd.md` (RN-33, RN-34).
-- [ ] Better Auth com Postgres, organizações como tenant, papéis dono, profissional e recepcionista
-- [ ] Cadastro, login por e-mail e por Google, verificação de e-mail, recuperação de senha
-- [ ] Middleware do Fastify que resolve usuário, tenant e papel e abre `withTenant`
-- [ ] Convite de membro
-- [ ] **(teste primeiro)** Recepcionista não acessa cobrança nem integrações; usuário de um tenant não acessa outro
+- [x] Better Auth com Postgres, organizações como tenant, papéis dono, profissional e recepcionista
+- [x] Cadastro, login por e-mail e por Google, verificação de e-mail, recuperação de senha. Google entra quando houver credencial (E-00c); e-mail real com o provedor de E-00f, até lá vai para o log em desenvolvimento
+- [x] Middleware do Fastify que resolve usuário, tenant e papel e abre `withTenant`
+- [x] Convite de membro
+- [x] **(teste primeiro)** Recepcionista não acessa cobrança nem integrações; usuário de um tenant não acessa outro
 
 ### E-05 Fila
 - [ ] pg-boss no worker com esquema próprio

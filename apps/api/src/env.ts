@@ -1,0 +1,22 @@
+import { baseEnvSchema, parseEnvWith } from '@app/core';
+import * as z from 'zod';
+
+const MIN_SECRET_LENGTH = 32;
+const DEFAULT_PORT = 3000;
+
+export const apiEnvSchema = baseEnvSchema.extend({
+  PORT: z.coerce.number().int().positive().default(DEFAULT_PORT),
+  BETTER_AUTH_SECRET: z.string().min(MIN_SECRET_LENGTH),
+  /** Public base URL of this API. */
+  BETTER_AUTH_URL: z.url(),
+  /** Panel origin, trusted for auth requests. */
+  WEB_ORIGIN: z.url(),
+  GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+  GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+});
+
+export type ApiEnv = z.infer<typeof apiEnvSchema>;
+
+export function parseApiEnv(source: Record<string, string | undefined>): ApiEnv {
+  return parseEnvWith(apiEnvSchema, source);
+}

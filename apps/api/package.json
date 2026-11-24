@@ -5,9 +5,14 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
-    "@app/core": "workspace:*"
+    "@app/core": "workspace:*",
+    "@app/db": "workspace:*",
+    "better-auth": "1.7.25",
+    "fastify": "5.12.8",
+    "zod": "4.6.7"
   },
   "scripts": {
-    "start": "node src/index.ts"
+    "start": "node src/index.ts",
+    "dev": "node --env-file-if-exists=../../.env --watch src/index.ts"
   }
 }
