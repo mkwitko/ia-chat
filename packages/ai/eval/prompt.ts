@@ -1,4 +1,4 @@
-import { conversationBlocks, type AgentProfile } from '../src/agent/prompt.ts';
+import { conversationBlocks, Identity, type AgentProfile } from '../src/agent/prompt.ts';
 import type { CacheableBlock } from '../src/gateway.ts';
 import type { Appointment } from './agenda.ts';
 import { CLINIC, HOURS, MIN_CANCEL_HOURS, NOW, SERVICES } from './data/clinic.ts';
@@ -33,6 +33,7 @@ export function systemBlocks(context: PromptContext): CacheableBlock[] {
 
 function clinicProfile(pricesForbidden: boolean): AgentProfile {
   return {
+    identity: Identity.assistant,
     assistantName: CLINIC.assistantName,
     professionalName: CLINIC.professional,
     specialty: CLINIC.specialty,

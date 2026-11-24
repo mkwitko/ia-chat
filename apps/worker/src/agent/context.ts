@@ -1,5 +1,5 @@
 import type { AgentProfile, AgentState } from '@app/ai';
-import { MessageAuthor, MessageType, type Tx } from '@app/db';
+import { MessageAuthor, MessageType, type IdentityMode, type Tx } from '@app/db';
 import type { ModelMessage } from 'ai';
 import * as z from 'zod';
 
@@ -134,7 +134,7 @@ async function loadHistory(
 }
 
 interface ProfileSources {
-  tenant: { id: string; name: string; assistantName: string };
+  tenant: { id: string; name: string; assistantName: string; identityMode: IdentityMode };
   policy: z.infer<typeof policySchema>;
   specialty: string | undefined;
 }
@@ -154,6 +154,7 @@ async function loadProfile(
     orderBy: { createdAt: 'asc' },
   });
   return {
+    identity: tenant.identityMode,
     assistantName: tenant.assistantName,
     professionalName: professional?.name ?? tenant.name,
     specialty,

@@ -25,6 +25,7 @@ export { dbUsageStore } from './usage-store.ts';
 export {
   conversationBlocks,
   formatCents,
+  Identity,
   type AgentProfile,
   type AgentService,
   type AgentState,
