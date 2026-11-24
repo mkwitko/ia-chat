@@ -1,55 +1,29 @@
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { createGroq } from '@ai-sdk/groq';
-import { createOpenAI } from '@ai-sdk/openai';
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import type { LanguageModel, TranscriptionModel } from 'ai';
+import { createGateway, type LanguageModel, type TranscriptionModel } from 'ai';
 import type { AiEnv } from './env.ts';
-import { Provider, type ModelRef } from './models.ts';
+import { modelKey, type ModelRef } from './models.ts';
 
 export interface ModelResolver {
   language(ref: ModelRef): LanguageModel;
   transcription(ref: ModelRef): TranscriptionModel;
 }
 
-const WORKERS_AI_NAME = 'workers-ai';
-const workersAiUrl = (accountId: string) =>
-  `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1`;
-
 export class MissingCredentialError extends Error {
-  constructor(provider: string) {
-    super(`No API key configured for ${provider}`);
+  constructor(name: string) {
+    super(`${name} is not configured`);
   }
 }
 
-function required(value: string | undefined, provider: string): string {
-  if (!value) throw new MissingCredentialError(provider);
-  return value;
-}
+const GATEWAY_KEY = 'VERCEL_API_KEY';
 
-/** Builds models from the keys in the environment; a missing key fails only when that model is used. */
-export function envModelResolver(env: AiEnv): ModelResolver {
+/** Ask the gateway to route only to providers that do not retain prompts (spec 04, privacy). */
+export const NO_RETENTION = { zeroDataRetention: true } as const;
+
+/** Every model goes through the Vercel AI Gateway with a single key (spec 04). */
+export function gatewayModelResolver(env: AiEnv): ModelResolver {
+  if (!env.VERCEL_API_KEY) throw new MissingCredentialError(GATEWAY_KEY);
+  const gateway = createGateway({ apiKey: env.VERCEL_API_KEY });
   return {
-    language({ provider, model }) {
-      switch (provider) {
-        case Provider.anthropic:
-          return createAnthropic({ apiKey: required(env.ANTHROPIC_API_KEY, provider) })(model);
-        case Provider.openai:
-          return createOpenAI({ apiKey: required(env.OPENAI_API_KEY, provider) })(model);
-        case Provider.groq:
-          return createGroq({ apiKey: required(env.GROQ_API_KEY, provider) })(model);
-        case Provider.workersAi:
-          return createOpenAICompatible({
-            name: WORKERS_AI_NAME,
-            baseURL: workersAiUrl(required(env.CLOUDFLARE_ACCOUNT_ID, provider)),
-            apiKey: required(env.CLOUDFLARE_API_TOKEN, provider),
-          })(model);
-      }
-    },
-    transcription({ provider, model }) {
-      if (provider === Provider.groq) {
-        return createGroq({ apiKey: required(env.GROQ_API_KEY, provider) }).transcription(model);
-      }
-      return createOpenAI({ apiKey: required(env.OPENAI_API_KEY, provider) }).transcription(model);
-    },
+    language: (ref) => gateway(modelKey(ref)),
+    transcription: (ref) => gateway.transcriptionModel(modelKey(ref)),
   };
 }

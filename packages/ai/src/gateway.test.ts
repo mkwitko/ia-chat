@@ -9,7 +9,7 @@ import type { JudgeProvider } from './judge.ts';
 import { Provider } from './models.ts';
 import { PRICE_TABLE } from './prices.ts';
 import type { ModelResolver } from './providers.ts';
-import { Task, routeTable, AiProfile } from './routing.ts';
+import { DEFAULT_ROUTES, Task } from './routing.ts';
 import { dbUsageStore } from './usage-store.ts';
 
 // E-06 with fake models on the real database: usage and cost recorded, fallback, caps, fail-safe judge.
@@ -17,7 +17,7 @@ import { dbUsageStore } from './usage-store.ts';
 const db = createDb(process.env.DATABASE_URL ?? '');
 afterAll(() => db.client.$disconnect());
 
-const ROUTES = routeTable(AiProfile.production);
+const ROUTES = DEFAULT_ROUTES;
 const usage = {
   inputTokens: { total: 1_000, noCache: 400, cacheRead: 600, cacheWrite: 0 },
   outputTokens: { total: 200, text: 200, reasoning: 0 },
@@ -88,7 +88,7 @@ describe('AI gateway', () => {
     expect(result.costMicroUsd).toBe(146n);
     expect(await usageRows(tenantId)).toMatchObject([
       {
-        model: 'claude-haiku-5-5',
+        model: 'claude-haiku-5.5',
         inputTokens: 1_000,
         cachedInputTokens: 600,
         outputTokens: 200,

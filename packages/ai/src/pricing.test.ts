@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { costMicroUsd, priceFor, type PriceEntry } from './pricing.ts';
 
-const MODEL = 'anthropic/claude-haiku-5-5';
+const MODEL = 'anthropic/claude-haiku-5.5';
 const PRICES: PriceEntry[] = [
   {
     model: MODEL,

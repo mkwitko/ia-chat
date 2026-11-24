@@ -16,7 +16,7 @@ export {
 export { maskPersonalData } from './mask.ts';
 export { Provider, type ModelRef } from './models.ts';
 export { PRICE_TABLE } from './prices.ts';
-export { envModelResolver, MissingCredentialError } from './providers.ts';
-export { AiProfile, Task, routeTable } from './routing.ts';
+export { gatewayModelResolver, MissingCredentialError } from './providers.ts';
+export { DEFAULT_ROUTES, Task, routeTable } from './routing.ts';
 export { typeSafeJudge } from './typesafe-judge.ts';
 export { dbUsageStore } from './usage-store.ts';

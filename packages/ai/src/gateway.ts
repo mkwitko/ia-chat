@@ -10,7 +10,7 @@ import { withFallback } from './fallback.ts';
 import { judge, type JudgeProvider, type JudgeQuestions, type JudgeRequest } from './judge.ts';
 import { modelKey, type ModelRef } from './models.ts';
 import { costMicroUsd, priceFor, type PriceEntry, type TokenUsage } from './pricing.ts';
-import type { ModelResolver } from './providers.ts';
+import { NO_RETENTION, type ModelResolver } from './providers.ts';
 import { Task, type RouteTable } from './routing.ts';
 import { transcribe, type TranscribeRequest } from './transcribe.ts';
 import { JEV_MODEL } from './typesafe-judge.ts';
@@ -23,7 +23,7 @@ const CONVERSATION_TASKS = new Set<Task>([Task.conversation, Task.conversationEs
 // Stable prefix blocks are cached by the provider (Anthropic needs an explicit marker).
 const CACHE_MARKER = { anthropic: { cacheControl: { type: 'ephemeral' } } } as const;
 // Low reasoning effort on conversation: reasoning tokens are billed as output.
-const LOW_REASONING = { openai: { reasoningEffort: 'low' } } as const;
+const LOW_REASONING = { reasoningEffort: 'low' } as const;
 
 export interface CacheableBlock {
   text: string;
@@ -103,7 +103,10 @@ async function generate({ deps, now }: Context, request: GenerateRequest) {
       stopWhen: stepCountIs(request.maxSteps ?? DEFAULT_MAX_STEPS),
       maxRetries: 0,
       abortSignal,
-      ...(CONVERSATION_TASKS.has(task) ? { providerOptions: LOW_REASONING } : {}),
+      providerOptions: {
+        gateway: NO_RETENTION,
+        ...(CONVERSATION_TASKS.has(task) ? { openai: LOW_REASONING } : {}),
+      },
     }),
   );
   const usage = tokenUsage(value.usage);

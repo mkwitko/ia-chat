@@ -64,7 +64,7 @@ Não é código. Quem faz é você; começa já.
 ### E-00g Chaves e acessos para desenvolver
 Necessárias a partir de E-06. Vão num `.env` local, nunca no repositório.
 - [ ] Chaves de API dos provedores de IA candidatos (dois de conversa, o de juízo, o de transcrição)
-- [ ] Conta Cloudflare com Workers AI e R2
+- [ ] Conta Cloudflare com R2; chave do Vercel AI Gateway
 - [ ] Langfuse e Sentry
 - [ ] Assinatura do Mobbin por um trimestre, para E-08
 
@@ -122,7 +122,7 @@ Spec: `04-agentes-e-ia.md` (AI Gateway, juízos tipados).
 - [x] Gravação em `ai_usage` de toda chamada
 - [x] **(teste primeiro)** Tetos por turno, conversa e tenant
 - [x] **(teste primeiro)** Reserva em timeout, erro e limite de taxa; `judge` devolve nulo sem lançar erro
-- [x] Provedor de desenvolvimento com Workers AI
+- [x] Provedores pelo Vercel AI Gateway (uma chave); Workers AI descartado
 - [x] Marcação de blocos de cache e esforço de raciocínio baixo nas tarefas de conversa
 - [ ] Langfuse com nome e telefone mascarados
 

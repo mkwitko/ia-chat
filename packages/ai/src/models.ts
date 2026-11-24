@@ -1,9 +1,7 @@
+/** Model creators as named by the Vercel AI Gateway catalog. */
 export const Provider = {
   anthropic: 'anthropic',
   openai: 'openai',
-  groq: 'groq',
-  /** Cloudflare Workers AI: development only, never patient traffic. */
-  workersAi: 'workers-ai',
 } as const;
 
 export type Provider = (typeof Provider)[keyof typeof Provider];
@@ -18,7 +16,7 @@ export interface Route {
   fallback?: ModelRef;
 }
 
-/** Key used by the price table and ai_usage: "provider/model". */
+/** Gateway model id "provider/model", also the key of the price table and ai_usage. */
 export function modelKey({ provider, model }: ModelRef): string {
   return `${provider}/${model}`;
 }

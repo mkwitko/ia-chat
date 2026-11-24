@@ -2,7 +2,7 @@ import { transcribe as transcribeAudio } from 'ai';
 import { withFallback } from './fallback.ts';
 import { modelKey, type ModelRef } from './models.ts';
 import { TRANSCRIPTION_PRICE_PER_MINUTE } from './prices.ts';
-import type { ModelResolver } from './providers.ts';
+import { NO_RETENTION, type ModelResolver } from './providers.ts';
 import type { Route } from './models.ts';
 import type { UsageStore } from './usage-store.ts';
 
@@ -29,6 +29,7 @@ export async function transcribe(deps: TranscribeDeps, request: TranscribeReques
       audio: request.audio,
       maxRetries: 0,
       abortSignal,
+      providerOptions: { gateway: NO_RETENTION },
     }),
   );
   const seconds = value.durationInSeconds ?? 0;

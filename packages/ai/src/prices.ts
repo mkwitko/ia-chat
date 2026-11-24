@@ -1,13 +1,13 @@
 import type { PriceEntry } from './pricing.ts';
 
-// Micro-dollars per million tokens. Source: spec 04 (research of 24/11/2026).
-// Cache write is not in the research: Anthropic charged 1.25x input; OpenAI does not charge it.
-// Re-check against each provider's page before the evaluation (E-07); add a dated row on change.
+// Micro-dollars per million tokens, from the Vercel AI Gateway catalog on 24/11/2026
+// (provider list price, no markup). Prompts above 100k tokens cost more; ours stay below.
+// On a price change, add a dated row instead of editing one.
 const SINCE = '2026-11-24';
 
 export const PRICE_TABLE: readonly PriceEntry[] = [
   {
-    model: 'anthropic/claude-haiku-5-5',
+    model: 'anthropic/claude-haiku-5.5',
     effectiveFrom: SINCE,
     input: 100_000,
     cacheRead: 10_000,
@@ -15,7 +15,7 @@ export const PRICE_TABLE: readonly PriceEntry[] = [
     output: 500_000,
   },
   {
-    model: 'anthropic/claude-sonnet-5-5',
+    model: 'anthropic/claude-sonnet-5.5',
     effectiveFrom: SINCE,
     input: 2_000_000,
     cacheRead: 100_000,
@@ -27,7 +27,7 @@ export const PRICE_TABLE: readonly PriceEntry[] = [
     effectiveFrom: SINCE,
     input: 100_000,
     cacheRead: 10_000,
-    cacheWrite: 100_000,
+    cacheWrite: 125_000,
     output: 500_000,
   },
   {
@@ -35,10 +35,10 @@ export const PRICE_TABLE: readonly PriceEntry[] = [
     effectiveFrom: SINCE,
     input: 1_000_000,
     cacheRead: 50_000,
-    cacheWrite: 1_000_000,
+    cacheWrite: 1_250_000,
     output: 5_000_000,
   },
-  // Jev: input only, output free.
+  // Jev (outside the gateway): input only, output free.
   {
     model: 'typesafe/jev-latest',
     effectiveFrom: SINCE,
@@ -47,19 +47,9 @@ export const PRICE_TABLE: readonly PriceEntry[] = [
     cacheWrite: 42_000,
     output: 0,
   },
-  // Free development quota.
-  {
-    model: 'workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast',
-    effectiveFrom: SINCE,
-    input: 0,
-    cacheRead: 0,
-    cacheWrite: 0,
-    output: 0,
-  },
 ];
 
-/** Transcription is billed per minute of audio, in micro-dollars. */
+/** Transcription is billed per minute of audio, in micro-dollars (US$ 0.000075 per second). */
 export const TRANSCRIPTION_PRICE_PER_MINUTE: Readonly<Record<string, number>> = {
-  'groq/whisper-large-v3-turbo': 670,
-  'openai/gpt-4o-mini-transcribe': 3_000,
+  'openai/gpt-transcribe': 4_500,
 };

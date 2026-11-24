@@ -55,9 +55,9 @@ Regra: free tier serve para desenvolvimento e para serviço que não recebe cont
 | GitHub Actions | CI | Sem dados reais |
 | Supabase e Neon gratuitos | Só desenvolvimento | Sem backup adequado; projeto pausa |
 | Gemini gratuito | Proibido com dados reais | A pesquisa indica que treina com os dados |
-| Cloudflare Workers AI (10 mil neurons por dia) | Desenvolvimento e testes de integração | Decidido; ver abaixo |
+| Vercel AI Gateway (créditos gratuitos mensais) | Desenvolvimento | Substituiu o Workers AI na E-06: uma chave para todos os modelos |
 
-**Workers AI gratuito é o provedor padrão em desenvolvimento e não entra no atendimento.** A franquia é da conta inteira (300 a 900 turnos por dia somando tudo) e falha de vez ao estourar. Cuidado: o modelo de desenvolvimento não é o de produção, então a bateria de avaliação (E-07) roda sempre nos modelos candidatos de produção. A versão paga é barata e não retém dados; pode virar modelo de reserva se passar na avaliação em português.
+**Workers AI saiu na E-06.** O desenvolvimento usa os mesmos modelos de produção pelo Vercel AI Gateway, com custo de centavos; testes automatizados usam modelos falsos.
 
 ## Painel e identidade visual
 
