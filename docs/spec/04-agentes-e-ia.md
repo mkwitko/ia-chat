@@ -152,7 +152,7 @@ Regras:
 - **Injeção de prompt:** mensagens do paciente, transcrições e conteúdo da base de conhecimento entram como dados, delimitados. O perigo real é limitado pelo desenho: o modelo não tem ferramenta que leia dados de outro contato, altere configuração ou envie mensagem a terceiros.
 - **Conteúdo de documentos não sobrepõe regras.** A base de conhecimento fica abaixo das regras da plataforma e da especialidade, e a validação de saída independe do que o documento diz.
 - **Sem orientação clínica.** O assistente acolhe em uma frase e oferece agendamento ou transferência. Não registra sintoma em campo estruturado.
-- **Identificação.** Primeira mensagem de cada conversa nova traz a identificação do assistente virtual. Perguntado se é humano, responde que é assistente virtual.
+- **Identificação.** Conforme o modo do cliente ([01](01-produto-e-planos.md), "Limites do produto"): no modo `assistant`, a primeira mensagem de cada conversa nova traz a identificação do assistente virtual; no `clinic`, diz que é do consultório; no `professional`, não se apresenta. Em todos, perguntado diretamente se é humano ou o profissional, diz a verdade.
 - **Escopo.** Assunto fora do consultório recebe recusa curta. A política da Meta proíbe assistente de uso geral.
 
 ## AI Gateway interno

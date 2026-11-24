@@ -3,6 +3,14 @@ import { PLATFORM_RULES, PRICES_ALLOWED, PRICES_FORBIDDEN } from './rules.ts';
 
 // Spec 04, "Contexto do prompt": blocks from the most stable to the most volatile.
 
+/** How the assistant presents itself (owner decision, 24/11/2026). */
+export const Identity = {
+  assistant: 'assistant',
+  clinic: 'clinic',
+  professional: 'professional',
+} as const;
+export type Identity = (typeof Identity)[keyof typeof Identity];
+
 export interface AgentService {
   id: string;
   name: string;
@@ -12,6 +20,7 @@ export interface AgentService {
 
 /** What the tenant configured. Stable between turns: cached. */
 export interface AgentProfile {
+  identity: Identity;
   assistantName: string;
   professionalName: string;
   specialty: string | undefined;
@@ -60,7 +69,7 @@ function profileBlock(profile: AgentProfile): string {
   });
   const specialty = profile.specialty ? ` (${profile.specialty})` : '';
   return [
-    `Você se chama ${profile.assistantName} e atende pelo consultório de ${profile.professionalName}${specialty}.`,
+    identityLine(profile) + specialty,
     profile.tone ? `Tom de voz: ${profile.tone}` : '',
     profile.examples.length
       ? `Exemplos de mensagens do profissional:\n${bullets(profile.examples)}`
@@ -88,13 +97,31 @@ function stateBlock(profile: AgentProfile, state: AgentState): string {
     `Agendamentos futuros do contato (já refletem o que as ferramentas fizeram nesta conversa):\n${state.appointments.length ? bullets(state.appointments) : NONE}`,
     `Feito nesta conversa:\n${state.done.length ? bullets(state.done) : 'nada ainda'}`,
     state.summary ? `Resumo da conversa anterior:\n${state.summary}` : '',
-    state.firstMessage
-      ? `Esta é a primeira resposta da conversa: comece se apresentando como ${profile.assistantName}, assistente virtual do consultório de ${profile.professionalName}.`
-      : '',
+    state.firstMessage ? FIRST_ANSWER[profile.identity](profile) : '',
   ]
     .filter(Boolean)
     .join('\n');
 }
+
+// Every mode keeps the platform rule: asked directly, tell the truth.
+function identityLine(profile: AgentProfile): string {
+  const { assistantName: name, professionalName: professional } = profile;
+  if (profile.identity === Identity.clinic) {
+    return `Fale como a recepção do consultório de ${professional}, no plural ("aqui é do consultório", "a gente"), no tom do profissional. Não se apresente como assistente virtual; se perguntarem diretamente, diga a verdade.`;
+  }
+  if (profile.identity === Identity.professional) {
+    return `Responda em nome de ${professional}, em primeira pessoa, no tom dele. Não se apresente como assistente; se perguntarem diretamente, diga a verdade. Nunca diga que leu, avaliou ou vai tratar algo de saúde.`;
+  }
+  return `Você se chama ${name} e atende pelo consultório de ${professional}.`;
+}
+
+const FIRST_ANSWER: Readonly<Record<Identity, (profile: AgentProfile) => string>> = {
+  [Identity.assistant]: (profile) =>
+    `Esta é a primeira resposta da conversa: comece se apresentando como ${profile.assistantName}, assistente virtual do consultório de ${profile.professionalName}.`,
+  [Identity.clinic]: (profile) =>
+    `Esta é a primeira resposta da conversa: comece dizendo que é do consultório de ${profile.professionalName}.`,
+  [Identity.professional]: () => '',
+};
 
 function bullets(items: readonly string[]): string {
   return items.map((item) => '- ' + item).join('\n');

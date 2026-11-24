@@ -11,6 +11,8 @@ model Tenant {
   timezone          String       @default("America/Sao_Paulo")
   /// How the assistant introduces itself (spec 04, "Identificação").
   assistantName     String       @default("Assistente virtual") @map("assistant_name")
+  /// How the assistant presents itself (owner decision, 24/11/2026; spec 01 "Limites").
+  identityMode      IdentityMode @default(assistant) @map("identity_mode")
   /// RF-13: a new client starts approving every answer before it goes out.
   autonomy          Autonomy     @default(approve)
   specialtyPolicyId String?      @map("specialty_policy_id") @db.Uuid
@@ -61,6 +63,12 @@ enum Plan {
   agenda
   pro
   clinica
+}
+
+enum IdentityMode {
+  assistant
+  clinic
+  professional
 }
 
 enum Autonomy {

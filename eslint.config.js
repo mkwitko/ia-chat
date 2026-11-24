@@ -65,7 +65,7 @@ export default tseslint.config(
   },
   {
     // Tests and fixtures read better with literal data inline.
-    files: ['**/*.test.ts', '**/seed*.ts', '**/eval/data/**', '**/fixtures/**'],
+    files: ['**/*.test.ts', '**/seed*.ts', '**/eval/data/**', '**/fixtures/**', '**/*-fixtures.ts'],
     rules: {
       'max-lines': [
         'error',
