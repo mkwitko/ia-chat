@@ -78,7 +78,7 @@ O master prompt pede preço fundamentado em custo e em disposição de pagamento
 
 - Todos os preços são hipótese. Validar com 5 a 10 profissionais antes de publicar.
 - O excedente cobre mais de 4 vezes o custo da conversa e fica abaixo do preço médio por conversa dentro do plano, para não punir quem cresce.
-- Taxa de implantação: cobrar pelo trabalho de configuração assistida. Valor a definir após medir quantas horas o onboarding do piloto consumiu.
+- Taxa de implantação: R$ 497, paga uma vez, pela configuração assistida (serviços, horários, base, tom de voz, conexões e teste no simulador). Hipótese do dono em 24/11/2026; rever depois de medir as horas do onboarding do piloto.
 - Módulos de voz e documentos: precificar quando forem especificados, com a mesma planilha.
 - Para o piloto: desconto em troca de depoimento, acesso aos números e indicações.
 
