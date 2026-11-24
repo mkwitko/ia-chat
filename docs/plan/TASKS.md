@@ -296,6 +296,7 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 ### E-24 Onboarding
 Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding do canal).
 - [ ] Fluxo de oito passos com progresso salvo
+- [ ] Telas de criar conta, confirmar e-mail e recuperar senha no painel (a API já faz os três desde a E-04; confirmação testada de ponta a ponta no navegador em 24/11/2026)
 - [ ] Modelos de serviços e textos por especialidade
 - [ ] Conexão oficial: Embedded Signup em coexistência e checagem de pagamento na Meta
 - [ ] Conexão por QR code com o termo de ciência
