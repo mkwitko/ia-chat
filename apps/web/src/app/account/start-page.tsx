@@ -10,13 +10,13 @@ import { AuthFrame, FormAlert } from './auth-frame';
 import { slugFor } from './slug';
 import { useAuthAction } from './use-auth-action';
 
-/** After the email link: create the consultório (the tenant), then set up the services. */
+/** After the email link: create the consultório (the tenant), then the guided setup. */
 export function StartPage() {
   const session = authClient.useSession();
   if (session.isPending) return <p className="p-6 text-sm text-muted-foreground">{LoadingCopy}</p>;
   if (!session.data) return <Navigate to={Route.login} replace />;
   // Creating the consultório updates the session; this single redirect takes over from there.
-  if (session.data.session.activeOrganizationId) return <Navigate to={Route.services} replace />;
+  if (session.data.session.activeOrganizationId) return <Navigate to={Route.onboarding} replace />;
   return (
     <AuthFrame title={Copy.title} subtitle={Copy.subtitle}>
       <StartForm />
