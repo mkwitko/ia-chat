@@ -50,14 +50,22 @@ export interface CancelRequest {
 }
 
 export async function bookAppointment(db: Db, req: BookRequest) {
-  const result = await runAgenda(db, req.tenantId, synced(req, (tx) => bookIn(tx, req)));
+  const result = await runAgenda(
+    db,
+    req.tenantId,
+    synced(req, (tx) => bookIn(tx, req)),
+  );
   if (!result.ok) return result;
   return finishBook(db, req.calendar, { view: result.value, tenantId: req.tenantId });
 }
 
 /** RF-43: the old time is released only if the new one was written (one transaction). */
 export async function rescheduleAppointment(db: Db, req: MoveRequest) {
-  const moved = await runAgenda(db, req.tenantId, synced(req, (tx) => moveIn(tx, req)));
+  const moved = await runAgenda(
+    db,
+    req.tenantId,
+    synced(req, (tx) => moveIn(tx, req)),
+  );
   if (!moved.ok) return moved;
   const booked = await finishBook(db, req.calendar, { view: moved.value, tenantId: req.tenantId });
   if (booked.ok)
@@ -69,7 +77,11 @@ export async function rescheduleAppointment(db: Db, req: MoveRequest) {
 }
 
 export async function cancelAppointment(db: Db, req: CancelRequest) {
-  const result = await runAgenda(db, req.tenantId, synced(req, (tx) => cancelIn(tx, req)));
+  const result = await runAgenda(
+    db,
+    req.tenantId,
+    synced(req, (tx) => cancelIn(tx, req)),
+  );
   if (result.ok)
     await removeEvent(db, req.calendar, {
       tenantId: req.tenantId,
