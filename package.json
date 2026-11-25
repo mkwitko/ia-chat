@@ -23,7 +23,8 @@
     "web:dev": "pnpm --filter @app/web dev",
     "dev:patient": "node --env-file-if-exists=.env apps/api/scripts/simulate-patient.ts",
     "dev:api": "pnpm --filter @app/api dev",
-    "dev:worker": "pnpm --filter @app/worker dev"
+    "dev:worker": "pnpm --filter @app/worker dev",
+    "invite": "node --env-file-if-exists=.env apps/api/scripts/create-invite.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
