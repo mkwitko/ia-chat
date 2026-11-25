@@ -13,3 +13,7 @@ export {
 } from './agenda/zoned.ts';
 export { parsePolicy, specialtyPolicySchema, type SpecialtyPolicy } from './policy.ts';
 export * from './plans.ts';
+export * from './onboarding/steps.ts';
+export * from './onboarding/templates.ts';
+export type { TemplateAnswer, TemplateService } from './onboarding/templates-data.ts';
+export * from './onboarding/provider-errors.ts';

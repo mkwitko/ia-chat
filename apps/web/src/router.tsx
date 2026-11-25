@@ -6,6 +6,7 @@ import { StartPage } from './app/account/start-page';
 import { AgendaScreen } from './app/agenda/agenda-screen';
 import { AvailabilityScreen } from './app/agenda/availability-screen';
 import { AssistantScreen } from './app/assistant/assistant-screen';
+import { OnboardingScreen } from './app/onboarding/onboarding-screen';
 import { LoginPage } from './app/login/login-page';
 import { ConversationScreen } from './app/inbox/conversation-screen';
 import { ConversationsScreen } from './app/inbox/conversations-screen';
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
       { path: Route.knowledge, element: <KnowledgeScreen /> },
       { path: Route.simulator, element: <SimulatorScreen /> },
       { path: Route.services, element: <ServicesScreen /> },
+      { path: Route.onboarding, element: <OnboardingScreen /> },
       { path: Route.usage, element: <UsageScreen /> },
     ],
   },

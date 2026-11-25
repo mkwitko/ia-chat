@@ -22,6 +22,8 @@ model Tenant {
   /// E-18: overage cap in cents, set by the owner; null means no cap (spec 01).
   overageCapCents     Int?         @map("overage_cap_cents")
   specialtyPolicyId   String?      @map("specialty_policy_id") @db.Uuid
+  /// E-24: onboarding step -> done|skipped plus the chosen specialty; shape in packages/core.
+  onboardingProgress  Json         @default("{}") @map("onboarding_progress")
   limits              Json         @default("{}")
   createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz

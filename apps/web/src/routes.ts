@@ -4,6 +4,7 @@ export const Route = {
   forgotPassword: '/esqueci-a-senha',
   resetPassword: '/nova-senha',
   start: '/comecar',
+  onboarding: '/configuracao',
   conversations: '/conversas',
   conversation: '/conversas/:id',
   agenda: '/agenda',
