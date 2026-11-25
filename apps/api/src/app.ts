@@ -60,12 +60,6 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
   registerControlRoutes(app);
-  registerAssistantSettingsRoutes(app);
-  registerServiceRoutes(app);
-  registerLocationRoutes(app);
-  registerKnowledgeRoutes(app);
-  registerToneRoutes(app);
-  registerUsageRoutes(app);
   registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
   registerSettingsRoutes(app);
   registerWaitlistIfConfigured(app, deps);
