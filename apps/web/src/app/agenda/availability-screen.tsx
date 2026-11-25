@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen } from '../screens/screen';
+import { Screen, ScreenWidth } from '../screens/screen';
 import { feedback } from '../setup/feedback';
 import { FormActions, TextField } from '../setup/fields';
 import { CommonCopy } from '../setup/setup-copy';
@@ -17,7 +17,7 @@ import { TimeOffSection } from './time-off-section';
 export function AvailabilityScreen() {
   const availability = useAvailability();
   return (
-    <Screen title={Copy.title}>
+    <Screen title={Copy.title} width={ScreenWidth.form}>
       <BackLink to={Route.agenda} label={Copy.back} />
       {availability.isPending && <ListSkeleton />}
       {availability.isError && (

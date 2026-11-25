@@ -1,9 +1,8 @@
-import { Gauge } from 'lucide-react';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
 import { EmptyState } from '../screens/empty-state';
-import { Screen } from '../screens/screen';
+import { Screen, ScreenWidth } from '../screens/screen';
 import { CapForm } from './cap-form';
 import { useUsage, type Usage } from './usage-api';
 import { monthLabel, UsageCopy as Copy } from './usage-copy';
@@ -15,7 +14,7 @@ import { OperatorAccessNotice } from '../operator/operator-notices';
 export function UsageScreen() {
   const usage = useUsage();
   return (
-    <Screen title={Copy.title}>
+    <Screen title={Copy.title} width={ScreenWidth.form}>
       <BackLink to={Route.more} label={Copy.more} />
       {usage.isPending && <ListSkeleton />}
       {usage.isError && (
@@ -38,11 +37,7 @@ function UsageContent({ usage }: Readonly<{ usage: Usage }>) {
       <p className="px-4 text-sm text-muted-foreground md:px-0">
         {Copy.planLine(usage.plan, usage.monthlyCents)} · {monthLabel(usage.month)}
       </p>
-      {usage.conversations === 0 ? (
-        <EmptyState icon={Gauge} {...Copy.empty} />
-      ) : (
-        <Month usage={usage} />
-      )}
+      {usage.conversations === 0 ? <EmptyState {...Copy.empty} /> : <Month usage={usage} />}
       <CapForm usage={usage} />
       <OperatorAccessNotice />
       <MetaBlock />

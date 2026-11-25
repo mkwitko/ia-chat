@@ -24,7 +24,7 @@ O profissional mantém o controle: começa em "aprovar antes de enviar", assume 
 ## Operating Context
 
 - Uso em pé, entre atendimentos, com pressa; precisa ver primeiro o que pede ação.
-- Três telas do dia a dia: Conversas, Agenda, Hoje. Configuração fora do caminho (docs/spec/10-painel-e-interface.md).
+- Navegação: Início, Conversas, Agenda, Clientes e Mais. Configuração fora do caminho, com volta fácil enquanto estiver pela metade (docs/spec/10-painel-e-interface.md).
 - Notificação push para urgência, pedido de humano e rascunho aguardando aprovação.
 
 ## Capabilities and Constraints
@@ -37,8 +37,8 @@ O profissional mantém o controle: começa em "aprovar antes de enviar", assume 
 
 ## Brand Commitments
 
-- Nome **Consultório Aberto**; cor de marca azul-petróleo; promessa, voz e brief do logo em `docs/brand.md`. Logo ainda por desenhar.
-- Direção visual escolhida pelo dono em 24/11/2026: **o padrão da categoria, feito com capricho**. Régua de acabamento e de jeito de app: **Nubank / Inter** (clareza, poucos elementos por tela, texto direto em português) e **WhatsApp Business** (lista de conversas e bolhas que o profissional já conhece). Familiaridade vale mais que originalidade.
+- Nome **Consultório Aberto**; marca em grafite com o jade como cor de assinatura, só onde o assistente está (o azul-petróleo foi aposentado, decisão do dono em 25/11/2026); promessa, voz e brief do logo em `docs/brand.md`. Logo ainda por desenhar.
+- Direção visual escolhida pelo dono em 25/11/2026 (substitui a de 24/11): **grafite monocromático com uma cor de assinatura**, no registro de **Linear / Cal.com / Vercel**: ferramenta de trabalho precisa, claro e escuro, largura total no computador. A lista de conversas e as bolhas continuam no jeito do **WhatsApp Business**, que o profissional já conhece.
 
 ## Evidence on Hand
 

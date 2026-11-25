@@ -21,9 +21,9 @@ export function ControlBar({
     <div
       role="group"
       aria-label={Copy.controlLabel}
-      className="flex items-center justify-between gap-3 border-b bg-card px-4 py-2"
+      className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b bg-card px-4 py-2 lg:px-6"
     >
-      <p className="text-sm text-muted-foreground">
+      <p className="min-w-48 flex-1 text-sm text-muted-foreground">
         {mine ? Copy.handBackHint : Copy.takeOverHint}
       </p>
       <Button variant={mine ? 'outline' : 'default'} disabled={set.isPending} onClick={change}>

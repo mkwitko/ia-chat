@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
-import { DocumentForm } from '../billing/document-form';
+import { onDocumentError } from '../billing/document-form';
+import { useSaveDocument } from '../billing/billing-api';
 import { notifySaveError } from '../setup/feedback';
 import { WhatsappSection } from '../whatsapp/whatsapp-section';
+import { AccountStep } from './account-step';
 import {
   Status,
   Step,
@@ -14,12 +17,12 @@ import {
   type OnboardingView,
 } from './onboarding-api';
 import { OnboardingCopy as Copy, STEP_INFO } from './onboarding-copy';
-import { SpecialtyPicker } from './specialty-picker';
 
 interface PanelProps {
   step: Step;
   view: OnboardingView;
   onSettled: () => void;
+  onBack: (() => void) | null;
 }
 
 const BLOCK_MESSAGE: Readonly<Record<string, string>> = {
@@ -33,79 +36,104 @@ function onSaveError(error: Error) {
   else notifySaveError(error);
 }
 
-/** What a step shows when opened: the explanation, the screen that does the work, the buttons. */
-export function StepPanel({ step, view, onSettled }: Readonly<PanelProps>) {
-  const info = STEP_INFO[step];
+const hasText = (value: string) => value.trim().length > 0;
+
+/** "Continuar" stays off until the step has what it needs (H-22: activation needs the WhatsApp). */
+function isReady(step: Step, view: OnboardingView, document: string): boolean {
+  if (step === Step.account) return (view.documentSet || hasText(document)) && !!view.specialty;
+  if (step === Step.whatsapp || step === Step.activation) return view.whatsappConnected;
+  return true;
+}
+
+/** Saves what the step holds (the CPF/CNPJ on the first one), then the step itself. */
+function useAdvance({ step, view, onSettled }: Omit<PanelProps, 'onBack'>) {
   const save = useSaveStep();
+  const saveDocument = useSaveDocument();
+  const refresh = useRefreshOnboarding();
   const settle = (status: Status) => {
     save.mutate({ step, status }, { onSuccess: onSettled, onError: onSaveError });
   };
-  // H-22: the assistant is activated only with the WhatsApp connected.
-  const locked = step === Step.activation && !view.whatsappConnected;
+  async function documentSaved(document: string): Promise<boolean> {
+    if (step !== Step.account || view.documentSet) return true;
+    try {
+      await saveDocument.mutateAsync(document.trim());
+      refresh();
+      return true;
+    } catch (error) {
+      if (error instanceof Error) onDocumentError(error);
+      return false;
+    }
+  }
+  const advance = async (document: string) => {
+    if (await documentSaved(document)) settle(STEP_INFO[step].soon ? Status.skipped : Status.done);
+  };
+  return { advance, settle, pending: save.isPending || saveDocument.isPending };
+}
+
+/** One step: what it is for, the work itself, and a single "Continuar" that saves and advances. */
+export function StepPanel({ step, view, onSettled, onBack }: Readonly<PanelProps>) {
+  const [document, setDocument] = useState('');
+  const { advance, settle, pending } = useAdvance({ step, view, onSettled });
   return (
-    <div className="grid gap-3 py-4">
-      <p className="text-sm">{info.text}</p>
-      {step === Step.account && <AccountStep view={view} />}
-      {step === Step.simulator && <p className="text-sm text-muted-foreground">{Copy.testNote}</p>}
-      {step === Step.whatsapp && (
-        <WhatsappStep
-          onSkip={() => {
-            settle(Status.skipped);
-          }}
-        />
-      )}
-      {locked && <LockedNote />}
-      {info.to && (
-        <Button asChild variant="outline">
-          <Link to={info.to}>{info.openLabel}</Link>
+    <div className="grid gap-5">
+      <StepBody step={step} view={view} document={document} onDocument={setDocument} />
+      <footer className="flex flex-wrap items-center gap-2 border-t pt-4">
+        {onBack && (
+          <Button variant="ghost" onClick={onBack}>
+            {Copy.back}
+          </Button>
+        )}
+        {step === Step.whatsapp && !view.whatsappConnected && (
+          <Button
+            variant="ghost"
+            disabled={pending}
+            onClick={() => {
+              settle(Status.skipped);
+            }}
+          >
+            {Copy.skipWhatsapp}
+          </Button>
+        )}
+        <Button
+          className="ml-auto"
+          disabled={pending || !isReady(step, view, document)}
+          onClick={() => void advance(document)}
+        >
+          {step === Step.activation ? Copy.activate : Copy.next}
         </Button>
-      )}
-      <Button
-        variant={info.soon ? 'outline' : 'default'}
-        disabled={save.isPending || locked}
-        onClick={() => {
-          settle(info.soon ? Status.skipped : Status.done);
-        }}
-      >
-        {actionLabel(step)}
-      </Button>
+      </footer>
     </div>
   );
 }
 
-function actionLabel(step: Step): string {
-  if (STEP_INFO[step].soon) return Copy.skip;
-  return step === Step.activation ? Copy.activate : Copy.next;
+interface BodyProps {
+  step: Step;
+  view: OnboardingView;
+  document: string;
+  onDocument: (value: string) => void;
 }
 
-/** H-37: the CPF/CNPJ comes first (one trial per document, RF-81), then the specialty. */
-function AccountStep({ view }: Readonly<{ view: OnboardingView }>) {
-  const refresh = useRefreshOnboarding();
+/** The work of the step: its own fields, or a link to the screen that does it. */
+function StepBody({ step, view, document, onDocument }: Readonly<BodyProps>) {
+  const info = STEP_INFO[step];
   return (
     <>
-      {!view.documentSet && (
-        <>
-          <p className="text-sm text-muted-foreground">{Copy.documentFirst}</p>
-          <DocumentForm onSaved={refresh} />
-        </>
+      <p className="text-base text-muted-foreground">{info.text}</p>
+      {step === Step.account && (
+        <AccountStep view={view} document={document} onDocument={onDocument} />
       )}
-      <SpecialtyPicker view={view} />
-    </>
-  );
-}
-
-const LockedNote = () => (
-  <p className="rounded-lg bg-attention-soft px-3 py-2 text-sm">{Copy.activationNeedsWhatsapp}</p>
-);
-
-/** The connection lives in its own section; the step can still be left for later. */
-function WhatsappStep({ onSkip }: Readonly<{ onSkip: () => void }>) {
-  return (
-    <>
-      <WhatsappSection />
-      <Button variant="outline" onClick={onSkip}>
-        {Copy.skipWhatsapp}
-      </Button>
+      {step === Step.whatsapp && <WhatsappSection />}
+      {step === Step.simulator && <p className="text-sm text-muted-foreground">{Copy.testNote}</p>}
+      {step === Step.activation && !view.whatsappConnected && (
+        <p className="rounded-lg border bg-attention-soft px-3 py-2 text-sm">
+          {Copy.activationNeedsWhatsapp}
+        </p>
+      )}
+      {info.to && (
+        <Button asChild variant="outline" className="justify-self-start">
+          <Link to={info.to}>{info.openLabel}</Link>
+        </Button>
+      )}
     </>
   );
 }

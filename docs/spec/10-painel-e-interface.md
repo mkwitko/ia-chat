@@ -28,6 +28,10 @@ Barra inferior no celular, lateral no computador. Cinco itens (a versão enxuta 
 
 Decisão (25/11/2026): não há aba "Resultados". Os números do piloto ficam numa seção "Resultados do mês" (`/resultados`), aberta pelo botão "Ver resultados" no Início, para não passar de cinco itens e não virar painel de métricas. "Mais" continua com o nome e os itens de configuração que já tinha.
 
+Volta à configuração (decisão do dono, 25/11/2026): enquanto a configuração guiada tiver passo pendente, "Configuração · X de N" com barra de progresso fica no topo da lateral (computador), numa faixa fina sob os alertas (celular) e como primeira linha de Mais; o Início mostra "Próximo passo" com o passo atual e um botão. Tudo some quando a configuração termina. `/configuracao` não é aba: o item ativo é Mais.
+
+Lateral no computador: nome do consultório, o cartão de configuração (quando pendente), os cinco itens e, no rodapé, a situação do atendimento em palavras (assistente ativo ou não, WhatsApp conectado ou não) e "Aparência: Sistema / Claro / Escuro" (também em Mais). Largura total sempre; Conversas em lista e conversa lado a lado a partir de `lg`; Mais com a lista de ajustes à esquerda e a página escolhida à direita a partir de `lg` (DESIGN.md, "Layout").
+
 Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsApp desconectado, Google expirado, pagamento da Meta ausente, assinatura vencida, franquia estourada. Cada alerta tem um botão que leva à correção.
 
 ## Telas

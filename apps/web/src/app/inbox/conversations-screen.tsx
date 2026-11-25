@@ -1,8 +1,8 @@
-import { MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { EmptyCopy, NavCopy } from '@/copy';
 import { cn } from '@/lib/utils';
-import { EmptyState } from '../screens/empty-state';
+import { EmptyState, GhostRows } from '../screens/empty-state';
+import { SimulatorLink } from '../simulator/simulator-link';
 import { Screen } from '../screens/screen';
 import { ConversationRow } from './conversation-row';
 import { InboxState, useConversations, type ConversationSummary } from './inbox-api';
@@ -34,13 +34,17 @@ export function ConversationsScreen() {
   const conversations = useConversations();
   const [filter, setFilter] = useState<Filter>(Filter.all);
   return (
-    <Screen title={NavCopy.conversations}>
+    <Screen title={NavCopy.conversations} className="lg:px-4 lg:pt-6 xl:px-4">
       {conversations.isPending && <ListSkeleton />}
       {conversations.isError && (
         <LoadError message={InboxCopy.loadFailed} onRetry={() => void conversations.refetch()} />
       )}
       {conversations.data?.length === 0 && (
-        <EmptyState icon={MessageSquare} {...EmptyCopy.conversations} />
+        <EmptyState
+          {...EmptyCopy.conversations}
+          action={<SimulatorLink />}
+          preview={<GhostRows rows={3} withAvatar />}
+        />
       )}
       {conversations.data && conversations.data.length > 0 && (
         <>
@@ -65,7 +69,7 @@ function FilterBar({
           className={cn(
             'flex min-h-11 shrink-0 cursor-pointer items-center rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring',
             value === option.value
-              ? 'border-primary bg-brand-soft text-primary'
+              ? 'border-primary bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground',
           )}
         >
@@ -91,7 +95,7 @@ function List({ items }: Readonly<{ items: readonly ConversationSummary[] }>) {
       <p className="px-4 py-6 text-sm text-muted-foreground md:px-0">{InboxCopy.emptyFilter}</p>
     );
   return (
-    <ul className="divide-y border-y bg-card md:rounded-xl md:border">
+    <ul className="divide-y overflow-hidden border-y bg-card md:rounded-xl md:border md:shadow-card lg:-mx-4 lg:rounded-none lg:border-x-0 lg:shadow-none">
       {items.map((item) => (
         <li key={item.id}>
           <ConversationRow item={item} />

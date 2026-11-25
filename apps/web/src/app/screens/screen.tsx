@@ -1,10 +1,29 @@
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
-/** Screen frame: title bar and content, 720 px wide at most on the computer (DESIGN.md). */
-export function Screen({ title, children }: Readonly<{ title: string; children: ReactNode }>) {
+export const ScreenWidth = { full: 'full', form: 'form' } as const;
+export type ScreenWidth = (typeof ScreenWidth)[keyof typeof ScreenWidth];
+
+interface ScreenProps {
+  title: string;
+  children: ReactNode;
+  /** Full width by default; forms and long text keep a reading measure (DESIGN.md). */
+  width?: ScreenWidth;
+  className?: string;
+}
+
+/** Screen frame: title and content across the whole work area, fluid side padding. */
+export function Screen(props: Readonly<ScreenProps>) {
+  const { title, children, width = ScreenWidth.full, className } = props;
   return (
-    <section className="mx-auto w-full max-w-3xl md:px-8 md:py-6">
-      <h1 className="bg-card px-4 pt-4 pb-3 text-xl md:bg-transparent md:px-0">{title}</h1>
+    <section
+      className={cn(
+        'w-full pb-10 md:px-8 md:pt-8 xl:px-12',
+        width === ScreenWidth.form && 'md:max-w-3xl',
+        className,
+      )}
+    >
+      <h1 className="px-4 pt-5 pb-4 text-xl md:px-0 md:pt-0 md:pb-6">{title}</h1>
       {children}
     </section>
   );

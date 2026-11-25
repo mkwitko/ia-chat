@@ -1,33 +1,60 @@
 import { ChevronRight, ExternalLink } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Link } from 'react-router';
+import { NavLink } from 'react-router';
 import { HELP_URL } from '@/lib/config';
+import { cn } from '@/lib/utils';
 
-const ROW = 'flex min-h-16 items-center gap-3 px-4 hover:bg-muted';
-const ICON = 'size-5 text-muted-foreground';
+export const MoreRowCopy = { soon: 'Em breve' } as const;
 
-interface MoreItemLinkProps {
-  text: ReactNode;
+const ROW =
+  'flex min-h-16 items-center gap-3 px-4 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring lg:min-h-12 lg:rounded-md lg:px-3';
+const ICON = 'size-4 shrink-0 text-muted-foreground';
+
+export interface MoreRow {
+  label: string;
+  hint: string;
   to?: string | undefined;
   /** The help center item: opens the site's help center when HELP_URL is configured. */
   helpLink?: boolean;
 }
 
-/** Row of "Mais": internal link, external help link, or plain text while the screen is missing. */
-export function MoreItemLink({ text, to, helpLink }: Readonly<MoreItemLinkProps>) {
-  if (helpLink && HELP_URL) {
+function RowText({ row, compact }: Readonly<{ row: MoreRow; compact: boolean }>) {
+  return (
+    <span className="min-w-0 flex-1">
+      <span className="block text-base font-medium lg:text-sm">{row.label}</span>
+      <span className={cn('block truncate text-sm text-muted-foreground', compact && 'lg:hidden')}>
+        {row.hint}
+      </span>
+    </span>
+  );
+}
+
+/** One row of "Mais": every row ends the same way (chevron, external mark or "Em breve"). */
+export function MoreItemLink({ row, compact }: Readonly<{ row: MoreRow; compact: boolean }>) {
+  if (row.helpLink && HELP_URL) {
     return (
       <a href={HELP_URL} target="_blank" rel="noreferrer" className={ROW}>
-        {text}
+        <RowText row={row} compact={compact} />
         <ExternalLink className={ICON} aria-hidden="true" />
       </a>
     );
   }
-  if (!to) return <div className="flex min-h-16 items-center gap-3 px-4">{text}</div>;
+  if (!row.to) {
+    return (
+      <div className={cn(ROW, 'hover:bg-transparent')}>
+        <RowText row={row} compact={compact} />
+        <span className="rounded-full border px-2 text-xs text-muted-foreground">
+          {MoreRowCopy.soon}
+        </span>
+      </div>
+    );
+  }
   return (
-    <Link to={to} className={ROW}>
-      {text}
+    <NavLink
+      to={row.to}
+      className={({ isActive }) => cn(ROW, isActive && 'lg:bg-muted lg:font-semibold')}
+    >
+      <RowText row={row} compact={compact} />
       <ChevronRight className={ICON} aria-hidden="true" />
-    </Link>
+    </NavLink>
   );
 }

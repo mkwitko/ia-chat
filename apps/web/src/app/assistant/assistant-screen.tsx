@@ -9,7 +9,7 @@ import { LoadingCopy } from '@/copy';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
 import { BackLink } from '../screens/back-link';
-import { Screen } from '../screens/screen';
+import { Screen, ScreenWidth } from '../screens/screen';
 import { AssistantCopy as Copy, DEFAULT_ASSISTANT_NAME, introPreview } from './assistant-copy';
 import { ChoiceList } from './choice-list';
 import {
@@ -28,7 +28,7 @@ const NAME_MAX = 40; // same limit as the API
 export function AssistantScreen() {
   const settings = useAssistantSettings();
   return (
-    <Screen title={Copy.title}>
+    <Screen title={Copy.title} width={ScreenWidth.form}>
       <BackLink to={Route.more} label={Copy.back} />
       <nav
         aria-label={Copy.sectionsLabel}

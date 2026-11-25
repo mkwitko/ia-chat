@@ -6,7 +6,12 @@ export const WhatsappCopy = {
     'Conecte o número do consultório. Leva uns 5 minutos numa janela da Meta. Você continua usando o app WhatsApp Business no celular, no mesmo número.',
   payment:
     'A Meta cobra direto de você, no cartão que você cadastra lá durante ou depois da conexão, os lembretes e confirmações enviados fora da janela de 24 horas. Responder a quem escreveu primeiro não tem custo.',
-  off: 'A conexão com o WhatsApp ainda não está disponível nesta conta. Você pode seguir sem ela.',
+  offTitle: 'Conexão com o WhatsApp ainda não liberada',
+  offWhy:
+    'A conexão de números pela Meta ainda não foi ligada pela nossa equipe nesta conta. Não depende de nada da sua parte.',
+  offWhat:
+    'Siga com os outros passos e teste o assistente no simulador. Se precisar conectar antes, responda o e-mail que enviamos para você.',
+  offAction: 'Abrir o simulador',
   ownerOnly: 'Só o dono da conta pode conectar o número.',
   loadFailed: 'Não conseguimos ver o estado do WhatsApp. Tente de novo.',
   connect: 'Conectar WhatsApp',

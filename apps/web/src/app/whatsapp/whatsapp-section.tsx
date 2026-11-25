@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
+import { Route } from '@/routes';
 import { ApiError } from '@/lib/api';
 import { runEmbeddedSignup } from './embedded-signup';
 import {
@@ -28,12 +30,26 @@ export function WhatsappSection() {
       <p className="text-sm text-muted-foreground">{Copy.intro}</p>
       <p className="text-sm text-muted-foreground">{Copy.payment}</p>
       {status.isError && <p role="alert">{Copy.loadFailed}</p>}
-      {status.data && (!available || !appId || !configId) && <p>{Copy.off}</p>}
+      {status.data && (!available || !appId || !configId) && <Unavailable />}
       {channel && <ChannelState channel={channel} />}
       {appId && configId && (
         <ConnectButton ids={{ appId, configId }} label={channel ? Copy.reconnect : Copy.connect} />
       )}
     </section>
+  );
+}
+
+/** Says why the connection is off (the platform's Meta keys are not set) and what to do meanwhile. */
+function Unavailable() {
+  return (
+    <div role="status" className="grid justify-items-start gap-2 rounded-lg border bg-muted p-4">
+      <p className="font-semibold">{Copy.offTitle}</p>
+      <p className="text-sm text-muted-foreground">{Copy.offWhy}</p>
+      <p className="text-sm text-muted-foreground">{Copy.offWhat}</p>
+      <Button asChild variant="outline" className="mt-1">
+        <Link to={Route.simulator}>{Copy.offAction}</Link>
+      </Button>
+    </div>
   );
 }
 

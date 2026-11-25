@@ -10,12 +10,12 @@ import { AssistantScreen } from './app/assistant/assistant-screen';
 import { OnboardingScreen } from './app/onboarding/onboarding-screen';
 import { LoginPage } from './app/login/login-page';
 import { ConversationScreen } from './app/inbox/conversation-screen';
-import { ConversationsScreen } from './app/inbox/conversations-screen';
+import { InboxLayout, NoConversation } from './app/inbox/inbox-layout';
 import { CustomerScreen } from './app/customers/customer-screen';
 import { CustomersScreen } from './app/customers/customers-screen';
 import { HomeScreen } from './app/home/home-screen';
 import { ResultsScreen } from './app/results/results-screen';
-import { MoreScreen } from './app/screens/more-screen';
+import { MoreLayout, MoreScreen } from './app/screens/more-screen';
 import { ConnectionsScreen } from './app/whatsapp/connections-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
 import { ServicesScreen } from './app/setup/services-screen';
@@ -38,8 +38,14 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { index: true, element: <Navigate to={Route.home} replace /> },
-      { path: Route.conversations, element: <ConversationsScreen /> },
-      { path: Route.conversation, element: <ConversationScreen /> },
+      {
+        path: Route.conversations,
+        element: <InboxLayout />,
+        children: [
+          { index: true, element: <NoConversation /> },
+          { path: Route.conversation, element: <ConversationScreen /> },
+        ],
+      },
       { path: Route.agenda, element: <AgendaScreen /> },
       { path: Route.agendaAvailability, element: <AvailabilityScreen /> },
       { path: Route.home, element: <HomeScreen /> },
@@ -47,16 +53,22 @@ export const router = createBrowserRouter([
       { path: Route.customers, element: <CustomersScreen /> },
       { path: Route.customer, element: <CustomerScreen /> },
       { path: Route.results, element: <ResultsScreen /> },
-      { path: Route.more, element: <MoreScreen /> },
-      { path: Route.assistant, element: <AssistantScreen /> },
-      { path: Route.tone, element: <ToneScreen /> },
-      { path: Route.knowledge, element: <KnowledgeScreen /> },
-      { path: Route.simulator, element: <SimulatorScreen /> },
-      { path: Route.services, element: <ServicesScreen /> },
+      {
+        path: Route.more,
+        element: <MoreLayout />,
+        children: [
+          { index: true, element: <MoreScreen /> },
+          { path: Route.assistant, element: <AssistantScreen /> },
+          { path: Route.tone, element: <ToneScreen /> },
+          { path: Route.knowledge, element: <KnowledgeScreen /> },
+          { path: Route.simulator, element: <SimulatorScreen /> },
+          { path: Route.services, element: <ServicesScreen /> },
+          { path: Route.connections, element: <ConnectionsScreen /> },
+          { path: Route.usage, element: <UsageScreen /> },
+          { path: Route.billing, element: <BillingScreen /> },
+        ],
+      },
       { path: Route.onboarding, element: <OnboardingScreen /> },
-      { path: Route.connections, element: <ConnectionsScreen /> },
-      { path: Route.usage, element: <UsageScreen /> },
-      { path: Route.billing, element: <BillingScreen /> },
       { path: Route.operator, element: <OperatorScreen /> },
     ],
   },

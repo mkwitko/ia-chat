@@ -60,7 +60,7 @@ function Preview({ text }: Readonly<{ text: string }>) {
   return (
     <div className="grid gap-2 text-sm">
       <span className="text-muted-foreground">{Copy.preview}</span>
-      <p className="max-w-sm rounded-xl rounded-tl-sm bg-brand-soft px-3 py-2 whitespace-pre-line">
+      <p className="max-w-sm rounded-xl rounded-tl-sm bg-jade-soft px-3 py-2 whitespace-pre-line">
         {text}
       </p>
     </div>

@@ -8,6 +8,7 @@ import { needsYou } from '../inbox/conversations-screen';
 import { useInboxEvents } from '../inbox/use-inbox-events';
 import { AlertBar } from './alert-bar';
 import { Navigation } from './navigation';
+import { SetupStrip } from './setup-progress';
 import { TrialBanner } from './trial-banner';
 import { useCalendarAlert } from './use-calendar-alert';
 import { usePushAlert } from './use-push-alert';
@@ -32,6 +33,7 @@ function Frame() {
     <div className="flex h-full flex-col">
       <AlertBar alert={alert} />
       <TrialBanner />
+      <SetupStrip />
       {!connected && (
         <p role="status" className="bg-muted px-4 py-1 text-center text-xs text-muted-foreground">
           {InboxCopy.reconnecting}

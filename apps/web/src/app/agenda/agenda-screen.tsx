@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { NavCopy } from '@/copy';
+import { useMedia, WIDE_QUERY } from '@/lib/use-media';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { Screen } from '../screens/screen';
 import { AgendaBody } from './agenda-body';
@@ -15,7 +16,10 @@ const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 function useAgendaParams() {
   const [params, setParams] = useSearchParams();
   const requested = params.get(DAY_PARAM) ?? '';
-  const view = params.get(VIEW_PARAM) === View.week ? View.week : View.day;
+  // The computer opens on the week (more than one day in view); the phone on the day.
+  const fallback = useMedia(WIDE_QUERY) ? View.week : View.day;
+  const asked = params.get(VIEW_PARAM);
+  const view = asked === View.week || asked === View.day ? asked : fallback;
   return {
     view,
     requested,
@@ -26,7 +30,7 @@ function useAgendaParams() {
   };
 }
 
-/** Spec 10, "Agenda": the day on the phone, the week as seven day sections. */
+/** Spec 10, "Agenda": the day on the phone, the week as seven day columns on the computer. */
 export function AgendaScreen() {
   const { view, requested, days, change } = useAgendaParams();
   const agenda = useAgenda(ISO_DAY.test(requested) ? requested : undefined, days);
