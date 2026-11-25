@@ -23,7 +23,7 @@ export function ConversationScreen() {
   const notFound =
     conversation.error instanceof ApiError && conversation.error.status === NOT_FOUND;
   return (
-    <section className="mx-auto flex h-full w-full max-w-3xl flex-col bg-background">
+    <section className="flex h-full w-full flex-col bg-background">
       <Header detail={conversation.data} />
       {conversation.isPending && (
         <p role="status" className="px-4 py-6 text-muted-foreground">
@@ -43,11 +43,11 @@ export function ConversationScreen() {
 
 function Header({ detail }: Readonly<{ detail: ConversationDetail | undefined }>) {
   return (
-    <header className="flex items-center gap-2 border-b bg-card px-2 py-1 md:px-4">
+    <header className="flex min-h-14 items-center gap-2 border-b bg-card px-2 py-1 md:px-4 lg:px-6">
       <Link
         to={Route.conversations}
         aria-label={Copy.back}
-        className="grid size-11 shrink-0 place-items-center rounded-lg text-primary hover:bg-muted"
+        className="grid size-11 shrink-0 place-items-center rounded-lg hover:bg-muted lg:hidden"
       >
         <ChevronLeft className="size-6" aria-hidden="true" />
       </Link>

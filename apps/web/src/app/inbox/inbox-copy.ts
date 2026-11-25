@@ -40,6 +40,7 @@ export const InboxCopy = {
   loadFailed: 'Não conseguimos carregar as conversas. Confira a conexão e tente de novo.',
   retry: 'Tentar de novo',
   emptyFilter: 'Nenhuma conversa neste filtro.',
+  pickOne: 'Escolha uma conversa à esquerda para ler e responder.',
   unread: (count: number) => (count === 1 ? '1 mensagem nova' : `${String(count)} mensagens novas`),
   reconnecting: 'Reconectando…',
   you: 'Você: ',

@@ -5,11 +5,13 @@ import { RouterProvider } from 'react-router/dom';
 import { Toaster } from './components/ui/sonner';
 import { queryClient } from './lib/query';
 import { initSentry } from './lib/sentry';
+import { watchSystemTheme } from './lib/theme';
 import { registerServiceWorker } from './pwa';
 import { router } from './router';
 import './index.css';
 
 initSentry();
+watchSystemTheme();
 const root = document.getElementById('root');
 if (!root) throw new Error('missing #root');
 

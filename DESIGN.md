@@ -1,105 +1,96 @@
 # DESIGN.md — Consultório Aberto, painel
 
-Status: proposta aprovada na prévia (E-08, 24/11/2026); login e casca do painel construídos com estes tokens em `apps/web`. Aprovado pelo dono, com as telas de login e da casca, em 24/11/2026.
+Status: em vigor desde 25/11/2026, decisão do dono depois da crítica que deu 21/40 ao painel anterior ("kit de componentes padrão"). Substitui a direção de 24/11 ("o padrão da categoria, feito com capricho", azul-petróleo), que fica aposentada.
 
-Direção: **o padrão da categoria, feito com capricho** (escolha do dono). Régua: Nubank / Inter na clareza e no texto; WhatsApp Business na lista de conversas e nas bolhas. Quem usa esses apps sabe onde está tudo no primeiro segundo. Familiaridade vale mais que originalidade. O que é da casa fica nos detalhes: o estado de cada conversa legível de longe, os horários sempre alinhados e o texto em português direto.
+Direção: **grafite monocromático com uma cor de assinatura**, no registro de Linear, Cal.com e Vercel. Uma ferramenta de trabalho: o cinza recua, o conteúdo e os estados aparecem, e a única cor da casa tem um significado só: **o assistente está aqui**.
 
-Cena de uso: consultório de dia, luz forte, celular numa mão entre um paciente e outro. Por isso o tema claro é o padrão; o escuro segue o sistema do aparelho.
+Cena de uso: consultório de dia, luz forte, celular numa mão entre um paciente e outro; à tarde, a secretária no computador. Por isso o painel tem claro e escuro, segue o sistema por padrão e deixa escolher em "Aparência".
 
 ## Cor
 
-Estratégia: neutros levemente frios, **uma cor de marca** e cores de estado que só aparecem quando carregam significado.
+Estratégia: neutros grafite, ação em tinta (preto no claro, quase branco no escuro), **jade só onde o assistente está**, e cores de estado só quando carregam significado.
 
-| Token              | Claro     | Escuro    | Uso                                                     |
-| ------------------ | --------- | --------- | ------------------------------------------------------- |
-| `--bg`             | `#F5F7F8` | `#0E1214` | Fundo do app                                            |
-| `--surface`        | `#FFFFFF` | `#171C1F` | Listas, cartões, folhas                                 |
-| `--surface-2`      | `#EEF2F4` | `#1F2629` | Campo de texto, linha selecionada                       |
-| `--ink`            | `#13191C` | `#E8EDEF` | Texto principal                                         |
-| `--ink-2`          | `#5A676D` | `#9AA7AD` | Texto secundário, hora, trecho de mensagem              |
-| `--line`           | `#E1E7EA` | `#2A3236` | Divisórias                                              |
-| `--brand`          | `#0B6E7A` | `#4FC1CC` | Ação principal, item ativo da navegação, links          |
-| `--brand-ink`      | `#FFFFFF` | `#06282C` | Texto sobre a cor de marca                              |
-| `--brand-soft`     | `#E1F1F3` | `#163338` | Bolha do assistente, fundo de seleção                   |
-| `--attention`      | `#B8480F` | `#F29A62` | Precisa de você (conversa aguardando, pedido de humano) |
-| `--attention-soft` | `#FCEBDF` | `#3A2418` | Fundo do selo e da faixa "precisa de você"              |
-| `--approval`       | `#6A4BC4` | `#B29CF2` | Rascunho aguardando sua aprovação                       |
-| `--approval-soft`  | `#EEE9FB` | `#2A2340` | Fundo do cartão de rascunho                             |
-| `--ok`             | `#1F7A3E` | `#6BD18F` | Confirmado, conectado                                   |
-| `--danger`         | `#B42318` | `#FF8A80` | Urgência, erro, desconectado, ação destrutiva           |
-| `--danger-soft`    | `#FDE8E6` | `#3D1C1A` | Faixa de alerta                                         |
+| Token           | Claro     | Escuro    | Uso                                                            |
+| --------------- | --------- | --------- | -------------------------------------------------------------- |
+| `--bg`          | `#FAFAFA` | `#09090B` | Fundo do app                                                   |
+| `--surface`     | `#FFFFFF` | `#141417` | Listas, cartões, barra lateral, folhas                         |
+| `--surface-2`   | `#F1F1F2` | `#1C1C20` | Campo, linha selecionada, item ativo, trilho                   |
+| `--line`        | `#E4E4E7` | `#27272A` | Bordas e divisórias                                            |
+| `--line-strong` | `#D4D4D8` | `#3F3F46` | Borda de campo, borda no foco do mouse, ponto inativo          |
+| `--ink`         | `#111214` | `#F2F2F3` | Texto principal                                                |
+| `--ink-2`       | `#63636B` | `#A1A1AA` | Texto secundário, hora, trecho de mensagem                     |
+| `--action`      | `#111214` | `#F2F2F3` | Botão principal, filtro escolhido (texto `--action-ink`)       |
+| `--action-ink`  | `#FFFFFF` | `#111214` | Texto sobre `--action`                                         |
+| `--jade`        | `#00A389` | `#2BC9A8` | Marca do assistente: traço da navegação, progresso             |
+| `--jade-ink`    | `#007A66` | `#2BC9A8` | Texto em jade (rótulo "Assistente", selo)                      |
+| `--jade-soft`   | `#DDF5EF` | `#0E2E28` | Bolha do assistente, selo "Com o assistente", seleção de texto |
+| `--attention`   | `#B54708` | `#F5A05A` | Precisa de você, contador de pendências                        |
+| `--approval`    | `#6941C6` | `#B69CF7` | Rascunho aguardando aprovação                                  |
+| `--ok`          | `#067647` | `#4ED08A` | Confirmado, conectado                                          |
+| `--danger`      | `#C0251B` | `#FF8A80` | Urgência, erro, desconectado, Sair, ação destrutiva            |
 
-- O azul-petróleo é a cor de marca do Consultório Aberto (`docs/brand.md`). Fica num token só, para a troca ser uma linha.
-- Verde de WhatsApp não entra: o painel não pode parecer o WhatsApp nem ser confundido com ele.
-- Estado nunca depende só de cor (RN-55): todo selo tem texto ("Precisa de você", "Com o assistente", "Aguardando aprovação") e um ícone de forma diferente.
-- Contraste AA conferido em todos os pares de texto acima, nos dois temas.
+Cada cor de estado tem o seu fundo `-soft` (`#FEF0E1` / `#2E1E10`, `#F1ECFC` / `#231C38`, `#FDECEA` / `#3A1715`).
+
+- **Jade só onde o assistente está:** bolha do assistente, selo "Com o assistente", traço do item ativo da navegação, barra de progresso da configuração, ponto "assistente respondendo". Em nenhum outro lugar. Não é o verde do WhatsApp (`#25D366`): é mais azulado, mais escuro e nunca aparece como fundo grande.
+- **Ação em tinta:** o botão principal é preto no claro e quase branco no escuro. Um por tela.
+- **Separação real:** superfície sobre fundo sempre com borda `--line`, e no claro uma elevação leve (`--elevation`: 1–2 px de sombra com deslocamento). No escuro a borda faz o trabalho; a sombra só reforça.
+- Estado nunca depende só de cor (RN-55): todo selo tem texto e ícone de forma própria; o ponto da barra lateral vem com a frase ao lado.
+- Contraste conferido (WCAG 2.x): tinta 18,7:1 no claro e 17,8:1 no escuro; `--ink-2` 5,7:1 sobre o fundo claro e 7,2:1 sobre a superfície escura; `--jade-ink` 5,3:1 sobre branco; jade escuro 9,5:1 sobre o fundo; `--jade` claro 3,2:1 sobre branco (só em traço e barra, não em texto); atenção 4,9:1 sobre o próprio fundo; contador branco sobre atenção 5,4:1.
 
 ## Tipografia
 
-Fonte do sistema: San Francisco no iPhone, Roboto no Android, Segoe no Windows. É a mesma que o WhatsApp e os bancos usam em cada aparelho, carrega na hora e não precisa de download.
+**Geist** (variável, auto-hospedada por `@fontsource-variable/geist`, licença SIL OFL), com algarismos tabulares ligados no corpo inteiro (`font-feature-settings: 'tnum'`): horários, valores e contadores sempre alinham.
 
-`font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`
+| Token        | Tamanho / linha       | Uso                                                  |
+| ------------ | --------------------- | ---------------------------------------------------- |
+| `--text-xs`  | 13 / 18               | Hora, selo, rótulo pequeno, status da barra lateral  |
+| `--text-sm`  | 15 / 22               | Trecho de mensagem, texto secundário, filtros        |
+| `--text-md`  | 16 / 24               | Corpo, mensagens, campos (16 evita o zoom do iPhone) |
+| `--text-lg`  | 20 / 28, 600          | Título de seção, nome do passo                       |
+| `--text-xl`  | 28 / 34, 600, −0,02em | Título de tela, números de Resultados                |
+| `--text-2xl` | 40 / 44, 600, −0,03em | Números do mês no Início                             |
 
-| Token        | Tamanho / altura de linha | Peso | Uso                                                           |
-| ------------ | ------------------------- | ---- | ------------------------------------------------------------- |
-| `--text-xs`  | 12 / 16                   | 500  | Hora, rótulo de selo                                          |
-| `--text-sm`  | 14 / 20                   | 400  | Trecho de mensagem, texto secundário                          |
-| `--text-md`  | 16 / 24                   | 400  | Corpo, mensagens, campos (16 evita o zoom do iPhone ao focar) |
-| `--text-lg`  | 18 / 24                   | 600  | Nome na lista, título de seção                                |
-| `--text-xl`  | 22 / 28                   | 700  | Título de tela                                                |
-| `--text-2xl` | 28 / 34                   | 700  | Números do "Hoje"                                             |
-
-- Horários, valores e contadores sempre com `font-variant-numeric: tabular-nums`.
+- Pesos: 400 no corpo, 500 em rótulos e itens, 600 em títulos e números. Sem 800/900.
 - Hora no formato brasileiro: 15:00, ter., 05/01. Valor: R$ 180,00.
 
-## Espaço, forma e densidade
+## Layout
 
+- **Sempre largura total.** Sem coluna de 720 px no meio da tela. Margem lateral de 16 px no celular, 32 px a partir de `md`, 48 px a partir de `xl`. Só formulários e texto longo guardam uma medida de leitura (`max-w-3xl`, alinhada à esquerda): Assistente, Serviços, Conexões, Plano e uso, Assinatura, Configuração, cliente.
+- **Celular (360–390 px) primeiro:** barra inferior com cinco itens, listas de ponta a ponta, uma coluna.
+- **Computador (`md`+):** barra lateral de 256 px: nome do consultório, cartão "Configuração · X de N" enquanto houver passo pendente, navegação, e no rodapé a situação do atendimento (assistente e WhatsApp, em palavras) e "Aparência".
+- **Usar a largura (`lg`+):** Conversas em lista + conversa lado a lado (como o WhatsApp Web); Agenda abre na semana, com os dias em colunas (2 em `md`, 3 em `xl`, 4 em `2xl`); Início com os quatro números numa faixa e duas colunas a partir de `xl` (o que precisa de você e hoje / quem não agendou e resultados); Resultados em grade de números; Mais com a lista de ajustes à esquerda e a página escolhida à direita.
 - Grade de 4 px. Espaçamentos: 4, 8, 12, 16, 20, 24, 32, 48.
-- Margem lateral de 16 px no celular; conteúdo com no máximo 720 px de largura no computador, com a navegação na lateral.
-- Raio: 10 px em campos e botões, 16 px em folhas e cartões, 18 px nas bolhas, círculo nos avatares e selos.
-- Sombra só em elementos que flutuam (folha inferior, menu). Listas e cartões se separam por divisória ou fundo, não por sombra.
-- Alvo de toque mínimo de 44 × 44 px (RN-55). A linha da lista de conversas tem 72 px, como no WhatsApp.
-- Densidade média: uma informação principal por linha, no máximo duas secundárias.
+- Raio: 10 px em campos e botões, 14 px em cartões e listas, 18 px nas bolhas, círculo em avatares e selos.
 
 ## Componentes
 
-- **Navegação:** barra inferior no celular com Conversas, Agenda, Hoje e Mais. O item ativo fica na cor de marca e com rótulo. Conversas leva um contador de pendências na cor de atenção. No computador a navegação vai para a lateral.
-- **Faixa de alerta:** no topo, acima de tudo, em `--danger-soft`, com uma frase e um botão que leva à correção ("WhatsApp desconectado. Reconectar").
-- **Linha de conversa:** avatar com iniciais, nome ou telefone, trecho da última mensagem, hora e o selo de quem está com a conversa. As que precisam de você vêm primeiro, com o selo de atenção.
-- **Bolhas:** paciente à esquerda, em `--surface`. Assistente à direita, em `--brand-soft`, com o rótulo "Assistente". Você à direita, em `--brand` com texto claro, com o rótulo "Você". Sistema no centro, em pílula pequena ("Você assumiu a conversa às 14:32"). A autoria aparece no rótulo e na posição, não só na cor.
-- **Rascunho para aprovação:** cartão em `--approval-soft` acima do campo de texto, com o texto sugerido e três botões de um toque: Enviar, Editar, Descartar.
-- **Barra de controle da conversa:** fixa, com "Assumir" quando está com o assistente e "Devolver ao assistente" quando está com você.
-- **Botões:** principal cheio na cor de marca, secundário com contorno, destrutivo em `--danger` e sempre com confirmação (RN-54). Um botão principal por tela.
-- **Estados de tela (RN-53):** carregando com esqueleto no formato do conteúdo; vazio com uma frase e a próxima ação; erro com o que houve e o que fazer.
-- **Base:** shadcn/ui sobre Radix (decisão do dono, 24/11/2026). O código dos componentes fica no projeto (`apps/web/src/components/ui`), e as variáveis do shadcn apontam para estes tokens em `apps/web/src/index.css`. O tema padrão do shadcn não é usado: botão e campo com 44 px de altura e texto de 16 px; o shadcn vem com 32 px e 14 px.
-- **Ícones:** lucide-react, traço de 2 px, 24 px na barra inferior e 20 px na lateral. Sempre com rótulo de texto ao lado; ícone sozinho só com `aria-label`.
-- **Símbolo provisório:** porta entreaberta em `apps/web/src/app/brand-mark.tsx` e nos ícones do PWA, até o logo ser desenhado (`docs/brand.md`).
+- **Navegação:** Início, Conversas, Agenda, Clientes, Mais (spec 10). Item ativo em tinta, fundo `--surface-2` na lateral, e o **traço jade**: 2 px na borda de cima no celular, na borda esquerda na lateral. Conversas leva o contador de pendências em `--attention`. "Configuração" não tem aba: pertence a Mais, que fica ativo em `/configuracao`.
+- **Volta à configuração:** enquanto houver passo pendente, "Configuração · X de N" com barra jade no topo da lateral (computador), numa faixa fina sob os alertas (celular) e como primeira linha de Mais, todos levando a `/configuracao`; o Início mostra o cartão "Próximo passo: {passo}" com um botão "Continuar configuração". Tudo some quando a configuração termina.
+- **Faixa de alerta:** no topo, acima de tudo, em `--danger-soft`, com uma frase e o botão que leva à correção.
+- **Linha de conversa:** 72 px, avatar com iniciais (círculo com borda), nome, trecho, hora e selo de quem está com a conversa; a aberta fica em `--surface-2`.
+- **Bolhas:** paciente à esquerda em `--surface` com borda; assistente à direita em `--jade-soft` com rótulo "Assistente" em `--jade-ink`; você à direita em `--action` com texto `--action-ink` e rótulo "Você"; sistema no centro em pílula. Autoria por rótulo e posição, não só por cor. Largura máxima de 85% (36rem no computador).
+- **Rascunho para aprovação:** cartão em `--approval-soft` acima do campo, com Enviar, Editar, Descartar.
+- **Botões:** principal em `--action`; secundário com contorno; fantasma para Voltar e Pular; destrutivo em `--danger` com confirmação (RN-54). Um principal por tela. 44 px de altura, texto de 16 px.
+- **Filtros e escolhas:** pílulas; a escolhida em `--action`. Escolha grande (especialidade) em fichas de 48 px, a escolhida com borda e anel em tinta.
+- **Aparência:** "Sistema / Claro / Escuro", controle segmentado em Mais e no rodapé da lateral. Padrão: sistema. A escolha fica no `localStorage` (`ca-theme`) e é aplicada em `<html data-theme>` antes da pintura, por um script em `index.html`, sem piscar.
+- **Mais:** todas as linhas terminam igual: seta, ícone de link externo ou "Em breve". Sair é a última linha, em `--danger`.
+- **Números:** Início em faixa única dividida por linhas finas (40 px); Resultados em grade de linhas finas (28 px). Valor que ainda não tem amostra aparece em texto normal ("Dados insuficientes"), nunca no estilo de número grande.
+- **Estados de tela (RN-53):** carregando com esqueleto no formato do conteúdo; erro com o que houve e o que fazer; vazio com título, uma frase, a próxima ação e um desenho apagado do que vai aparecer ali, no formato de cada tela (linhas de conversa, horas do dia, linhas de cliente). Sem o molde "ícone num quadrado" repetido.
+- **Base:** shadcn/ui sobre Radix, com o código em `apps/web/src/components/ui` e as variáveis do shadcn apontando para estes tokens em `apps/web/src/index.css`.
+- **Ícones:** lucide-react, traço 1,75 na navegação, 24 px na barra inferior e 18 px na lateral. Sempre com rótulo; ícone sozinho só com `aria-label`.
+- **Superfícies do navegador:** seleção de texto em `--jade-soft`, cursor de texto em jade, barra de rolagem fina em `--line-strong`, foco com contorno em tinta.
+- **Símbolo provisório:** porta entreaberta em `apps/web/src/app/brand-mark.tsx`, em tinta, até o logo ser desenhado (`docs/brand.md`).
 
 ## Movimento
 
-- 150 a 200 ms, saída suave. Só para dar retorno: nova mensagem entrando, folha abrindo, selo mudando de estado.
+- 150 a 300 ms, saída suave. Só para dar retorno: troca de tema, barra de progresso avançando, nova mensagem, folha abrindo.
 - Retorno visível em até 100 ms a cada toque (RN-54).
 - Com "reduzir movimento" ligado, as transições viram troca direta.
 
 ## Texto
 
-Tom do Nubank: direto, segunda pessoa, frases curtas, sem jargão de software (RN-56).
+Direto, segunda pessoa, frases curtas, sem jargão de software (RN-56). Mensagem de indisponível diz por quê e o que fazer.
 
-| Em vez de                       | Escreva                                                                |
-| ------------------------------- | ---------------------------------------------------------------------- |
-| "Handoff realizado com sucesso" | "Você assumiu a conversa"                                              |
-| "Erro 500 ao sincronizar"       | "Não conseguimos falar com o Google. Tente de novo em alguns minutos." |
-| "Nenhum registro encontrado"    | "Nenhuma conversa ainda. Teste o assistente no simulador."             |
-| "Bot", "IA", "agente"           | "Assistente"                                                           |
-| "Deletar"                       | "Apagar", sempre com confirmação                                       |
+## Pendências
 
-## Evitar (RN-57)
-
-Gradiente decorativo; cartões idênticos com ícone; emoji como ícone; números de vaidade; sombra em tudo; o mesmo raio grande em todos os blocos; verde de WhatsApp; texto centralizado em telas de trabalho.
-
-## Referências
-
-- Nubank e Inter: listas de transações (ritmo da linha, hora à direita), telas de confirmação, tom do texto.
-- WhatsApp Business: lista de conversas, bolhas, campo de texto e anexos, rótulos de conversa.
-- Mobbin não foi usado (assinatura paga); as referências vêm dos próprios apps.
-- Bibliotecas animadas (Aceternity, Obsidian UI) e galerias de seção pronta (Jiro) ficam fora do painel (RN-57). Para o site (S-01), podem servir: header.design como referência de topo, Aceternity para um ou dois momentos animados, transitions.dev como referência das microinterações do inbox (aprovar, enviar, assumir), sempre com os nossos tokens e respeitando "reduzir movimento".
+- O site público (`apps/site`) ainda usa o azul-petróleo: migrar para este mundo numa etapa própria.

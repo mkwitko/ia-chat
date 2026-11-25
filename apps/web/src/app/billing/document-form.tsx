@@ -8,7 +8,7 @@ import { BillingCopy as Copy } from './billing-copy';
 const EMPTY = '';
 const Status = { badRequest: 400, forbidden: 403, conflict: 409 } as const;
 
-function onError(error: Error) {
+export function onDocumentError(error: Error) {
   const status = error instanceof ApiError ? error.status : 0;
   if (status === Status.conflict) toast.error(Copy.documentTaken);
   else if (status === Status.badRequest) toast.error(Copy.documentInvalid);
@@ -29,7 +29,7 @@ export function DocumentForm({ onSaved }: Readonly<{ onSaved?: () => void }>) {
             toast.success(Copy.documentSaved);
             onSaved?.();
           },
-          onError,
+          onError: onDocumentError,
         });
       }}
     >

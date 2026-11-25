@@ -1,4 +1,5 @@
-import { Link } from 'react-router';
+import { NavLink } from 'react-router';
+import { cn } from '@/lib/utils';
 import { conversationPath } from '@/routes';
 import { InboxState, Author, type ConversationSummary } from './inbox-api';
 import { InboxCopy, TypePreview } from './inbox-copy';
@@ -36,18 +37,21 @@ function previewOf(last: ConversationSummary['lastMessage']): string {
   return body;
 }
 
+const rowClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    'flex min-h-[72px] items-center gap-3 px-4 py-2 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
+    isActive && 'bg-muted',
+  );
+
 /** 72 px row (DESIGN.md): avatar, name, preview, time and who has the conversation. */
 export function ConversationRow({ item }: Readonly<{ item: ConversationSummary }>) {
   const name = displayName(item);
   const waiting = item.state === InboxState.needsYou || item.state === InboxState.awaitingApproval;
   return (
-    <Link
-      to={conversationPath(item.id)}
-      className="flex min-h-[72px] items-center gap-3 px-4 py-2 hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-    >
+    <NavLink to={conversationPath(item.id)} className={rowClass}>
       <span
         aria-hidden="true"
-        className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-soft font-semibold text-primary"
+        className="grid size-11 shrink-0 place-items-center rounded-full border bg-muted text-sm font-semibold text-foreground"
       >
         {initials(name)}
       </span>
@@ -71,14 +75,14 @@ export function ConversationRow({ item }: Readonly<{ item: ConversationSummary }
           <UnreadCount count={item.unreadCount} />
         </span>
       </span>
-    </Link>
+    </NavLink>
   );
 }
 
 function UnreadCount({ count }: Readonly<{ count: number }>) {
   if (count === 0) return null;
   return (
-    <span className="rounded-full bg-attention px-1.5 text-[11px] leading-[18px] font-bold text-card tabular-nums">
+    <span className="rounded-full bg-attention px-1.5 text-xs leading-5 font-semibold text-card tabular-nums">
       <span className="sr-only">{InboxCopy.unread(count)}</span>
       <span aria-hidden="true">{count}</span>
     </span>

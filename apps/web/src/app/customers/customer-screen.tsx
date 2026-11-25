@@ -3,7 +3,7 @@ import { ApiError } from '@/lib/api';
 import { conversationPath, Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen } from '../screens/screen';
+import { Screen, ScreenWidth } from '../screens/screen';
 import { Note } from '../screens/section';
 import { AppointmentsSection } from './customer-appointments';
 import { ConsentSection } from './customer-consent';
@@ -23,7 +23,10 @@ export function CustomerScreen() {
   const customer = useCustomer(id);
   const missing = customer.error instanceof ApiError && customer.error.status === NOT_FOUND;
   return (
-    <Screen title={customer.data ? customerName(customer.data) : Copy.back}>
+    <Screen
+      title={customer.data ? customerName(customer.data) : Copy.back}
+      width={ScreenWidth.form}
+    >
       <BackLink to={Route.customers} label={Copy.back} />
       {customer.isPending && <ListSkeleton />}
       {missing && <p className="px-4 py-6 md:px-0">{Copy.notFound}</p>}

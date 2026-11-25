@@ -9,7 +9,7 @@ export const OnboardingCopy = {
   progress: (index: number, total: number) => `Passo ${String(index)} de ${String(total)}`,
   back: 'Voltar',
   allDone: 'Configuração concluída. Toque num passo para revisar.',
-  documentFirst: 'Primeiro, o CPF ou CNPJ de quem atende. Vale um teste grátis por documento.',
+  documentSaved: 'CPF ou CNPJ já informado.',
   activationNeedsWhatsapp:
     'Para ativar, conecte o WhatsApp no passo 2. Os 14 dias de teste começam quando ele conecta.',
   documentRequired: 'Informe o CPF ou CNPJ antes de seguir.',
@@ -17,14 +17,8 @@ export const OnboardingCopy = {
   loadFailed: 'Não conseguimos carregar. Confira a conexão e tente de novo.',
   statusDone: 'Feito',
   statusSkipped: 'Pulado',
-  statusSoon: 'Em breve',
-  markDone: 'Marcar como feito',
-  skip: 'Pular por enquanto',
-  next: 'Concluí este passo',
-  help: 'Preciso de ajuda',
+  next: 'Continuar',
   specialtyLabel: 'Qual é a sua especialidade?',
-  specialtyHint:
-    'Com ela, aplicamos as regras da sua área e oferecemos modelos de serviços e respostas.',
   useTemplate: 'Usar modelos de exemplo',
   templateDone: (services: number, answers: number) =>
     `Criamos ${String(services)} serviços e ${String(answers)} respostas de exemplo. Edite cada um antes de ativar.`,
@@ -32,7 +26,6 @@ export const OnboardingCopy = {
   pricesForbidden:
     'Nesta especialidade o assistente não informa valores. Os modelos vêm sem preço.',
   examplesNote: 'Os valores e textos dos modelos são exemplos fictícios. Edite antes de ativar.',
-  soonTitle: 'Em breve',
   activationText:
     'O assistente começa em "aprovar antes de enviar": toda resposta vira um rascunho e nada sai sem o seu toque. Você pode mudar isso depois em Mais > Assistente.',
   activate: 'Ativar o assistente',
@@ -87,7 +80,7 @@ export const STEP_INFO: Record<Step, StepInfo> = {
   },
   [Step.google]: {
     title: 'Conectar o Google Agenda',
-    text: 'A conexão com o Google Agenda ainda não está disponível. É opcional no plano Essencial.',
+    text: 'A conexão com o Google Agenda ainda não está disponível e é opcional no plano Essencial. Toque em Continuar para seguir sem ela.',
     soon: true,
   },
   [Step.activation]: {

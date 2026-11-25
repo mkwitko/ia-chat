@@ -12,7 +12,11 @@ export function Section({ title, children }: Readonly<{ title: string; children:
 
 /** White list with dividers, edge to edge on the phone. */
 export function CardList({ children }: Readonly<{ children: ReactNode }>) {
-  return <ul className="divide-y border-y bg-card md:rounded-xl md:border">{children}</ul>;
+  return (
+    <ul className="divide-y overflow-hidden border-y bg-card md:rounded-xl md:border md:shadow-card">
+      {children}
+    </ul>
+  );
 }
 
 /** Quiet explanatory line. */

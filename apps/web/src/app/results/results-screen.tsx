@@ -6,7 +6,7 @@ import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
 import { Screen } from '../screens/screen';
 import { CardList, Note, Section } from '../screens/section';
-import { CountMetric, DurationMetric, RateMetric } from './metric';
+import { CountMetric, DurationMetric, MetricGrid, RateMetric } from './metric';
 import { Period, useResults, type ResultsView } from './results-api';
 import { ResultsCopy as Copy } from './results-copy';
 import { durationOf, rateOf } from './results-model';
@@ -48,7 +48,7 @@ function PeriodPicker({
           className={cn(
             'flex min-h-11 shrink-0 cursor-pointer items-center rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring',
             value === period
-              ? 'border-primary bg-brand-soft text-primary'
+              ? 'border-primary bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground',
           )}
         >
@@ -74,16 +74,16 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
     <div className="pb-10">
       <Note>{since ? Copy.baseline(since) : Copy.baselineNoDate}</Note>
       <Section title={Copy.conversations.title}>
-        <CardList>
+        <MetricGrid>
           <CountMetric {...Copy.conversations} count={results.conversations} />
           <CountMetric {...Copy.newContacts} count={results.newContacts} />
           <ResponseMetrics results={results} />
-        </CardList>
+        </MetricGrid>
       </Section>
       <Section title={Copy.booked.title}>
-        <CardList>
+        <MetricGrid>
           <AgendaMetrics results={results} />
-        </CardList>
+        </MetricGrid>
         <div className="pt-2">
           <Note>{Copy.requestsNote}</Note>
         </div>

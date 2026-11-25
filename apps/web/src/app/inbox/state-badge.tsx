@@ -7,8 +7,8 @@ import { StateCopy } from './inbox-copy';
 const LOOK: Record<InboxState, { icon: LucideIcon; tone: string }> = {
   [InboxState.needsYou]: { icon: Bell, tone: 'bg-attention-soft text-attention' },
   [InboxState.awaitingApproval]: { icon: FilePen, tone: 'bg-approval-soft text-approval' },
-  [InboxState.human]: { icon: UserRound, tone: 'bg-brand-soft text-primary' },
-  [InboxState.assistant]: { icon: Bot, tone: 'bg-muted text-muted-foreground' },
+  [InboxState.human]: { icon: UserRound, tone: 'bg-muted text-foreground' },
+  [InboxState.assistant]: { icon: Bot, tone: 'bg-jade-soft text-jade-ink' },
 };
 
 export function StateBadge({ state }: Readonly<{ state: InboxState }>) {

@@ -26,7 +26,7 @@ export function ChoiceList<T extends string>(props: Readonly<ChoiceListProps<T>>
       {choices.map((choice) => (
         <label
           key={choice.value}
-          className="flex cursor-pointer gap-3 rounded-xl border bg-card p-4 has-checked:border-primary has-checked:bg-brand-soft has-focus-visible:ring-3 has-focus-visible:ring-ring/50"
+          className="flex cursor-pointer gap-3 rounded-xl border bg-card p-4 has-checked:border-primary has-checked:bg-muted has-checked:ring-1 has-checked:ring-primary has-focus-visible:ring-3 has-focus-visible:ring-ring/50"
         >
           <input
             type="radio"

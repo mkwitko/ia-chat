@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
 import { BackLink } from '../screens/back-link';
-import { Screen } from '../screens/screen';
+import { Screen, ScreenWidth } from '../screens/screen';
 import { AreaField } from '../setup/fields';
 import { CommonCopy } from '../setup/setup-copy';
 import { Chat } from './chat';
@@ -33,7 +33,7 @@ const plainOf = ({ role, text }: ChatLine): SimulatedMessage => ({ role, text })
 export function SimulatorScreen() {
   const chat = useSimulation();
   return (
-    <Screen title={Copy.title}>
+    <Screen title={Copy.title} width={ScreenWidth.form}>
       <BackLink to={Route.assistant} label={CommonCopy.assistant} />
       <Notes />
       <Chat lines={chat.lines} />

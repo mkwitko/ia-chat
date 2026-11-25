@@ -65,7 +65,7 @@ export function Timeline(props: Readonly<Pick<ConversationDetail, 'messages' | '
 
 const SIDE: Record<Author, string> = {
   [Author.patient]: 'justify-self-start bg-card border',
-  [Author.assistant]: 'justify-self-end bg-brand-soft',
+  [Author.assistant]: 'justify-self-end bg-jade-soft',
   [Author.professional]: 'justify-self-end bg-primary text-primary-foreground',
   [Author.system]: 'justify-self-center bg-muted text-muted-foreground',
 };
@@ -77,17 +77,24 @@ function bodyOf({ type, text }: MessageView): string {
   return label ? Copy.mediaNote(label) : '';
 }
 
+const MUTED = 'text-muted-foreground';
+const LABEL: Record<Author, string> = {
+  [Author.patient]: MUTED,
+  [Author.assistant]: 'text-jade-ink',
+  [Author.professional]: 'opacity-80',
+  [Author.system]: MUTED,
+};
+
 function Bubble({ message }: Readonly<{ message: MessageView }>) {
-  const mine = message.author === Author.assistant || message.author === Author.professional;
   return (
-    <div className={cn('max-w-[85%] rounded-2xl px-3 py-2', SIDE[message.author])}>
-      <p className={cn('text-xs font-semibold', mine ? 'opacity-80' : 'text-muted-foreground')}>
+    <div className={cn('max-w-[85%] rounded-2xl px-3 py-2 lg:max-w-xl', SIDE[message.author])}>
+      <p className={cn('text-xs font-semibold', LABEL[message.author])}>
         {AuthorCopy[message.author]}
       </p>
       <p className="text-base break-words whitespace-pre-wrap">{bodyOf(message)}</p>
       <time
         dateTime={message.at}
-        className="mt-0.5 block text-right text-[11px] opacity-70 tabular-nums"
+        className="mt-0.5 block text-right text-xs opacity-70 tabular-nums"
       >
         {shortTime(message.at)}
       </time>

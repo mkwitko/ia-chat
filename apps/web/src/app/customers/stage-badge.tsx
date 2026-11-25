@@ -3,7 +3,7 @@ import { StageLabel } from './customers-labels';
 import { Stage } from './customers-types';
 
 // State never depends on color alone: the badge always carries its text.
-const BRAND = 'bg-brand-soft text-primary';
+const BRAND = 'bg-muted text-foreground';
 const QUIET = 'bg-muted text-muted-foreground';
 const TONE: Record<Stage, string> = {
   [Stage.newContact]: 'bg-attention-soft text-attention',

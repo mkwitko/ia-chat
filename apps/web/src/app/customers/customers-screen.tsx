@@ -1,9 +1,8 @@
-import { Users } from 'lucide-react';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
-import { EmptyState } from '../screens/empty-state';
+import { EmptyState, GhostRows } from '../screens/empty-state';
 import { CardList } from '../screens/section';
 import { Screen } from '../screens/screen';
 import { CustomerRow } from './customer-row';
@@ -57,7 +56,7 @@ function Results({ query, stage }: Readonly<{ query: string; stage: Stage | null
     return filtered ? (
       <p className="px-4 py-6 text-sm text-muted-foreground md:px-0">{Copy.emptyFilter}</p>
     ) : (
-      <EmptyState icon={Users} {...Copy.empty} />
+      <EmptyState {...Copy.empty} preview={<GhostRows rows={4} withAvatar={false} />} />
     );
   return (
     <CardList>
@@ -83,7 +82,7 @@ function FilterBar({
           className={cn(
             'flex min-h-11 shrink-0 cursor-pointer items-center rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring',
             value === option.value
-              ? 'border-primary bg-brand-soft text-primary'
+              ? 'border-primary bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground',
           )}
         >

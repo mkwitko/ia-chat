@@ -27,9 +27,9 @@ function rangeLabel(day: string, view: View): string {
 /** Day navigation, day/week switch and the two entry points: new booking and availability. */
 export function AgendaToolbar({ day, view, onChange, onNew }: Readonly<ToolbarProps>) {
   return (
-    <div className="grid gap-3 bg-card px-4 pb-3 md:bg-transparent md:px-0">
+    <div className="grid gap-3 border-b bg-card px-4 pb-3 md:mb-6 md:flex md:flex-wrap md:items-center md:border-0 md:bg-transparent md:px-0 md:pb-0">
       <DayNav day={day} view={view} onChange={onChange} />
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 md:contents">
         <ViewSwitch view={view} onChange={onChange} />
         <Button
           variant="outline"
@@ -39,14 +39,14 @@ export function AgendaToolbar({ day, view, onChange, onNew }: Readonly<ToolbarPr
         >
           {Copy.today}
         </Button>
-        <Button className="ml-auto" onClick={onNew}>
+        <Button className="ml-auto md:order-last" onClick={onNew}>
           <CalendarPlus aria-hidden="true" />
           {Copy.newBooking}
         </Button>
       </div>
       <Link
         to={Route.agendaAvailability}
-        className="flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
+        className="flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
       >
         <Settings2 className="size-4" aria-hidden="true" />
         {Copy.settings}
@@ -66,7 +66,7 @@ function DayNav({ day, view, onChange }: Readonly<Omit<ToolbarProps, 'onNew'>>) 
         <ChevronLeft aria-hidden="true" />
       </Button>
       <p
-        className="min-w-0 flex-1 text-center font-semibold first-letter:uppercase"
+        className="min-w-0 flex-1 text-center font-semibold first-letter:uppercase md:w-56 md:flex-none"
         aria-live="polite"
       >
         {rangeLabel(day, view)}
@@ -85,7 +85,7 @@ const OPTIONS = [
 
 function ViewSwitch({ view, onChange }: Readonly<Pick<ToolbarProps, 'view' | 'onChange'>>) {
   return (
-    <div role="group" aria-label={Copy.viewLabel} className="flex rounded-lg border p-0.5">
+    <div role="group" aria-label={Copy.viewLabel} className="flex rounded-lg border bg-muted p-0.5">
       {OPTIONS.map((option) => (
         <Button
           key={option.value}

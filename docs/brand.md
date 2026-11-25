@@ -48,20 +48,21 @@ Antes e depois de uma frase de venda:
 
 ## Cores
 
-As mesmas do `DESIGN.md`, aprovadas na prévia do painel. O azul-petróleo deixa de ser provisório e vira a cor de marca.
+As mesmas do `DESIGN.md`. Decisão do dono em 25/11/2026: o azul-petróleo sai; a marca passa a ser **grafite com uma cor de assinatura, o jade**.
 
 | Cor | Hex (claro / escuro) | Função | Contraste |
 |---|---|---|---|
-| Azul-petróleo | `#0B6E7A` / `#4FC1CC` | Marca, ação principal, item ativo | 5,96:1 sobre branco; 8,04:1 sobre o fundo escuro |
-| Laranja-atenção | `#B8480F` / `#F29A62` | "Precisa de você", pendências | 4,55:1 sobre o fundo de atenção; 6,62:1 no escuro |
-| Tinta | `#13191C` / `#E8EDEF` | Texto | 17,7:1 / 14,6:1 |
+| Tinta | `#111214` / `#F2F2F3` | Texto, ação principal, símbolo | 18,7:1 sobre branco / 17,8:1 sobre o fundo escuro |
+| Grafite | `#63636B` / `#A1A1AA` | Texto secundário | 5,9:1 sobre branco / 7,2:1 sobre a superfície escura |
+| Jade | `#00A389` / `#2BC9A8` | Assinatura: só onde o assistente está | traço e barra (3,2:1 sobre branco); texto em jade usa `#007A66` (5,3:1) |
+| Laranja-atenção | `#B54708` / `#F5A05A` | "Precisa de você", pendências | 4,9:1 sobre o fundo de atenção / 9,5:1 no escuro |
 
-Fica de fora o verde do WhatsApp, para não ser confundido com o próprio WhatsApp. O lilás de aprovação, o verde de confirmado e o vermelho de urgência são cores de estado do painel, não de marca.
+O jade não é o verde do WhatsApp (`#25D366`): é mais azulado e mais escuro, e nunca vira fundo grande, para não ser confundido com o próprio WhatsApp. O lilás de aprovação, o verde de confirmado e o vermelho de urgência são cores de estado do painel, não de marca.
 
 ## Tipografia
 
-- **Painel:** a fonte do sistema (San Francisco, Roboto, Segoe), conforme `DESIGN.md`. Sem licença a comprar.
-- **Logo e site:** Figtree (Google Fonts, licença SIL Open Font License, uso comercial livre), em peso 700 para o nome e 400 para o texto. Grotesca arredondada, amigável sem parecer infantil.
+- **Painel:** Geist (SIL Open Font License, auto-hospedada), com algarismos tabulares, conforme `DESIGN.md`. Sem licença a comprar.
+- **Logo e site:** Figtree (o site ainda migra para o mundo grafite e jade numa etapa própria) (Google Fonts, licença SIL Open Font License, uso comercial livre), em peso 700 para o nome e 400 para o texto. Grotesca arredondada, amigável sem parecer infantil.
 
 ## Brief do logo
 

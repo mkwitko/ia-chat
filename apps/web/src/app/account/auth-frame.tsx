@@ -46,7 +46,7 @@ export function FormAlert({ message }: Readonly<{ message: string | null }>) {
 export function FormNote({ message }: Readonly<{ message: string | null }>) {
   if (!message) return null;
   return (
-    <p role="status" className="rounded-lg bg-brand-soft px-3 py-2 text-sm">
+    <p role="status" className="rounded-lg bg-muted px-3 py-2 text-sm">
       {message}
     </p>
   );

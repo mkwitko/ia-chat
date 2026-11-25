@@ -1,25 +1,33 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/geist';
 
-/* Tokens from DESIGN.md. Dark follows the device (prefers-color-scheme), no toggle. */
-@custom-variant dark (@media (prefers-color-scheme: dark));
+/*
+ * Tokens from DESIGN.md: graphite monochrome, ink actions, and jade only where the assistant is.
+ * The theme lives on <html data-theme>, set before paint by index.html and by src/lib/theme.ts.
+ */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 :root {
-  --bg: #f5f7f8;
+  --bg: #fafafa;
   --surface: #ffffff;
-  --surface-2: #eef2f4;
-  --ink: #13191c;
-  --ink-2: #5a676d;
-  --line: #e1e7ea;
-  --brand: #0b6e7a;
-  --brand-ink: #ffffff;
-  --brand-soft: #e1f1f3;
-  --attention: #b8480f;
-  --attention-soft: #fcebdf;
-  --approval: #6a4bc4;
-  --approval-soft: #eee9fb;
-  --ok: #1f7a3e;
-  --danger: #b42318;
-  --danger-soft: #fde8e6;
+  --surface-2: #f1f1f2;
+  --ink: #111214;
+  --ink-2: #63636b;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --action: #111214;
+  --action-ink: #ffffff;
+  --jade: #00a389;
+  --jade-ink: #007a66;
+  --jade-soft: #ddf5ef;
+  --attention: #b54708;
+  --attention-soft: #fef0e1;
+  --approval: #6941c6;
+  --approval-soft: #f1ecfc;
+  --ok: #067647;
+  --danger: #c0251b;
+  --danger-soft: #fdecea;
+  --elevation: 0 1px 2px rgb(17 18 20 / 0.05), 0 1px 1px rgb(17 18 20 / 0.03);
   --radius: 10px;
   color-scheme: light;
 
@@ -30,56 +38,61 @@
   --card-foreground: var(--ink);
   --popover: var(--surface);
   --popover-foreground: var(--ink);
-  --primary: var(--brand);
-  --primary-foreground: var(--brand-ink);
+  --primary: var(--action);
+  --primary-foreground: var(--action-ink);
   --secondary: var(--surface-2);
   --secondary-foreground: var(--ink);
   --muted: var(--surface-2);
   --muted-foreground: var(--ink-2);
-  --accent: var(--brand-soft);
+  --accent: var(--surface-2);
   --accent-foreground: var(--ink);
   --destructive: var(--danger);
   --border: var(--line);
-  --input: var(--line);
-  --ring: var(--brand);
+  --input: var(--line-strong);
+  --ring: var(--ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0e1214;
-    --surface: #171c1f;
-    --surface-2: #1f2629;
-    --ink: #e8edef;
-    --ink-2: #9aa7ad;
-    --line: #2a3236;
-    --brand: #4fc1cc;
-    --brand-ink: #06282c;
-    --brand-soft: #163338;
-    --attention: #f29a62;
-    --attention-soft: #3a2418;
-    --approval: #b29cf2;
-    --approval-soft: #2a2340;
-    --ok: #6bd18f;
-    --danger: #ff8a80;
-    --danger-soft: #3d1c1a;
-    color-scheme: dark;
-  }
+[data-theme='dark'] {
+  --bg: #09090b;
+  --surface: #141417;
+  --surface-2: #1c1c20;
+  --ink: #f2f2f3;
+  --ink-2: #a1a1aa;
+  --line: #27272a;
+  --line-strong: #3f3f46;
+  --action: #f2f2f3;
+  --action-ink: #111214;
+  --jade: #2bc9a8;
+  --jade-ink: #2bc9a8;
+  --jade-soft: #0e2e28;
+  --attention: #f5a05a;
+  --attention-soft: #2e1e10;
+  --approval: #b69cf7;
+  --approval-soft: #231c38;
+  --ok: #4ed08a;
+  --danger: #ff8a80;
+  --danger-soft: #3a1715;
+  --elevation: 0 0 0 1px rgb(255 255 255 / 0.02), 0 1px 2px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
 }
 
 @theme inline {
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --text-xs: 12px;
-  --text-xs--line-height: 16px;
-  --text-sm: 14px;
-  --text-sm--line-height: 20px;
+  --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Scale 13/15/16/20/28/40 (DESIGN.md). */
+  --text-xs: 13px;
+  --text-xs--line-height: 18px;
+  --text-sm: 15px;
+  --text-sm--line-height: 22px;
   --text-base: 16px;
   --text-base--line-height: 24px;
-  --text-lg: 18px;
-  --text-lg--line-height: 24px;
-  --text-xl: 22px;
-  --text-xl--line-height: 28px;
-  --text-2xl: 28px;
-  --text-2xl--line-height: 34px;
+  --text-lg: 20px;
+  --text-lg--line-height: 28px;
+  --text-xl: 28px;
+  --text-xl--line-height: 34px;
+  --text-xl--letter-spacing: -0.02em;
+  --text-2xl: 40px;
+  --text-2xl--line-height: 44px;
+  --text-2xl--letter-spacing: -0.03em;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -99,6 +112,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-line-strong: var(--line-strong);
+  --color-jade: var(--jade);
+  --color-jade-ink: var(--jade-ink);
+  --color-jade-soft: var(--jade-soft);
   --color-attention: var(--attention);
   --color-attention-soft: var(--attention-soft);
   --color-approval: var(--approval);
@@ -106,12 +123,13 @@
   --color-ok: var(--ok);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --color-brand-soft: var(--brand-soft);
+
+  --shadow-card: var(--elevation);
 
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: var(--radius);
-  --radius-xl: 16px;
+  --radius-xl: 14px;
   --radius-2xl: 18px;
 }
 
@@ -124,15 +142,24 @@
   #root {
     height: 100%;
   }
-  h1 {
-    @apply font-bold;
-  }
+  h1,
   h2 {
     @apply font-semibold;
+    text-wrap: balance;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: 'tnum' 1;
     -webkit-tap-highlight-color: transparent;
+    caret-color: var(--jade);
+  }
+  ::selection {
+    background: var(--jade-soft);
+    color: var(--ink);
+  }
+  * {
+    scrollbar-color: var(--line-strong) transparent;
+    scrollbar-width: thin;
   }
   @media (prefers-reduced-motion: reduce) {
     *,

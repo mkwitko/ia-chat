@@ -26,7 +26,7 @@ function Bubble({ line }: Readonly<{ line: ChatLine }>) {
     <div
       className={cn(
         'max-w-[85%] rounded-2xl px-3 py-2',
-        patient ? 'justify-self-start border bg-card' : 'justify-self-end bg-brand-soft',
+        patient ? 'justify-self-start border bg-card' : 'justify-self-end bg-jade-soft',
       )}
     >
       <p className="text-xs font-semibold text-muted-foreground">
