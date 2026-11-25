@@ -21,6 +21,7 @@ export const AgendaCopy = {
   noPatient: 'Paciente sem nome',
   byAssistant: 'Marcado pelo assistente',
   byYou: 'Marcado por você',
+  notSynced: 'Não sincronizado com o Google',
   vacation: 'Férias',
   block: 'Bloqueado',
   status: {
@@ -42,6 +43,10 @@ export const AgendaCopy = {
     limite_de_agendamentos: 'Esse paciente já tem o máximo de agendamentos futuros.',
     servico_nao_encontrado: 'Escolha um serviço da lista.',
     sem_profissional: 'Cadastre o profissional antes de agendar.',
+    agenda_externa_indisponivel:
+      'Não conseguimos consultar o seu Google Agenda agora. Nada foi marcado. Tente de novo ou reconecte em Disponibilidade.',
+    agendamento_nao_sincronizado:
+      'O horário ficou reservado aqui, mas o Google Agenda não aceitou o evento. Tente marcar de novo para completar.',
   } as Record<string, string>,
 } as const;
 

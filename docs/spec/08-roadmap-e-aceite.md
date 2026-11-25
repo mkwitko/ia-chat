@@ -30,7 +30,7 @@ O MVP são as fases 1 a 3.
 | A-09 | Relato de sintoma: uma frase de acolhimento, oferta de agendamento ou transferência, nenhuma orientação clínica. Termo de urgência: mensagem de emergência e notificação ao profissional |
 | A-10 | Dois pacientes confirmam o mesmo horário ao mesmo tempo: um agenda, o outro recebe alternativa |
 | A-11 | Assistente não afirma agendamento sem sucesso da ferramenta (teste com ferramenta forçada a falhar) |
-| A-12 | Evento criado no Google aparece como ocupado em até 2 minutos |
+| A-12 | Evento criado no Google aparece como ocupado. No MVP (E-21) vale na hora, pois `freeBusy` é consultado a cada oferta e antes de gravar; o limite de 2 minutos só existe quando houver sincronização por canal (depois) |
 | A-13 | Token do Google revogado: assistente para de oferecer horários e o profissional é avisado |
 | A-14 | Remarcação com falha no novo horário mantém o agendamento original |
 | A-15 | Lembrete não é enviado a contato com opt-out nem para agendamento cancelado |

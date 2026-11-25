@@ -1,11 +1,20 @@
 import { addDays } from '@app/core';
-import { AppointmentStatus, dayBounds, loadScope, localDayRange, slotsIn, type Tx } from '@app/db';
+import {
+  AgendaFailure,
+  AppointmentStatus,
+  dayBounds,
+  loadScope,
+  localDayRange,
+  slotsIn,
+  type Tx,
+} from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
 import { requireTenant } from '../auth/tenant-guard.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { notFound, tenantOf } from '../setup/guarded.ts';
+import { calendarOf } from './booking-routes.ts';
 import { daySchema, toLocalDate } from './schemas.ts';
 
 // Spec 10, "Agenda": what the day and week views show, the free slots a tap books, and the
@@ -75,6 +84,7 @@ async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date })
       endsAt: row.endsAt,
       status: row.status,
       createdBy: row.createdBy,
+      calendarSync: row.calendarSync,
       serviceId: row.serviceId,
       serviceName: row.service.name,
       patientName: row.contact.name,
@@ -87,23 +97,34 @@ async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date })
 async function freeSlots(request: FastifyRequest, reply: FastifyReply) {
   const query = slotsQuery.safeParse(request.query);
   if (!query.success) return invalid(reply);
-  const slots = await tenantOf(request).withTenant(async (tx) => {
-    if ((await tx.professional.count()) === 0) return [];
-    const scope = await loadScope(tx);
-    const service = await tx.service.findFirst({
-      where: { id: query.data.serviceId, active: true },
+  const tenant = tenantOf(request);
+  const calendar = await calendarOf(request, tenant);
+  const slots = await tenant
+    .withTenant(async (tx) => {
+      if ((await tx.professional.count()) === 0) return [];
+      const scope = await loadScope(tx);
+      const service = await tx.service.findFirst({
+        where: { id: query.data.serviceId, active: true },
+      });
+      if (!service) return null;
+      const { start, end } = dayBounds(toLocalDate(query.data.day), scope.timezone);
+      const now = new Date();
+      return slotsIn(tx, {
+        ...scope,
+        durationMinutes: service.durationMinutes,
+        calendar,
+        from: start > now ? start : now,
+        to: end,
+        now,
+      });
+    })
+    .catch((error: unknown) => {
+      // Google could not be read: no slots are offered (A-13).
+      if (error instanceof AgendaFailure) return error;
+      throw error;
     });
-    if (!service) return null;
-    const { start, end } = dayBounds(toLocalDate(query.data.day), scope.timezone);
-    const now = new Date();
-    return slotsIn(tx, {
-      ...scope,
-      durationMinutes: service.durationMinutes,
-      from: start > now ? start : now,
-      to: end,
-      now,
-    });
-  });
+  if (slots instanceof AgendaFailure)
+    return reply.code(HttpStatus.conflict).send({ error: slots.code });
   if (!slots) return notFound(reply);
   return { slots: slots.map(({ start, end }) => ({ startsAt: start, endsAt: end })) };
 }

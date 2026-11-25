@@ -1,8 +1,9 @@
 import { aiConfigured, aiEnvSchema, createEnvGateway, startTracing } from '@app/ai';
 import { pushEnvSchema, vapidFrom } from '../notify/push.ts';
 import { createChannelSender } from '@app/channels';
-import { NodeEnv } from '@app/core';
+import { NodeEnv, googleCalendarConfig, googleCalendarEnvSchema } from '@app/core';
 import {
+  createCalendarResolver,
   DRAFT_REMINDER_QUEUE,
   HANDOFF_REMINDER_QUEUE,
   TURN_QUEUE,
@@ -27,7 +28,8 @@ const turnJob = z.object({
 });
 const workerEnvSchema = aiEnvSchema
   .extend({ META_ACCESS_TOKEN: z.string().min(1).optional() })
-  .extend(pushEnvSchema.shape);
+  .extend(pushEnvSchema.shape)
+  .extend(googleCalendarEnvSchema.shape);
 
 interface TurnWiring {
   boss: PgBoss;
@@ -86,7 +88,12 @@ interface DepsSources {
 function turnDeps({ db, boss, notifier, alert, env, nodeEnv, log }: DepsSources): TurnDeps {
   const gateway = createEnvGateway({ db, env, nodeEnv });
   return {
-    respond: createConversationAgent({ db, gateway, pushEnabled: vapidFrom(env) !== null }),
+    respond: createConversationAgent({
+      db,
+      gateway,
+      pushEnabled: vapidFrom(env) !== null,
+      ...calendarDeps({ db, env, alert }),
+    }),
     alert,
     notify: (input) => {
       // Fire and forget: a failing push must never fail the turn.
@@ -104,6 +111,12 @@ function turnDeps({ db, boss, notifier, alert, env, nodeEnv, log }: DepsSources)
       log: log.info,
     }),
   };
+}
+
+/** E-21: the tenant's Google Calendar, only when the credentials and the token key are set. */
+function calendarDeps({ db, env, alert }: Pick<DepsSources, 'db' | 'env' | 'alert'>) {
+  const config = googleCalendarConfig(env);
+  return config ? { calendar: createCalendarResolver({ db, config, alert }) } : {};
 }
 
 /** RF-36 and RF-13: a delayed job per turn; the consumer checks it still applies. */

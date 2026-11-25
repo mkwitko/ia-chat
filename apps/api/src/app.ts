@@ -8,6 +8,8 @@ import { registerAssistantSettingsRoutes } from './assistant/settings-routes.ts'
 import { createAuth, type Auth } from './auth/auth.ts';
 import { registerAgendaRoutes } from './agenda/register.ts';
 import { registerAuthRoutes } from './auth/routes.ts';
+import { registerCalendarRoutes } from './calendar/routes.ts';
+import { setupCalendar } from './calendar/setup.ts';
 import type { HealthDeps } from './health/health-routes.ts';
 import { fastifyObservability, setupObservability } from './observability.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
@@ -56,6 +58,8 @@ export interface AppDeps extends HealthDeps {
   verifyTurnstile?: TurnstileVerifier;
   /** Test seam; defaults to log + Sentry + ops_events. */
   alert?: Alert;
+  /** Test seam: the `fetch` used for Google (OAuth and Calendar). */
+  calendarFetch?: typeof fetch;
 }
 
 export function buildApp(deps: AppDeps): FastifyInstance {
@@ -63,6 +67,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   const app = Fastify(fastifyObservability(env));
   app.decorate('db', db);
   setupObservability(app, deps);
+  setupCalendar(app, deps);
   app.decorate('operatorEmails', env.OPERATOR_EMAILS);
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
@@ -104,4 +109,5 @@ function registerSettingsRoutes(app: FastifyInstance): void {
   registerToneRoutes(app);
   registerUsageRoutes(app);
   registerAgendaRoutes(app);
+  registerCalendarRoutes(app);
 }

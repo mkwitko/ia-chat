@@ -1,6 +1,8 @@
 export { availabilityTool } from './agenda-availability.ts';
 export {
   appointmentOutput,
+  calendarOf,
+  needsProfessional,
   confirmationError,
   failure,
   findService,

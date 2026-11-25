@@ -10,6 +10,8 @@ export const AlertEvent = {
   turnAborted: 'turn_aborted',
   queueError: 'queue_error',
   jobFailed: 'job_failed',
+  /** Google Calendar token revoked or expired for good: the tenant must reconnect (E-21, A-13). */
+  calendarDisconnected: 'calendar_disconnected',
 } as const;
 export type AlertEvent = (typeof AlertEvent)[keyof typeof AlertEvent];
 

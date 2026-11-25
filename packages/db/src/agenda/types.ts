@@ -1,3 +1,5 @@
+import type { CalendarSyncState } from '../../generated/prisma/enums.ts';
+
 // Business outcomes of the agenda (spec 05). The codes are what the assistant tools return.
 
 export const AgendaError = {
@@ -8,6 +10,10 @@ export const AgendaError = {
   tooLateToCancel: 'cancelamento_fora_do_prazo',
   limitReached: 'limite_de_agendamentos',
   noProfessional: 'sem_profissional',
+  /** Google Calendar could not be read: nothing is offered or booked (spec 05, A-13). */
+  calendarUnavailable: 'agenda_externa_indisponivel',
+  /** Booked here, but Google rejected the event: not confirmed to the patient. */
+  notSynced: 'agendamento_nao_sincronizado',
 } as const;
 export type AgendaError = (typeof AgendaError)[keyof typeof AgendaError];
 
@@ -23,6 +29,7 @@ export class AgendaFailure extends Error {
 }
 
 export interface AppointmentView {
+  calendarSync: CalendarSyncState;
   id: string;
   startsAt: Date;
   endsAt: Date;

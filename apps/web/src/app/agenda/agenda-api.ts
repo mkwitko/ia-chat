@@ -8,6 +8,7 @@ export const TimeOffKind = { block: 'block', vacation: 'vacation' } as const;
 export type TimeOffKind = (typeof TimeOffKind)[keyof typeof TimeOffKind];
 
 export const CreatedBy = { ai: 'ai', human: 'human' } as const;
+export const CalendarSync = { failed: 'failed' } as const;
 
 export interface AppointmentItem {
   id: string;
@@ -15,6 +16,8 @@ export interface AppointmentItem {
   endsAt: string;
   status: string;
   createdBy: string;
+  /** `failed`: the Google event was not written (E-21). */
+  calendarSync: string;
   serviceId: string;
   serviceName: string;
   patientName: string | null;

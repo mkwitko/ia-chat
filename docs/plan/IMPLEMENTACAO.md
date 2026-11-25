@@ -128,7 +128,7 @@ MVP = Fases 1 a 3. Fase 0 corre em paralelo desde já.
 |---|---|---|
 | E-19 | `availableSlots` como função pura | Testes cobrem fuso, virada de dia, bloqueio, serviço maior que a janela |
 | E-20 | Agendamentos com exclusion constraint; ferramentas agendar, remarcar, cancelar com confirmação | A-10, A-11, A-14 |
-| E-21 | Google Calendar: OAuth, escrita, leitura por notificação e sincronização incremental, renovação de canais | A-12, A-13 |
+| E-21 | Google Calendar (MVP): OAuth, calendário escolhido, `freeBusy` na oferta e antes de gravar, evento com id determinístico, token revogado. Watch e `syncToken` ficam para depois | A-13 (A-12 adiado com a sincronização) |
 | E-22 | Templates, confirmação e lembrete em dois tempos (RF-47); opt-out | A-15 |
 | E-22b | Modo férias (RF-14) e agenda do dia seguinte para o profissional (RF-15) | Em férias, nenhum horário do período é oferecido; o resumo chega no horário configurado |
 | E-23 | Painel: agenda, disponibilidade, bloqueios, agendamento manual | Agendamento manual respeita as mesmas regras |

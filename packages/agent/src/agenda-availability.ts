@@ -6,11 +6,22 @@ import {
   pickSpread,
   zonedToUtc,
 } from '@app/core';
-import { loadScope, recordOffers, slotsIn, vacationReturn, type Tx } from '@app/db';
+import {
+  AgendaFailure,
+  loadScope,
+  recordOffers,
+  slotsIn,
+  vacationReturn,
+  type CalendarLink,
+  type Tx,
+} from '@app/db';
 import { tool } from 'ai';
 import * as z from 'zod';
 import {
+  calendarOf,
+  failure,
   findService,
+  needsProfessional,
   serviceMissing,
   slotOutput,
   vacationOutput,
@@ -32,9 +43,31 @@ export function availabilityTool(context: OfferContext, record = true) {
       a_partir_de: z.iso.date().describe('AAAA-MM-DD, no fuso do consultório'),
       periodo: z.enum(Object.values(Period)).optional(),
     }),
-    execute: (query) =>
-      context.db.withTenant(context.tenantId, (tx) => offerSlots(tx, { context, record }, query)),
+    execute: (query) => offered(context, { record, query }),
   });
+}
+
+/** An unreadable calendar offers nothing and hands the patient to the professional (A-13). */
+async function offered(
+  context: OfferContext,
+  { record, query }: { record: boolean; query: AvailabilityQuery },
+) {
+  const calendar = await calendarOf(context);
+  try {
+    return await context.db.withTenant(context.tenantId, (tx) =>
+      offerSlots(tx, { context, record, calendar }, query),
+    );
+  } catch (error) {
+    if (!(error instanceof AgendaFailure) || !needsProfessional(error.code)) throw error;
+    if (context.effects) context.effects.handoff = true;
+    return failure(error.code);
+  }
+}
+
+interface OfferRun {
+  context: OfferContext;
+  record: boolean;
+  calendar: CalendarLink | undefined;
 }
 
 interface AvailabilityQuery {
@@ -45,7 +78,7 @@ interface AvailabilityQuery {
 
 async function offerSlots(
   tx: Tx,
-  { context, record }: { context: OfferContext; record: boolean },
+  { context, record, calendar }: OfferRun,
   query: AvailabilityQuery,
 ) {
   const { conversationId, now } = context;
@@ -59,6 +92,7 @@ async function offerSlots(
   const slots = await slotsIn(tx, {
     ...scope,
     durationMinutes: service.durationMinutes,
+    calendar,
     from,
     to,
     now,
