@@ -1,10 +1,10 @@
-import { ChevronRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { MoreCopy } from '@/copy';
 import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
 import { OperatorLink } from '../operator/operator-notices';
+import { MoreItemLink } from './more-item-link';
 import { Screen } from './screen';
 
 /** "Mais": settings out of the daily path (RN-52). Items become links as their screens land. */
@@ -26,14 +26,11 @@ export function MoreScreen() {
           );
           return (
             <li key={item.label}>
-              {'to' in item ? (
-                <Link to={item.to} className="flex min-h-16 items-center gap-3 px-4 hover:bg-muted">
-                  {text}
-                  <ChevronRight className="size-5 text-muted-foreground" aria-hidden="true" />
-                </Link>
-              ) : (
-                <div className="flex min-h-16 items-center gap-3 px-4">{text}</div>
-              )}
+              <MoreItemLink
+                text={text}
+                to={'to' in item ? item.to : undefined}
+                helpLink={'helpLink' in item}
+              />
             </li>
           );
         })}
