@@ -6,7 +6,7 @@
 
 1.1. **Controlador:** o Cliente identificado no cadastro do Consultório Aberto ("Cliente").
 
-1.2. **Operador:** Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, [ENDEREÇO] ("Operador"). Encarregado: Mauricio de Oliveira Kwitko, [E-MAIL DO ENCARREGADO].
+1.2. **Operador:** Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, [ENDEREÇO] ("Operador"). Encarregado: Mauricio de Oliveira Kwitko, mauriciokwt@gmail.com.
 
 1.3. Este contrato faz parte dos [Termos de Uso](termos-de-uso.md) e prevalece sobre eles no que trata de dados pessoais dos pacientes.
 

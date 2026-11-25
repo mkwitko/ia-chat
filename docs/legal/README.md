@@ -20,8 +20,8 @@ Dados da empresa: Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, também 
 
 Marcadores ainda abertos nos textos (preencher e remover daqui):
 
-- `[ENDEREÇO]`, `[E-MAIL DE CONTATO]`, `[E-MAIL DO ENCARREGADO]`: Termos, Política, Contrato de Operador e termo do piloto.
-- `[CIDADE DO FORO]`: Termos de Uso, cláusula 18.2.
+- `[ENDEREÇO]`, `mauriciokwt@gmail.com`, `mauriciokwt@gmail.com`: Termos, Política, Contrato de Operador e termo do piloto.
+- `Florianópolis (SC)`: Termos de Uso, cláusula 18.2.
 - `[PROVEDOR DE HOSPEDAGEM]` e `[PROVEDOR DE E-MAIL]` (e `[LOCAL DO PROVEDOR]`): `suboperadores.md`, quando os contratos forem fechados.
 - Valor do profissional adicional do plano Clínica: Termos, cláusula 5.1 (hoje remete à página de preços).
 - Valores adotados por padrão, sem fonte na especificação, para ajustar se o dono quiser: reajuste anual pelo IPCA (7.3), multa de 2% e juros de 1% ao mês (8.5), suporte em dias úteis das 9h às 18h (13.4), backups eliminados em até 35 dias (contrato de operador 12.2), registros de auditoria por 12 meses (Política).

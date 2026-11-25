@@ -16,7 +16,7 @@ b) **visitantes do site** e quem entra na lista de espera.
 
 ## 2. Encarregado
 
-2.1. Encarregado pelo tratamento de dados pessoais: Mauricio de Oliveira Kwitko, [E-MAIL DO ENCARREGADO].
+2.1. Encarregado pelo tratamento de dados pessoais: Mauricio de Oliveira Kwitko, mauriciokwt@gmail.com.
 
 ## 3. Dados que tratamos
 

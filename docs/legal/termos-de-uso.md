@@ -6,7 +6,7 @@
 
 1.1. O Consultório Aberto é um serviço oferecido por Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, com sede em [ENDEREÇO] ("nós").
 
-1.2. Contato: [E-MAIL DE CONTATO]. Encarregado pelo tratamento de dados pessoais: Mauricio de Oliveira Kwitko, [E-MAIL DO ENCARREGADO].
+1.2. Contato: mauriciokwt@gmail.com. Encarregado pelo tratamento de dados pessoais: Mauricio de Oliveira Kwitko, mauriciokwt@gmail.com.
 
 ## 2. O que é o serviço
 
@@ -165,7 +165,7 @@ h) não tentar acessar dados de outros clientes, contornar limites técnicos ou 
 
 13.3. Manutenções planejadas são avisadas com pelo menos 48 horas e feitas, quando possível, fora do horário comercial.
 
-13.4. Suporte por e-mail [E-MAIL DE CONTATO], em dias úteis, das 9h às 18h (horário de Brasília). Meta de primeira resposta: 1 dia útil.
+13.4. Suporte por e-mail mauriciokwt@gmail.com, em dias úteis, das 9h às 18h (horário de Brasília). Meta de primeira resposta: 1 dia útil.
 
 13.5. A meta da cláusula 13.1 não gera multa nem crédito automático.
 
@@ -211,4 +211,4 @@ e) lucros cessantes, perda de clientes ou de agendamentos, salvo dolo ou culpa g
 
 18.1. Estes Termos seguem a lei brasileira.
 
-18.2. Fica eleito o foro da comarca de [CIDADE DO FORO], salvo quando a lei garantir ao Cliente o foro do seu domicílio.
+18.2. Fica eleito o foro da comarca de Florianópolis (SC), salvo quando a lei garantir ao Cliente o foro do seu domicílio.

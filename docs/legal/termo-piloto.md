@@ -33,7 +33,7 @@ Marque o que autoriza. Cada item é independente; posso autorizar um e não outr
 
 ## 5. Revogação
 
-5.1. Posso **revogar este consentimento a qualquer momento**, no todo ou em parte, por escrito para [E-MAIL DE CONTATO], sem custo e sem justificar.
+5.1. Posso **revogar este consentimento a qualquer momento**, no todo ou em parte, por escrito para mauriciokwt@gmail.com, sem custo e sem justificar.
 
 5.2. Após a revogação, o Consultório Aberto deixa de usar o material em até 10 dias úteis e remove o que estiver sob seu controle (site, redes, materiais). Material já impresso ou já distribuído a terceiros antes da revogação não pode ser recolhido.
 
@@ -43,7 +43,7 @@ Marque o que autoriza. Cada item é independente; posso autorizar um e não outr
 
 ## 7. Dados pessoais
 
-7.1. Meus dados neste termo são tratados conforme a [Política de Privacidade](politica-de-privacidade.md). Posso exercer meus direitos pelo e-mail [E-MAIL DO ENCARREGADO].
+7.1. Meus dados neste termo são tratados conforme a [Política de Privacidade](politica-de-privacidade.md). Posso exercer meus direitos pelo e-mail mauriciokwt@gmail.com.
 
 ## 8. Assinatura
 
