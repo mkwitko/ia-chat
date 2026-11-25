@@ -114,7 +114,7 @@ Observação de documentação: `docs/spec/README.md` tem a hipótese H-23 dupli
 | Crédito no gateway de IA | Bateria final e A-11 | E-07, E-20 |
 | Só código | Funil, origem, consentimento, perfil, horário no prompt, Home, Resultados, lista de espera, indicação, relatórios | M-xx |
 
-Para o piloto, o caminho mais curto sem conta externa é o adaptador por QR code (E-09b) com agenda interna. Ele depende do termo de ciência, que é jurídico, mas não da Meta nem do Google.
+Para o piloto, o canal padrão é o oficial com Coexistence (decisão de 25/11/2026: os dois canais ficam, o QR code é alternativo e opcional, ver `docs/spec/11-pequenos-negocios.md`). O caminho mais curto sem conta externa é o adaptador por QR code (E-09b) com agenda interna. Ele depende do termo de ciência, que é jurídico, mas não da Meta nem do Google.
 
 ## Riscos de dado de saúde encontrados
 

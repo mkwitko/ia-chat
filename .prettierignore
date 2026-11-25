@@ -5,3 +5,4 @@ CLAUDE.md
 *.astro
 apps/site/dist/
 apps/site/.astro/
+founder/
