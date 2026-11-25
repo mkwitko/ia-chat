@@ -133,4 +133,22 @@ describe('AI gateway', () => {
     );
     expect(answers).toEqual({ urgent: null });
   });
+
+  it('judge records usage with only the ids, even when the caller passes a whole turn', async () => {
+    const tenantId = await newTenant();
+    const judgeProvider: JudgeProvider = {
+      ask: () =>
+        Promise.resolve({
+          answers: { urgent: { kind: 'noul', probability: 0.1 } },
+          usage: { inputTokens: 100, outputTokens: 10 },
+        }),
+    };
+    const turn = { tenantId, messages: [{ text: 'conteúdo do paciente' }] };
+    await gateway({ judgeProvider }).judge(turn, {
+      state: { text: 'oi' },
+      questions: { urgent: { kind: 'noul', instructions: 'Urgente?' } },
+    });
+    const rows = await db.withTenant(tenantId, (tx) => tx.aiUsage.findMany());
+    expect(rows).toHaveLength(1);
+  });
 });
