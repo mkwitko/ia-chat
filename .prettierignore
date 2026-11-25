@@ -2,3 +2,6 @@ docs/
 pnpm-lock.yaml
 CLAUDE.md
 .impeccable/
+*.astro
+apps/site/dist/
+apps/site/.astro/

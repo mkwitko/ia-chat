@@ -1,0 +1,104 @@
+---
+import Base from '../layouts/Base.astro';
+import PlansTable from '../components/PlansTable.astro';
+import Waitlist from '../components/Waitlist.astro';
+import { PLANS, WARNING_PERCENT } from '@app/core';
+import { META_ESTIMATE_DATE, META_PROFILES } from '../lib/meta-estimate.ts';
+import { formatBrl, formatCount } from '../lib/money.ts';
+import { FEATURED_PLAN, SETUP_FEE_CENTS } from '../lib/plans-view.ts';
+
+const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
+---
+
+<Base
+  title="Preços"
+  description="Mensalidade com franquia de conversas, valor do excedente e estimativa do custo da Meta para o seu volume."
+  path="/precos"
+>
+  <section class="hero">
+    <p class="eyebrow">Preços</p>
+    <h1>Mensalidade com franquia de conversas</h1>
+    <p class="lede prose">
+      Uma conversa é a troca de mensagens com um paciente sem pausa maior que 24 horas. Não importa
+      quantas mensagens ela tenha.
+    </p>
+  </section>
+
+  <section class="block" aria-label="Planos">
+    <PlansTable />
+    <p class="muted small">
+      Valores de lançamento, em validação com os primeiros profissionais. Itens marcados "em breve"
+      ainda estão em desenvolvimento.
+    </p>
+  </section>
+
+  <section class="block prose" aria-labelledby="franquia">
+    <h2 id="franquia">Franquia e excedente</h2>
+    <p>
+      Com {String(WARNING_PERCENT)}% da franquia usada, você recebe um aviso no painel e no WhatsApp.
+      Passou de 100%, o atendimento continua e cada conversa a mais entra na fatura seguinte, por
+      exemplo {overage} no plano Agenda. Você define um teto para o excedente: ao atingi-lo, o
+      assistente avisa o paciente que você responde em breve e notifica você.
+    </p>
+  </section>
+
+  <section class="block prose" aria-labelledby="implantacao">
+    <h2 id="implantacao">Implantação, paga uma vez</h2>
+    <p>
+      <strong class="num">{formatBrl(SETUP_FEE_CENTS)}</strong>. Deixamos o assistente pronto com
+      você: serviços, valores e horários, endereço, tom de voz, conexão do WhatsApp e da agenda
+      Google, e teste no simulador antes de atender pacientes.
+    </p>
+  </section>
+
+  <section class="block" aria-labelledby="meta">
+    <h2 id="meta">Custo da Meta, pago por você</h2>
+    <p class="prose">
+      As mensagens que o assistente envia ativamente pelo WhatsApp oficial, como lembretes, têm
+      custo da Meta, cobrado direto no seu cartão. Respostas enviadas por você no celular não são
+      cobradas. Estimativa para três perfis de uso, em {META_ESTIMATE_DATE}:
+    </p>
+    <div class="scroll">
+      <table>
+        <caption class="skip">Estimativa mensal do custo da Meta por perfil de uso</caption>
+        <thead>
+          <tr>
+            <th scope="col">Perfil</th>
+            <th scope="col">Conversas</th>
+            <th scope="col">Agendamentos</th>
+            <th scope="col">Meta, por mês</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            META_PROFILES.map((profile) => (
+              <tr>
+                <th scope="row">{profile.name}</th>
+                <td class="num">{formatCount(profile.conversations)}</td>
+                <td class="num">{formatCount(profile.appointments)}</td>
+                <td class="num">{formatBrl(profile.metaCents)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="muted small prose">
+      Estimativa, não é cotação: depende da tabela da Meta, que pode mudar, e do seu volume real.
+      No cadastro mostramos a estimativa para o volume que você informar.
+    </p>
+  </section>
+
+  <section class="block prose" aria-labelledby="extras">
+    <h2 id="extras">Módulos à parte</h2>
+    <ul>
+      <li><strong>Resposta em áudio:</strong> pacote de minutos, sob consulta.</li>
+      <li><strong>Documentos:</strong> base de conhecimento grande, por faixa de páginas, sob consulta.</li>
+      <li><strong>Profissional adicional:</strong> no plano Clínica.</li>
+    </ul>
+  </section>
+
+  <section class="block prose" id="lista" aria-label="Lista de espera">
+    <Waitlist />
+  </section>
+</Base>

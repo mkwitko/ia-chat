@@ -26,5 +26,5 @@
     "packages/*/scripts",
     "apps/*/scripts"
   ],
-  "exclude": ["apps/web"]
+  "exclude": ["apps/web", "apps/site"]
 }

@@ -1,0 +1,31 @@
+---
+const api = import.meta.env.PUBLIC_API_URL ?? '';
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
+---
+
+<form data-waitlist data-api={api} class="card" aria-labelledby="lista-titulo">
+  <h2 id="lista-titulo">Entre na lista de espera</h2>
+  <p class="muted">
+    Abrimos o acesso em lotes. Usamos seu e-mail só para avisar quando chegar a sua vez.
+  </p>
+  <div class="field">
+    <label for="wl-email">E-mail</label>
+    <input id="wl-email" name="email" type="email" autocomplete="email" required />
+  </div>
+  <div class="field">
+    <label for="wl-name">Nome (opcional)</label>
+    <input id="wl-name" name="name" type="text" autocomplete="name" maxlength="120" />
+  </div>
+  <div class="field">
+    <label for="wl-specialty">Sua especialidade (opcional)</label>
+    <input id="wl-specialty" name="specialty" type="text" maxlength="120" />
+  </div>
+  <div class="cf-turnstile" data-sitekey={siteKey}></div>
+  <button class="btn" type="submit">Entrar na lista</button>
+  <p data-status role="status" aria-live="polite"></p>
+</form>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+  import '../scripts/waitlist.ts';
+</script>

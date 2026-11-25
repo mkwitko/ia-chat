@@ -1,0 +1,60 @@
+---
+import { FEATURE_ROWS, FEATURED_PLAN, includes, planColumns } from '../lib/plans-view.ts';
+
+const columns = planColumns();
+---
+
+<div class="scroll">
+  <table>
+    <caption class="skip">Planos, preços por mês, franquia e o que cada um inclui</caption>
+    <thead>
+      <tr>
+        <th scope="col">Por mês</th>
+        {
+          columns.map((plan) => (
+            <th scope="col" class={plan.id === FEATURED_PLAN ? 'featured' : ''}>
+              {plan.name}
+              <span class="price num">{plan.price}</span>
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Conversas incluídas</th>
+        {
+          columns.map((plan) => (
+            <td class={plan.id === FEATURED_PLAN ? 'featured num' : 'num'}>{plan.franchise}</td>
+          ))
+        }
+      </tr>
+      <tr>
+        <th scope="row">Cada conversa além da franquia</th>
+        {
+          columns.map((plan) => (
+            <td class={plan.id === FEATURED_PLAN ? 'featured num' : 'num'}>{plan.overage}</td>
+          ))
+        }
+      </tr>
+      {
+        FEATURE_ROWS.map((row) => (
+          <tr>
+            <th scope="row">{row.label}</th>
+            {columns.map((plan) => (
+              <td class={plan.id === FEATURED_PLAN ? 'featured' : ''}>
+                {includes(plan.id, row) ? (
+                  <>
+                    Incluído{row.soon && <span class="soon">em breve</span>}
+                  </>
+                ) : (
+                  'Não'
+                )}
+              </td>
+            ))}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

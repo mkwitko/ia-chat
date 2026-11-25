@@ -18,6 +18,14 @@ export function passwordResetEmail(to: string, url: string): EmailMessage {
   };
 }
 
+export function waitlistEmail(to: string): EmailMessage {
+  return {
+    to,
+    subject: 'Você está na lista de espera do Consultório Aberto',
+    text: 'Recebemos seu pedido. Avisamos por este e-mail quando abrirmos o acesso, em lotes.\n\nSe não foi você, ignore esta mensagem e não vamos escrever de novo.',
+  };
+}
+
 export interface InvitationEmail {
   to: string;
   url: string;

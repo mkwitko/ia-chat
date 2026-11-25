@@ -90,3 +90,15 @@ enum TenantStatus {
   restricted
   cancelled
 }
+
+/// Platform table (no tenant, no RLS): a visitor of the public site who asked for early access
+/// (S-01). Email is stored lowercase; one row per address.
+model WaitlistEntry {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  email     String   @unique
+  name      String?
+  specialty String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("waitlist_entries")
+}
