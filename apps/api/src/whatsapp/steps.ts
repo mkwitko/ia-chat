@@ -41,9 +41,11 @@ const RUN: Record<SetupStep, (ctx: StepContext) => Promise<boolean>> = {
     }
     return true;
   },
-  // H-05: the client pays Meta with their own card; we only check one is there. Not done yet means
-  // "add it at Meta and come back": not an error. Checked again on every retry.
-  [SetupStep.paymentMethod]: ({ client, wabaId }) => client.hasPaymentMethod(wabaId),
+  // H-05: the client pays Meta with their own card; we only check one is there. Advisory: the
+  // field read is not verified against Meta yet, so a "no" or a failed read never blocks the
+  // assistant; the panel keeps asking for the card and every retry checks again.
+  [SetupStep.paymentMethod]: ({ client, wabaId }) =>
+    client.hasPaymentMethod(wabaId).catch(() => false),
 };
 
 export interface SetupResult {
@@ -65,9 +67,10 @@ export async function runSetup(ctx: StepContext, already: readonly string[]): Pr
   return { done, error: null };
 }
 
-/** Spec 03 step 3: the assistant goes live only when every step, payment included, is done. */
-export const isReady = (done: readonly string[]) =>
-  Object.values(SetupStep).every((step) => done.includes(step));
+const REQUIRED = Object.values(SetupStep).filter((step) => step !== SetupStep.paymentMethod);
+
+/** Spec 03 step 3: live once every step but the (advisory) card check is done. */
+export const isReady = (done: readonly string[]) => REQUIRED.every((step) => done.includes(step));
 
 export function errorCodeOf(error: unknown): string {
   return error instanceof CloudApiError && error.code ? error.code : UNKNOWN_ERROR;

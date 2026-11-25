@@ -140,12 +140,12 @@ describe('whatsapp embedded signup', () => {
     expect((await signup(other, { phoneNumberId })).statusCode).toBe(409);
   });
 
-  it('without a card at Meta the number waits; the retry checks again', async () => {
+  it('without a card at Meta the number connects, the card stays pending; the retry checks again', async () => {
     phoneNumberId = digits();
     funded = false;
     const waiting = await signup(owner, { wabaId: '999' });
     expect(waiting.json()).toMatchObject({
-      channel: { status: 'pending', ready: false, paymentMethod: false, error: null },
+      channel: { status: 'connected', ready: true, paymentMethod: false, error: null },
     });
     funded = true;
     const retried = await post(`${PATH}/retry`, owner);

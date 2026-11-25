@@ -57,6 +57,12 @@ function ChannelState({ channel }: Readonly<{ channel: WhatsappChannel }>) {
         {channel.displayPhone ? Copy.connected(channel.displayPhone) : Copy.connectedNoPhone}
       </p>
       {channel.coexistence && <p className="text-sm">{Copy.coexistence}</p>}
+      {!channel.paymentMethod && (
+        <>
+          <PaymentPrompt />
+          <RetryButton label={Copy.paymentDone} />
+        </>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ Fontes: [pesquisa 01](../research/01-meta-whatsapp-compliance.md). Itens marcado
 |---|---|
 | Mensagem de atendimento custa R$ 0,035 acima de 1.000 por mês por número (desde 01/10/2026) | Uma mensagem por turno sempre que possível |
 | Utility custa R$ 0,035, marketing R$ 0,3217 | Reativação é módulo com custo repassado |
-| Sem forma de pagamento na Meta, a entrega para após a franquia | Onboarding só conclui com cobrança configurada |
+| Sem forma de pagamento na Meta, a entrega para após a franquia | O painel pede o cartão até a Meta confirmar; a checagem não trava a ativação (25/11/2026: o campo lido da Meta ainda não foi verificado) |
 | Coexistência: respostas pelo celular chegam como `smb_message_echoes` | É o gatilho principal de controle humano |
 | Coexistência desconecta após cerca de 14 dias sem abrir o app | Monitorar estado da conexão e alertar |
 | Coexistência no Brasil (nv) | Confirmar no onboarding do piloto antes de qualquer promessa |
