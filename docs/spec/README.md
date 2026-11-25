@@ -51,7 +51,7 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 3. **RAG vetorial sai do MVP.** Entra com o módulo de documentos.
 4. **API não oficial entrou como segunda conexão**, por decisão posterior, contra o princípio 11 do master prompt. Fica como opção com termo de ciência; a oficial segue como padrão.
 5. **Dividir a resposta em várias mensagens custa dinheiro.** Desde 01/10/2026 a Meta cobra R$ 0,035 por mensagem de atendimento acima de 1.000 por mês por número. A entrega natural privilegia uma mensagem por turno.
-6. **A mensagem atual do piloto pede "o que está sentindo".** A política da Meta e a LGPD recomendam que o agente não solicite informação de saúde. O agente trata só do administrativo.
+6. **O assistente pode perguntar a queixa**, como faz a mensagem atual do piloto (decisão do dono, 25/11/2026). A recomendação anterior (não solicitar informação de saúde, pela LGPD e pela política da Meta) foi vencida. Continua proibido avaliar, diagnosticar ou orientar, e a queixa não sai do texto da mensagem (RN-21).
 
 ## Hipóteses a validar com o cliente piloto
 

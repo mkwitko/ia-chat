@@ -24,7 +24,7 @@ Assistente de IA no WhatsApp para profissionais de saúde autônomos no Brasil. 
 - Toda consulta de negócio roda em `withTenant(tenantId, fn)`. Toda tabela de negócio tem `tenant_id` e RLS, com teste de isolamento.
 - O modelo nunca é fonte de preço, horário, agendamento ou pagamento. Esses dados vêm de ferramentas e passam pela validação de saída.
 - Nenhuma mensagem sai sem passar pela trava de envio (`control = 'ai'` e `turn_version` igual).
-- O assistente não pede informação de saúde e não dá orientação clínica.
+- O assistente não dá orientação clínica. Pode perguntar a queixa (o que incomoda e há quanto tempo) (decisão do dono, 25/11/2026); a queixa fica só no texto da mensagem, fora de cadastro, resumo e relatório.
 - Logs não contêm conteúdo de mensagem. Segredos nunca em log nem no repositório.
 - Dinheiro em centavos inteiros. Horário em `timestamptz`.
 - Nunca usar dados reais de pacientes em desenvolvimento ou teste.
