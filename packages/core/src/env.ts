@@ -10,7 +10,7 @@ const INVALID_ENV = 'Invalid environment';
 const POSTGRES_PROTOCOL = /^postgres(ql)?$/;
 
 /** Optional text: unset or empty (a blank line in .env) both mean "off". */
-const optionalText = z
+export const optionalText = z
   .string()
   .optional()
   .transform((value) => {

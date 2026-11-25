@@ -29,6 +29,7 @@ import { NotifyReason, startNotifier, startSummaryNotifier } from './notify/inde
 import { sendNightlySummary } from './agenda/nightly-summary.ts';
 import { syncSummarySchedules } from './agenda/summary-schedule.ts';
 import { turnScheduler } from './conversation/turn-scheduler.ts';
+import { mediaScheduler, startMediaWorker } from './media/wiring.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
 import { logEmailSender } from './trial/log-sender.ts';
@@ -104,6 +105,7 @@ await workTenantQueue({
     processInboundEvent(tx, data, {
       alert,
       scheduleTurn: turnScheduler(boss),
+      scheduleMedia: mediaScheduler(boss),
       notifyUsage: (tenantId, { reason, conversationId }) => {
         remind(tenantId, reason)(conversationId);
       },
@@ -185,6 +187,8 @@ await startReminderSweep({
   tokenKey: process.env.META_TOKEN_KEY,
   log: appLog.info,
 });
+
+await startMediaWorker({ boss, db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
 
 const turns = await startTurnWorker({
   boss,

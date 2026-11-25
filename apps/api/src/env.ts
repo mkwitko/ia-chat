@@ -4,6 +4,7 @@ import {
   billingEnvSchema,
   googleCalendarEnvSchema,
   parseEnvWith,
+  r2EnvSchema,
   whatsappSignupEnvSchema,
 } from '@app/core';
 import * as z from 'zod';
@@ -27,6 +28,7 @@ export const apiEnvSchema = baseEnvSchema
   .extend(googleCalendarEnvSchema.shape)
   .extend(billingEnvSchema.shape)
   .extend(whatsappSignupEnvSchema.shape)
+  .extend(r2EnvSchema.shape)
   .extend({
     PORT: z.coerce.number().int().positive().default(DEFAULT_PORT),
     BETTER_AUTH_SECRET: z.string().min(MIN_SECRET_LENGTH),

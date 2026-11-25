@@ -14,6 +14,7 @@ import { NotifyReason } from '../notify/reasons.ts';
 
 import { realClock } from './clock.ts';
 import { pacedDelayMs } from './pacing.ts';
+import { mediaPending, turnMessage, unansweredMessages } from './turn-media.ts';
 import { isRestricted, restrictedReply } from './restricted.ts';
 import { generateInTime } from './timing.ts';
 import {
@@ -123,16 +124,9 @@ async function claim(tx: Tx, job: TurnJob): Promise<Claimed | null> {
     !conversation.pendingSince
   )
     return null;
-  // Everything unanswered since pendingSince, including messages of a discarded turn (A-03).
-  const messages = await tx.message.findMany({
-    where: {
-      conversationId: job.conversationId,
-      author: MessageAuthor.patient,
-      createdAt: { gte: conversation.pendingSince },
-    },
-    orderBy: [{ providerTimestamp: 'asc' }, { createdAt: 'asc' }],
-    select: { id: true, type: true, text: true, providerMessageId: true },
-  });
+  const messages = await unansweredMessages(tx, job.conversationId, conversation.pendingSince);
+  // E-10: the media job asks for a new turn when the transcript (or the failure) is in.
+  if (mediaPending(messages, new Date())) return null;
   const turn = await tx.turn.create({
     data: {
       tenantId: job.tenantId,
@@ -144,7 +138,7 @@ async function claim(tx: Tx, job: TurnJob): Promise<Claimed | null> {
   });
   return {
     turnId: turn.id,
-    messages: messages.map(({ id, type, text }) => ({ id, type, text })),
+    messages: messages.map(turnMessage),
     lastProviderMessageId: messages.at(-1)?.providerMessageId ?? null,
     restricted: await isRestricted(tx, job.tenantId),
   };

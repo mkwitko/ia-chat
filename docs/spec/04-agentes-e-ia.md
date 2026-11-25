@@ -205,7 +205,7 @@ Preços por milhão de tokens (entrada / cache lido / saída), conforme a pesqui
 | Conversa escalada | GPT-6.1 Terra (1,00 / 0,05 / 5,00) | Claude Sonnet 5.5 (2,00 / 0,10 / 10,00) | Ver gatilhos abaixo |
 | Resumo de histórico | GPT-6 Luna | Claude Haiku 5.5 (0,10 / 0,01 / 0,50) | |
 | Avaliação de qualidade e insights | GPT-6.2 Sol (2,00 / 0,10 / 10,00) | Claude Sonnet 5.5 | Candidato incluído pelo dono em 24/11/2026; amostragem |
-| Transcrição | `openai/gpt-transcribe` pelo gateway (US$ 0,0045 por minuto) | — | O Groq Whisper turbo custa US$ 0,00067 por minuto mas não está no gateway; reavaliar na E-10 com o volume de áudio do piloto |
+| Transcrição | `openai/gpt-transcribe` pelo gateway (US$ 0,0045 por minuto; adotado na E-10, o custo é registrado por minuto em `ai_usage`) | — | O Groq Whisper turbo custa US$ 0,00067 por minuto mas não está no gateway; reavaliar na E-10 com o volume de áudio do piloto |
 | Embeddings | Adiado | — | Só com o módulo de documentos |
 | Síntese de voz | Adiado | — | Módulo de voz |
 | Áudio em tempo real | Fora do escopo | — | Telefonia |

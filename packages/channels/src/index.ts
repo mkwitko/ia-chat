@@ -13,6 +13,11 @@ export {
   type ChannelSendTemplate,
   type SenderConfig,
 } from './sender.ts';
+export {
+  createMediaDownloadFor,
+  type MediaDownload,
+  type MediaDownloadFor,
+} from './media-client.ts';
 export { phoneKey, toE164, typedPhone } from './phone.ts';
 export * from './types.ts';
 export {

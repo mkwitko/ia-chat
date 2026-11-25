@@ -40,6 +40,7 @@ export function createDb(connectionString: string, pool: PoolOptions = {}): Db {
 export {
   DEFAULT_QUEUE_OPTIONS,
   INBOUND_QUEUE,
+  MEDIA_QUEUE,
   RECONCILE_QUEUE,
   TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,

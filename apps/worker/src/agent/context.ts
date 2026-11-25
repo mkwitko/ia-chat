@@ -7,13 +7,15 @@ import type { ModelMessage } from 'ai';
 export const HISTORY_LIMIT = 20;
 
 const PLACEHOLDER: Partial<Record<MessageType, string>> = {
-  [MessageType.audio]: '[áudio ainda sem transcrição]',
+  [MessageType.audio]: '[áudio que não deu para ouvir]',
   [MessageType.image]: '[imagem]',
   [MessageType.document]: '[documento]',
   [MessageType.sticker]: '[figurinha]',
   [MessageType.location]: '[localização]',
   [MessageType.unsupported]: '[mensagem que não deu para abrir]',
 };
+// The transcript enters the turn as the patient's words, marked as audio (spec 03).
+const AUDIO_PREFIX = '[áudio transcrito] ';
 const PROFESSIONAL_PREFIX = '[o profissional respondeu] ';
 export interface AgentInput extends TenantAgentInput {
   contactId: string;
@@ -72,7 +74,8 @@ function toModelMessage(message: {
   type: MessageType;
   text: string | null;
 }): ModelMessage | null {
-  const text = message.text ?? PLACEHOLDER[message.type] ?? '';
+  const spoken = message.type === MessageType.audio && message.text ? AUDIO_PREFIX : '';
+  const text = spoken + (message.text ?? PLACEHOLDER[message.type] ?? '');
   if (message.author === MessageAuthor.system || !text) return null;
   if (message.author === MessageAuthor.patient) return { role: 'user', content: text };
   return {

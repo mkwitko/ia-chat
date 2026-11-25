@@ -55,6 +55,9 @@ export const REMINDER_SWEEP_QUEUE: QueueDefinition = { name: 'reminders.sweep' }
 /** E-25: daily reconciliation with Asaas, the overdue ladder and the overage charge. */
 export const BILLING_RECONCILE_QUEUE: QueueDefinition = { name: 'billing.reconcile' };
 
+/** E-10 (RF-24): downloads one inbound media to R2 and, for audio, transcribes it. */
+export const MEDIA_QUEUE: QueueDefinition = { name: 'media.fetch' };
+
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
   INBOUND_QUEUE,
@@ -67,4 +70,5 @@ export const QUEUES: readonly QueueDefinition[] = [
   TRIAL_SWEEP_QUEUE,
   REMINDER_SWEEP_QUEUE,
   BILLING_RECONCILE_QUEUE,
+  MEDIA_QUEUE,
 ];

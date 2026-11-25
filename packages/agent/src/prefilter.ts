@@ -9,13 +9,20 @@ export const PrefilterKind = {
   optIn: 'opt_in',
   ignore: 'ignore',
   unsupported: 'unsupported',
+  /** Image or document alone (RN-22): never read; the professional looks. */
+  media: 'media',
+  /** Audio nobody could transcribe, or media that failed to download (RF-24). */
+  mediaUnavailable: 'media_unavailable',
   model: 'model',
 } as const;
 export type PrefilterKind = (typeof PrefilterKind)[keyof typeof PrefilterKind];
 
 export interface PrefilterMessage {
   type: MessageType;
+  /** Text, caption or audio transcript. */
   text: string | null;
+  /** RF-24: the download failed for good. */
+  mediaUnavailable?: boolean;
 }
 
 /** Emergency floor for segments with `sensitivity = health` (spec 11); others bring their own terms. */
@@ -58,7 +65,9 @@ const OPT_IN_PHRASES = [
   'volte a me mandar',
   'quero receber de novo',
 ];
-const READABLE = new Set<MessageType>([MessageType.text, MessageType.interactive_reply]);
+// Registered, never answered on their own (spec 03, table by content type).
+const SILENT = new Set<MessageType>([MessageType.sticker, MessageType.location]);
+const OPAQUE = new Set<MessageType>([MessageType.image, MessageType.document]);
 const DIACRITICS = /\p{Diacritic}/gu;
 const SPACES = /\s+/g;
 const END_PUNCTUATION = '.!?';
@@ -73,12 +82,17 @@ export function prefilter(
     return { kind: PrefilterKind.urgency };
   if (texts.some(isOptOut)) return { kind: PrefilterKind.optOut };
   if (texts.some(isOptIn)) return { kind: PrefilterKind.optIn };
-  if (messages.every((message) => message.type === MessageType.sticker))
-    return { kind: PrefilterKind.ignore };
-  const readable = messages.some(
-    (message) => READABLE.has(message.type) || message.type === MessageType.audio,
-  );
-  return { kind: readable ? PrefilterKind.model : PrefilterKind.unsupported };
+  if (messages.every((message) => SILENT.has(message.type))) return { kind: PrefilterKind.ignore };
+  if (texts.some(Boolean)) return { kind: PrefilterKind.model };
+  return { kind: mediaKind(messages) };
+}
+
+/** No text anywhere: say what happened to the media, or that the professional will look. */
+function mediaKind(messages: readonly PrefilterMessage[]): PrefilterKind {
+  if (messages.some((m) => m.mediaUnavailable === true || m.type === MessageType.audio))
+    return PrefilterKind.mediaUnavailable;
+  if (messages.some((m) => OPAQUE.has(m.type))) return PrefilterKind.media;
+  return PrefilterKind.unsupported;
 }
 
 const WORDS_BETWEEN = 2;
