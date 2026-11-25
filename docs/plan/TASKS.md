@@ -459,9 +459,9 @@ Spec: 11 ("Modelo de template"). Bloqueio: código; gasto com IA para rodar a ba
 
 ### M-03 Limite de dado de saúde (P0)
 Spec: 11 ("Limite de dado de saúde"), 06. Bloqueio: código.
-- [ ] **(teste primeiro)** `registrar_duvida_sem_resposta`, `atualizar_nome_do_contato` e o resumo passam pelo juízo `informacao_de_saude`; se positivo não gravam o texto
-- [ ] Limite de tamanho nas duas ferramentas; nome só se parecer nome
-  - Feito: `registrar_duvida_sem_resposta` (300 caracteres) e o resumo passam por `informacao_de_saude`; positivo ou falha do juízo = não grava, com log sem conteúdo (`health_guard.blocked`). Falta: `atualizar_nome_do_contato` (filtro e "parecer nome").
+- [x] **(teste primeiro)** `registrar_duvida_sem_resposta`, `atualizar_nome_do_contato` e o resumo passam pelo juízo `informacao_de_saude`; se positivo não gravam o texto
+- [x] Limite de tamanho nas duas ferramentas; nome só se parecer nome
+  - Feito: `registrar_duvida_sem_resposta` (300 caracteres) e o resumo passam por `informacao_de_saude`; positivo ou falha do juízo = não grava, com log sem conteúdo (`health_guard.blocked`). `atualizar_nome_do_contato` grava só até 5 palavras de letras (sem número nem frase longa) e depois do mesmo juízo.
 - [ ] Política de retenção do conteúdo de mensagem escrita na spec 06 e no aviso de privacidade (jurídico)
 - [ ] Sem campo de nota livre em Clientes
 - Pronto quando: um teste com texto clínico mostra que nada disso chega a `knowledge_items`, `conversations.summary` ou `contacts`.

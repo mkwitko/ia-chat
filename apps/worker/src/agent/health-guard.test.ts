@@ -91,3 +91,27 @@ describe('conversation summary (M-03)', () => {
     expect(result.summaryUntil).not.toBeNull();
   });
 });
+
+describe('atualizar_nome_do_contato (M-03)', () => {
+  async function nameAfter(nome: string, judge: Record<string, number> | undefined) {
+    const scope = await conversation({ answered: true });
+    const rename = { tool: ToolName.rename, input: { nome } };
+    const fake = scripted([rename, { text: HANDOFF_TEXT }]);
+    await agentWith(fake.model, { judge })(turnOf(scope, ['oi']));
+    const contact = await db.withTenant(scope.tenantId, (tx) => tx.contact.findFirstOrThrow());
+    return contact.name;
+  }
+
+  it('stores a name', async () => {
+    expect(await nameAfter("Maria D'Ávila", { health: 0.1 })).toBe("Maria D'Ávila");
+  });
+
+  it.each([
+    ['digits', 'Maria 3x por semana', { health: 0 }],
+    ['a sentence', 'Maria com dor forte nas costas', { health: 0 }],
+    ['health information', 'Maria Lombar', { health: 0.95 }],
+    ['a judge failure', 'Maria Souza', undefined],
+  ])('stores nothing for %s', async (_name, nome, judge) => {
+    expect(await nameAfter(nome, judge)).toBeNull();
+  });
+});
