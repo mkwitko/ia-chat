@@ -1,7 +1,7 @@
 ---
-title: 'Passo 3: endereço e como chegar'
+title: 'Passo 5: endereço e como chegar'
 category: comecar
-order: 3
+order: 5
 summary: 'Informe o endereço e as instruções de chegada.'
 ---
 

@@ -1,7 +1,7 @@
 ---
-title: 'Passo 4: tom de voz'
+title: 'Passo 6: tom de voz'
 category: assistente
-order: 4
+order: 6
 summary: 'Ensine o assistente a escrever do seu jeito.'
 ---
 

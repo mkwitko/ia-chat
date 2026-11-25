@@ -38,7 +38,8 @@ const post = (url: string, payload: object = {}, cookie = operator) =>
 const newInvite = async (practiceName = PRACTICE) =>
   (await post(BASE, { practiceName })).json<InviteBody>();
 const tokenOf = (link: string | null) => link?.split('/').pop() ?? '';
-const readInvite = (token: string) => ctx.app.inject({ method: 'GET', url: `/api/invites/${token}` });
+const readInvite = (token: string) =>
+  ctx.app.inject({ method: 'GET', url: `/api/invites/${token}` });
 const cookieFor = (token: string) => `${INVITE_COOKIE}=${token}`;
 
 describe('operator invites', () => {
@@ -115,7 +116,9 @@ describe('invite-only sign-up', () => {
     expect((await readInvite(tokenOf(link))).json()).toMatchObject({ state: 'used' });
     const again = await signUp(ctx, { email: uniqueEmail(), cookie: cookieFor(tokenOf(link)) });
     expect(again.json()).toMatchObject({ code: INVITE_REQUIRED });
-    const row = await ctx.db.client.onboardingInvite.findUniqueOrThrow({ where: { id: invite.id } });
+    const row = await ctx.db.client.onboardingInvite.findUniqueOrThrow({
+      where: { id: invite.id },
+    });
     expect(row.tenantId).toBe(membership.tenantId);
   });
 

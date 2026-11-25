@@ -1,7 +1,7 @@
 ---
-title: 'Passo 2: serviços, valores e horários'
+title: 'Passo 4: serviços, valores e horários'
 category: comecar
-order: 2
+order: 4
 summary: 'Revise os serviços, os valores e os horários de atendimento.'
 ---
 

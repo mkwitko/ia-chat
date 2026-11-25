@@ -7,6 +7,8 @@ summary: 'O que acontece quando você ativa o assistente.'
 
 Ao ativar, o assistente começa em **"aprovar antes de enviar"**: toda resposta vira um rascunho e nada sai sem o seu toque.
 
+Para ativar, o WhatsApp precisa estar conectado (passo 2). Sem ele, o botão fica desligado e o painel avisa.
+
 ## Como fazer
 
 1. Na Configuração guiada, toque em **Ativar o assistente**.

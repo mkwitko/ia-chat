@@ -73,7 +73,11 @@ async function chooseSpecialty(request: FastifyRequest, reply: FastifyReply) {
     progress.specialty = body.specialty;
     // The first step is CPF/CNPJ and specialty: done once both are there (H-37).
     if (await documentSet(tx, tenant.tenantId))
-      markStep(progress, { step: OnboardingStep.account, status: StepStatus.done, now: new Date() });
+      markStep(progress, {
+        step: OnboardingStep.account,
+        status: StepStatus.done,
+        now: new Date(),
+      });
     await tx.tenant.update({
       where: { id: tenant.tenantId },
       data: { specialtyPolicyId: policy.id, onboardingProgress: progress },

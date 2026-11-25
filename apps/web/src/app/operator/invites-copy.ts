@@ -2,7 +2,11 @@ import { InviteState } from './invites-api';
 
 // Panel copy in pt-BR for the operator's onboarding invites (H-37).
 
-const DATE = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const DATE = new Intl.DateTimeFormat('pt-BR', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+});
 const date = (iso: string) => DATE.format(new Date(iso));
 
 const STATE_LABELS: Record<InviteState, string> = {
@@ -18,7 +22,8 @@ export const InvitesCopy = {
   newHeading: 'Novo convite',
   practiceName: 'Nome do consultório',
   email: 'E-mail do profissional (opcional)',
-  emailHint: 'Só aparece preenchido no cadastro. O link não é enviado por e-mail: copie e mande você.',
+  emailHint:
+    'Só aparece preenchido no cadastro. O link não é enviado por e-mail: copie e mande você.',
   create: 'Criar convite',
   linkLabel: 'Link do convite (aparece só agora)',
   copy: 'Copiar link',

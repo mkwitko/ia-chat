@@ -8,7 +8,12 @@ import { InviteSignUp } from './signup-page';
 
 // Mirrors apps/api/src/invites/invite-routes.ts (H-37).
 
-const State = { pending: 'pending', used: 'used', expired: 'expired', cancelled: 'cancelled' } as const;
+const State = {
+  pending: 'pending',
+  used: 'used',
+  expired: 'expired',
+  cancelled: 'cancelled',
+} as const;
 type State = (typeof State)[keyof typeof State];
 
 interface PublicInvite {

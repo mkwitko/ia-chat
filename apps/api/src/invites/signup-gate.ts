@@ -26,7 +26,10 @@ interface NewUser {
   name: string;
 }
 
-/** The invite each sign-up request claimed, so the after-hook opens exactly that one. */
+/**
+ * The invite each sign-up request claimed, so the after-hook opens exactly that one.
+ * ponytail: if creating the user fails after the claim, the invite stays used; the operator makes a new one.
+ */
 const claimed = new WeakMap<object, string>();
 
 /** Someone invited to join a team (Better Auth invitation) may still create their own login. */
@@ -71,7 +74,13 @@ async function openTenant(db: Db, { inviteId, user }: { inviteId: string; user: 
   await db.withTenant(tenantId, async (tx) => {
     const name = invite.practiceName;
     await tx.tenant.create({
-      data: { id: tenantId, name, slug: slugFor(name), status: TenantStatus.setup, trialEndsAt: null },
+      data: {
+        id: tenantId,
+        name,
+        slug: slugFor(name),
+        status: TenantStatus.setup,
+        trialEndsAt: null,
+      },
     });
     await tx.membership.create({ data: { tenantId, userId: user.id, role: Role.owner } });
     await tx.professional.create({ data: { tenantId, name: user.name } });

@@ -12,7 +12,11 @@ const MS_PER_DAY = 86_400_000;
 export const INVITE_TTL_DAYS = 7;
 
 /** Mirrors the Prisma InviteStatus enum: core does not depend on the database package. */
-export const InviteStatusName = { pending: 'pending', used: 'used', cancelled: 'cancelled' } as const;
+export const InviteStatusName = {
+  pending: 'pending',
+  used: 'used',
+  cancelled: 'cancelled',
+} as const;
 export type InviteStatusName = (typeof InviteStatusName)[keyof typeof InviteStatusName];
 
 /** What the operator and the invite page see: the stored status plus "expired", derived. */

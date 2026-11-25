@@ -1,7 +1,8 @@
-import { InviteState } from '@app/core';
+import { InviteState, NodeEnv } from '@app/core';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { AUTH_BASE_PATH } from '../auth/auth.ts';
+import type { ApiEnv } from '../env.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { requireOperator } from '../operator/operator-guard.ts';
 import {
@@ -51,8 +52,12 @@ declare module 'fastify' {
   }
 }
 
-export function registerInviteRoutes(app: FastifyInstance, config: InviteRouteConfig): void {
-  app.decorate('invites', config);
+export function registerInviteRoutes(
+  app: FastifyInstance,
+  env: Pick<ApiEnv, 'WEB_ORIGIN' | 'NODE_ENV'>,
+): void {
+  const secureCookie = env.NODE_ENV === NodeEnv.production;
+  app.decorate('invites', { webOrigin: env.WEB_ORIGIN, secureCookie });
   const preHandler = requireOperator;
   app.get(OPERATOR_PATH, { preHandler }, (request) => listInvites(request.server.db, new Date()));
   app.post(OPERATOR_PATH, { preHandler }, create);
@@ -75,7 +80,8 @@ const linkFor = (request: FastifyRequest, token: string) =>
 
 async function create(request: FastifyRequest, reply: FastifyReply) {
   const body = createBody.safeParse(request.body);
-  if (!body.success) return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
+  if (!body.success)
+    return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
   const { token, invite } = await createInvite(request.server.db, {
     practiceName: body.data.practiceName,
     email: body.data.email ?? null,
@@ -89,7 +95,11 @@ async function create(request: FastifyRequest, reply: FastifyReply) {
 async function change(request: FastifyRequest, reply: FastifyReply, event: string) {
   const params = idParams.safeParse(request.params);
   if (!params.success) return reply.code(HttpStatus.notFound).send({ error: ErrorCode.notFound });
-  const input: InviteChange = { id: params.data.id, operatorId: operatorId(request), now: new Date() };
+  const input: InviteChange = {
+    id: params.data.id,
+    operatorId: operatorId(request),
+    now: new Date(),
+  };
   const { db } = request.server;
   const result =
     event === LogEvent.resent
@@ -106,11 +116,17 @@ async function change(request: FastifyRequest, reply: FastifyReply, event: strin
 async function readPublic(request: FastifyRequest, reply: FastifyReply) {
   const params = tokenParams.safeParse(request.params);
   const now = new Date();
-  const invite = params.success ? await publicInvite(request.server.db, params.data.token, now) : null;
-  if (!params.success || !invite) return reply.code(HttpStatus.notFound).send({ error: ErrorCode.notFound });
+  const invite = params.success
+    ? await publicInvite(request.server.db, params.data.token, now)
+    : null;
+  if (!params.success || !invite)
+    return reply.code(HttpStatus.notFound).send({ error: ErrorCode.notFound });
   if (invite.state === InviteState.pending) {
     const seconds = Math.floor((invite.expiresAt.getTime() - now.getTime()) / MS_PER_SECOND);
-    reply.header(SET_COOKIE, inviteCookie(params.data.token, seconds, request.server.invites.secureCookie));
+    reply.header(
+      SET_COOKIE,
+      inviteCookie(params.data.token, seconds, request.server.invites.secureCookie),
+    );
   }
   return { state: invite.state, practiceName: invite.practiceName, email: invite.email };
 }

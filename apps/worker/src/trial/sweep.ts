@@ -15,7 +15,10 @@ export async function sweepTrials(deps: SweepDeps): Promise<SweepResult> {
   const tenants = await deps.db.client.tenant.findMany({
     where: {
       // H-24: an invited consultório in "setup" has no clock yet, but still gets the reminders.
-      OR: [{ status: TenantStatus.trial, trialEndsAt: { not: null } }, { status: TenantStatus.setup }],
+      OR: [
+        { status: TenantStatus.trial, trialEndsAt: { not: null } },
+        { status: TenantStatus.setup },
+      ],
       trialEndedAt: null,
       // E-25: once subscribed, the billing ladder (not the trial clock) decides.
       billingSubscriptionId: null,

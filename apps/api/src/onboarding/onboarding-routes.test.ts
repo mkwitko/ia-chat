@@ -47,9 +47,9 @@ describe('progress', () => {
     expect((await call('GET', '/api/onboarding')).json<View>().current).toBe('account');
     await call('POST', '/api/onboarding/specialty', { specialty: 'quiropraxia' });
     expect((await call('GET', '/api/onboarding')).json<View>().current).toBe('account');
-    expect((await call('PUT', '/api/onboarding/steps/account', { status: 'done' })).statusCode).toBe(
-      409,
-    );
+    expect(
+      (await call('PUT', '/api/onboarding/steps/account', { status: 'done' })).statusCode,
+    ).toBe(409);
     await call('PUT', '/api/trial/document', { document: freshCpf() });
     await call('PUT', '/api/onboarding/steps/account', { status: 'done' });
     expect((await call('GET', '/api/onboarding')).json<View>().current).toBe('whatsapp');
@@ -75,9 +75,9 @@ describe('progress', () => {
     await ctx.db.client.tenant.update({ where: { id: tenantId }, data: { autonomy: 'auto' } });
     const activate = () => call('PUT', '/api/onboarding/steps/activation', { status: 'done' });
     expect((await activate()).json()).toEqual({ error: 'whatsapp_not_connected' });
-    expect((await call('PUT', '/api/onboarding/steps/whatsapp', { status: 'done' })).statusCode).toBe(
-      409,
-    );
+    expect(
+      (await call('PUT', '/api/onboarding/steps/whatsapp', { status: 'done' })).statusCode,
+    ).toBe(409);
     await connectWhatsapp(tenantId);
     expect((await activate()).statusCode).toBe(200);
     const tenant = await ctx.db.client.tenant.findUniqueOrThrow({ where: { id: tenantId } });

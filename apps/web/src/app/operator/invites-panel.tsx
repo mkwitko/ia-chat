@@ -31,36 +31,48 @@ export function InvitesPanel() {
   );
 }
 
-function NewInviteForm({ onLink }: Readonly<{ onLink: (link: string | null) => void }>) {
-  const [practiceName, setPracticeName] = useState('');
-  const [email, setEmail] = useState('');
+type OnLink = (link: string | null) => void;
+const EMPTY = '';
+
+function useNewInvite(onLink: OnLink) {
+  const [practiceName, setPracticeName] = useState(EMPTY);
+  const [email, setEmail] = useState(EMPTY);
   const create = useCreateInvite();
   const submit = () => {
-    const body = { practiceName, email: email.trim() || null };
-    create.mutate(body, {
-      onSuccess: (result) => {
-        onLink(result.link);
-        setPracticeName('');
-        setEmail('');
+    create.mutate(
+      { practiceName, email: email.trim() || null },
+      {
+        onSuccess: (result) => {
+          onLink(result.link);
+          setPracticeName(EMPTY);
+          setEmail(EMPTY);
+        },
+        onError: () => {
+          toast.error(Copy.failed);
+        },
       },
-      onError: () => toast.error(Copy.failed),
-    });
+    );
   };
+  return { practiceName, setPracticeName, email, setEmail, submit, pending: create.isPending };
+}
+
+function NewInviteForm({ onLink }: Readonly<{ onLink: OnLink }>) {
+  const form = useNewInvite(onLink);
   return (
     <form
       className="grid gap-3"
       aria-label={Copy.newHeading}
       onSubmit={(event) => {
         event.preventDefault();
-        submit();
+        form.submit();
       }}
     >
       <h3 className="font-semibold">{Copy.newHeading}</h3>
       <TextField
         id="invite-practice"
         label={Copy.practiceName}
-        value={practiceName}
-        onChange={setPracticeName}
+        value={form.practiceName}
+        onChange={form.setPracticeName}
         required
         maxLength={MAX_NAME}
       />
@@ -68,12 +80,12 @@ function NewInviteForm({ onLink }: Readonly<{ onLink: (link: string | null) => v
         id="invite-email"
         label={Copy.email}
         hint={Copy.emailHint}
-        value={email}
-        onChange={setEmail}
+        value={form.email}
+        onChange={form.setEmail}
         type="email"
         autoComplete="off"
       />
-      <FormActions pending={create.isPending} saveLabel={Copy.create} />
+      <FormActions pending={form.pending} saveLabel={Copy.create} />
     </form>
   );
 }
@@ -90,7 +102,14 @@ function LinkBox({ link }: Readonly<{ link: string }>) {
       <label className="text-sm font-semibold" htmlFor="invite-link">
         {Copy.linkLabel}
       </label>
-      <Input id="invite-link" readOnly value={link} onFocus={(e) => e.target.select()} />
+      <Input
+        id="invite-link"
+        readOnly
+        value={link}
+        onFocus={(event) => {
+          event.target.select();
+        }}
+      />
       <Button type="button" onClick={copy}>
         {Copy.copy}
       </Button>
@@ -98,7 +117,7 @@ function LinkBox({ link }: Readonly<{ link: string }>) {
   );
 }
 
-function InviteList({ onLink }: Readonly<{ onLink: (link: string | null) => void }>) {
+function InviteList({ onLink }: Readonly<{ onLink: OnLink }>) {
   const invites = useInvites();
   if (!invites.data) return null;
   if (invites.data.length === 0) return <p className="text-sm">{Copy.none}</p>;
@@ -111,23 +130,7 @@ function InviteList({ onLink }: Readonly<{ onLink: (link: string | null) => void
   );
 }
 
-function InviteRow({
-  invite,
-  onLink,
-}: Readonly<{ invite: Invite; onLink: (link: string | null) => void }>) {
-  const change = useChangeInvite();
-  const run = (action: InviteAction) => {
-    change.mutate(
-      { id: invite.id, action },
-      {
-        onSuccess: (result) => {
-          onLink(result.link);
-          toast.success(action === InviteAction.resend ? Copy.resent : Copy.cancelled);
-        },
-        onError: () => toast.error(Copy.failed),
-      },
-    );
-  };
+function InviteRow({ invite, onLink }: Readonly<{ invite: Invite; onLink: OnLink }>) {
   const open = invite.state === InviteState.pending || invite.state === InviteState.expired;
   return (
     <li className="grid gap-1 border-b pb-2 last:border-0">
@@ -138,16 +141,48 @@ function InviteRow({
       <span className="text-xs text-muted-foreground tabular-nums">
         {Copy.details(invite.createdAt, invite.expiresAt, invite.email)}
       </span>
-      {open && (
-        <span className="flex gap-2">
-          <Button variant="outline" disabled={change.isPending} onClick={() => run(InviteAction.resend)}>
-            {Copy.resend}
-          </Button>
-          <Button variant="ghost" disabled={change.isPending} onClick={() => run(InviteAction.cancel)}>
-            {Copy.cancel}
-          </Button>
-        </span>
-      )}
+      {open && <InviteActions id={invite.id} onLink={onLink} />}
     </li>
+  );
+}
+
+/** A pending (or expired) invite: new link (the old one stops working) or cancel. */
+function InviteActions({ id, onLink }: Readonly<{ id: string; onLink: OnLink }>) {
+  const change = useChangeInvite();
+  const run = (action: InviteAction) => {
+    change.mutate(
+      { id, action },
+      {
+        onSuccess: (result) => {
+          onLink(result.link);
+          toast.success(action === InviteAction.resend ? Copy.resent : Copy.cancelled);
+        },
+        onError: () => {
+          toast.error(Copy.failed);
+        },
+      },
+    );
+  };
+  return (
+    <span className="flex flex-wrap gap-2">
+      <Button
+        variant="outline"
+        disabled={change.isPending}
+        onClick={() => {
+          run(InviteAction.resend);
+        }}
+      >
+        {Copy.resend}
+      </Button>
+      <Button
+        variant="ghost"
+        disabled={change.isPending}
+        onClick={() => {
+          run(InviteAction.cancel);
+        }}
+      >
+        {Copy.cancel}
+      </Button>
+    </span>
   );
 }

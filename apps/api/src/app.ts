@@ -82,10 +82,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   app.decorate('operatorEmails', env.OPERATOR_EMAILS);
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
-  registerInviteRoutes(app, {
-    webOrigin: env.WEB_ORIGIN,
-    secureCookie: env.NODE_ENV === NodeEnv.production,
-  });
+  registerInviteRoutes(app, env);
   registerOperatorRoutes(app);
   registerControlRoutes(app);
   registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });

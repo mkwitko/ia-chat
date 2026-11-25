@@ -56,6 +56,6 @@ export const FAQS: readonly Faq[] = [
   {
     question: 'Posso testar antes de assinar?',
     answer:
-      'O acesso abre em lotes, pela lista de espera. O teste de 14 dias sem cartão está planejado para quando o cadastro sozinho estiver no ar.',
+      'Sim. O acesso é por convite: entre na lista de espera e mandamos o seu link. O teste grátis de 14 dias, sem cartão, começa quando o seu WhatsApp conecta.',
   },
 ];

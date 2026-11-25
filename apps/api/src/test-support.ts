@@ -112,7 +112,10 @@ export function authPost(ctx: TestContext, { path, body, cookie = '' }: AuthRequ
 }
 
 /** A fresh onboarding invite (H-37) and the cookie the invite page would have set. */
-export async function inviteCookie(ctx: TestContext, practiceName = TEST_PRACTICE): Promise<string> {
+export async function inviteCookie(
+  ctx: TestContext,
+  practiceName = TEST_PRACTICE,
+): Promise<string> {
   const { token } = await createInvite(ctx.db, {
     practiceName,
     email: null,
@@ -122,7 +125,10 @@ export async function inviteCookie(ctx: TestContext, practiceName = TEST_PRACTIC
   return `${INVITE_COOKIE}=${token}`;
 }
 
-export function signUp(ctx: TestContext, { email, cookie = '' }: { email: string; cookie?: string }) {
+export function signUp(
+  ctx: TestContext,
+  { email, cookie = '' }: { email: string; cookie?: string },
+) {
   return authPost(ctx, {
     path: '/sign-up/email',
     body: { email, password: PASSWORD, name: TEST_NAME },
@@ -198,14 +204,15 @@ export async function newConversation(ctx: TestContext, tenantId: string): Promi
 
 const CPF_BASE_LENGTH = 9;
 const CPF_MOD = 11;
+const DECIMAL = 10;
 
 /** A valid CPF no other test has used (the document is unique, and the dev database is shared). */
 export function freshCpf(): string {
-  const digits = Array.from({ length: CPF_BASE_LENGTH }, () => randomInt(10));
+  const digits = Array.from({ length: CPF_BASE_LENGTH }, () => randomInt(DECIMAL));
   const check = (list: number[]) => {
     const sum = list.reduce((acc, d, i) => acc + d * (list.length + 1 - i), 0);
-    const rest = (sum * 10) % CPF_MOD;
-    return rest === 10 ? 0 : rest;
+    const rest = (sum * DECIMAL) % CPF_MOD;
+    return rest === DECIMAL ? 0 : rest;
   };
   const first = check(digits);
   return [...digits, first, check([...digits, first])].join('');

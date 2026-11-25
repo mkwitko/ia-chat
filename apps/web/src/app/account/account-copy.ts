@@ -16,7 +16,8 @@ export const AccountCopy = {
 
 export const SignUpCopy = {
   title: CREATE_ACCOUNT,
-  subtitle: (practice: string) => `Convite para ${practice}. Crie seu acesso para começar a configuração.`,
+  subtitle: (practice: string) =>
+    `Convite para ${practice}. Crie seu acesso para começar a configuração.`,
   google: 'Criar com o Google',
   divider: 'ou com e-mail',
   submit: CREATE_ACCOUNT,
