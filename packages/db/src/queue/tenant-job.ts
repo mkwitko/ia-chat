@@ -1,3 +1,4 @@
+import { withLogContext } from '@app/observability';
 import type { Job, PgBoss, SendOptions, WorkOptions } from 'pg-boss';
 import * as z from 'zod';
 import type { Db, Tx } from '../index.ts';
@@ -43,8 +44,10 @@ export async function workTenantQueue({ boss, db, queue, options = {}, handler }
   return boss.work(queue, options, async (jobs) => {
     for (const job of jobs) {
       const { tenantId, data } = envelopeSchema.parse(job.data);
-      const afterCommit = await db.withTenant(tenantId, (tx) => handler(tx, data, job));
-      await afterCommit?.();
+      await withLogContext({ jobId: job.id, queue, tenantId }, async () => {
+        const afterCommit = await db.withTenant(tenantId, (tx) => handler(tx, data, job));
+        await afterCommit?.();
+      });
     }
   });
 }

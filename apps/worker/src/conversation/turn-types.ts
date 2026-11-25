@@ -1,4 +1,5 @@
 import type { MessageType, Tx } from '@app/db';
+import type { Alert } from '@app/observability';
 import type { NotifyReason } from '../notify/reasons.ts';
 import type { Clock } from './clock.ts';
 
@@ -70,6 +71,8 @@ export interface TurnDeps {
     turnId: string;
     kind: ReminderKind;
   }) => Promise<void>;
+  /** Raised when a turn is aborted (past 45 s): ids only. */
+  alert?: Alert;
   clock?: Clock;
 }
 

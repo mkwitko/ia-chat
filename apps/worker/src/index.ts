@@ -1,5 +1,13 @@
 import { parseEnv } from '@app/core';
 import {
+  AlertEvent,
+  createAlert,
+  createLogger,
+  initSentry,
+  logProcessErrors,
+  startReadinessServer,
+} from '@app/observability';
+import {
   INBOUND_QUEUE,
   QUEUES,
   QUEUE_SCHEMA,
@@ -11,12 +19,12 @@ import {
   SUMMARY_SYNC_QUEUE,
   TRIAL_SWEEP_QUEUE,
   createDb,
+  recordOpsEvent,
   sendTenantJob,
   watchDeadLetters,
   workTenantQueue,
 } from '@app/db';
 import { PgBoss } from 'pg-boss';
-import pino from 'pino';
 import { startTurnWorker } from './agent/wiring.ts';
 import { remindDraft, remindHandoff, tenantOf } from './conversation/reminder-job.ts';
 import { NotifyReason, startNotifier, startSummaryNotifier } from './notify/index.ts';
@@ -28,9 +36,9 @@ import { findStaleMessages } from './inbound/reconcile.ts';
 import { logEmailSender } from './trial/log-sender.ts';
 import { sweepTrials } from './trial/sweep.ts';
 
-const QUEUE_ERROR = 'queue error';
+const WORKER_READY = 'worker ready';
+const RECONCILE_CODE = 'no_status_after_1h';
 const TRIAL_SWEPT = 'trial sweep done';
-const DEAD_LETTER = 'job exhausted its retries';
 // E-11: one job per (conversation, version); an older version finds a newer one and skips.
 // ponytail: conversation.turn has no consumer until the agent exists (E-13); jobs wait there.
 async function scheduleTurn(tenantId: string, request: TurnRequest): Promise<void> {
@@ -47,7 +55,6 @@ async function scheduleTurn(tenantId: string, request: TurnRequest): Promise<voi
 
 const SHUTDOWN_SIGNALS = ['SIGTERM', 'SIGINT'] as const;
 const REMINDER_FAILED = 'reminder push failed';
-const STALE_MESSAGES = 'outbound messages without delivery status after 1 hour';
 // RF-26: every morning, in the clinics' time zone.
 const RECONCILE_CRON = '0 7 * * *';
 const RECONCILE_TZ = 'America/Sao_Paulo';
@@ -57,8 +64,16 @@ const DEFAULT_WEB_ORIGIN = 'http://localhost:5173';
 const RESUME_PATH = '/configuracao';
 
 const env = parseEnv(process.env);
-const log = pino();
+const log = createLogger({ service: 'worker', ...env, level: env.LOG_LEVEL });
+const sentryOn = initSentry({
+  service: 'worker',
+  dsn: env.SENTRY_DSN,
+  release: env.APP_RELEASE,
+  environment: env.NODE_ENV,
+});
+if (!sentryOn) logProcessErrors(log);
 const db = createDb(env.DATABASE_URL);
+const alert = createAlert({ log, record: (row) => recordOpsEvent(db, row) });
 // App role: no schema migration here; `pnpm db:migrate` owns it (RN-02).
 const boss = new PgBoss({
   connectionString: env.DATABASE_URL,
@@ -66,17 +81,16 @@ const boss = new PgBoss({
   migrate: false,
 });
 boss.on('error', (error) => {
-  log.error({ err: error }, QUEUE_ERROR);
+  alert(AlertEvent.queueError, {}, error);
 });
 
 await boss.start();
-// ponytail: alert = error log, picked up by Sentry/Axiom in E-26.
 for (const queue of QUEUES) {
   await watchDeadLetters({
     boss,
     queue: queue.name,
-    onDead: (dead) => {
-      log.error(dead, DEAD_LETTER);
+    onDead: ({ queue: deadQueue, jobId, tenantId }) => {
+      alert(AlertEvent.deadLetter, { queue: deadQueue, jobId, ...(tenantId ? { tenantId } : {}) });
     },
   });
 }
@@ -102,9 +116,7 @@ await workTenantQueue({
   queue: INBOUND_QUEUE.name,
   handler: (tx, data) =>
     processInboundEvent(tx, data, {
-      alert: (fields, message) => {
-        log.error(fields, message);
-      },
+      alert,
       scheduleTurn,
       notifyUsage: (tenantId, { reason, conversationId }) => {
         remind(tenantId, reason)(conversationId);
@@ -130,7 +142,9 @@ await workTenantQueue({
 
 await boss.schedule(RECONCILE_QUEUE.name, RECONCILE_CRON, null, { tz: RECONCILE_TZ });
 await boss.work(RECONCILE_QUEUE.name, async () => {
-  for (const stale of await findStaleMessages(db, new Date())) log.error(stale, STALE_MESSAGES);
+  for (const { tenantId } of await findStaleMessages(db, new Date())) {
+    alert(AlertEvent.deliveryFailure, { tenantId, code: RECONCILE_CODE });
+  }
 });
 
 // RF-15: the professional's agenda for tomorrow, at the time each tenant chose (default 20:00).
@@ -167,9 +181,7 @@ await boss.work(TRIAL_SWEEP_QUEUE.name, async () => {
     email: trialEmail,
     now: new Date(),
     urls: { resume: `${webOrigin}${RESUME_PATH}`, panel: webOrigin },
-    alert: (fields, message) => {
-      log.error(fields, message);
-    },
+    alert,
   });
   log.info(result, TRIAL_SWEPT);
 });
@@ -178,13 +190,23 @@ const turns = await startTurnWorker({
   boss,
   db,
   notifier,
+  alert,
   nodeEnv: env.NODE_ENV,
   source: process.env,
   log: appLog,
 });
 
+const readiness = env.WORKER_HEALTH_PORT
+  ? await startReadinessServer(env.WORKER_HEALTH_PORT, {
+      database: () => db.client.$queryRaw`select 1`,
+      queue: () => boss.getQueues(),
+    })
+  : undefined;
+log.info({ healthPort: env.WORKER_HEALTH_PORT }, WORKER_READY);
+
 for (const signal of SHUTDOWN_SIGNALS) {
   process.once(signal, () => {
+    readiness?.close();
     void turns
       .shutdown()
       .then(() => boss.stop())

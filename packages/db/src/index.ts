@@ -94,3 +94,9 @@ export {
   type AgendaResult,
   type AppointmentView,
 } from './agenda/types.ts';
+export {
+  recordOpsEvent,
+  recentOpsEvents,
+  RECENT_OPS_EVENTS,
+  type OpsEventInput,
+} from './ops-events.ts';

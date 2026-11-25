@@ -4,10 +4,12 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router/dom';
 import { Toaster } from './components/ui/sonner';
 import { queryClient } from './lib/query';
+import { initSentry } from './lib/sentry';
 import { registerServiceWorker } from './pwa';
 import { router } from './router';
 import './index.css';
 
+initSentry();
 const root = document.getElementById('root');
 if (!root) throw new Error('missing #root');
 

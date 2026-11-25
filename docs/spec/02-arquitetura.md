@@ -85,7 +85,7 @@ Requisitos do Postgres próprio. São dados de saúde e de agenda, então nenhum
 | Tempo real do inbox | SSE no Fastify + `LISTEN/NOTIFY` | Sem serviço extra |
 | Frontend | React, TypeScript, Tailwind, React Query, componentes acessíveis (Radix) | Design system próprio fica para depois do piloto |
 | IA | Vercel AI SDK por trás de um AI Gateway interno | Ver [04](04-agentes-e-ia.md) |
-| Traços | OpenTelemetry → Axiom; erros no Sentry | |
+| Logs, erros e traços | Logs pino → stdout, mais Axiom com `AXIOM_TOKEN`; erros no Sentry com `SENTRY_DSN`; traços de IA no Langfuse | Mudança: sem OpenTelemetry → Axiom por ora (só a IA gera traços, e o Langfuse já os recebe). Ver [observabilidade](../observabilidade.md) |
 
 ## Multi-tenancy
 

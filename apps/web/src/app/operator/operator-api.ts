@@ -31,6 +31,18 @@ export interface TenantConversations {
   handoffs: { conversationId: string; reason: string | null }[];
 }
 
+export interface Problem {
+  id: string;
+  event: string;
+  tenantId: string | null;
+  queue: string | null;
+  jobId: string | null;
+  conversationId: string | null;
+  turnId: string | null;
+  code: string | null;
+  createdAt: string;
+}
+
 export interface OwnerGrant {
   operatorEmail: string | null;
   reason: string;
@@ -41,6 +53,7 @@ export interface OwnerGrant {
 const ME_PATH = '/api/operator/me';
 const CLIENTS_PATH = '/api/operator/clients';
 const FUNNEL_PATH = '/api/operator/funnel';
+const PROBLEMS_PATH = '/api/operator/problems';
 const OWNER_PATH = '/api/operator-access';
 const POST = 'POST';
 const tenantPath = (tenantId: string, leaf: string) => `/api/operator/tenants/${tenantId}/${leaf}`;
@@ -58,6 +71,13 @@ export const useClients = () =>
 
 export const useFunnel = () =>
   useQuery({ queryKey: [FUNNEL_PATH], queryFn: () => api<Funnel>(FUNNEL_PATH), retry: false });
+
+export const useProblems = () =>
+  useQuery({
+    queryKey: [PROBLEMS_PATH],
+    queryFn: () => api<Problem[]>(PROBLEMS_PATH),
+    retry: false,
+  });
 
 export const useOwnerGrants = () =>
   useQuery({ queryKey: [OWNER_PATH], queryFn: () => api<OwnerGrant[]>(OWNER_PATH), retry: false });
