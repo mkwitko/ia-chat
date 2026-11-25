@@ -16,8 +16,7 @@ export function StartPage() {
   if (session.isPending) return <p className="p-6 text-sm text-muted-foreground">{LoadingCopy}</p>;
   if (!session.data) return <Navigate to={Route.login} replace />;
   // Creating the consultório updates the session; this single redirect takes over from there.
-  if (session.data.session.activeOrganizationId)
-    return <Navigate to={Route.services} replace />;
+  if (session.data.session.activeOrganizationId) return <Navigate to={Route.services} replace />;
   return (
     <AuthFrame title={Copy.title} subtitle={Copy.subtitle}>
       <StartForm />
