@@ -47,6 +47,12 @@ Por ser função pura, é o alvo principal dos testes unitários: mudança de ho
 
 O assistente recebe no máximo 6 opções por consulta, espalhadas em dias e períodos diferentes.
 
+### Férias e resumo noturno (E-22b)
+
+- **Férias (RF-14):** um `time_off` com `kind = vacation` (`block` é o bloqueio comum). O período vai do primeiro dia, 00:00, ao dia seguinte ao último, 00:00, no fuso do consultório; `availableSlots` já o subtrai, então nenhum horário do período é oferecido. `consultar_horarios` devolve `ferias: { retorno, aviso }` sempre que um período de férias cai na janela de busca. A data de retorno (`retorno`, `dd/mm/aaaa`) sai do banco e o texto fixo está em `AgentCopy.vacation`; o modelo só repete, nunca calcula data.
+- **Resumo noturno (RF-15):** `tenants.nightly_summary_minute` (minutos desde a meia-noite local, padrão 1200 = 20:00). O worker mantém uma agenda do pg-boss por consultório (fila `agenda.nightly_summary`, chave = tenant, fuso do consultório) e a recria a cada 15 minutos (`agenda.summary_sync`), o que aplica mudança de horário feita no painel. O job conta os atendimentos não cancelados do dia seguinte local e envia o push "Sua agenda de amanhã" com a quantidade e o link `/agenda?dia=AAAA-MM-DD`, sem nome de paciente (RN-38); dia vazio não envia (H-19). A lista fica no painel.
+- `tenants` não tem RLS: leitura do consultório sempre por `id` (o `loadScope` antigo lia "o primeiro" e podia devolver o fuso de outro consultório; corrigido na E-22b).
+
 ### Requisitos
 
 | ID | Requisito |
@@ -59,7 +65,7 @@ O assistente recebe no máximo 6 opções por consulta, espalhadas em dias e per
 | RF-45 | Um paciente pode ter mais de um agendamento futuro; o limite é configurável (padrão 2) |
 | RF-46 | Confirmação imediata ao paciente com data, hora, serviço, endereço e instruções |
 | RF-47 | Lembrete em dois tempos, configurável (padrão 24 horas e 2 horas antes). O primeiro traz as opções de confirmar ou remarcar; o segundo só é enviado se a janela de conversa estiver aberta ou se o cliente ativar, porque cada um custa uma mensagem |
-| RF-48 | Agendamento criado pelo profissional no painel segue as mesmas regras e constraints |
+| RF-48 | Agendamento criado pelo profissional no painel segue as mesmas regras e constraints (implementação E-23: mesma `bookAppointment`, mesma constraint; horário ocupado vira `slot_taken` com mensagem amigável; paciente novo exige telefone, que é a identidade do contato; só a antecedência mínima de cancelamento não vale para quem marca pelo painel, H-18) |
 
 ### Google Calendar
 

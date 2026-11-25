@@ -292,14 +292,14 @@ Spec: `05-agenda-e-pagamentos.md`.
 - [ ] Respostas de confirmar e remarcar tratadas pelo agente
 
 ### E-22b Férias e agenda do dia seguinte
-- [ ] **(teste primeiro)** Modo férias: nenhum horário do período é oferecido; aviso ao paciente
-- [ ] Resumo noturno ao profissional, em horário configurável
+- [x] **(teste primeiro)** Modo férias: nenhum horário do período é oferecido; aviso ao paciente
+- [x] Resumo noturno ao profissional, em horário configurável
 
 ### E-23 Agenda no painel
 Spec: `10-painel-e-interface.md`, `DESIGN.md`.
-- [ ] Visão de dia e semana no celular (Schedule-X)
-- [ ] Regras de disponibilidade e bloqueios
-- [ ] Agendamento manual pelas mesmas regras e constraints
+- [x] Visão de dia e semana no celular (lista feita à mão em vez de Schedule-X, spec 10)
+- [x] Regras de disponibilidade e bloqueios
+- [x] Agendamento manual pelas mesmas regras e constraints
 - [ ] Revisão com `impeccable`
 
 ### E-24 Onboarding

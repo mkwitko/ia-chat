@@ -7,6 +7,7 @@ export const Route = {
   conversations: '/conversas',
   conversation: '/conversas/:id',
   agenda: '/agenda',
+  agendaAvailability: '/agenda/disponibilidade',
   today: '/hoje',
   more: '/mais',
   assistant: '/mais/assistente',

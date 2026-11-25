@@ -21,9 +21,10 @@ export interface AgendaScope {
 
 /** The tenant's agenda owner. ponytail: first professional; multi-professional arrives with the Clínica plan. */
 export async function loadScope(tx: Tx): Promise<AgendaScope> {
-  const tenant = await tx.tenant.findFirstOrThrow();
   const professional = await tx.professional.findFirst({ orderBy: { createdAt: 'asc' } });
   if (!professional) throw new AgendaFailure(AgendaError.noProfessional);
+  // `tenants` has no RLS: the row is picked by the (RLS-filtered) professional's tenant, never "the first".
+  const tenant = await tx.tenant.findUniqueOrThrow({ where: { id: professional.tenantId } });
   const location = await tx.location.findFirst({ orderBy: { createdAt: 'asc' } });
   return {
     timezone: tenant.timezone,

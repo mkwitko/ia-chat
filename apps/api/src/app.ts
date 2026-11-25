@@ -4,6 +4,7 @@ import type { Db } from '@app/db';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { registerAssistantSettingsRoutes } from './assistant/settings-routes.ts';
 import { createAuth, type Auth } from './auth/auth.ts';
+import { registerAgendaRoutes } from './agenda/register.ts';
 import { registerAuthRoutes } from './auth/routes.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
 import { registerInboxRoutes } from './conversations/inbox-routes.ts';
@@ -55,12 +56,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
   registerControlRoutes(app);
-  registerAssistantSettingsRoutes(app);
-  registerServiceRoutes(app);
-  registerLocationRoutes(app);
-  registerKnowledgeRoutes(app);
-  registerToneRoutes(app);
-  registerUsageRoutes(app);
+  registerSettingsRoutes(app);
   registerWaitlistIfConfigured(app, deps);
   registerInboxRoutes(app, {
     send:
@@ -82,4 +78,15 @@ export function buildApp(deps: AppDeps): FastifyInstance {
     registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
   }
   return app;
+}
+
+/** Panel settings and agenda: each module registers its own guarded routes. */
+function registerSettingsRoutes(app: FastifyInstance): void {
+  registerAssistantSettingsRoutes(app);
+  registerServiceRoutes(app);
+  registerLocationRoutes(app);
+  registerKnowledgeRoutes(app);
+  registerToneRoutes(app);
+  registerUsageRoutes(app);
+  registerAgendaRoutes(app);
 }

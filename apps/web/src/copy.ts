@@ -32,10 +32,6 @@ export const EmptyCopy = {
     title: 'Nenhuma conversa ainda',
     body: 'Quando um paciente mandar mensagem no seu WhatsApp, a conversa aparece aqui. Antes disso, teste o assistente no simulador.',
   },
-  agenda: {
-    title: 'Sua agenda está vazia',
-    body: 'Conecte o Google Agenda para ver seus horários e deixar o assistente marcar consultas.',
-  },
   today: {
     title: 'Nada para hoje',
     body: 'Aqui aparecem os atendimentos do dia e o que precisa de você: conversas aguardando, rascunhos para aprovar e perguntas que o assistente não soube.',
