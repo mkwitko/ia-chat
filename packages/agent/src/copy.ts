@@ -6,8 +6,11 @@ import { Identity } from '@app/ai';
 /** tenants.assistant_name default (schema): reads as a role, not a name. */
 export const DEFAULT_ASSISTANT_NAME = 'Assistente virtual';
 
-const EMERGENCY =
-  'Já avisei o profissional. Se for uma emergência, ligue agora para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Se estiver em sofrimento emocional, o CVV atende 24 horas no 188.';
+const EMERGENCY_HELP =
+  'Se for uma emergência, ligue agora para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Se estiver em sofrimento emocional, o CVV atende 24 horas no 188.';
+const WARNED = 'Já avisei o profissional.';
+// Without a working notification nobody was warned: no promise, the message waits in the panel.
+const WILL_SEE = 'O profissional vai ver sua mensagem e te responder por aqui.';
 const NOTICE =
   'Vou passar sua mensagem para o profissional, que vai te responder por aqui assim que puder.';
 
@@ -19,7 +22,9 @@ export interface Persona {
 
 export const AgentCopy = {
   /** Says the professional was told: the push notice (E-16) goes out with this answer. */
-  emergency: EMERGENCY,
+  /** `notified`: a push really went to the professional (keys set and a device subscribed). */
+  emergency: (notified: boolean) =>
+    notified ? `${WARNED} ${EMERGENCY_HELP}` : `${EMERGENCY_HELP} ${WILL_SEE}`,
   handoffNotice: ({ identity }: Persona) =>
     identity === Identity.professional
       ? 'Vou te responder com calma por aqui assim que puder.'

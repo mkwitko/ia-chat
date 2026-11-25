@@ -17,7 +17,7 @@ export function FunnelPanel() {
               {STEP_INFO[step].title}: {Copy.funnel.line(count, funnel.signups)}
             </span>
             <progress
-              className="h-2 w-full"
+              className="h-2 w-full overflow-hidden rounded-full [&::-moz-progress-bar]:bg-primary [&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-value]:bg-primary"
               max={Math.max(funnel.signups, 1)}
               value={count}
               aria-label={STEP_INFO[step].title}

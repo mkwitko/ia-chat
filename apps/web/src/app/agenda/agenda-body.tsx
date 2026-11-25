@@ -41,7 +41,9 @@ function DaySection({
   const offs = agenda.timeOffs.filter((off) => covers(off, day, timezone));
   return (
     <section aria-label={dayTitle(day)} className="grid gap-2">
-      {showTitle && <h2 className="px-4 text-base capitalize md:px-0">{dayTitle(day)}</h2>}
+      {showTitle && (
+        <h2 className="px-4 text-base first-letter:uppercase md:px-0">{dayTitle(day)}</h2>
+      )}
       {offs.map((off) => (
         <TimeOffNote key={off.id} off={off} timezone={timezone} />
       ))}

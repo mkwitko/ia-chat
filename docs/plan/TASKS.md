@@ -353,6 +353,7 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 
 ### E-28 Piloto
 - [ ] Configurar a conta do piloto junto com ele e medir o tempo gasto
+- [ ] **Antes do primeiro paciente real:** ativar as notificações no celular do piloto, simular uma urgência e confirmar que o aviso chega. Sem aparelho com notificação ativa, a resposta de urgência não diz "Já avisei o profissional" (só orienta SAMU/CVV e diz que ele vai ver a mensagem)
 - [ ] Uma semana em "aprovar antes de enviar"; depois automático, se ele quiser
 - [ ] Revisão semanal de conversas, custos e perguntas sem resposta
 - [ ] Coletar os indicadores do piloto e o número de faltas antes e depois

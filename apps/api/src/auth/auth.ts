@@ -44,7 +44,8 @@ export function createAuth({ env, db, email }: AuthDeps) {
       sendVerificationEmail: ({ user, url }) => email.send(verificationEmail(user.email, url)),
     },
     socialProviders: googleProvider(env),
-    plugins: [tenantPlugin({ env, email })],
+    plugins: [tenantPlugin({ env, db, email })],
+    databaseHooks: { session: { create: { before: withFirstTenant(db) } } },
   });
 }
 
@@ -52,4 +53,19 @@ export function createAuth({ env, db, email }: AuthDeps) {
 function googleProvider(env: ApiEnv) {
   const { GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: clientSecret } = env;
   return clientId && clientSecret ? { google: { clientId, clientSecret } } : {};
+}
+
+/**
+ * A new session (sign-in, email link) starts on the user's oldest consultório, so the panel
+ * does not send someone who already has one to "Seu consultório" again.
+ */
+function withFirstTenant(db: Db) {
+  return async <T extends { userId: string }>(session: T) => {
+    const membership = await db.client.membership.findFirst({
+      where: { userId: session.userId },
+      orderBy: { createdAt: 'asc' },
+      select: { tenantId: true },
+    });
+    return { data: { ...session, activeOrganizationId: membership?.tenantId ?? null } };
+  };
 }
