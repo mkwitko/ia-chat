@@ -38,12 +38,7 @@ export function channelTokenReader(
 }
 
 /** Fictional values Meta shows the reviewer, in the order of {{1}}..{{4}}. */
-export const TEMPLATE_EXAMPLE = [
-  'Consulta',
-  '10/12/2026',
-  '14:30',
-  'Rua das Flores, 100',
-] as const;
+export const TEMPLATE_EXAMPLE = ['Consulta', '10/12/2026', '14:30', 'Rua das Flores, 100'] as const;
 
 /** Templates created in each client's WABA: only those ever sent outside the 24 h window. */
 export const SIGNUP_TEMPLATES: readonly MessageTemplate[] = [
