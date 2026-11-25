@@ -1,0 +1,8 @@
+name,type,url,location_or_channel,price_of_comparable_item,what_it_sells,positioning_line,rating,review_count,source_date
+Cloudia,direct,https://www.cloudia.com.br/,Brasil / online,preço mascarado no site; tiers por atendimentos/mês,plataforma de atendimento + agente IA + CRM para clínicas,n/d,n/d,n/d,2026-11-24 (pesquisa 04)
+Clinicorp,indirect,https://www.clinicorp.com/,Brasil / online,Standard R$149.90 e Premium R$369.90 por mês (sistema); agentes IA sob consulta,sistema de gestão odonto/estética + agentes IA no WhatsApp,n/d,n/d,n/d,2026-11-24 (pesquisa 04)
+Simples Dental,indirect,https://www.simplesdental.com/planos-e-precos,Brasil / online,Basic R$149.90; Plus R$249.90; Pro R$349.90; secretária IA paga à parte,sistema odontológico + secretária IA,n/d,n/d,n/d,2026-11-24 (pesquisa 04)
+Botconversa,direct,https://www.botconversa.com.br/,Brasil / online,Starter R$189; Pro + API Oficial R$199 (5.000 interações de IA/mês),plataforma genérica de chatbot e funis no WhatsApp,n/d,n/d,n/d,2026-11-24 (pesquisa 04)
+Substituto: secretária humana,substitute,n/d,local,n/d,pessoa que responde e agenda,n/d,n/d,n/d,n/d
+Substituto: WhatsApp Business (respostas rápidas e ausência),substitute,n/d,app gratuito,gratuito,mensagem de ausência e respostas prontas,n/d,n/d,n/d,n/d
+Substituto: agenda manual,substitute,n/d,n/d,gratuito,marcação manual,n/d,n/d,n/d,n/d
