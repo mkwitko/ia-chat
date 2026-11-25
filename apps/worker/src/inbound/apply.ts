@@ -12,6 +12,7 @@ import {
 } from '@app/db';
 import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts';
 import { resolveContact } from './contacts.ts';
+import { countMessage, MessageCategory, type UsageNotice } from '../usage/counters.ts';
 import { contentColumns } from './message-row.ts';
 
 const WINDOW_MS = 86_400_000; // Meta customer service window: 24 h from the patient's last message
@@ -58,6 +59,8 @@ export interface InboundResult {
   alerts: DeliveryAlert[];
   /** Turns to schedule after the transaction commits (E-11). */
   turns: TurnRequest[];
+  /** Franchise warnings to push after the transaction commits (E-18). */
+  usage: UsageNotice[];
 }
 
 export async function applyInboundEvents(
@@ -65,7 +68,7 @@ export async function applyInboundEvents(
   { tenantId, channelId, events }: InboundScope,
 ): Promise<InboundResult> {
   const ordered = [...events].sort((a, b) => a.at.getTime() - b.at.getTime()); // RF-23: provider time
-  const result: InboundResult = { alerts: [], turns: [] };
+  const result: InboundResult = { alerts: [], turns: [], usage: [] };
   for (const event of ordered) await applyOne(tx, { tenantId, channelId, event, result });
   return result;
 }
@@ -86,8 +89,9 @@ async function applyOne(tx: Tx, { tenantId, channelId, event, result }: ApplyOne
     return;
   }
   if (event.kind !== InboundKind.status) {
-    const turn = await storeMessage(tx, { tenantId, channelId, event });
-    if (turn) result.turns.push(turn);
+    const stored = await storeMessage(tx, { tenantId, channelId, event });
+    if (stored.turn) result.turns.push(stored.turn);
+    if (stored.usage) result.usage.push(stored.usage);
     return;
   }
   await applyStatus(tx, channelId, event);
@@ -101,10 +105,12 @@ interface StoreMessage {
   event: ConversationEvent;
 }
 
-async function storeMessage(
-  tx: Tx,
-  { tenantId, channelId, event }: StoreMessage,
-): Promise<TurnRequest | null> {
+interface Stored {
+  turn: TurnRequest | null;
+  usage: UsageNotice | null;
+}
+
+async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage): Promise<Stored> {
   const contact = await resolveContact(tx, tenantId, event.contact);
   const conversation = await tx.conversation.upsert({
     where: { tenantId_channelId_contactId: { tenantId, channelId, contactId: contact.id } },
@@ -120,9 +126,17 @@ async function storeMessage(
     },
     skipDuplicates: true, // unique (tenant, channel, provider_message_id): RF-22
   });
-  if (count === 0) return null;
+  if (count === 0) return { turn: null, usage: null };
+  const fromPatient = event.kind === InboundKind.message;
+  const usage = await countMessage(tx, {
+    tenantId,
+    conversationId: conversation.id,
+    category: fromPatient ? MessageCategory.patient : MessageCategory.owner,
+    opensConversation: fromPatient && opensConversation(conversation.lastMessageAt, event.at),
+    now,
+  });
   const updated = await touchConversation(tx, conversation, event);
-  if (event.kind === InboundKind.message) return onPatientMessage(tx, updated, now);
+  if (fromPatient) return { turn: await onPatientMessage(tx, updated, now), usage };
   // RF-30: the owner answered from the phone; same transaction as the message.
   await setControl(tx, {
     tenantId,
@@ -131,8 +145,12 @@ async function storeMessage(
     reason: ControlReason.ownerEcho,
     actor: { type: ActorType.user },
   });
-  return null;
+  return { turn: null, usage };
 }
+
+/** Spec 01: a new conversation starts after more than 24 h without messages. */
+const opensConversation = (last: Date | null, at: Date) =>
+  !last || at.getTime() - last.getTime() > WINDOW_MS;
 
 async function touchConversation(
   tx: Tx,

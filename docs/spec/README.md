@@ -72,6 +72,7 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | H-14 | Autonomia, identidade e nome do assistente falam com o paciente: dono e profissional alteram, recepcionista só vê (padrão conservador adotado na tela "Assistente") | Ajustar `assistant` em `apps/api/src/auth/access.ts` | Perguntar ao piloto quando houver equipe |
 | H-15 | Rascunho não aprovado em 30 minutos gera um lembrete único por push; nada é enviado sozinho (RF-13). Tempo fixo no código até haver configuração por cliente | Tornar configurável por tenant | Validar com o piloto |
 | H-16 | Enviar mensagem pelo painel assume a conversa (spec 10); o texto do push nunca traz conteúdo da mensagem, só o motivo e o link (RN-38) | Perguntar ao piloto se prefere ver o nome do paciente | Validar com o piloto |
+| H-17 | Uso (E-18): o mês é o mês civil em UTC; "conversa" nova quando a última mensagem da conversa tem mais de 24 h; teto de excedente é em centavos por mês, vazio = sem teto, e o modo restrito começa quando o excedente passa do teto (não quando iguala); em modo restrito o assistente envia a mensagem fixa mesmo em "aprovar" e passa a conversa ao profissional (a notificação é a de transferência); avisos de 80% e 100% vão só por push (WhatsApp ao profissional fica para depois); sem previsão de fim de mês nem troca de plano na tela | Perguntar ao piloto se o mês deve seguir o ciclo de cobrança; decidir a previsão com o Asaas (E-25) | Validar com o piloto |
 
 ## Pendências que bloqueiam prazo
 

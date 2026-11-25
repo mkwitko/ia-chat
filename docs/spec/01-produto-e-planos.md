@@ -81,7 +81,7 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 
 - **Franquia por conversa, não por mensagem ou token.** É a unidade que o profissional entende.
 - **Ao atingir 80% da franquia:** aviso no painel e por WhatsApp ao profissional.
-- **Ao atingir 100%:** o atendimento continua. O excedente é cobrado por conversa na fatura seguinte, com teto configurável pelo cliente. Atingido o teto, o assistente passa a só avisar o paciente de que o profissional responderá em breve e notifica o profissional. Nunca deixa o paciente sem resposta.
+- **Ao atingir 100%:** o atendimento continua. O excedente é cobrado por conversa na fatura seguinte, com teto configurável pelo cliente. Atingido o teto, o assistente passa a só avisar o paciente de que o profissional responderá em breve e notifica o profissional. Nunca deixa o paciente sem resposta. Franquias, excedente e mensalidades ficam em `packages/core/src/plans.ts` (fonte única); o teto e os avisos seguem a hipótese H-17.
 - **Teto técnico por conversa:** máximo de 30 turnos do assistente e de custo de IA por conversa (valor em [04](04-agentes-e-ia.md)). Passou do teto, transfere para humano.
 - **Custo da Meta:** cada cliente paga a Meta diretamente, com cartão próprio. O onboarding mostra a estimativa mensal conforme o volume informado.
 

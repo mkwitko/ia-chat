@@ -48,7 +48,7 @@ export const MoreCopy = {
     { label: 'Assistente', hint: 'Autonomia, apresentação e tom de voz', to: Route.assistant },
     { label: 'Serviços e local', hint: 'Valores, duração e endereço', to: Route.services },
     { label: 'Conexões', hint: 'WhatsApp e Google Agenda' },
-    { label: 'Plano e uso', hint: 'Conversas do mês e fatura' },
+    { label: 'Plano e uso', hint: 'Conversas do mês e fatura', to: Route.usage },
     { label: 'Equipe', hint: 'Quem mais acessa o painel' },
     { label: 'Ajuda', hint: 'Fale com a gente' },
   ],

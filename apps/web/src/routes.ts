@@ -9,6 +9,7 @@ export const Route = {
   tone: '/mais/assistente/tom',
   knowledge: '/mais/assistente/base',
   services: '/mais/servicos',
+  usage: '/mais/plano-e-uso',
 } as const;
 
 export const conversationPath = (id: string) => `${Route.conversations}/${id}`;

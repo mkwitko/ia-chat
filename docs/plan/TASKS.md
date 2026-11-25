@@ -245,9 +245,9 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 - [x] Auditoria das alterações
 
 ### E-18 Uso e limites
-- [ ] Contadores de conversa por mês e por categoria de mensagem
-- [ ] **(teste primeiro)** Avisos de 80% e 100%; excedente com teto; modo restrito com resposta fixa
-- [ ] Tela de uso do mês com estimativa de gasto na Meta
+- [x] Contadores de conversa por mês e por categoria de mensagem
+- [x] **(teste primeiro)** Avisos de 80% e 100%; excedente com teto; modo restrito com resposta fixa
+- [x] Tela de uso do mês com estimativa de gasto na Meta
 
 ### E-18b Níveis de autonomia
 Spec: `01-produto-e-planos.md` (RF-13).

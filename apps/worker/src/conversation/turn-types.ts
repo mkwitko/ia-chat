@@ -78,3 +78,12 @@ export interface TurnJob {
   conversationId: string;
   version: number;
 }
+
+/** What claiming the pending messages hands to the generation step. */
+export interface Claimed {
+  turnId: string;
+  messages: TurnMessage[];
+  lastProviderMessageId: string | null;
+  /** E-18: the owner's overage cap was reached; the model must not be called. */
+  restricted: boolean;
+}
