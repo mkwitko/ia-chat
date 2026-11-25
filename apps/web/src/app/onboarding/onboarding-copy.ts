@@ -74,7 +74,7 @@ export const STEP_INFO: Record<Step, StepInfo> = {
   },
   [Step.whatsapp]: {
     title: 'Conectar o WhatsApp',
-    text: 'A conexão com o WhatsApp ainda não está disponível. Você pode seguir sem ela.',
+    text: 'A conexão com o WhatsApp e a forma de pagamento na Meta ainda não estão disponíveis. Você pode seguir sem ela.',
     soon: true,
   },
   [Step.google]: {

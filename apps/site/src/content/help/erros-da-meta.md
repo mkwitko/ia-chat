@@ -12,7 +12,7 @@ summary: 'Os avisos da Meta que traduzimos para linguagem comum.'
 | O serviço está com muita demanda agora                        | Espere alguns minutos e tente de novo.                                  |
 | A autorização expirou ou foi cancelada                        | Conecte a conta de novo, aceitando todas as permissões.                 |
 | Faltou uma permissão para concluir a conexão                  | Refaça a conexão e aceite todas as permissões da tela.                  |
-| A Meta não encontrou uma forma de pagamento válida            | Fale com o suporte: a cobrança da Meta é nossa.                         |
+| A Meta não encontrou uma forma de pagamento válida            | Corrija o cartão no Gerenciador de Negócios da Meta.                    |
 | A conta do WhatsApp Business foi bloqueada                    | Veja o aviso da Meta no Gerenciador de Negócios e siga o que ela pedir. |
 | O nome de exibição ainda precisa ser aprovado                 | Acompanhe no Gerenciador do WhatsApp. Costuma levar até um dia.         |
 | Passaram mais de 24 horas desde a última mensagem do paciente | Só um modelo de mensagem aprovado pode ser enviado.                     |

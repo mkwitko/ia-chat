@@ -72,7 +72,7 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 |---|---|---|
 | Resposta em áudio (voz padrão) | Pacote de minutos | Custo por minuto de fala |
 | Documentos (base de conhecimento grande, PDFs) | Valor fixo por faixa de páginas | Custo de indexação e de contexto maior |
-| Mensagens ativas (reativação, campanhas) | Repasse do custo Meta na nossa fatura (pagamos a Meta) | Marketing custa R$ 0,32 por mensagem |
+| Mensagens ativas (reativação, campanhas) | Repasse do custo Meta, pago pelo cliente direto à Meta | Marketing custa R$ 0,32 por mensagem |
 | Profissional adicional | Valor fixo por profissional | Só no plano Clínica |
 | Telefonia | Não ofertado | Incompatível com coexistência; exige segundo número |
 | Voz clonada do próprio profissional | Valor fixo + pacote de minutos (Fase 5) | Exige termo de consentimento; ver [06](06-seguranca-e-lgpd.md) |
@@ -83,7 +83,7 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 - **Ao atingir 80% da franquia:** aviso no painel e por WhatsApp ao profissional.
 - **Ao atingir 100%:** o atendimento continua. O excedente é cobrado por conversa na fatura seguinte, com teto configurável pelo cliente. Atingido o teto, o assistente passa a só avisar o paciente de que o profissional responderá em breve e notifica o profissional. Nunca deixa o paciente sem resposta. Franquias, excedente e mensalidades ficam em `packages/core/src/plans.ts` (fonte única); o teto e os avisos seguem a hipótese H-17.
 - **Teto técnico por conversa:** máximo de 30 turnos do assistente e de custo de IA por conversa (valor em [04](04-agentes-e-ia.md)). Passou do teto, transfere para humano.
-- **Custo da Meta:** pagamos a Meta por todos os clientes (decisão do dono, 25/11/2026). O custo entra na mensalidade e no excedente; o cliente não cadastra cartão na Meta. Mecanismo de pagamento: H-05.
+- **Custo da Meta:** cada cliente paga a Meta diretamente, com cartão próprio. O onboarding mostra a estimativa mensal conforme o volume informado.
 
 ### Preços
 
