@@ -4,7 +4,7 @@
 
 ## 1. A quem se aplica
 
-1.1. Esta política explica como Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, [ENDEREÇO] ("nós"), trata os dados pessoais de:
+1.1. Esta política explica como Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131 ("nós"), trata os dados pessoais de:
 
 a) **clientes e usuários do painel**: profissionais e pequenos negócios que contratam o Consultório Aberto e as pessoas da equipe que eles cadastram;
 

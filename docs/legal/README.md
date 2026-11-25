@@ -20,7 +20,7 @@ Dados da empresa: Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, também 
 
 Marcadores ainda abertos nos textos (preencher e remover daqui):
 
-- `[ENDEREÇO]`, `mauriciokwt@gmail.com`, `mauriciokwt@gmail.com`: Termos, Política, Contrato de Operador e termo do piloto.
+- `Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131`, `mauriciokwt@gmail.com`, `mauriciokwt@gmail.com`: Termos, Política, Contrato de Operador e termo do piloto.
 - `Florianópolis (SC)`: Termos de Uso, cláusula 18.2.
 - `[PROVEDOR DE HOSPEDAGEM]` e `[PROVEDOR DE E-MAIL]` (e `[LOCAL DO PROVEDOR]`): `suboperadores.md`, quando os contratos forem fechados.
 - Valor do profissional adicional do plano Clínica: Termos, cláusula 5.1 (hoje remete à página de preços).

@@ -4,9 +4,9 @@
 
 ## 1. Partes
 
-1.1. **Piloto:** [NOME DO PROFISSIONAL], [CPF], responsável por [NOME DO NEGÓCIO], [CNPJ, SE HOUVER], [ENDEREÇO].
+1.1. **Piloto:** [NOME DO PROFISSIONAL], [CPF], responsável por [NOME DO NEGÓCIO], [CNPJ, SE HOUVER], Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131.
 
-1.2. **Consultório Aberto:** Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, [ENDEREÇO].
+1.2. **Consultório Aberto:** Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131.
 
 ## 2. O que eu autorizo
 

@@ -25,7 +25,7 @@ Observações para o profissional:
 
 **1. Quem trata seus dados**
 
-1.1. O responsável pelos seus dados (controlador) é [NOME DO PROFISSIONAL OU RAZÃO SOCIAL], [CPF OU CNPJ], [ENDEREÇO].
+1.1. O responsável pelos seus dados (controlador) é [NOME DO PROFISSIONAL OU RAZÃO SOCIAL], [CPF OU CNPJ], Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131.
 
 1.2. Contato para assuntos de privacidade: [E-MAIL OU TELEFONE DO CONTROLADOR]. Encarregado: [NOME E E-MAIL DO ENCARREGADO DO CONTROLADOR, OU "não indicado, conforme a Resolução CD/ANPD 2/2022"].
 

@@ -4,7 +4,7 @@
 
 ## 1. Quem somos
 
-1.1. O Consultório Aberto é um serviço oferecido por Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, com sede em [ENDEREÇO] ("nós").
+1.1. O Consultório Aberto é um serviço oferecido por Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, com sede em Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131 ("nós").
 
 1.2. Contato: mauriciokwt@gmail.com. Encarregado pelo tratamento de dados pessoais: Mauricio de Oliveira Kwitko, mauriciokwt@gmail.com.
 
