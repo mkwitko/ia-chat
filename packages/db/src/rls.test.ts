@@ -17,6 +17,9 @@ const PLATFORM_TABLES = new Set([
   'waitlist_entries', // public site signups before any tenant exists (S-01)
   'ops_events', // operator-facing problem log from alert(); ids and codes only (E-26)
   'billing_events', // Asaas webhook ids for idempotency, no tenant data (E-25)
+  // Operator's onboarding invites (H-37): read by the sign-up before the tenant exists; tenant_id
+  // only records which consultório the invite opened.
+  'onboarding_invites',
   // Better Auth (E-04): read before a tenant is chosen. The API guard checks membership.
   'users',
   'sessions',

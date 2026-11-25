@@ -117,6 +117,9 @@ enum Autonomy {
 }
 
 enum TenantStatus {
+  /// Invite-only signup (owner decision, 25/11/2026): created by an onboarding invite, no trial clock
+  /// yet. The 14-day trial starts when a channel first connects (trigger on channels, H-24).
+  setup
   trial
   active
   restricted

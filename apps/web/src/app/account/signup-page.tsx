@@ -8,26 +8,59 @@ import { EmailField, NewPasswordField } from './account-fields';
 import { panelUrl } from './auth-errors';
 import { AuthFrame, FormAlert } from './auth-frame';
 import { CheckEmail } from './check-email';
+import { InviteOnly } from './invite-only';
 import { useAuthAction } from './use-auth-action';
 
-/** Spec 09, step 1: create the account; the email link signs in and opens "Seu consultório". */
+const GOOGLE = 'google';
+
+/** /criar-conta: sign-up is invite-only (H-37); the invite link opens InviteSignUp instead. */
 export function SignUpPage() {
+  return <InviteOnly />;
+}
+
+interface InviteSignUpProps {
+  practiceName: string;
+  email: string | null;
+  /** Where Google sends the person back if the sign-up is refused (the invite page itself). */
+  returnTo: string;
+}
+
+/**
+ * Spec 09, step 1, from an invite: Google or e-mail. The invite page already armed the http-only
+ * cookie that lets the API create the account and the consultório; the guided setup follows.
+ */
+export function InviteSignUp({ practiceName, email, returnTo }: Readonly<InviteSignUpProps>) {
   const [sentTo, setSentTo] = useState<string | null>(null);
   if (sentTo) return <CheckEmail email={sentTo} />;
+  const google = () =>
+    void authClient.signIn.social({
+      provider: GOOGLE,
+      callbackURL: panelUrl(Route.onboarding),
+      errorCallbackURL: panelUrl(returnTo),
+    });
   return (
     <AuthFrame
       title={Copy.title}
-      subtitle={Copy.subtitle}
+      subtitle={Copy.subtitle(practiceName)}
       footer={{ to: Route.login, label: Copy.haveAccount }}
     >
-      <SignUpForm onSent={setSentTo} />
+      <Button type="button" variant="outline" onClick={google}>
+        {Copy.google}
+      </Button>
+      <p className="text-center text-xs text-muted-foreground">{Copy.divider}</p>
+      <SignUpForm initialEmail={email ?? ''} onSent={setSentTo} />
     </AuthFrame>
   );
 }
 
-function SignUpForm({ onSent }: Readonly<{ onSent: (email: string) => void }>) {
+interface FormProps {
+  initialEmail: string;
+  onSent: (email: string) => void;
+}
+
+function SignUpForm({ initialEmail, onSent }: Readonly<FormProps>) {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
   const action = useAuthAction();
   const submit = async () => {

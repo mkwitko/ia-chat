@@ -26,7 +26,12 @@ export function LoginPage() {
         type="button"
         variant="outline"
         onClick={() =>
-          void authClient.signIn.social({ provider: GOOGLE, callbackURL: Route.conversations })
+          void authClient.signIn.social({
+            provider: GOOGLE,
+            callbackURL: Route.conversations,
+            // A Google account without an invite is refused (H-37): explain it there.
+            errorCallbackURL: Route.signUp,
+          })
         }
       >
         {LoginCopy.google}

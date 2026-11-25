@@ -23,6 +23,7 @@ import { registerEventsRoute } from './realtime/events-route.ts';
 import { createInboxHub } from './realtime/inbox-hub.ts';
 import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
+import { registerInviteRoutes } from './invites/invite-routes.ts';
 import { registerOnboardingRoutes } from './onboarding/onboarding-routes.ts';
 import { registerTrialRoutes } from './trial/trial-routes.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
@@ -78,6 +79,10 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   app.decorate('operatorEmails', env.OPERATOR_EMAILS);
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
+  registerInviteRoutes(app, {
+    webOrigin: env.WEB_ORIGIN,
+    secureCookie: env.NODE_ENV === NodeEnv.production,
+  });
   registerOperatorRoutes(app);
   registerControlRoutes(app);
   registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });

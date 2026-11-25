@@ -1,15 +1,16 @@
 import * as z from 'zod';
 
-// Spec 09, "Cadastro e ativação sem ajuda": the eight steps, in order.
+// Spec 09, "Cadastro e ativação sem ajuda": the steps, in order. Owner decision (25/11/2026, H-37):
+// CPF/CNPJ, WhatsApp, Google, then services and the rest, simulator, activation.
 
 export const OnboardingStep = {
   account: 'account',
+  whatsapp: 'whatsapp',
+  google: 'google',
   services: 'services',
   location: 'location',
   tone: 'tone',
   simulator: 'simulator',
-  whatsapp: 'whatsapp',
-  google: 'google',
   activation: 'activation',
 } as const;
 export type OnboardingStep = (typeof OnboardingStep)[keyof typeof OnboardingStep];

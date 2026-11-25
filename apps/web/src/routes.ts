@@ -1,6 +1,7 @@
 export const Route = {
   login: '/entrar',
   signUp: '/criar-conta',
+  invite: '/convite/:token',
   forgotPassword: '/esqueci-a-senha',
   resetPassword: '/nova-senha',
   start: '/comecar',
@@ -25,5 +26,6 @@ export const Route = {
   operator: '/operador',
 } as const;
 
+export const invitePath = (token: string) => `/convite/${token}`;
 export const conversationPath = (id: string) => `${Route.conversations}/${id}`;
 export const customerPath = (id: string) => `${Route.customers}/${id}`;

@@ -9,8 +9,9 @@ import { audit, AuditAction } from '../setup/audit.ts';
 import { notFound, parsed, tenantOf } from '../setup/guarded.ts';
 import { applyTemplate } from './apply-template.ts';
 import { progressView, readProgress, saveProgress } from './progress.ts';
+import { documentSet, stepBlocked } from './requirements.ts';
 
-// Spec 09, "Cadastro e ativação sem ajuda": eight steps with progress saved on the server.
+// Spec 09, "Cadastro e ativação sem ajuda": one guided flow, progress saved on the server.
 
 const PATH = '/api/onboarding';
 const STEP_PATH = '/api/onboarding/steps/:step';
@@ -45,6 +46,8 @@ async function saveStep(request: FastifyRequest, reply: FastifyReply) {
   if (body.status === StepStatus.skipped && !SKIPPABLE_STEPS.has(step))
     return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
   return tenant.withTenant(async (tx) => {
+    const blocked = await stepBlocked(tx, { tenantId: tenant.tenantId, step, status: body.status });
+    if (blocked) return reply.code(HttpStatus.conflict).send({ error: blocked });
     const progress = await readProgress(tx, tenant.tenantId);
     markStep(progress, { step, status: body.status, now: new Date() });
     await saveProgress(tx, { tenantId: tenant.tenantId, progress });
@@ -68,7 +71,9 @@ async function chooseSpecialty(request: FastifyRequest, reply: FastifyReply) {
     if (!policy) return reply.code(HttpStatus.conflict).send({ error: ErrorCode.invalidRequest });
     const progress = await readProgress(tx, tenant.tenantId);
     progress.specialty = body.specialty;
-    markStep(progress, { step: OnboardingStep.account, status: StepStatus.done, now: new Date() });
+    // The first step is CPF/CNPJ and specialty: done once both are there (H-37).
+    if (await documentSet(tx, tenant.tenantId))
+      markStep(progress, { step: OnboardingStep.account, status: StepStatus.done, now: new Date() });
     await tx.tenant.update({
       where: { id: tenant.tenantId },
       data: { specialtyPolicyId: policy.id, onboardingProgress: progress },

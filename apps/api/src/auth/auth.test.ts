@@ -4,8 +4,10 @@ import {
   authPost,
   cookieOf,
   createTenant,
+  inviteCookie,
   lastLinkTo,
   signIn,
+  signUp,
   signUpVerified,
   startTestApp,
   uniqueEmail,
@@ -14,7 +16,8 @@ import {
 import { Permission, Role } from './access.ts';
 import { requireTenant } from './tenant-guard.ts';
 
-// E-04 "pronto quando": login, tenant creation and invitation through the API.
+// E-04 "pronto quando": login, tenant creation and invitation through the API. Sign-up is by
+// onboarding invite (H-37, see invites.test.ts); a team invitation also lets the invited e-mail sign up.
 // RN-34: receptionist cannot see billing nor change integrations; no access across tenants.
 
 const BILLING = '/test/billing';
@@ -59,10 +62,7 @@ const put = (url: string, cookie: string) =>
 describe('sign-up and login', () => {
   it('refuses login before the email is verified', async () => {
     const email = uniqueEmail();
-    await authPost(ctx, {
-      path: '/sign-up/email',
-      body: { email, password: 'senha-de-teste-123', name: 'X' },
-    });
+    await signUp(ctx, { email, cookie: await inviteCookie(ctx) });
     expect((await signIn(ctx, email)).statusCode).toBe(403);
   });
 

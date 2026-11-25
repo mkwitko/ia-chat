@@ -133,6 +133,16 @@ describe('end of trial (RF-88)', () => {
     expect((await pilot.sweep(after(99))).ended).toBe(0);
     expect((await pilot.row()).autonomy).not.toBe('off');
   });
+
+  it('never ends an invited consultório still in setup, but reminds it (H-24)', async () => {
+    const invited = await setup();
+    await db.client.tenant.update({
+      where: { id: invited.tenantId },
+      data: { status: 'setup', trialEndsAt: null },
+    });
+    expect(await invited.sweep(after(99))).toEqual({ ended: 0, reminded: 1 });
+    expect((await invited.row()).status).toBe('setup');
+  });
 });
 
 describe('conversation cap during the trial (RF-81)', () => {

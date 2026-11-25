@@ -126,7 +126,7 @@ describe('tenant access grant (RN-35)', () => {
   });
 
   it('refuses an expired grant', async () => {
-    const fresh = await createTenant(ctx, owner);
+    const fresh = await createTenant(ctx, await signUpVerified(ctx));
     const user = await ctx.db.client.user.findUniqueOrThrow({ where: { email: operatorEmail } });
     const expiresAt = new Date(Date.now() - MS_PER_HOUR).toISOString();
     await ctx.db.withTenant(fresh, (tx) =>
