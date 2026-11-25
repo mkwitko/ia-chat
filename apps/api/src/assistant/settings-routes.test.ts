@@ -34,7 +34,7 @@ describe('assistant settings', () => {
       autonomy: 'approve',
       identityMode: 'assistant',
       assistantName: 'Assistente virtual',
-      professionalName: 'Consultório Teste',
+      professionalName: 'Pessoa Teste',
     });
   });
 

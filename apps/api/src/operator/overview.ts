@@ -35,10 +35,14 @@ export interface ClientRow {
  * One row per tenant. Each tenant is read inside its own withTenant (RLS stays on), so the cost
  * is one short transaction per client. ponytail: fine for tens of clients (sequential); a SQL view when hundreds.
  */
+const MAX_CLIENTS = 50;
+
 export async function clientRows(db: Db, now: Date, only?: string): Promise<ClientRow[]> {
   const tenants = await db.client.tenant.findMany({
     ...(only ? { where: { id: only } } : {}),
-    orderBy: { createdAt: 'asc' },
+    // Newest first, capped: the list is for spotting problems, not a full export.
+    orderBy: { createdAt: 'desc' },
+    take: MAX_CLIENTS,
   });
   const rows: ClientRow[] = [];
   // One at a time: a parallel burst would starve the connection pool.

@@ -93,9 +93,10 @@ describe('tenant, roles and invitation', () => {
   let ownerCookie = '';
   let receptionistCookie = '';
   let tenantId = '';
+  const ownerEmail = uniqueEmail();
 
   beforeAll(async () => {
-    ownerCookie = await signUpVerified(ctx);
+    ownerCookie = await signUpVerified(ctx, ownerEmail);
     tenantId = await createTenant(ctx, ownerCookie);
 
     const receptionistEmail = uniqueEmail();
@@ -118,6 +119,16 @@ describe('tenant, roles and invitation', () => {
   it('creating a tenant makes the creator its owner, inside withTenant', async () => {
     const response = await get(CURRENT_TENANT, ownerCookie);
     expect(response.json()).toEqual({ id: tenantId, role: Role.owner });
+  });
+
+  it('creating a tenant also creates its professional, named after the owner', async () => {
+    const professionals = await ctx.db.withTenant(tenantId, (tx) => tx.professional.findMany());
+    expect(professionals.map((professional) => professional.name)).toEqual(['Pessoa Teste']);
+  });
+
+  it('a new sign-in comes back with the consultório already active', async () => {
+    const fresh = cookieOf(await signIn(ctx, ownerEmail));
+    expect((await get(CURRENT_TENANT, fresh)).json()).toEqual({ id: tenantId, role: Role.owner });
   });
 
   it('owner sees billing and manages integrations', async () => {
