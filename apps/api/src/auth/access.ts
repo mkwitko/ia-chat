@@ -6,7 +6,7 @@ import { defaultStatements, memberAc, ownerAc } from 'better-auth/plugins/organi
 // (autonomy, identity) speak to patients: receptionist only reads them (hypothesis H-14).
 // Agenda: the receptionist views and books; availability, blocks and vacation are the owner's
 // and the professional's (hypothesis H-18). Connecting the WhatsApp number is the owner's alone:
-// it binds the clinic's number to us and to the Meta bill we pay (H-05, E-24).
+// it binds the clinic's number to us; the clinic pays Meta with its own card (H-05, E-24).
 
 export const Role = {
   owner: 'owner',
