@@ -48,6 +48,7 @@ function BillingContent({ billing }: Readonly<{ billing: Billing }>) {
     <div className="grid gap-8 pt-2 pb-10">
       <section className="grid gap-2 px-4 md:px-0" role="status">
         <p>{Copy.status[billing.status]}</p>
+        {billing.endsAt && <p className="text-sm">{Copy.endsAt(billing.endsAt)}</p>}
         {billing.overdueSince && <p className="text-sm">{Copy.overdue}</p>}
         {billing.invoiceUrl && (
           <a className="font-semibold underline" href={billing.invoiceUrl} rel="noreferrer">

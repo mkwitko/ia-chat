@@ -113,6 +113,19 @@ describe('overdue ladder', () => {
     await run();
     expect(await row()).toMatchObject({ status: 'cancelled', billingSubscriptionId: null });
   });
+
+  it('keeps a cancelled tenant on until the paid month ends, then stops it', async () => {
+    const { fake, subscriptionId, run, row } = await setup();
+    fake.setState(subscriptionId, PaymentState.paid);
+    await run();
+    await fake.cancelSubscription(subscriptionId);
+    await run();
+    const kept = await row();
+    expect(kept).toMatchObject({ status: 'active', billingSubscriptionId: null });
+    expect(kept.billingEndsAt?.toISOString()).toBe('2027-04-05T00:00:00.000Z');
+    expect(await run(new Date('2027-04-06T10:00:00Z'))).toMatchObject({ ended: 1 });
+    expect(await row()).toMatchObject({ status: 'cancelled', billingEndsAt: null });
+  });
 });
 
 describe('overage', () => {

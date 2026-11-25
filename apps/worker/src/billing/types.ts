@@ -20,4 +20,6 @@ export interface BillingResult {
   noticed: number;
   restricted: number;
   overageCharged: number;
+  /** Cancelled subscriptions whose paid period ran out today. */
+  ended: number;
 }

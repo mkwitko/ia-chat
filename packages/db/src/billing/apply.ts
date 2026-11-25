@@ -78,20 +78,40 @@ async function applyOpen(
   return true;
 }
 
-/** The subscription is gone at the provider (we cancelled it, or support did). */
+const nextMonth = (date: Date): Date => {
+  const next = new Date(date);
+  next.setUTCMonth(next.getUTCMonth() + 1);
+  return next;
+};
+
+/**
+ * The subscription is gone at the provider (we cancelled it, or support did). The assistant keeps
+ * working until the end of the month already paid, or of the trial (the trial sweep ends that);
+ * the daily billing job stops it at `billing_ends_at`. Nothing paid ahead: it stops now.
+ */
 export async function markSubscriptionCancelled(
   client: Client,
   subscriptionId: string,
+  now: Date = new Date(),
 ): Promise<boolean> {
-  const done = await client.tenant.updateMany({
+  const tenant = await client.tenant.findUnique({
     where: { billingSubscriptionId: subscriptionId },
+    select: { id: true, status: true, billingPaidDueDate: true },
+  });
+  if (!tenant) return false;
+  const paidUntil = tenant.billingPaidDueDate ? nextMonth(tenant.billingPaidDueDate) : null;
+  const endsAt = paidUntil && paidUntil > now ? paidUntil : null;
+  const keepsOn = endsAt !== null || tenant.status === TenantStatus.trial;
+  await client.tenant.update({
+    where: { id: tenant.id },
     data: {
-      status: TenantStatus.cancelled,
       billingSubscriptionId: null,
       billingOverdueSince: null,
       billingNoticeStep: 0,
       billingInvoiceUrl: null,
+      billingEndsAt: endsAt,
+      ...(keepsOn ? {} : { status: TenantStatus.cancelled }),
     },
   });
-  return done.count > 0;
+  return true;
 }

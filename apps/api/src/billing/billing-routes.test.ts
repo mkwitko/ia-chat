@@ -142,13 +142,18 @@ describe('subscription', () => {
     expect((await row()).billingOverdueSince).toBeNull();
   });
 
-  it('changes plan at the provider and here, then cancels', async () => {
+  it('changes plan, then cancels and keeps working until the paid month ends', async () => {
     expect((await call('PUT', '/api/billing/plan', { plan: 'pro' })).statusCode).toBe(200);
     expect(fake.subscriptions.get(subscriptionId)?.cents).toBe(49_700);
     expect((await row()).plan).toBe('pro');
     expect((await call('DELETE', '/api/billing/subscription')).statusCode).toBe(200);
     expect(fake.subscriptions.get(subscriptionId)?.active).toBe(false);
-    expect(await row()).toMatchObject({ status: 'cancelled', billingSubscriptionId: null });
+    // The last paid invoice fell due on 2027-04-01: paid through 2027-05-01.
+    const after = await row();
+    expect(after).toMatchObject({ status: 'active', billingSubscriptionId: null });
+    expect(after.billingEndsAt?.toISOString()).toBe('2027-05-01T00:00:00.000Z');
+    const view = (await call('GET', '/api/billing')).json<{ endsAt: string }>();
+    expect(view.endsAt).toBe('2027-05-01T00:00:00.000Z');
     expect((await call('PUT', '/api/billing/plan', { plan: 'agenda' })).statusCode).toBe(409);
   });
 });

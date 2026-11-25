@@ -49,6 +49,8 @@ model Tenant {
   billingPaidDueDate    DateTime? @map("billing_paid_due_date") @db.Date
   /// First day of the last month whose overage was charged.
   billingOverageThrough DateTime? @map("billing_overage_through") @db.Date
+  /// Cancelled subscription: the assistant works until here (end of the paid period), then stops.
+  billingEndsAt         DateTime? @map("billing_ends_at") @db.Timestamptz
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
