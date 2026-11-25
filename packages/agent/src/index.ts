@@ -22,6 +22,7 @@ export {
   OK,
   ToolName,
   unansweredTool,
+  MAX_QUESTION_LENGTH,
   type ToolEffects,
 } from './shared-tools.ts';
 export {

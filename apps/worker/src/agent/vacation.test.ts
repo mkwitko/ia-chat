@@ -51,6 +51,7 @@ beforeEach(async () => {
       contactId: contact.id,
       conversationId: conversation.id,
       timezone: 'America/Sao_Paulo',
+      health: () => Promise.resolve(false),
     };
   });
 });

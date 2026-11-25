@@ -20,6 +20,9 @@ export const AgendaToolName = {
 
 export const OK = { ok: true } as const;
 
+/** Free text the model writes is capped before it is stored (M-03). */
+export const MAX_QUESTION_LENGTH = 300;
+
 export interface ToolEffects {
   handoff: boolean;
 }
@@ -41,7 +44,7 @@ export function unansweredTool(record: (question: string) => Promise<unknown>) {
   return tool({
     description:
       'Registra uma pergunta sobre o consultório que o perfil não responde, para o profissional completar a base.',
-    inputSchema: z.object({ pergunta: z.string().min(1) }),
+    inputSchema: z.object({ pergunta: z.string().min(1).max(MAX_QUESTION_LENGTH) }),
     execute: async ({ pergunta }) => {
       await record(pergunta);
       return OK;

@@ -104,7 +104,7 @@ describe('conversation agent (E-13)', () => {
       { tool: ToolName.handoff, input: { motivo: 'paciente quer falar com o profissional' } },
       { text: 'Vou passar para o Dr. Rafael.' },
     ]);
-    const reply = await agentWith(fake.model)(
+    const reply = await agentWith(fake.model, { judge: { health: 0 } })(
       turnOf(scope, ['tem wifi? e quero falar com o doutor']),
     );
     expect(reply).toMatchObject({ handoff: true, text: 'Vou passar para o Dr. Rafael.' });

@@ -1,10 +1,18 @@
 import { Task, type AiGateway } from '@app/ai';
 import type { Db, Tx } from '@app/db';
+import { healthGuard, type EventLog } from './health-guard.ts';
 import { HISTORY_LIMIT } from './context.ts';
 
 const INSTRUCTIONS =
   'Resuma em até 5 frases o que já foi tratado nesta conversa de recepção de consultório: pedidos, horários combinados, dúvidas pendentes. Não inclua informação de saúde. Responda só com o resumo.';
+const SUMMARY_TARGET = 'conversations.summary';
 const PREVIOUS = 'Resumo anterior:';
+
+export interface SummaryDeps {
+  db: Db;
+  gateway: AiGateway;
+  log: EventLog;
+}
 
 interface Scope {
   tenantId: string;
@@ -15,7 +23,8 @@ interface Scope {
  * Spec 04: history beyond the last 20 messages becomes a summary, stored on the
  * conversation and extended only when more messages fall out of the window.
  */
-export async function refreshSummary(db: Db, gateway: AiGateway, scope: Scope): Promise<void> {
+export async function refreshSummary(deps: SummaryDeps, scope: Scope): Promise<void> {
+  const { db, gateway } = deps;
   const older = await db.withTenant(scope.tenantId, (tx) =>
     messagesOutOfWindow(tx, scope.conversationId),
   );
@@ -34,11 +43,13 @@ export async function refreshSummary(db: Db, gateway: AiGateway, scope: Scope): 
       },
     ],
   });
+  // M-03: a summary with health information is not kept; the window still moves on.
+  const blocked = await healthGuard({ gateway, log: deps.log, scope })(text, SUMMARY_TARGET);
   const until = older.messages.at(-1)?.createdAt ?? null;
   await db.withTenant(scope.tenantId, (tx) =>
     tx.conversation.update({
       where: { id: scope.conversationId },
-      data: { summary: text, summaryUntil: until },
+      data: { summary: blocked ? null : text, summaryUntil: until },
     }),
   );
 }
