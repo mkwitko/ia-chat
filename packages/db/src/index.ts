@@ -48,6 +48,7 @@ export {
   SUMMARY_SYNC_QUEUE,
   TRIAL_SWEEP_QUEUE,
   REMINDER_SWEEP_QUEUE,
+  BILLING_RECONCILE_QUEUE,
   QUEUES,
   QUEUE_SCHEMA,
   deadLetterName,
@@ -124,3 +125,5 @@ export {
 } from './reminders/gate.ts';
 export { cancelPendingMessages, scheduleMessages } from './reminders/schedule.ts';
 export { confirmAppointment, type ConfirmRequest } from './agenda/confirm.ts';
+export { applyPayment, markSubscriptionCancelled } from './billing/apply.ts';
+export { handleBillingEvent, EventOutcome } from './billing/events.ts';

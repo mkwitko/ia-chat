@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import type { AiGateway } from '@app/ai';
 import type { ChannelSend } from '@app/channels';
+import type { BillingProvider } from '@app/core';
 import { createDb, type Db } from '@app/db';
 import { buildApp } from './app.ts';
 import { AUTH_BASE_PATH } from './auth/auth.ts';
@@ -23,6 +24,8 @@ const TEST_ENV = {
   GOOGLE_TOKEN_KEY: undefined,
   SENTRY_DSN: undefined,
   AXIOM_TOKEN: undefined,
+  ASAAS_API_KEY: undefined,
+  ASAAS_WEBHOOK_TOKEN: undefined,
 };
 const PASSWORD = 'senha-de-teste-123';
 const SET_COOKIE = 'set-cookie';
@@ -41,6 +44,7 @@ export interface TestAppOptions {
   simulatorGateway?: AiGateway;
   checkQueue?: () => Promise<unknown>;
   calendarFetch?: typeof fetch;
+  billing?: BillingProvider;
 }
 
 export async function startTestApp(
@@ -59,6 +63,7 @@ export async function startTestApp(
     ...(options.simulatorGateway ? { simulatorGateway: options.simulatorGateway } : {}),
     ...(options.checkQueue ? { checkQueue: options.checkQueue } : {}),
     ...(options.calendarFetch ? { calendarFetch: options.calendarFetch } : {}),
+    ...(options.billing ? { billing: options.billing } : {}),
   });
   register(app);
   await app.ready();

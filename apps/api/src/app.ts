@@ -1,6 +1,6 @@
 import type { AiGateway } from '@app/ai';
 import { createChannelSender, type ChannelSend } from '@app/channels';
-import { NodeEnv } from '@app/core';
+import { NodeEnv, type BillingProvider } from '@app/core';
 import type { Db } from '@app/db';
 import type { Alert } from '@app/observability';
 import Fastify, { type FastifyInstance } from 'fastify';
@@ -30,6 +30,8 @@ import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
 import { registerSimulatorRoutes } from './simulator/simulator-routes.ts';
 import { registerToneRoutes } from './setup/tone-routes.ts';
+import { registerBillingRoutes } from './billing/billing-routes.ts';
+import { registerBillingWebhook } from './billing/webhook.ts';
 import { registerUsageRoutes } from './usage/usage-routes.ts';
 import type { ApiEnv } from './env.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
@@ -59,6 +61,8 @@ export interface AppDeps extends HealthDeps {
   simulatorGateway?: AiGateway;
   /** Checks Turnstile tokens of the public waitlist form. Defaults to Cloudflare's siteverify. */
   verifyTurnstile?: TurnstileVerifier;
+  /** Asaas (E-25); without it billing is off and the routes answer 503. */
+  billing?: BillingProvider;
   /** Test seam; defaults to log + Sentry + ops_events. */
   alert?: Alert;
   /** Test seam: the `fetch` used for Google (OAuth and Calendar). */
@@ -98,6 +102,8 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   if (appSecret && verifyToken && enqueueInbound) {
     registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
   }
+  registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
+  registerBillingRoutes(app, deps.billing);
   return app;
 }
 

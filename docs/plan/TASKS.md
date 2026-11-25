@@ -326,13 +326,15 @@ Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding d
 
 ### E-25 Assinatura
 Spec: `05-agenda-e-pagamentos.md` (assinatura do SaaS).
-- [ ] Interface `BillingProvider` e cliente Asaas próprio com tipos Zod
-- [ ] Teste de 14 dias, assinatura, troca de plano, cancelamento pelo cliente
-- [ ] Webhook idempotente e reconciliação diária
-- [ ] Excedente calculado do nosso lado e lançado na fatura seguinte
-- [ ] Régua de inadimplência até o modo restrito
+- [x] Interface `BillingProvider` e cliente Asaas próprio com tipos Zod (`packages/core/src/billing/`); `ASAAS_API_KEY`, `ASAAS_BASE_URL` (padrão sandbox), `ASAAS_WEBHOOK_TOKEN`; sem chave, a cobrança fica desligada
+- [x] Teste de 14 dias (o de S-05), assinatura, troca de plano, cancelamento pelo cliente (`/api/billing`, tela Mais > Assinatura)
+- [x] Webhook idempotente (`POST /webhooks/asaas`, cabeçalho `asaas-access-token`, id do evento em `billing_events`) e reconciliação diária (fila `billing.reconcile`, 06:00 de Brasília)
+- [x] Excedente calculado do nosso lado e lançado como cobrança avulsa com o vencimento da próxima fatura
+- [x] Régua de inadimplência: aviso no vencimento, aviso em 3 dias, modo restrito em 7 (`status = restricted`; `isRestricted` já barra a chamada ao modelo)
 - [ ] Nota fiscal de serviço
-- [ ] Ciclo completo no sandbox
+  - Feito: nada além deste registro. Falta emitir: precisa da conta Asaas real com a configuração municipal (inscrição, código de serviço, alíquota). Ponto de encaixe: `applyPayment` em `packages/db/src/billing/apply.ts`, no ramo de fatura paga. TODO: chamar a emissão da nota do Asaas (`POST /v3/invoices`) quando a conta estiver configurada.
+- [x] Ciclo completo no sandbox: `node --env-file=.env apps/api/scripts/billing-sandbox.ts` (cliente, assinatura, pagamento simulado com `/sandbox/payment/{id}/confirm`, cobrança de excedente, troca de valor, cancelamento)
+- Falta (precisa de conta ou servidor): cadastrar o webhook no painel do Asaas apontando para a URL pública da API com o `ASAAS_WEBHOOK_TOKEN`; chave de produção; apagar os dados 30 dias após o cancelamento ou a restrição (ainda não há rotina).
 
 ### E-26 Produção
 Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
