@@ -412,3 +412,10 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [ ] Sitemap, canônicas, dados estruturados, imagens de compartilhamento, `llms.txt`
 - [ ] Página da primeira especialidade e de três problemas
 - [ ] Search Console configurado
+
+### SMB-01 Clientes, Início e Resultados (fatia vertical do MVP enxuto)
+- [x] Origem, log de consentimento e status derivado do cliente (migração `customers_pipeline`)
+- [x] Presença (compareceu/faltou) no atendimento
+- [x] API de clientes, Início e Resultados do mês, com testes
+- [x] Telas Início, Clientes e Resultados; navegação de cinco itens
+- [ ] Passada no navegador em 360 px e 1280 px (quatro estados por tela)

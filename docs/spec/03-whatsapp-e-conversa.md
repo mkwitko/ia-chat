@@ -214,7 +214,7 @@ Implementação (E-11 e E-12, 24/11/2026):
 | Reativação | Marketing | Módulo Pro, com opt-in registrado |
 
 - Templates são cadastrados por nós em cada WABA no onboarding, com texto padrão por especialidade.
-- Opt-out: palavras como "parar" ou "sair" marcam `contacts.opt_out` e bloqueiam mensagens ativas. Regra determinística, antes do modelo.
+- Opt-out: palavras como "parar" ou "sair" marcam `contacts.opt_out` e bloqueiam mensagens ativas. Regra determinística, antes do modelo. Cada mudança de consentimento (opt-in na primeira mensagem, opt-out por palavra ou pelo painel) também grava uma linha em `consent_events` (tipo, categoria, origem, quem, quando); ver H-26.
 - Mensagem ativa dentro da janela de 24 horas vai como texto livre, sem template.
 
 ## Onboarding do canal
