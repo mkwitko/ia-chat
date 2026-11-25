@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 // Integration tests read DATABASE_URL; CI sets it directly.
 try {
@@ -7,4 +7,7 @@ try {
   // no local .env
 }
 
-export default defineConfig({});
+// Agent worktrees live under .claude/worktrees: their copies of the tests are not ours to run.
+export default defineConfig({
+  test: { exclude: [...configDefaults.exclude, '.claude/**'] },
+});
