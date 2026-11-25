@@ -255,7 +255,7 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 Spec: `01-produto-e-planos.md` (RF-13).
 - [x] **(teste primeiro)** Em "aprovar", a resposta vira rascunho e nada sai sem toque do profissional
 - [x] Aprovar, editar e descartar no inbox; lembrete se ficar sem aprovação
-- [ ] **(teste primeiro)** Em "desligado", nenhuma chamada de LLM; mensagem fixa de ausência
+- [x] **(teste primeiro)** Em "desligado", nenhuma chamada de LLM; mensagem fixa de ausência
 - [x] Cliente novo começa em "aprovar" (padrão do banco desde a E-13)
 - [x] Tela "Mais > Assistente": autonomia, identidade (com prévia da primeira mensagem e aviso no modo "como você") e nome, com auditoria; recepcionista só vê (H-14)
 
