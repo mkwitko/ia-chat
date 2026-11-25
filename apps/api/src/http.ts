@@ -25,6 +25,7 @@ export const ErrorCode = {
   rateLimited: 'rate_limited',
   simulatorOff: 'simulator_off',
   noGrant: 'no_active_grant',
+  documentTaken: 'document_taken',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

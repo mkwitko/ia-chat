@@ -23,7 +23,12 @@ const tick = (ms = 1000) => {
 
 async function setup(overageCapCents: number | null = null) {
   const tenant = await db.client.tenant.create({
-    data: { name: 'Uso (fictício)', slug: `use-${randomUUID()}`, overageCapCents },
+    data: {
+      name: 'Uso (fictício)',
+      slug: `use-${randomUUID()}`,
+      overageCapCents,
+      status: 'active', // paying: the trial has its own cap (S-05)
+    },
   });
   const tenantId = tenant.id;
   const channel = await db.withTenant(tenantId, (tx) =>

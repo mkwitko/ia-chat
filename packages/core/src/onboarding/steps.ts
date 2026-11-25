@@ -36,6 +36,8 @@ export type Specialty = (typeof Specialty)[keyof typeof Specialty];
 export const onboardingProgressSchema = z.object({
   steps: z.partialRecord(z.enum(OnboardingStep), z.enum(StepStatus)).default({}),
   specialty: z.enum(Specialty).optional(),
+  /** S-05: when each step was last settled (ISO), for the funnel and the abandonment reminders. */
+  at: z.partialRecord(z.enum(OnboardingStep), z.iso.datetime()).default({}),
 });
 export type OnboardingProgress = z.infer<typeof onboardingProgressSchema>;
 
@@ -46,4 +48,22 @@ export function parseProgress(raw: unknown): OnboardingProgress {
 /** Where to resume: the first step not yet done or skipped; null when all are settled. */
 export function currentStep(progress: OnboardingProgress): OnboardingStep | null {
   return STEP_ORDER.find((step) => progress.steps[step] === undefined) ?? null;
+}
+
+export interface StepMark {
+  step: OnboardingStep;
+  status: StepStatus;
+  now: Date;
+}
+
+/** Records a step transition together with its time (S-05 funnel). */
+export function markStep(progress: OnboardingProgress, { step, status, now }: StepMark): void {
+  progress.steps[step] = status;
+  progress.at[step] = now.toISOString();
+}
+
+/** Latest step transition, or null when the tenant never started. */
+export function lastStepAt(progress: OnboardingProgress): Date | null {
+  const times = Object.values(progress.at).map((iso) => Date.parse(iso));
+  return times.length > 0 ? new Date(Math.max(...times)) : null;
 }

@@ -389,10 +389,10 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [x] Calculadora de receita perdida (`/calculadora` e bloco na página inicial; só repete os números digitados)
 
 ### S-05 Cadastro sozinho
-- [ ] Teste de 14 dias sem cartão, com os limites de RF-81
-- [ ] Lembretes de abandono em 1 e 3 dias e oferta de configuração assistida
-- [ ] Funil medido passo a passo
-- [ ] Fim do teste: assistente em "desligado", dados preservados por 30 dias
+- [x] Teste de 14 dias sem cartão, com os limites de RF-81
+- [x] Lembretes de abandono em 1 e 3 dias e oferta de configuração assistida
+- [x] Funil medido passo a passo
+- [x] Fim do teste: assistente em "desligado", dados preservados por 30 dias
 
 ### S-06 Central de ajuda e status
 - [ ] Artigos em Markdown para cada passo do onboarding e cada alerta

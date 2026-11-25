@@ -1,4 +1,4 @@
-import { monthOf, PlanId, usageStatus } from '@app/core';
+import { monthOf, PlanId, trialCapReached, usageStatus } from '@app/core';
 import type { Tx } from '@app/db';
 import { DeliveryMode, type TurnReply } from './turn-types.ts';
 
@@ -6,19 +6,24 @@ import { DeliveryMode, type TurnReply } from './turn-types.ts';
 export const RESTRICTED_MESSAGE =
   'Recebi a sua mensagem. O profissional vai te responder em breve.';
 
-/** True when this month's overage passed the cap: no model call may be made (E-18). */
+/**
+ * True when no model call may be made (E-18): this month's overage passed the owner's cap, or a
+ * trial reached its conversation cap (RF-81).
+ */
 export async function isRestricted(tx: Tx, tenantId: string): Promise<boolean> {
   const tenant = await tx.tenant.findUniqueOrThrow({
     where: { id: tenantId },
-    select: { plan: true, overageCapCents: true },
+    select: { plan: true, overageCapCents: true, status: true },
   });
-  if (tenant.overageCapCents === null) return false;
   const counter = await tx.usageCounter.findUnique({
     where: { tenantId_month: { tenantId, month: monthOf(new Date()) } },
   });
+  const conversations = counter?.conversations ?? 0;
+  if (trialCapReached({ status: tenant.status, conversations })) return true;
+  if (tenant.overageCapCents === null) return false;
   return usageStatus({
     plan: PlanId[tenant.plan],
-    conversations: counter?.conversations ?? 0,
+    conversations,
     capCents: tenant.overageCapCents,
   }).restricted;
 }

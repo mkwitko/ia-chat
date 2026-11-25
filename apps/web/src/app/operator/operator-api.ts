@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import type { Step } from '../onboarding/onboarding-api';
 
 // Mirrors apps/api/src/operator/*; the web does not import server code.
 
@@ -19,6 +20,11 @@ export interface ClientRow {
   handoffs: number;
 }
 
+export interface Funnel {
+  signups: number;
+  steps: { step: Step; count: number }[];
+}
+
 export interface TenantConversations {
   costs: { conversationId: string; costCents: number }[];
   issues: { conversationId: string; state: string; turns: number }[];
@@ -34,6 +40,7 @@ export interface OwnerGrant {
 
 const ME_PATH = '/api/operator/me';
 const CLIENTS_PATH = '/api/operator/clients';
+const FUNNEL_PATH = '/api/operator/funnel';
 const OWNER_PATH = '/api/operator-access';
 const POST = 'POST';
 const tenantPath = (tenantId: string, leaf: string) => `/api/operator/tenants/${tenantId}/${leaf}`;
@@ -48,6 +55,9 @@ export const useClients = () =>
     queryFn: () => api<ClientRow[]>(CLIENTS_PATH),
     retry: false,
   });
+
+export const useFunnel = () =>
+  useQuery({ queryKey: [FUNNEL_PATH], queryFn: () => api<Funnel>(FUNNEL_PATH), retry: false });
 
 export const useOwnerGrants = () =>
   useQuery({ queryKey: [OWNER_PATH], queryFn: () => api<OwnerGrant[]>(OWNER_PATH), retry: false });
