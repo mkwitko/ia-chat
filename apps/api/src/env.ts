@@ -36,7 +36,7 @@ export const apiEnvSchema = baseEnvSchema.extend(aiEnvSchema.shape).extend({
   /** Public site origin (S-01): the only origin allowed to call the waitlist route. */
   SITE_ORIGIN: z.url().optional(),
   /** Cloudflare Turnstile secret key (S-01). Without it and SITE_ORIGIN the waitlist route is off. */
-  /** Platform operators (E-27, H-20): comma-separated emails. Empty means nobody. */
+  /** Platform operators (E-27, H-23): comma-separated emails. Empty means nobody. */
   OPERATOR_EMAILS: operatorEmails,
   TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
 });

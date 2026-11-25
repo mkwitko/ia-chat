@@ -304,14 +304,14 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 
 ### E-24 Onboarding
 Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding do canal).
-- [ ] Fluxo de oito passos com progresso salvo
+- [x] Fluxo de oito passos com progresso salvo (`/configuracao`; WhatsApp e Google aparecem como "em breve" e podem ser pulados)
 - [x] Telas de criar conta, confirmar e-mail e recuperar senha no painel (a API já faz os três desde a E-04; confirmação testada de ponta a ponta no navegador em 24/11/2026) Feito: telas no painel e passo "Seu consultório" (cria o tenant e leva aos serviços).
-- [ ] Modelos de serviços e textos por especialidade
+- [x] Modelos de serviços e textos por especialidade (quiropraxia, fisioterapia, psicologia, nutrição; sem preço quando a política veda; H-20)
 - [ ] Conexão oficial: Embedded Signup em coexistência e checagem de pagamento na Meta
 - [ ] Conexão por QR code com o termo de ciência
 - [ ] Conexão do Google
-- [ ] Mensagem de teste e ativação em "aprovar antes de enviar"
-- [ ] Erros da Meta e do Google traduzidos para linguagem comum
+- [ ] Mensagem de teste e ativação em "aprovar antes de enviar" Feito: ativação mantém "aprovar"; teste pelo simulador. Falta: mensagem de teste pelo canal real (depende da conexão)
+- [ ] Erros da Meta e do Google traduzidos para linguagem comum Feito: módulo `packages/core/src/onboarding/provider-errors.ts` com os códigos conhecidos (H-21). Falta: conferir com a documentação e ligar às telas de conexão
 - [ ] Pessoa de fora da equipe ativa uma conta sem ajuda
 
 ### E-24b Onboarding pelo histórico (opcional)

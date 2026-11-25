@@ -15,6 +15,7 @@ import { registerEventsRoute } from './realtime/events-route.ts';
 import { createInboxHub } from './realtime/inbox-hub.ts';
 import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
+import { registerOnboardingRoutes } from './onboarding/onboarding-routes.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
@@ -94,6 +95,7 @@ function registerSettingsRoutes(app: FastifyInstance): void {
   registerServiceRoutes(app);
   registerLocationRoutes(app);
   registerKnowledgeRoutes(app);
+  registerOnboardingRoutes(app);
   registerToneRoutes(app);
   registerUsageRoutes(app);
   registerAgendaRoutes(app);

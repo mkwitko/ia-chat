@@ -12,7 +12,7 @@ declare module 'fastify' {
     operator?: OperatorContext;
   }
   interface FastifyInstance {
-    /** Lowercase emails of the platform operators (OPERATOR_EMAILS, hypothesis H-20). */
+    /** Lowercase emails of the platform operators (OPERATOR_EMAILS, hypothesis H-23). */
     operatorEmails: readonly string[];
   }
 }
