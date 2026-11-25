@@ -279,12 +279,15 @@ Spec: `05-agenda-e-pagamentos.md`.
 - [ ] Bateria: casos de agenda em 95% ou mais; A-11 (pede chamadas pagas; não executada. A parte de A-11 com ferramenta forçada a falhar está coberta em `agenda-tools.test.ts`)
 
 ### E-21 Google Calendar
-- [ ] OAuth, escolha do calendário, tokens cifrados
-- [ ] Escrita de evento com nova tentativa e estado "não sincronizado"
-- [ ] Leitura por canal de notificação e sincronização incremental em `external_busy` (A-12)
-- [ ] Job diário de renovação dos canais; tratamento de token de sincronização inválido
-- [ ] Token revogado: parar de oferecer horários e avisar (A-13)
-- [ ] Alerta de conflito externo
+Decisão do dono (25/11/2026): para o piloto o **Google é a fonte oficial de disponibilidade**; sem sincronização paralela da agenda. Spec: `05-agenda-e-pagamentos.md` (seção Google Calendar). Escopos: `calendar.events.freebusy`, `calendar.events.owned`, `calendar.calendarlist.readonly`.
+- [x] OAuth, escolha do calendário, tokens cifrados (AES-256-GCM, `GOOGLE_TOKEN_KEY`)
+- [x] **(teste primeiro)** Oferta = regras menos `freeBusy`; nova consulta antes de gravar; reserva dupla: uma vence e o Google recebe um insert só
+- [x] Escrita de evento com id determinístico (repetir não duplica) e estado "não sincronizado"; sem confirmação ao paciente se o Google falha
+- [x] Remarcar e cancelar seguem o evento; painel e assistente usam o mesmo caminho
+- [x] Token revogado: parar de oferecer horários, `alert()` e faixa "Reconectar" no painel (A-13)
+- [ ] **Depois (não construir agora):** canal de notificação (watch) e sincronização incremental com `syncToken` em `external_busy` (A-12); job diário de renovação dos canais; tratamento de 410; alerta de conflito externo; job que repete eventos `calendar_sync = failed`
+- [ ] Passo do Google no onboarding (E-24) usar a seção "Google Agenda" da tela Disponibilidade
+- [ ] Verificação do app no Google para uso público (E-00c; só usuários de teste conectam até lá)
 
 ### E-22 Confirmação e lembretes
 - [ ] Templates por especialidade cadastrados no onboarding (conexão oficial)
@@ -429,7 +432,7 @@ Spec: [11-pequenos-negocios.md](../spec/11-pequenos-negocios.md). Inventário: [
 | WhatsApp assistente | E-09 (oficial, bloqueada pela Meta), E-09b (QR code, caminho do piloto) | Abertas |
 | Transferência para humano, caixa de entrada | E-12, E-16 | E-12 feita; E-16 com 1 tarefa aberta |
 | Agendamento e agenda no painel | E-20, E-23 | Quase feitas (E-20 com 2 e E-23 com 1 tarefa abertas); "realizado" e "faltou" em M-08 |
-| Google Calendar | E-21 | Aberta; bloqueio Google |
+| Google Calendar | E-21 | MVP feito (fonte de disponibilidade); sincronização completa adiada; bloqueio Google (verificação do app) |
 | Lembretes e confirmações | E-22 | Aberta; ver M-01 antes |
 | Onboarding | E-24 | Em curso; passo de perfil em M-04 |
 | Assinatura e produção | E-25, E-26 | Abertas; retenção e exclusão de dados em M-03 e E-26 |

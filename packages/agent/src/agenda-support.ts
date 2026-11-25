@@ -1,6 +1,14 @@
 import { toLocalIso } from '@app/core';
-import { AgendaError, wasOfferedBefore, type AppointmentView, type Db, type Tx } from '@app/db';
+import {
+  AgendaError,
+  wasOfferedBefore,
+  type AppointmentView,
+  type CalendarResolver,
+  type Db,
+  type Tx,
+} from '@app/db';
 import { AgentCopy } from './copy.ts';
+import type { ToolEffects } from './shared-tools.ts';
 
 // Shared pieces of the agenda tools: the confirmation gate, service lookup and output shape.
 // Key names (`inicio`, `fim`, `erro`) are what the output validation reads as facts.
@@ -16,11 +24,23 @@ export interface OfferContext {
   tenantId: string;
   conversationId: string;
   now: Date;
+  /** Google Calendar of the tenant (E-21); absent means the agenda runs on our own rules. */
+  calendar?: CalendarResolver | undefined;
+  /** Where an unavailable calendar asks for the professional (A-13). */
+  effects?: ToolEffects | undefined;
 }
 
 const LOCALE = 'pt-BR';
 
 export const failure = (erro: string) => ({ erro });
+
+export async function calendarOf(context: OfferContext) {
+  return (await context.calendar?.(context.tenantId)) ?? undefined;
+}
+
+/** A calendar that cannot be read or written hands the patient to the professional (A-13). */
+export const needsProfessional = (code: string): boolean =>
+  code === AgendaError.calendarUnavailable || code === AgendaError.notSynced;
 
 export interface Gate {
   serviceId: string;

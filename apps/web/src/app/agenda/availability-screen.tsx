@@ -9,6 +9,7 @@ import { CommonCopy } from '../setup/setup-copy';
 import { AvailabilityCopy as Copy } from './agenda-copy';
 import { minuteToTime, timeToMinute } from './agenda-dates';
 import { useAvailability, useSaveSummaryTime } from './agenda-api';
+import { CalendarSection } from '../calendar/calendar-section';
 import { RulesEditor } from './rules-editor';
 import { TimeOffSection } from './time-off-section';
 
@@ -29,6 +30,7 @@ export function AvailabilityScreen() {
             <p className="px-4 text-sm text-muted-foreground md:px-0">{Copy.rulesIntro}</p>
             <RulesEditor initial={availability.data.rules} />
           </section>
+          <CalendarSection />
           <TimeOffSection timezone={availability.data.timezone} />
           <SummarySection minute={availability.data.nightlySummaryMinute} />
         </div>

@@ -119,6 +119,7 @@ async function seedConversation(tx: Tx, ids: Ids): Promise<void> {
   await tx.pushSubscription.create({
     data: { tenantId, userId: user.id, endpoint: `${endpoint}${tenantId}`, ...keys },
   });
+  await tx.calendarIntegration.create({ data: { tenantId, ...FIXTURE.calendarIntegration } });
   await tx.auditLog.create({ data: { tenantId, entityId: tenantId, ...FIXTURE.audit } });
 }
 

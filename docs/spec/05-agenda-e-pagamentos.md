@@ -6,7 +6,7 @@ Fontes: [pesquisa 03](../research/03-banco-infra-pagamentos.md).
 
 ### Fonte da verdade
 
-A tabela `appointments` no Postgres é a fonte da verdade. O Google Calendar é espelho: recebe nossos agendamentos e nos informa os compromissos que o profissional cria por fora.
+A tabela `appointments` no Postgres guarda os agendamentos e a constraint de exclusão decide o conflito entre eles. **Para o piloto, o Google Calendar é a fonte oficial de disponibilidade** (decisão do dono, 25/11/2026): horários oferecidos = nossas regras menos a ocupação do Google, consultada na hora. Não há sincronização paralela da agenda (sem `external_busy`, sem canais de notificação): o espelho completo é decisão posterior.
 
 ### Sem agendamento duplicado
 
@@ -41,7 +41,7 @@ Função pura `availableSlots(rules, timeOff, appointments, externalBusy, servic
 3. Fatia pela duração do serviço mais o intervalo configurado.
 4. Aplica antecedência mínima (padrão 2 horas) e máxima (padrão 30 dias).
 
-Implementação (E-19): `availableSlots` e `pickSpread` estão em `packages/core/src/agenda`, sem banco. Os horários saem de uma grade a partir do início da janela (duração mais intervalo); um agendamento fora da grade bloqueia os horários que toca, mas não desloca a grade. `external_busy` é entrada somente leitura (a tabela e a sincronização são da E-21; até lá a lista é vazia). Os horários devolvidos às ferramentas levam o fuso do tenant (`2027-01-04T09:00:00-03:00`).
+Implementação (E-19): `availableSlots` e `pickSpread` estão em `packages/core/src/agenda`, sem banco. Os horários saem de uma grade a partir do início da janela (duração mais intervalo); um agendamento fora da grade bloqueia os horários que toca, mas não desloca a grade. `external_busy` é entrada somente leitura de `availableSlots`; na E-21 ela vem de `freeBusy.query` no momento da oferta e de novo antes de gravar, sem tabela. Os horários devolvidos às ferramentas levam o fuso do tenant (`2027-01-04T09:00:00-03:00`).
 
 Por ser função pura, é o alvo principal dos testes unitários: mudança de horário de verão em outros fusos, virada de dia, serviço mais longo que a janela, feriado cadastrado como bloqueio.
 
@@ -69,16 +69,23 @@ O assistente recebe no máximo 6 opções por consulta, espalhadas em dias e per
 
 ### Google Calendar
 
+Escopo do MVP (E-21, enxuto): o Google é a fonte de disponibilidade; não existe cópia local da agenda do Google.
+
 | Tema | Especificação |
 |---|---|
-| Autorização | OAuth do profissional. Pedir o menor escopo que permita ler ocupação e criar eventos num calendário escolhido. A verificação do app no Google pode levar semanas: iniciar já |
-| Escrita | Cada agendamento confirmado vira evento com `google_event_id` gravado. Falha na escrita não desfaz o agendamento; entra em fila de nova tentativa e aparece como "não sincronizado" no painel |
-| Leitura | Canal de notificação (watch) por calendário + sincronização incremental com token. O resultado alimenta uma tabela `external_busy` |
-| Renovação | Canais expiram e não renovam sozinhos: job diário renova os que vencem em menos de 48 horas |
-| Token de sincronização inválido (410) | Sincronização completa do intervalo de hoje até a antecedência máxima |
-| Conflito externo | Evento criado no Google sobre um horário já agendado conosco não cancela nada; gera alerta ao profissional |
-| Token revogado | Assistente para de oferecer horários, passa a transferir pedidos de agenda e o profissional é avisado para reconectar |
-| Garantia adicional | Antes de confirmar, `agendar` consulta ocupação (freebusy) do horário. Se o Google estiver fora do ar, vale a tabela local |
+| Autorização | OAuth 2.0 de servidor web, acesso offline (`access_type=offline`, `prompt=consent`). Escopos mínimos que atendem: `calendar.events.freebusy` (ocupação), `calendar.events.owned` (criar, alterar e apagar eventos só em agendas do próprio usuário) e `calendar.calendarlist.readonly` (listar as agendas para escolher). Nenhum escopo amplo (`calendar`, `calendar.events`). `calendar.events.owned` é sensível: app público precisa de verificação do Google (semanas); até lá só "usuários de teste" conseguem conectar. O `state` é assinado e amarra tenant e usuário, vale 10 minutos |
+| Credenciais | `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` (o mesmo cliente do login) e `GOOGLE_TOKEN_KEY` (32 bytes em base64). Sem os três, a integração fica desligada e a agenda usa só as regras próprias |
+| Tokens | Cifrados em repouso com AES-256-GCM (`v1.iv.tag.texto`, chave fora do banco, RN-31); nunca em log. Tabela `calendar_integrations`, uma por tenant, com RLS. O token de acesso é renovado com o de atualização quando falta menos de 1 minuto |
+| Calendário | Depois do consentimento o profissional escolhe uma agenda que seja dele (ex.: "Atendimentos"); só ids dessa lista são aceitos. Conectado sem agenda escolhida conta como indisponível |
+| Oferta | `freeBusy.query` na janela oferecida: horários = regras próprias menos ocupação do Google (inclui os eventos que nós criamos, que coincidem com nossos agendamentos) |
+| Antes de gravar | `bookAppointment` consulta `freeBusy` de novo dentro da mesma transação do agendamento; horário ocupado no Google vira `horario_indisponivel` e nada é gravado |
+| Escrita | Depois que o banco aceita (constraint de exclusão), `events.insert` com id determinístico (o UUID do agendamento sem traços, que cabe no alfabeto base32hex do Google). Repetir a chamada não duplica (409 conta como sucesso). Grava `google_event_id` e `calendar_sync = synced` |
+| Falha do Google | O paciente **não** recebe confirmação: a ferramenta devolve `agendamento_nao_sincronizado` e o turno transfere para o profissional. O agendamento fica no banco com `calendar_sync = failed` ("Não sincronizado com o Google" no painel). Repetir a mesma chamada (mesma chave de idempotência) tenta o evento de novo com o mesmo id |
+| Remarcar e cancelar | Remarcar grava o novo agendamento (novo evento) e apaga o evento do antigo; cancelar apaga o evento. Falha ao apagar marca `calendar_sync = failed` no agendamento cancelado e não desfaz o cancelamento. Limitação: remarcar para um horário que sobrepõe o próprio horário antigo é recusado, pois o evento antigo ainda aparece como ocupado |
+| Google fora do ar ou ilegível | `freeBusy` com erro (ou agenda não lida) nunca é tratado como livre: nada é oferecido nem gravado (`agenda_externa_indisponivel`) e o paciente é transferido (A-13). Isto muda a regra antiga "se o Google estiver fora do ar, vale a tabela local" |
+| Token revogado ou expirado (`invalid_grant`, 401) | A integração vira `needs_reconnect` uma única vez, `alert()` registra `calendar_disconnected`, o assistente não oferece horários e transfere os pedidos de agenda, e o painel mostra a faixa "Reconectar" até o profissional voltar a conectar (a agenda escolhida é mantida) |
+| Painel | Os mesmos caminhos: agendar, remarcar e cancelar pelo painel passam por `bookAppointment`, `rescheduleAppointment` e `cancelAppointment` com o mesmo vínculo de calendário; os horários livres do painel também descontam o Google |
+| Fica para depois | Canal de notificação (watch) e sincronização incremental com `syncToken`, tabela `external_busy`, renovação diária de canais, tratamento de 410, alerta de conflito externo (evento criado por fora sobre horário já agendado), job que repete eventos `failed` |
 
 Sem Google conectado, o plano Agenda funciona só com a agenda interna.
 

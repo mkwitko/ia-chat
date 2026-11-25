@@ -60,6 +60,7 @@ model Tenant {
   usageCounters     UsageCounter[]
   auditLogs         AuditLog[]
   pushSubscriptions PushSubscription[]
+  calendarIntegration CalendarIntegration?
 
   @@map("tenants")
 }

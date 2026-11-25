@@ -34,6 +34,7 @@ export interface TestAppOptions {
   send?: ChannelSend;
   simulatorGateway?: AiGateway;
   checkQueue?: () => Promise<unknown>;
+  calendarFetch?: typeof fetch;
 }
 
 export async function startTestApp(
@@ -51,6 +52,7 @@ export async function startTestApp(
     ...(options.send ? { send: options.send } : {}),
     ...(options.simulatorGateway ? { simulatorGateway: options.simulatorGateway } : {}),
     ...(options.checkQueue ? { checkQueue: options.checkQueue } : {}),
+    ...(options.calendarFetch ? { calendarFetch: options.calendarFetch } : {}),
   });
   register(app);
   await app.ready();

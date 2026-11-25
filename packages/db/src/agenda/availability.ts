@@ -7,6 +7,7 @@ import {
 } from '@app/core';
 import { AppointmentStatus } from '../../generated/prisma/enums.ts';
 import type { Tx } from '../index.ts';
+import { externalBusyOf, type CalendarLink } from '../calendar/link.ts';
 import { AgendaFailure, AgendaError } from './types.ts';
 
 const MINUTES_PER_HOUR = 60;
@@ -44,13 +45,15 @@ export interface SlotWindow {
   from: Date;
   to: Date;
   now: Date;
+  /** The tenant's connected calendar: its busy time is subtracted (E-21). */
+  calendar?: CalendarLink | undefined;
 }
 
 /** Reads the inputs of `availableSlots` for one professional. */
 export async function slotsIn(tx: Tx, window: SlotWindow): Promise<Interval[]> {
-  const { professionalId, from, to } = window;
+  const { professionalId, from, to, calendar, ...query } = window;
   const longest = window.durationMinutes * MS_PER_MINUTE;
-  const [rules, timeOffs, booked] = await Promise.all([
+  const [rules, timeOffs, booked, externalBusy] = await Promise.all([
     tx.availabilityRule.findMany({ where: { professionalId } }),
     tx.timeOff.findMany({ where: { professionalId, startsAt: { lt: to }, endsAt: { gt: from } } }),
     tx.appointment.findMany({
@@ -61,14 +64,16 @@ export async function slotsIn(tx: Tx, window: SlotWindow): Promise<Interval[]> {
         endsAt: { gt: from },
       },
     }),
+    externalBusyOf(calendar, { from, to: new Date(to.getTime() + longest) }),
   ]);
   return availableSlots({
     rules: rules.map(toRule),
     timeOffs: timeOffs.map((off) => ({ start: off.startsAt, end: off.endsAt })),
     appointments: booked.map((one) => ({ start: one.startsAt, end: one.endsAt })),
-    // ponytail: external_busy arrives with the Google sync (E-21); it is an input here already.
-    externalBusy: [],
-    ...window,
+    externalBusy,
+    from,
+    to,
+    ...query,
   });
 }
 

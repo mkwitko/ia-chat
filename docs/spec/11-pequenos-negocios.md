@@ -25,7 +25,7 @@ Cada linha aponta o que existe hoje (inventário completo na auditoria) e a etap
 | Cadastro de lead e contato | PARCIAL (contato sim, origem não) | M-06 (em andamento) |
 | Funil simples de leads | AUSENTE | M-06 (em andamento) |
 | Gestão de agendamentos | IMPLEMENTADO; falta marcar realizado e faltou | E-20, E-23, M-08 |
-| Agenda externa ou reserva confiável | Reserva confiável: IMPLEMENTADO. Google: AUSENTE | E-21 |
+| Agenda externa ou reserva confiável | Reserva confiável: IMPLEMENTADO. Google como fonte de disponibilidade (freeBusy na oferta e antes de gravar, evento com id determinístico): IMPLEMENTADO na E-21; sincronização completa (watch, syncToken): fica para depois | E-21 |
 | Transferência para humano | IMPLEMENTADO | E-12 |
 | Painel básico | PARCIAL | M-07 (em andamento) |
 | Registro de opt-in e opt-out | PROBLEMÁTICO | M-01 |

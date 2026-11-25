@@ -9,6 +9,7 @@ import { useInboxEvents } from '../inbox/use-inbox-events';
 import { AlertBar } from './alert-bar';
 import { Navigation } from './navigation';
 import { TrialBanner } from './trial-banner';
+import { useCalendarAlert } from './use-calendar-alert';
 import { usePushAlert } from './use-push-alert';
 
 /** Signed-in frame: alert strip, navigation and the current screen. */
@@ -24,7 +25,8 @@ export function AppShell() {
 function Frame() {
   const { connected } = useInboxEvents();
   const conversations = useConversations();
-  const alert = usePushAlert();
+  const pushAlert = usePushAlert();
+  const alert = useCalendarAlert() ?? pushAlert;
   const pending = conversations.data?.filter(needsYou).length ?? 0;
   return (
     <div className="flex h-full flex-col">
