@@ -1,4 +1,4 @@
-import { MINUTES_PER_DAY } from '@app/core';
+import { MINUTES_PER_DAY, MS_PER_MINUTE } from '@app/core';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
@@ -31,7 +31,7 @@ export function validWindows(rules: readonly RuleInput[]): boolean {
   return sorted.every((rule, index) => {
     if (minutesOf(rule.start) >= minutesOf(rule.end)) return false;
     const next = sorted[index + 1];
-    return !next || next.weekday !== rule.weekday || minutesOf(next.start) >= minutesOf(rule.end);
+    return !(next?.weekday === rule.weekday && minutesOf(next.start) < minutesOf(rule.end));
   });
 }
 
@@ -55,7 +55,7 @@ export function registerAvailabilityRoutes(app: FastifyInstance): void {
   app.put(SUMMARY_PATH, manage, saveSummaryTime);
 }
 
-const at = (minute: number) => new Date(minute * 60_000);
+const at = (minute: number) => new Date(minute * MS_PER_MINUTE);
 
 function readAvailability(request: FastifyRequest) {
   const { tenantId } = tenantOf(request);

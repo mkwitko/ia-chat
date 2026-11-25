@@ -72,6 +72,8 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | H-14 | Autonomia, identidade e nome do assistente falam com o paciente: dono e profissional alteram, recepcionista só vê (padrão conservador adotado na tela "Assistente") | Ajustar `assistant` em `apps/api/src/auth/access.ts` | Perguntar ao piloto quando houver equipe |
 | H-15 | Rascunho não aprovado em 30 minutos gera um lembrete único por push; nada é enviado sozinho (RF-13). Tempo fixo no código até haver configuração por cliente | Tornar configurável por tenant | Validar com o piloto |
 | H-16 | Enviar mensagem pelo painel assume a conversa (spec 10); o texto do push nunca traz conteúdo da mensagem, só o motivo e o link (RN-38) | Perguntar ao piloto se prefere ver o nome do paciente | Validar com o piloto |
+| H-18 | Agenda (E-23): a recepcionista vê a agenda e marca, remarca e cancela pelo painel; disponibilidade, bloqueios, férias e o horário do resumo noturno são do dono e do profissional (permissão `agenda`: `read`, `book`, `manage`). Quem marca pelo painel não fica preso à antecedência mínima de cancelamento, que existe para o paciente (RF-44) | Perguntar ao piloto se a recepção pode bloquear horários | Validar com o piloto |
+| H-19 | Resumo noturno (RF-15, E-22b): dia seguinte sem atendimentos não gera notificação; o padrão é 20:00 no fuso do consultório; o push traz só a quantidade e o link, sem nome de paciente (RN-38) | Perguntar ao piloto se quer o aviso também em dia vazio | Validar com o piloto |
 
 ## Pendências que bloqueiam prazo
 

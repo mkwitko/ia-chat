@@ -1,9 +1,9 @@
 import { addDays, zonedToUtc } from '@app/core';
-import { AppointmentStatus, TimeOffKind } from '@app/db';
+import { AppointmentStatus, TimeOffKind, type Tx } from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
-import { requireTenant } from '../auth/tenant-guard.ts';
+import { requireTenant, type TenantContext } from '../auth/tenant-guard.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { audit, AuditAction } from '../setup/audit.ts';
 import { notFound, parsed, tenantOf } from '../setup/guarded.ts';
@@ -16,6 +16,7 @@ const PATH = '/api/time-offs';
 const ITEM_PATH = '/api/time-offs/:id';
 const ENTITY = 'time_off';
 const MAX_REASON = 120;
+const DAY_START = '00:00';
 const SELECT = { id: true, kind: true, startsAt: true, endsAt: true, reason: true } as const;
 
 const bodySchema = z
@@ -50,52 +51,61 @@ function listTimeOffs(request: FastifyRequest) {
   }));
 }
 
+type Body = z.infer<typeof bodySchema>;
+
+/** The period in UTC: whole days, or the clock times of a block (tenant's wall clock). */
+function periodOf(body: Body, timezone: string) {
+  const startsAt = zonedToUtc(
+    toLocalDate(body.fromDay),
+    minutesOf(body.fromTime ?? DAY_START),
+    timezone,
+  );
+  const endsAt = body.toTime
+    ? zonedToUtc(toLocalDate(body.toDay), minutesOf(body.toTime), timezone)
+    : zonedToUtc(addDays(toLocalDate(body.toDay), 1), 0, timezone);
+  return { startsAt, endsAt };
+}
+
+async function insertTimeOff(tx: Tx, tenant: TenantContext, body: Body) {
+  const professional = await tx.professional.findFirstOrThrow({ orderBy: { createdAt: 'asc' } });
+  const { timezone } = await tx.tenant.findUniqueOrThrow({
+    where: { id: tenant.tenantId },
+    select: { timezone: true },
+  });
+  const period = periodOf(body, timezone);
+  if (period.endsAt <= period.startsAt) return null;
+  const row = await tx.timeOff.create({
+    data: {
+      tenantId: tenant.tenantId,
+      professionalId: professional.id,
+      kind: body.kind,
+      reason: body.reason,
+      ...period,
+    },
+    select: SELECT,
+  });
+  // The panel warns: existing appointments inside the period are not cancelled by it.
+  const conflicts = await tx.appointment.count({
+    where: {
+      status: { not: AppointmentStatus.cancelled },
+      startsAt: { lt: period.endsAt },
+      endsAt: { gt: period.startsAt },
+    },
+  });
+  await audit(tx, tenant, {
+    entity: ENTITY,
+    entityId: row.id,
+    action: AuditAction.create,
+    after: row,
+  });
+  return { ...row, conflicts };
+}
+
 async function createTimeOff(request: FastifyRequest, reply: FastifyReply) {
   const input = parsed(request, reply, bodySchema);
   if (!input) return reply;
   const { tenant, body } = input;
-  const created = await tenant.withTenant(async (tx) => {
-    const professional = await tx.professional.findFirstOrThrow({ orderBy: { createdAt: 'asc' } });
-    const { timezone } = await tx.tenant.findUniqueOrThrow({
-      where: { id: tenant.tenantId },
-      select: { timezone: true },
-    });
-    const startsAt = zonedToUtc(
-      toLocalDate(body.fromDay),
-      minutesOf(body.fromTime ?? '00:00'),
-      timezone,
-    );
-    const endsAt = body.toTime
-      ? zonedToUtc(toLocalDate(body.toDay), minutesOf(body.toTime), timezone)
-      : zonedToUtc(addDays(toLocalDate(body.toDay), 1), 0, timezone);
-    if (endsAt <= startsAt) return null;
-    const row = await tx.timeOff.create({
-      data: {
-        tenantId: tenant.tenantId,
-        professionalId: professional.id,
-        kind: body.kind,
-        reason: body.reason,
-        startsAt,
-        endsAt,
-      },
-      select: SELECT,
-    });
-    // The panel warns: existing appointments inside the period are not cancelled by it.
-    const conflicts = await tx.appointment.count({
-      where: {
-        status: { not: AppointmentStatus.cancelled },
-        startsAt: { lt: endsAt },
-        endsAt: { gt: startsAt },
-      },
-    });
-    await audit(tx, tenant, {
-      entity: ENTITY,
-      entityId: row.id,
-      action: AuditAction.create,
-      after: row,
-    });
-    return { ...row, conflicts };
-  });
+  const created = await tenant.withTenant((tx) => insertTimeOff(tx, tenant, body));
   if (!created) return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
   return reply.code(HttpStatus.created).send(created);
 }

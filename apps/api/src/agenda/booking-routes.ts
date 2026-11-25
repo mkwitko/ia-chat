@@ -7,7 +7,6 @@ import {
   cancelAppointment,
   rescheduleAppointment,
   type AgendaResult,
-  type Db,
   type Tx,
 } from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -16,7 +15,7 @@ import { Permission } from '../auth/access.ts';
 import { requireTenant, type TenantContext } from '../auth/tenant-guard.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { audit, AuditAction } from '../setup/audit.ts';
-import { notFound, parsed, tenantOf } from '../setup/guarded.ts';
+import { notFound, parsed } from '../setup/guarded.ts';
 import { idParams } from './schemas.ts';
 
 // RF-48: the professional books, moves and cancels through the same functions and the same
@@ -95,7 +94,7 @@ async function createAppointment(request: FastifyRequest, reply: FastifyReply) {
     createdBy: AppointmentCreator.human,
     now: new Date(),
   });
-  if (result.ok) await record(tenant, request.server.db, result.value.id, AuditAction.create);
+  if (result.ok) await record(tenant, result.value.id, AuditAction.create);
   return respond(reply, result, HttpStatus.created);
 }
 
@@ -116,7 +115,7 @@ async function rescheduleOne(request: FastifyRequest, reply: FastifyReply) {
     createdBy: AppointmentCreator.human,
     now: new Date(),
   });
-  if (result.ok) await record(tenant, request.server.db, result.value.id, AuditAction.update);
+  if (result.ok) await record(tenant, result.value.id, AuditAction.update);
   return respond(reply, result, HttpStatus.ok);
 }
 
@@ -135,7 +134,7 @@ async function cancelOne(request: FastifyRequest, reply: FastifyReply) {
     createdBy: AppointmentCreator.human,
     now: new Date(),
   });
-  if (result.ok) await record(tenant, request.server.db, old.id, AuditAction.archive);
+  if (result.ok) await record(tenant, old.id, AuditAction.archive);
   return respond(reply, result, HttpStatus.ok);
 }
 
@@ -147,8 +146,6 @@ function liveAppointment(tenant: TenantContext, id: string) {
 }
 
 /** Who did what to which appointment; no patient data in the entry (RN-38). */
-function record(tenant: TenantContext, db: Db, entityId: string, action: AuditAction) {
-  return db.withTenant(tenant.tenantId, (tx) =>
-    audit(tx, tenant, { entity: ENTITY, entityId, action }),
-  );
+function record(tenant: TenantContext, entityId: string, action: AuditAction) {
+  return tenant.withTenant((tx) => audit(tx, tenant, { entity: ENTITY, entityId, action }));
 }

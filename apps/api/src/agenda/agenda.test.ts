@@ -50,8 +50,13 @@ beforeAll(async () => {
 afterAll(() => ctx.app.close());
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
-const call = (method: Method, url: string, payload?: object, cookie = owner) =>
-  ctx.app.inject({ method, url, headers: { cookie }, ...(payload ? { payload } : {}) });
+const call = (method: Method, url: string, ...rest: [payload?: object, cookie?: string]) =>
+  ctx.app.inject({
+    method,
+    url,
+    headers: { cookie: rest[1] ?? owner },
+    ...(rest[0] ? { payload: rest[0] } : {}),
+  });
 
 const WEEK = [{ weekday: MONDAY, start: '09:00', end: '12:00' }];
 const newKey = () => ({ key: randomUUID() });

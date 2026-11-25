@@ -1,5 +1,5 @@
 import { addDays } from '@app/core';
-import { AppointmentStatus, dayBounds, loadScope, slotsIn } from '@app/db';
+import { AppointmentStatus, dayBounds, loadScope, localDayRange, slotsIn, type Tx } from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
@@ -16,13 +16,15 @@ const SLOTS_PATH = '/api/agenda/slots';
 const PATIENTS_PATH = '/api/patients';
 const MAX_DAYS = 14;
 const PATIENT_LIMIT = 20;
+const MAX_QUERY = 80;
 
 const rangeQuery = z.object({
-  from: daySchema,
+  /** Local day the view starts on; today (tenant zone) when omitted. */
+  from: daySchema.optional(),
   days: z.coerce.number().int().min(1).max(MAX_DAYS).default(1),
 });
 const slotsQuery = z.object({ day: daySchema, serviceId: z.uuid() });
-const patientsQuery = z.object({ q: z.string().trim().max(80).default('') });
+const patientsQuery = z.object({ q: z.string().trim().max(MAX_QUERY).default('') });
 
 export function registerAgendaViewRoutes(app: FastifyInstance): void {
   const read = { preHandler: requireTenant(Permission.agendaRead) };
@@ -36,50 +38,50 @@ function invalid(reply: FastifyReply) {
   return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
 }
 
-async function listAgenda(request: FastifyRequest, reply: FastifyReply) {
+function listAgenda(request: FastifyRequest, reply: FastifyReply) {
   const query = rangeQuery.safeParse(request.query);
   if (!query.success) return invalid(reply);
-  const { tenantId } = tenantOf(request);
-  return tenantOf(request).withTenant(async (tx) => {
+  const tenant = tenantOf(request);
+  return tenant.withTenant(async (tx) => {
     const { timezone } = await tx.tenant.findUniqueOrThrow({
-      where: { id: tenantId },
+      where: { id: tenant.tenantId },
       select: { timezone: true },
     });
-    const first = toLocalDate(query.data.from);
+    const from = query.data.from ?? localDayRange(new Date(), timezone).day;
+    const first = toLocalDate(from);
     const start = dayBounds(first, timezone).start;
     const end = dayBounds(addDays(first, query.data.days - 1), timezone).end;
-    const [appointments, timeOffs] = await Promise.all([
-      tx.appointment.findMany({
-        where: { status: { not: AppointmentStatus.cancelled }, startsAt: { gte: start, lt: end } },
-        include: { service: true, contact: true },
-        orderBy: { startsAt: 'asc' },
-      }),
-      tx.timeOff.findMany({
-        where: { startsAt: { lt: end }, endsAt: { gt: start } },
-        orderBy: { startsAt: 'asc' },
-      }),
-    ]);
-    return {
-      timezone,
-      appointments: appointments.map((row) => ({
-        id: row.id,
-        startsAt: row.startsAt,
-        endsAt: row.endsAt,
-        status: row.status,
-        createdBy: row.createdBy,
-        serviceName: row.service.name,
-        patientName: row.contact.name,
-        patientPhone: row.contact.phoneE164,
-      })),
-      timeOffs: timeOffs.map(({ id, startsAt, endsAt, kind, reason }) => ({
-        id,
-        startsAt,
-        endsAt,
-        kind,
-        reason,
-      })),
-    };
+    return { timezone, from, ...(await agendaBetween(tx, { start, end })) };
   });
+}
+
+async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date }) {
+  const [appointments, timeOffs] = await Promise.all([
+    tx.appointment.findMany({
+      where: { status: { not: AppointmentStatus.cancelled }, startsAt: { gte: start, lt: end } },
+      include: { service: true, contact: true },
+      orderBy: { startsAt: 'asc' },
+    }),
+    tx.timeOff.findMany({
+      where: { startsAt: { lt: end }, endsAt: { gt: start } },
+      orderBy: { startsAt: 'asc' },
+      select: { id: true, startsAt: true, endsAt: true, kind: true, reason: true },
+    }),
+  ]);
+  return {
+    appointments: appointments.map((row) => ({
+      id: row.id,
+      startsAt: row.startsAt,
+      endsAt: row.endsAt,
+      status: row.status,
+      createdBy: row.createdBy,
+      serviceId: row.serviceId,
+      serviceName: row.service.name,
+      patientName: row.contact.name,
+      patientPhone: row.contact.phoneE164,
+    })),
+    timeOffs,
+  };
 }
 
 async function freeSlots(request: FastifyRequest, reply: FastifyReply) {

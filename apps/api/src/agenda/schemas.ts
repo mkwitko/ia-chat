@@ -4,6 +4,7 @@ import * as z from 'zod';
 // Shared request shapes of the agenda routes (spec 05, spec 10 "Agenda").
 
 const MINUTES_PER_HOUR = 60;
+const PAD = 2;
 const TIME_FORMAT = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 /** `YYYY-MM-DD`, a local calendar day of the tenant. */
@@ -25,7 +26,7 @@ export function minutesOf(time: string): number {
 }
 
 export function timeOf(minuteOfDay: number): string {
-  const pad = (value: number) => String(value).padStart(2, '0');
+  const pad = (value: number) => String(value).padStart(PAD, '0');
   return `${pad(Math.floor(minuteOfDay / MINUTES_PER_HOUR))}:${pad(minuteOfDay % MINUTES_PER_HOUR)}`;
 }
 
