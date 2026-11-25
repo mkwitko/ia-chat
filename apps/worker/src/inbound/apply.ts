@@ -8,6 +8,7 @@ import {
   MessageDirection,
   MessageStatus,
   setControl,
+  syncStage,
   type Tx,
 } from '@app/db';
 import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts';
@@ -90,6 +91,7 @@ async function applyOne(tx: Tx, { tenantId, channelId, event, result }: ApplyOne
   }
   if (event.kind !== InboundKind.status) {
     const stored = await storeMessage(tx, { tenantId, channelId, event });
+    await syncStage(tx, { tenantId, contactId: stored.contactId, now: new Date() });
     if (stored.turn) result.turns.push(stored.turn);
     if (stored.usage) result.usage.push(stored.usage);
     return;
@@ -106,12 +108,15 @@ interface StoreMessage {
 }
 
 interface Stored {
+  contactId: string;
   turn: TurnRequest | null;
   usage: UsageNotice | null;
 }
 
 async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage): Promise<Stored> {
   const contact = await resolveContact(tx, tenantId, event.contact);
+  // Logs a time-based "não agendou" before this message brings the contact back.
+  await syncStage(tx, { tenantId, contactId: contact.id, now: new Date() });
   const conversation = await tx.conversation.upsert({
     where: { tenantId_channelId_contactId: { tenantId, channelId, contactId: contact.id } },
     create: { tenantId, channelId, contactId: contact.id },
@@ -126,7 +131,7 @@ async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage
     },
     skipDuplicates: true, // unique (tenant, channel, provider_message_id): RF-22
   });
-  if (count === 0) return { turn: null, usage: null };
+  if (count === 0) return { contactId: contact.id, turn: null, usage: null };
   const fromPatient = event.kind === InboundKind.message;
   const usage = await countMessage(tx, {
     tenantId,
@@ -136,7 +141,8 @@ async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage
     now,
   });
   const updated = await touchConversation(tx, conversation, event);
-  if (fromPatient) return { turn: await onPatientMessage(tx, updated, now), usage };
+  if (fromPatient)
+    return { contactId: contact.id, turn: await onPatientMessage(tx, updated, now), usage };
   // RF-30: the owner answered from the phone; same transaction as the message.
   await setControl(tx, {
     tenantId,
@@ -145,7 +151,7 @@ async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage
     reason: ControlReason.ownerEcho,
     actor: { type: ActorType.user },
   });
-  return { turn: null, usage };
+  return { contactId: contact.id, turn: null, usage };
 }
 
 /** Spec 01: a new conversation starts after more than 24 h without messages. */

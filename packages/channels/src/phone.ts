@@ -22,3 +22,15 @@ export function phoneKey(raw: string): string | null {
   if (national.length !== MOBILE_WITH_NINE || national[DDD_LENGTH] !== NINTH_DIGIT) return e164;
   return `+${BRAZIL}${national.slice(0, DDD_LENGTH)}${national.slice(DDD_LENGTH + 1)}`;
 }
+
+const LANDLINE_WITH_DDD = MOBILE_WITH_NINE - 1; // DDD + 8 digits
+const NATIONAL_LENGTHS = new Set([LANDLINE_WITH_DDD, MOBILE_WITH_NINE]);
+
+/**
+ * A number the professional typed in the panel: with only DDD and number it is Brazilian, so
+ * the country code is added (WhatsApp payloads always carry it and go through toE164).
+ */
+export function typedPhone(raw: string): string | null {
+  const digits = raw.replace(NON_DIGITS, '');
+  return toE164(NATIONAL_LENGTHS.has(digits.length) ? `${BRAZIL}${digits}` : digits);
+}

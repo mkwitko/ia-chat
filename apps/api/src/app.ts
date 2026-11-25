@@ -14,6 +14,9 @@ import type { HealthDeps } from './health/health-routes.ts';
 import { fastifyObservability, setupObservability } from './observability.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
 import { registerInboxRoutes } from './conversations/inbox-routes.ts';
+import { registerCustomerRoutes } from './customers/customers-routes.ts';
+import { registerHomeRoutes } from './home/home-routes.ts';
+import { registerResultsRoutes } from './results/results-routes.ts';
 import { registerOperatorRoutes } from './operator/operator-routes.ts';
 import { registerPushRoutes } from './push/push-routes.ts';
 import { registerEventsRoute } from './realtime/events-route.ts';
@@ -109,5 +112,8 @@ function registerSettingsRoutes(app: FastifyInstance): void {
   registerToneRoutes(app);
   registerUsageRoutes(app);
   registerAgendaRoutes(app);
+  registerCustomerRoutes(app);
+  registerHomeRoutes(app);
+  registerResultsRoutes(app);
   registerCalendarRoutes(app);
 }

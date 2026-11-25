@@ -8,7 +8,7 @@ Define o que cada tela contém e como se comporta. Não define aparência: cor, 
 |---|---|
 | RN-50 | Celular primeiro. Toda tela é desenhada para 360 px de largura e depois ampliada. O profissional usa entre um paciente e outro, com uma mão |
 | RN-51 | Instalável (PWA), com notificação push. No iOS, o push exige o app instalado na tela inicial: o onboarding orienta |
-| RN-52 | Tudo o que o profissional precisa no dia cabe em três telas: conversas, agenda, hoje. Configuração fica fora do caminho |
+| RN-52 | Tudo o que o profissional precisa no dia cabe em quatro telas: início, conversas, agenda, clientes. Configuração fica fora do caminho |
 | RN-53 | Toda tela tem os quatro estados desenhados: carregando, vazio, erro e com dados. O estado vazio explica o que fazer |
 | RN-54 | Nenhuma ação destrutiva sem confirmação; toda ação tem retorno visível em até 100 ms |
 | RN-55 | Acessibilidade: contraste AA, alvos de toque de 44 px, navegação por teclado, leitor de tela, respeito a "reduzir movimento" |
@@ -18,12 +18,15 @@ Define o que cada tela contém e como se comporta. Não define aparência: cor, 
 
 ## Navegação
 
-Barra inferior no celular, lateral no computador:
+Barra inferior no celular, lateral no computador. Cinco itens (a versão enxuta do MVP; cabe em 360 px com `grid-cols-5`):
 
-1. **Conversas** (com contador de pendências)
-2. **Agenda**
-3. **Hoje**
-4. **Mais**: assistente, serviços, conexões, plano e uso, equipe, ajuda
+1. **Início** (o que precisa de você, o mês em quatro números, atalho para os resultados)
+2. **Conversas** (com contador de pendências)
+3. **Agenda**
+4. **Clientes**
+5. **Mais**: assistente, serviços, conexões, plano e uso, equipe, ajuda
+
+Decisão (25/11/2026): não há aba "Resultados". Os números do piloto ficam numa seção "Resultados do mês" (`/resultados`), aberta pelo botão "Ver resultados" no Início, para não passar de cinco itens e não virar painel de métricas. "Mais" continua com o nome e os itens de configuração que já tinha.
 
 Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsApp desconectado, Google expirado, pagamento da Meta ausente, assinatura vencida, franquia estourada. Cada alerta tem um botão que leva à correção.
 
@@ -55,11 +58,47 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsA
 - Acesso a disponibilidade, bloqueios e modo férias.
 - Implementação (E-23): lista feita à mão, sem Schedule-X (sem dependência nova): dia no celular e semana como sete seções de dia, a partir do dia escolhido (`/agenda?dia=AAAA-MM-DD&visao=semana`). Em vez de tocar num horário livre da grade, o botão "Novo agendamento" abre o formulário com os horários livres do dia (mesmo `availableSlots` do assistente) e o toque no atendimento abre remarcar e cancelar. Com o Google Agenda conectado (E-21) os horários ocupados lá saem da lista de livres; a seção "Google Agenda" da tela Disponibilidade conecta, escolhe a agenda, mostra o estado e desconecta, e uma faixa de alerta pede para reconectar quando o token cai. A tela "Disponibilidade, bloqueios e férias" (`/agenda/disponibilidade`) edita os horários da semana, os bloqueios, as férias e o horário do resumo noturno.
 
-### Hoje
+### Início
 
-- Próximos atendimentos do dia.
-- O que precisa de atenção: conversas aguardando, rascunhos para aprovar, perguntas que o assistente não soube.
-- Três números da semana, todos vindos do banco: conversas atendidas, agendamentos feitos pelo assistente, horas estimadas poupadas.
+Substitui o antigo "Hoje" (`/inicio`; `/hoje` redireciona).
+
+- **O mês em quatro números**, todos contados do banco e cada um um link para onde agir: contatos no mês (Clientes), agendamentos (Agenda), aguardando retorno (Conversas) e cancelamentos (Agenda). Cancelamento conta no dia em que foi feito.
+- **O que precisa de você**: conversas aguardando, rascunhos para aprovar, perguntas que o assistente não soube, atendimentos que já passaram sem "compareceu/faltou" marcado (com os dois botões ali mesmo) e atendimentos das próximas 48 h ainda sem confirmação. Item vazio some; sem nada, "Tudo em dia".
+- **Hoje**: os atendimentos do dia.
+- **Não agendaram**: quantos contatos estão em "Não agendou" e quantos podem ser retomados (não pediram para parar e falaram com você nos últimos 30 dias). Nenhuma mensagem sai sozinha daqui: o link leva à ficha do cliente.
+- **Resultados do mês**: botão "Ver resultados".
+
+### Clientes
+
+Lista (`/clientes`) e ficha (`/clientes/:id`) de quem já falou com o consultório. Poucos campos, quase tudo automático.
+
+- Lista: nome ou telefone, origem, status, último contato, próximo atendimento, "pediu para parar" e quantos atendimentos teve (recorrência é contagem, não etapa). Busca por nome ou telefone e filtro por status.
+- **Status** (no máximo quatro, derivados de fatos; ver H-31): **Novo contato**, **Agendado** (tem atendimento marcado), **Cliente** (compareceu ao menos uma vez), **Não agendou** (sem mensagem e sem agendamento há mais de 3 dias, ou só teve agendamentos cancelados ou faltas: é a lista de recuperação). Manual, auditado: **Perdido**, com um motivo de lista fixa (preço, distância, escolheu outro profissional, não precisa mais, número errado, outro); vale até chegar mensagem ou agendamento novo, ou até "voltar ao status automático".
+- **Origem**: WhatsApp direto, indicação (com código), site, anúncio, importado, cadastro manual. Só a evidência define sozinha: mensagem que chega é "WhatsApp direto" e cadastro pelo painel é "manual". Indicação, site e anúncio o profissional escolhe na ficha (anúncio automático só quando a Meta mandar o dado de origem, o que ainda não lemos). Nunca se deduz campanha sem prova.
+- Ficha: conversa (link), atendimentos com "compareceu/faltou", histórico de consentimento (aceitou/pediu para parar, categoria, origem, data, quem), histórico do status, origem e perdido.
+- **Saúde fora daqui**: não existe campo de queixa nem de anotação em contato, nota ou status; o texto das mensagens não aparece na lista nem na ficha. Se um dia houver campo de observação, terá aviso visível e ficará fora do contexto do assistente.
+
+### Presença
+
+No atendimento que já começou, o profissional marca "Compareceu" ou "Faltou" (na ficha do cliente e no Início); dá para corrigir. Alimenta o status "Cliente" e a taxa de faltas. Atendimento futuro ou cancelado não pode ser marcado.
+
+### Resultados do mês
+
+`/resultados`, filtro de período (este mês, mês passado, últimos 90 dias). Só dados reais; cada número mostra a conta e a fórmula; abaixo de 5 casos aparece "sem dados suficientes" com as contagens, nunca um percentual.
+
+| Número | Fórmula |
+|---|---|
+| Conversas | conversas com ao menos uma mensagem do paciente no período |
+| Contatos novos e por origem | contatos criados no período |
+| Primeira resposta (mediana) | das conversas abertas no período (primeira mensagem do paciente dentro dele) que foram respondidas, o tempo até a primeira resposta do assistente ou do profissional |
+| Passaram para você (taxa de transferência) | conversas do período em que o controle foi para o profissional ÷ conversas do período |
+| Agendamentos feitos / cancelamentos | atendimentos criados / cancelados no período |
+| Taxa de faltas | faltou ÷ (compareceu + faltou), só atendimentos com presença marcada; a tela diz quantos ficaram sem marca |
+| Recuperados | contatos que estavam em "Não agendou" e agendaram no período |
+| Retornos | atendimentos criados no período para quem já tinha comparecido antes |
+| Indicações | contatos criados no período com origem indicação |
+
+Aviso fixo de linha de base: os números começam na data do primeiro registro; para comparar com antes do assistente, o profissional anota hoje o que tem. Pedidos de agendamento ainda não são medidos (nada os registra).
 
 ### Assistente
 

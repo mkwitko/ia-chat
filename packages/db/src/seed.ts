@@ -9,6 +9,11 @@ import {
   Autonomy,
   Plan,
   ScheduledMessageKind,
+  ConsentCategory,
+  ConsentKind,
+  ConsentSource,
+  PipelineStage,
+  StageSource,
   type Db,
   type Tx,
 } from './index.ts';
@@ -147,4 +152,17 @@ async function seedSchedule(tx: Tx, ids: Ids): Promise<void> {
     },
   });
   await tx.payment.create({ data: { tenantId, appointmentId, ...FIXTURE.payment } });
+  await tx.contactStageEvent.create({
+    data: { tenantId, contactId, toStage: PipelineStage.new_contact, source: StageSource.derived },
+  });
+  await tx.consentEvent.create({
+    data: {
+      tenantId,
+      contactId,
+      kind: ConsentKind.opt_in,
+      category: ConsentCategory.service,
+      source: ConsentSource.patient_message,
+      actorType: 'contact',
+    },
+  });
 }

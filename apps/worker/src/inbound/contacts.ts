@@ -1,5 +1,12 @@
 import { phoneKey, type ContactRef } from '@app/channels';
-import type { Tx } from '@app/db';
+import {
+  ConsentActor,
+  ConsentCategory,
+  ConsentKind,
+  ConsentSource,
+  recordConsent,
+  type Tx,
+} from '@app/db';
 
 type Contact = Awaited<ReturnType<Tx['contact']['create']>>;
 
@@ -18,9 +25,20 @@ export async function resolveContact(tx: Tx, tenantId: string, ref: ContactRef):
   const found = byBsuid ?? byPhone;
   if (!found) {
     const phone = key ? { phoneKey: key, phoneE164: ref.phoneE164 ?? null } : {};
-    return tx.contact.create({
+    const created = await tx.contact.create({
       data: { tenantId, bsuid: ref.bsuid ?? null, name: ref.name ?? null, ...phone },
     });
+    // Writing first is the opt-in to the conversation itself (not to marketing).
+    await recordConsent(tx, {
+      tenantId,
+      contactId: created.id,
+      kind: ConsentKind.opt_in,
+      category: ConsentCategory.service,
+      source: ConsentSource.patient_message,
+      actor: { type: ConsentActor.contact },
+      now: new Date(),
+    });
+    return created;
   }
   // ponytail: a person already stored twice (one record by BSUID, another by phone) is not
   // merged here; the BSUID record wins. Merge in the inbox if it ever shows up.

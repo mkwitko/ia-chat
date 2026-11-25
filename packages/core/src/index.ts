@@ -14,6 +14,7 @@ export {
   localParts,
   toLocalIso,
   zonedToUtc,
+  MS_PER_DAY,
   MS_PER_MINUTE,
   MINUTES_PER_DAY,
   type LocalDate,

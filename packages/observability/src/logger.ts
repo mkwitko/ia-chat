@@ -1,6 +1,7 @@
 import pino, { type DestinationStream, type Logger, type LoggerOptions } from 'pino';
 import { isObject } from './guards.ts';
 import { currentLogContext } from './context.ts';
+import { withHttpLine } from './http-line.ts';
 import { scrub } from './scrub.ts';
 
 const AXIOM_TARGET = '@axiomhq/pino';
@@ -39,7 +40,7 @@ export function loggerOptions(config: LoggerConfig): LoggerOptions {
     // Runs on every line before serialization: redaction cannot be skipped by a call site.
     formatters: {
       log: (fields) => {
-        const clean = scrub(fields);
+        const clean = scrub(withHttpLine(fields));
         return isObject(clean) ? { ...clean } : {};
       },
     },

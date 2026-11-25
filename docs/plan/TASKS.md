@@ -527,3 +527,9 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 ### M-14 Higiene da especificação (rápida)
 - [ ] Renumerar a hipótese H-23 duplicada e o buraco em H-20, varrendo as referências no código
 - [ ] Atualizar spec 01 e 10 com o posicionamento e a navegação novos quando a fatia M-06/M-07 fechar
+### SMB-01 Clientes, Início e Resultados (fatia vertical do MVP enxuto)
+- [x] Origem, log de consentimento e status derivado do cliente (migração `customers_pipeline`)
+- [x] Presença (compareceu/faltou) no atendimento
+- [x] API de clientes, Início e Resultados do mês, com testes
+- [x] Telas Início, Clientes e Resultados; navegação de cinco itens
+- [ ] Passada no navegador em 360 px e 1280 px (quatro estados por tela)

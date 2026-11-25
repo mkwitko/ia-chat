@@ -59,6 +59,8 @@ model Tenant {
   aiUsages          AiUsage[]
   usageCounters     UsageCounter[]
   auditLogs         AuditLog[]
+  contactStageEvents ContactStageEvent[]
+  consentEvents      ConsentEvent[]
   pushSubscriptions PushSubscription[]
   calendarIntegration CalendarIntegration?
 

@@ -10,6 +10,8 @@ export const AgendaError = {
   tooLateToCancel: 'cancelamento_fora_do_prazo',
   limitReached: 'limite_de_agendamentos',
   noProfessional: 'sem_profissional',
+  notMarkable: 'presenca_indisponivel',
+  notStarted: 'atendimento_nao_comecou',
   /** Google Calendar could not be read: nothing is offered or booked (spec 05, A-13). */
   calendarUnavailable: 'agenda_externa_indisponivel',
   /** Booked here, but Google rejected the event: not confirmed to the patient. */

@@ -25,6 +25,15 @@ function capture() {
 }
 
 describe('logger', () => {
+  it('keeps the request line and status, without query string or headers', () => {
+    const { lines, logger } = capture();
+    const req = { method: 'GET', url: '/api/customers?token=abc', headers: { cookie: 'x' } };
+    logger.info({ req, res: { statusCode: 200, getHeaders: () => ({}) } }, 'request completed');
+    const line = JSON.parse(lines[0] ?? '{}') as Record<string, unknown>;
+    expect(line.req).toEqual({ method: 'GET', path: '/api/customers' });
+    expect(line.res).toEqual({ statusCode: 200 });
+  });
+
   it('never writes message content, phones, emails or credentials', () => {
     const { lines, logger } = capture();
     logger.info(

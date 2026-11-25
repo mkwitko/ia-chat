@@ -108,3 +108,9 @@ export {
   RECENT_OPS_EVENTS,
   type OpsEventInput,
 } from './ops-events.ts';
+export { Attendance, markAttendance, type MarkRequest } from './agenda/attendance.ts';
+export { NOT_BOOKED_AFTER_DAYS, deriveStage, type StageFacts } from './customers/stage.ts';
+export { loadFacts, stageOf, type ContactFacts } from './customers/facts.ts';
+export { logStage, syncStage, withStageSync, type StageSync } from './customers/sync.ts';
+export { ManualStageError, setManualStage, type ManualStage } from './customers/manual.ts';
+export { ConsentActor, recordConsent, type ConsentChange } from './customers/consent.ts';
