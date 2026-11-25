@@ -21,6 +21,7 @@ export const Route = {
   simulator: '/mais/assistente/simulador',
   services: '/mais/servicos',
   usage: '/mais/plano-e-uso',
+  billing: '/mais/assinatura',
   operator: '/operador',
 } as const;
 

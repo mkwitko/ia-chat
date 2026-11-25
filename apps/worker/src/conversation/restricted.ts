@@ -1,5 +1,5 @@
 import { monthOf, PlanId, trialCapReached, usageStatus } from '@app/core';
-import type { Tx } from '@app/db';
+import { TenantStatus, type Tx } from '@app/db';
 import { DeliveryMode, type TurnReply } from './turn-types.ts';
 
 /** Spec 01: past the owner's overage cap the assistant only tells the patient to wait. */
@@ -15,6 +15,9 @@ export async function isRestricted(tx: Tx, tenantId: string): Promise<boolean> {
     where: { id: tenantId },
     select: { plan: true, overageCapCents: true, status: true },
   });
+  // E-25: the overdue ladder (restricted) and a cancelled subscription also stop the model.
+  if (tenant.status === TenantStatus.restricted || tenant.status === TenantStatus.cancelled)
+    return true;
   const counter = await tx.usageCounter.findUnique({
     where: { tenantId_month: { tenantId, month: monthOf(new Date()) } },
   });

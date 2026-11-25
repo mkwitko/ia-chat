@@ -16,6 +16,8 @@ export async function sweepTrials(deps: SweepDeps): Promise<SweepResult> {
     where: {
       status: TenantStatus.trial,
       trialEndedAt: null,
+      // E-25: once subscribed, the billing ladder (not the trial clock) decides.
+      billingSubscriptionId: null,
       trialEndsAt: { not: null },
       ...(deps.onlyTenantId ? { id: deps.onlyTenantId } : {}),
     },

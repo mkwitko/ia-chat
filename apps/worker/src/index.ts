@@ -34,6 +34,7 @@ import { findStaleMessages } from './inbound/reconcile.ts';
 import { logEmailSender } from './trial/log-sender.ts';
 import { sweepTrials } from './trial/sweep.ts';
 import { startReminderSweep } from './reminders/wiring.ts';
+import { startBilling } from './billing/wiring.ts';
 
 const WORKER_READY = 'worker ready';
 const RECONCILE_CODE = 'no_status_after_1h';
@@ -170,6 +171,9 @@ await boss.work(TRIAL_SWEEP_QUEUE.name, async () => {
   });
   log.info(result, TRIAL_SWEPT);
 });
+
+// E-25: reconciliation with Asaas, overdue ladder and overage, once a day.
+await startBilling({ boss, db, alert, email: trialEmail, panelUrl: webOrigin, log: appLog.info });
 
 // E-22 (RF-46, RF-47): confirmations and reminders, every minute.
 await startReminderSweep({

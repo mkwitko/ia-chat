@@ -1,5 +1,5 @@
 import { aiConfigured, createEnvGateway, dbUsageStore, markedStore } from '@app/ai';
-import { NodeEnv } from '@app/core';
+import { AsaasClient, NodeEnv } from '@app/core';
 import { createDb, INBOUND_QUEUE, QUEUE_SCHEMA, sendTenantJob } from '@app/db';
 import { AlertEvent, initSentry, logProcessErrors } from '@app/observability';
 import { PgBoss } from 'pg-boss';
@@ -50,6 +50,9 @@ const app = buildApp({
   env,
   db,
   enqueueInbound,
+  ...(env.ASAAS_API_KEY
+    ? { billing: new AsaasClient({ apiKey: env.ASAAS_API_KEY, baseUrl: env.ASAAS_BASE_URL }) }
+    : {}),
   checkQueue: () => boss.getQueues(),
   ...(simulatorGateway ? { simulatorGateway } : {}),
 });

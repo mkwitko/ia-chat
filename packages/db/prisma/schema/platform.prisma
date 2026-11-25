@@ -36,7 +36,20 @@ model Tenant {
   reminder3dSentAt    DateTime?    @map("reminder_3d_sent_at") @db.Timestamptz
   /// S-05 (RF-81): CPF or CNPJ, digits only; unique, so one trial per document.
   document            String?
-  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  /// E-25: Asaas ids. The subscription id is null while there is no subscription.
+  billingCustomerId     String?   @unique @map("billing_customer_id")
+  billingSubscriptionId String?   @unique @map("billing_subscription_id")
+  /// Due date of the oldest unpaid subscription invoice; null = in good standing.
+  billingOverdueSince   DateTime? @map("billing_overdue_since") @db.Timestamptz
+  /// Overdue notices already sent (0 to 2); the ladder sends each once.
+  billingNoticeStep     Int       @default(0) @map("billing_notice_step")
+  /// Link to pay the open invoice, as the provider gave it.
+  billingInvoiceUrl     String?   @map("billing_invoice_url")
+  /// Due date of the latest paid subscription invoice; a late "overdue" event for older ones is ignored.
+  billingPaidDueDate    DateTime? @map("billing_paid_due_date") @db.Date
+  /// First day of the last month whose overage was charged.
+  billingOverageThrough DateTime? @map("billing_overage_through") @db.Date
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   specialtyPolicy SpecialtyPolicy? @relation(fields: [specialtyPolicyId], references: [id], onDelete: Restrict)
@@ -134,4 +147,15 @@ model OpsEvent {
 
   @@index([createdAt(sort: Desc)])
   @@map("ops_events")
+}
+
+/// Platform table (no RLS): Asaas webhook events already received (E-25). The provider's event id is
+/// the key, so a retried delivery is recognised; `processedAt` null means it must be applied again.
+model BillingEvent {
+  id          String    @id
+  type        String
+  receivedAt  DateTime  @default(now()) @map("received_at") @db.Timestamptz
+  processedAt DateTime? @map("processed_at") @db.Timestamptz
+
+  @@map("billing_events")
 }

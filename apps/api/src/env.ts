@@ -1,5 +1,5 @@
 import { aiEnvSchema } from '@app/ai';
-import { baseEnvSchema, googleCalendarEnvSchema, parseEnvWith } from '@app/core';
+import { baseEnvSchema, billingEnvSchema, googleCalendarEnvSchema, parseEnvWith } from '@app/core';
 import * as z from 'zod';
 
 const MIN_SECRET_LENGTH = 32;
@@ -19,6 +19,7 @@ const operatorEmails = z
 export const apiEnvSchema = baseEnvSchema
   .extend(aiEnvSchema.shape)
   .extend(googleCalendarEnvSchema.shape)
+  .extend(billingEnvSchema.shape)
   .extend({
     PORT: z.coerce.number().int().positive().default(DEFAULT_PORT),
     BETTER_AUTH_SECRET: z.string().min(MIN_SECRET_LENGTH),

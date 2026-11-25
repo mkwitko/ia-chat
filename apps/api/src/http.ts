@@ -28,6 +28,11 @@ export const ErrorCode = {
   documentTaken: 'document_taken',
   calendarOff: 'calendar_off',
   calendarNeedsReconnect: 'calendar_needs_reconnect',
+  billingOff: 'billing_off',
+  documentRequired: 'document_required',
+  noSubscription: 'no_subscription',
+  alreadySubscribed: 'already_subscribed',
+  billingFailed: 'billing_failed',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

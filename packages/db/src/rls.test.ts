@@ -16,6 +16,7 @@ const PLATFORM_TABLES = new Set([
   'channel_routes', // webhook routing by provider account, read before the tenant is known (E-09)
   'waitlist_entries', // public site signups before any tenant exists (S-01)
   'ops_events', // operator-facing problem log from alert(); ids and codes only (E-26)
+  'billing_events', // Asaas webhook ids for idempotency, no tenant data (E-25)
   // Better Auth (E-04): read before a tenant is chosen. The API guard checks membership.
   'users',
   'sessions',
