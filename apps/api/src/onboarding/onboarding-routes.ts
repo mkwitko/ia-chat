@@ -1,5 +1,5 @@
-import { OnboardingStep, SKIPPABLE_STEPS, Specialty, StepStatus } from '@app/core';
-import { Autonomy } from '@app/db';
+import { markStep, OnboardingStep, SKIPPABLE_STEPS, Specialty, StepStatus } from '@app/core';
+import { Autonomy, TenantStatus } from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
@@ -46,12 +46,13 @@ async function saveStep(request: FastifyRequest, reply: FastifyReply) {
     return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
   return tenant.withTenant(async (tx) => {
     const progress = await readProgress(tx, tenant.tenantId);
-    progress.steps[step] = body.status;
+    markStep(progress, { step, status: body.status, now: new Date() });
     await saveProgress(tx, { tenantId: tenant.tenantId, progress });
     // Activation never leaves "approve before sending" (RF-13); nothing goes out on its own.
+    // After the trial ended without subscription the assistant stays off (RF-88).
     if (step === OnboardingStep.activation && body.status === StepStatus.done)
-      await tx.tenant.update({
-        where: { id: tenant.tenantId },
+      await tx.tenant.updateMany({
+        where: { id: tenant.tenantId, status: { not: TenantStatus.restricted } },
         data: { autonomy: Autonomy.approve },
       });
     return progressView(tx, tenant.tenantId);
@@ -67,7 +68,7 @@ async function chooseSpecialty(request: FastifyRequest, reply: FastifyReply) {
     if (!policy) return reply.code(HttpStatus.conflict).send({ error: ErrorCode.invalidRequest });
     const progress = await readProgress(tx, tenant.tenantId);
     progress.specialty = body.specialty;
-    progress.steps[OnboardingStep.account] = StepStatus.done;
+    markStep(progress, { step: OnboardingStep.account, status: StepStatus.done, now: new Date() });
     await tx.tenant.update({
       where: { id: tenant.tenantId },
       data: { specialtyPolicyId: policy.id, onboardingProgress: progress },

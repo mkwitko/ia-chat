@@ -8,6 +8,7 @@ import { needsYou } from '../inbox/conversations-screen';
 import { useInboxEvents } from '../inbox/use-inbox-events';
 import { AlertBar } from './alert-bar';
 import { Navigation } from './navigation';
+import { TrialBanner } from './trial-banner';
 import { usePushAlert } from './use-push-alert';
 
 /** Signed-in frame: alert strip, navigation and the current screen. */
@@ -28,6 +29,7 @@ function Frame() {
   return (
     <div className="flex h-full flex-col">
       <AlertBar alert={alert} />
+      <TrialBanner />
       {!connected && (
         <p role="status" className="bg-muted px-4 py-1 text-center text-xs text-muted-foreground">
           {InboxCopy.reconnecting}

@@ -9,6 +9,7 @@ import {
   DRAFT_REMINDER_QUEUE,
   SUMMARY_QUEUE,
   SUMMARY_SYNC_QUEUE,
+  TRIAL_SWEEP_QUEUE,
   createDb,
   sendTenantJob,
   watchDeadLetters,
@@ -24,8 +25,11 @@ import { syncSummarySchedules } from './agenda/summary-schedule.ts';
 import type { TurnRequest } from './conversation/schedule.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
+import { logEmailSender } from './trial/log-sender.ts';
+import { sweepTrials } from './trial/sweep.ts';
 
 const QUEUE_ERROR = 'queue error';
+const TRIAL_SWEPT = 'trial sweep done';
 const DEAD_LETTER = 'job exhausted its retries';
 // E-11: one job per (conversation, version); an older version finds a newer one and skips.
 // ponytail: conversation.turn has no consumer until the agent exists (E-13); jobs wait there.
@@ -48,6 +52,9 @@ const STALE_MESSAGES = 'outbound messages without delivery status after 1 hour';
 const RECONCILE_CRON = '0 7 * * *';
 const RECONCILE_TZ = 'America/Sao_Paulo';
 const SUMMARY_SYNC_CRON = '*/15 * * * *';
+const TRIAL_SWEEP_CRON = '0 * * * *';
+const DEFAULT_WEB_ORIGIN = 'http://localhost:5173';
+const RESUME_PATH = '/configuracao';
 
 const env = parseEnv(process.env);
 const log = pino();
@@ -146,6 +153,25 @@ await syncSummarySchedules(db, boss);
 await boss.schedule(SUMMARY_SYNC_QUEUE.name, SUMMARY_SYNC_CRON);
 await boss.work(SUMMARY_SYNC_QUEUE.name, async () => {
   await syncSummarySchedules(db, boss);
+});
+
+// S-05 (RF-84, RF-88): abandonment reminders and the end of the trial, once each, every hour.
+const webOrigin = process.env.WEB_ORIGIN ?? DEFAULT_WEB_ORIGIN;
+const trialEmail = logEmailSender((fields, message) => {
+  log.info(fields, message);
+});
+await boss.schedule(TRIAL_SWEEP_QUEUE.name, TRIAL_SWEEP_CRON);
+await boss.work(TRIAL_SWEEP_QUEUE.name, async () => {
+  const result = await sweepTrials({
+    db,
+    email: trialEmail,
+    now: new Date(),
+    urls: { resume: `${webOrigin}${RESUME_PATH}`, panel: webOrigin },
+    alert: (fields, message) => {
+      log.error(fields, message);
+    },
+  });
+  log.info(result, TRIAL_SWEPT);
 });
 
 const turns = await startTurnWorker({

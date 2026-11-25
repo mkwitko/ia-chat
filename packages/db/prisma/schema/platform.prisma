@@ -25,7 +25,16 @@ model Tenant {
   /// E-24: onboarding step -> done|skipped plus the chosen specialty; shape in packages/core.
   onboardingProgress  Json         @default("{}") @map("onboarding_progress")
   limits              Json         @default("{}")
-  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  /// S-05 (RF-80): the trial ends here; null = no trial (the pilot). Default set in SQL: created + 14 days.
+  trialEndsAt         DateTime?    @map("trial_ends_at") @db.Timestamptz
+  /// S-05 (RF-88): when the sweep turned the assistant off; the data is kept 30 days from here.
+  trialEndedAt        DateTime?    @map("trial_ended_at") @db.Timestamptz
+  /// S-05 (RF-84): each abandonment reminder is sent once; the moment it was claimed.
+  reminder1dSentAt    DateTime?    @map("reminder_1d_sent_at") @db.Timestamptz
+  reminder3dSentAt    DateTime?    @map("reminder_3d_sent_at") @db.Timestamptz
+  /// S-05 (RF-81): CPF or CNPJ, digits only; unique, so one trial per document.
+  document            String?
+  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   specialtyPolicy SpecialtyPolicy? @relation(fields: [specialtyPolicyId], references: [id], onDelete: Restrict)

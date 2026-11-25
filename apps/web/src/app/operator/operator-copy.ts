@@ -49,6 +49,12 @@ export const OperatorCopy = {
       `${shortId(id)}: ${STATE_LABELS[state] ?? state} (${String(turns)})`,
     handoffLine: (id: string, reason: string | null) => `${shortId(id)}: ${reason ?? '-'}`,
   },
+  funnel: {
+    heading: 'Funil do cadastro',
+    signups: (total: number) => `${String(total)} cadastros`,
+    line: (count: number, total: number) => `${String(count)} de ${String(total)}`,
+    goal: 'Meta inicial: metade de quem chega ao simulador ativa o assistente.',
+  },
   ownerNotice: {
     heading: 'Acessos da equipe da plataforma',
     line: (email: string | null, reason: string, until: string) =>

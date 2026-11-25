@@ -6,6 +6,7 @@ import { BackLink } from '../screens/back-link';
 import { Screen } from '../screens/screen';
 import { AccessPanel } from './access-panel';
 import { ClientsTable } from './clients-table';
+import { FunnelPanel } from './funnel-panel';
 import { useClients, type ClientRow } from './operator-api';
 import { OperatorCopy as Copy } from './operator-copy';
 
@@ -20,6 +21,7 @@ export function OperatorScreen() {
       {clients.isPending && <ListSkeleton />}
       {clients.data?.length === 0 && <p className="px-4 md:px-0">{Copy.empty}</p>}
       <div className="grid gap-6 px-4 pb-10 md:px-0">
+        <FunnelPanel />
         {clients.data && <ClientsTable rows={clients.data} onRequest={setSelected} />}
         {selected && <AccessPanel key={selected.id} client={selected} />}
       </div>
