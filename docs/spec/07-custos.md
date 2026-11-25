@@ -34,7 +34,7 @@ O LLM responde por mais de 90% desse valor. A transcrição é desprezível.
 
 ## Custo por perfil de consumo (por cliente, por mês)
 
-| Perfil | Conversas | Agendamentos | Custo variável nosso | Meta, pago pelo cliente |
+| Perfil | Conversas | Agendamentos | Custo variável nosso (IA) | Meta, pago por nós |
 |---|---|---|---|---|
 | Baixo | 150 | 30 | R$ 12,57 | R$ 2,10 |
 | Médio | 400 | 80 | R$ 33,51 | R$ 54,60 |
@@ -43,7 +43,7 @@ O LLM responde por mais de 90% desse valor. A transcrição é desprezível.
 **O maior custo variável do cliente é a Meta, não a IA.** No perfil médio a Meta custa mais que todo o nosso custo de IA. Consequências:
 
 - uma mensagem por turno é regra de produto, não só de estilo;
-- o onboarding mostra a estimativa de gasto com a Meta;
+- pagamos a Meta por todos os clientes (decisão do dono, 25/11/2026), então ela entra na margem abaixo;
 - respostas enviadas pelo profissional no celular não são cobradas, e isso não muda;
 - se a Meta mudar a tabela de novo, só a aba "Premissas" precisa de ajuste.
 
@@ -53,10 +53,12 @@ Mistura de perfis: 50% baixo, 35% médio, 15% alto. Ticket médio de R$ 280 (hip
 
 | Clientes | Fixo por cliente | Custo por cliente | Custo total por mês | Receita por mês | Margem bruta |
 |---|---|---|---|---|---|
-| 100 | R$ 15,12 | R$ 50,21 | R$ 5.021 | R$ 28.000 | 82% |
-| 300 | R$ 7,09 | R$ 42,18 | R$ 12.654 | R$ 84.000 | 85% |
-| 1.000 | R$ 3,02 | R$ 38,11 | R$ 38.105 | R$ 280.000 | 86% |
-| 3.000 | R$ 1,58 | R$ 36,66 | R$ 109.993 | R$ 840.000 | 87% |
+| 100 | R$ 15,12 | R$ 105,02 | R$ 10.502 | R$ 28.000 | 62% |
+| 300 | R$ 7,09 | R$ 96,99 | R$ 29.097 | R$ 84.000 | 65% |
+| 1.000 | R$ 3,02 | R$ 92,92 | R$ 92.920 | R$ 280.000 | 67% |
+| 3.000 | R$ 1,58 | R$ 91,47 | R$ 274.410 | R$ 840.000 | 67% |
+
+Custo por cliente inclui a Meta média da mistura (R$ 54,81). Sem a Meta, a margem era de 82% a 87%.
 
 A margem bruta não inclui impostos, suporte, aquisição de clientes, inadimplência nem salários. Não é lucro.
 
@@ -86,7 +88,7 @@ O master prompt pede preço fundamentado em custo e em disposição de pagamento
 
 - Resposta em áudio: de US$ 0,009 a US$ 0,072 por minuto de fala, conforme o provedor.
 - RAG com embeddings (módulo de documentos).
-- Mensagens de marketing (R$ 0,3217 cada), pagas pelo cliente.
+- Mensagens de marketing (R$ 0,3217 cada): pagamos a Meta e repassamos na fatura do cliente.
 - Crescimento de armazenamento: a pesquisa estima 432 GB em 12 meses com 3.000 clientes. A retenção configurável em [06](06-seguranca-e-lgpd.md) controla isso.
 - Um preço de modelo citado na pesquisa dobra em 01/01/2027 (Gemini Flash). Os modelos candidatos principais não são afetados, mas a tabela de preços do AI Gateway precisa ser versionada por data.
 

@@ -27,7 +27,7 @@ export const FAQS: readonly Faq[] = [
   {
     question: 'Quem paga a Meta?',
     answer:
-      'Você, direto à Meta, com o seu cartão. As respostas que você mesmo envia pelo celular não são cobradas. A página de preços traz uma estimativa por volume de uso.',
+      'Nós. O custo da Meta já está na mensalidade e no excedente; você não cadastra cartão na Meta.',
   },
   {
     question: 'O assistente inventa preço ou horário?',

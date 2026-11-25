@@ -8,7 +8,7 @@ Fontes: [pesquisa 01](../research/01-meta-whatsapp-compliance.md). Itens marcado
 |---|---|
 | Mensagem de atendimento custa R$ 0,035 acima de 1.000 por mês por número (desde 01/10/2026) | Uma mensagem por turno sempre que possível |
 | Utility custa R$ 0,035, marketing R$ 0,3217 | Reativação é módulo com custo repassado |
-| Sem forma de pagamento na Meta, a entrega para após a franquia | Onboarding só conclui com cobrança configurada |
+| Sem forma de pagamento na Meta, a entrega para após a franquia | Onboarding só conclui com a nossa forma de pagamento ligada à conta do cliente (H-05) |
 | Coexistência: respostas pelo celular chegam como `smb_message_echoes` | É o gatilho principal de controle humano |
 | Coexistência desconecta após cerca de 14 dias sem abrir o app | Monitorar estado da conexão e alertar |
 | Coexistência no Brasil (nv) | Confirmar no onboarding do piloto antes de qualquer promessa |
@@ -30,7 +30,7 @@ Decisão de 24/11/2026: o produto oferece conexão oficial e conexão por QR cod
 |---|---|---|
 | Implementação | Adaptador da Cloud API | Adaptador HTTP para um gateway em contêiner separado, com motor whatsmeow (Go). Piloto: WAHA com o motor GOWS (Apache-2.0). Ver "Motor da conexão por QR code" abaixo |
 | Ativação | Embedded Signup, depende das verificações da Meta | Leitura de QR code, imediata |
-| Custo por mensagem | Tabela da Meta, pago pelo cliente | Nenhum |
+| Custo por mensagem | Tabela da Meta, pago por nós | Nenhum |
 | Risco de bloqueio do número | Baixo, dentro das políticas | Real e não mensurável: viola os termos do WhatsApp |
 | Resposta do profissional pelo celular | Evento de eco da coexistência | Mensagem própria vinda de outro aparelho; mesmo evento interno `owner_echo` |
 | Mensagens ativas | Templates aprovados | Só transacionais ligadas a um agendamento (confirmação e lembrete) |
@@ -221,7 +221,7 @@ Implementação (E-11 e E-12, 24/11/2026):
 
 1. Embedded Signup em modo coexistência; o profissional lê o QR code no app Business.
 2. Sistema grava `phone_number_id`, WABA e assina os webhooks, incluindo `smb_message_echoes`.
-3. Profissional cadastra forma de pagamento na Meta. O onboarding verifica e só então ativa o assistente.
+3. Ligamos a nossa forma de pagamento à conta WhatsApp do profissional (H-05). O onboarding verifica e só então ativa o assistente.
 4. Envio de mensagem de teste para um número do próprio profissional.
 5. Histórico sincronizado pela coexistência não é usado para gerar respostas. Fica disponível só como contexto do inbox.
 

@@ -77,7 +77,7 @@ Fluxo, com o progresso salvo a cada passo:
 3. Endereço e instruções de chegada.
 4. Tom de voz: colar mensagens ou responder a quatro perguntas.
 5. **Simulador:** conversa com o assistente já configurado. Até aqui não precisa de WhatsApp nem de cartão.
-6. Conectar WhatsApp (Embedded Signup, coexistência) e forma de pagamento na Meta.
+6. Conectar WhatsApp (Embedded Signup, coexistência). A cobrança da Meta fica conosco.
 7. Conectar Google Calendar (opcional no Essencial).
 8. Mensagem de teste e ativação em "aprovar antes de enviar".
 
