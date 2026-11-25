@@ -76,6 +76,7 @@ Implementação (E-13, 24/11/2026):
 
 - O prompt de produção fica em `packages/ai/src/agent` (`conversationBlocks`) e recebe um perfil tipado. A bateria da E-07 monta o perfil da clínica fictícia e chama a mesma função: avaliar é sempre avaliar o prompt de produção.
 - Nível de autonomia e nome do assistente ficam no tenant (`autonomy`, padrão `approve`; `assistant_name`). Em `approve`, o turno grava `turns.draft_text` e não envia; a aprovação entra com o inbox (E-16). Respostas fixas (urgência, opt-out) saem sem esperar aprovação.
+- Decisão (E-18b, 25/11/2026): em `off` não há nenhuma chamada de LLM, nem o juízo de urgência do Jev. Valem só as regras determinísticas: a lista de termos de urgência continua respondendo a mensagem do SAMU (texto fixo, sem modelo) e avisando o profissional; opt-out e figurinha seguem como sempre; o resto recebe a mensagem fixa de ausência (`AgentCopy.away`). O teste prova zero chamadas ao gateway.
 - A ferramenta de transferência só marca a intenção. O turno troca o controle sob a trava de envio, depois de mandar o aviso ao paciente (RF-35); senão a própria troca descartaria o aviso.
 - Identificação: se a primeira resposta da conversa não trouxer o nome do assistente, a frase de apresentação é acrescentada no início, de forma determinística.
 

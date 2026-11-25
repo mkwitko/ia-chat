@@ -5,6 +5,12 @@ import { agentWith, conversation, db, scripted, subscribePush, turnOf } from './
 import { AgentCopy } from '@app/agent';
 import { ToolName } from './tools.ts';
 
+const AWAY_PERSONA = {
+  identity: Identity.assistant,
+  assistantName: 'Lia',
+  professionalName: 'Dr. Rafael Exemplo',
+};
+
 afterAll(() => db.client.$disconnect());
 
 describe('conversation agent (E-13)', () => {
@@ -145,5 +151,26 @@ describe('conversation agent (E-13)', () => {
       caps: { turn: 0n, conversation: 1_000_000n, tenantMonth: 1_000_000n },
     })(turnOf(scope, ['oi']));
     expect(reply).toMatchObject({ handoff: true, model: 'none' });
+  });
+
+  it('with autonomy off makes no model and no judge call and sends the fixed away message (E-18b)', async () => {
+    const scope = await conversation({ autonomy: Autonomy.off });
+    const fake = scripted([]);
+    // Jev would call this urgent; off means it is never asked.
+    const reply = await agentWith(fake.model, { judge: { urgent: 0.99 } })(
+      turnOf(scope, ['quero marcar uma consulta']),
+    );
+    expect(reply).toMatchObject({ mode: 'send', model: 'none', handoff: false, costMicroUsd: 0n });
+    expect(reply?.text).toContain(AgentCopy.away(AWAY_PERSONA));
+    expect(reply).not.toHaveProperty('urgent');
+    expect(fake.prompts).toHaveLength(0);
+  });
+
+  it('with autonomy off the deterministic urgency word list still answers SAMU', async () => {
+    const scope = await conversation({ autonomy: Autonomy.off });
+    const fake = scripted([]);
+    const reply = await agentWith(fake.model)(turnOf(scope, ['to com dor no peito agora']));
+    expect(reply).toMatchObject({ handoff: true, urgent: true, model: 'none' });
+    expect(fake.prompts).toHaveLength(0);
   });
 });

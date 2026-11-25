@@ -52,12 +52,15 @@ export function createConversationAgent(
     );
     const urgent = urgentReply(await canWarn(deps, turn.tenantId));
     const prefiltered = await applyPrefilter(deps.db, turn, { input, urgent });
+    // Off (E-18b, spec 04): no LLM at all, the judge included; only the word list and fixed copy run.
+    const off = input.autonomy === Autonomy.off;
     // null (nothing to answer) is a decision too; only undefined goes on to the judge.
     const filtered =
-      prefiltered === undefined ? await judgedUrgency(deps.gateway, turn, urgent) : prefiltered;
+      prefiltered === undefined && !off
+        ? await judgedUrgency(deps.gateway, turn, urgent)
+        : prefiltered;
     if (filtered !== undefined) return filtered && introducedReply(filtered, input);
-    if (input.autonomy === Autonomy.off)
-      return introducedReply(fixed(AgentCopy.away(input.profile), false), input);
+    if (off) return introducedReply(fixed(AgentCopy.away(input.profile), false), input);
     await refreshSummary({ db: deps.db, gateway: deps.gateway, log: deps.log ?? NO_LOG }, turn);
     input = await deps.db.withTenant(turn.tenantId, (tx) =>
       loadAgentInput(tx, turn.conversationId, now),
