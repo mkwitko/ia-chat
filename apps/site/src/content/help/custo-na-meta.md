@@ -9,4 +9,4 @@ A Meta cobra à parte, direto de você, as mensagens enviadas ao paciente **fora
 
 Esse valor não entra na sua fatura nem no excedente, e depende da tabela da Meta para o Brasil. Na [página de preços](/precos) há uma estimativa para o seu volume.
 
-A conexão com a Meta ainda não está disponível (**em breve**).
+O cartão é cadastrado na sua conta do WhatsApp na Meta, durante a conexão ou logo depois ([Passo 6](/ajuda/passo-whatsapp)).

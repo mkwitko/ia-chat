@@ -5,7 +5,7 @@ export const WhatsappCopy = {
   intro:
     'Conecte o número do consultório. Leva uns 5 minutos numa janela da Meta. Você continua usando o app WhatsApp Business no celular, no mesmo número.',
   payment:
-    'A Meta cobra as mensagens direto de você, no cartão que você cadastra lá durante ou depois da conexão. As primeiras 1.000 respostas do mês em cada número são grátis.',
+    'A Meta cobra direto de você, no cartão que você cadastra lá durante ou depois da conexão, os lembretes e confirmações enviados fora da janela de 24 horas. Responder a quem escreveu primeiro não tem custo.',
   off: 'A conexão com o WhatsApp ainda não está disponível nesta conta. Você pode seguir sem ela.',
   ownerOnly: 'Só o dono da conta pode conectar o número.',
   loadFailed: 'Não conseguimos ver o estado do WhatsApp. Tente de novo.',

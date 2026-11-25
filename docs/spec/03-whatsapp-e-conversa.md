@@ -227,6 +227,13 @@ Implementação (E-11 e E-12, 24/11/2026):
 
 Enquanto não formos Tech Provider verificados, o piloto pode entrar pelo limite de 10 onboardings por semana, por um BSP ou pela conexão por QR code, com o termo de ciência (RF-27).
 
+Implementação (E-24, 25/11/2026, documentação da Meta lida no mesmo dia):
+
+- Painel: botão "Conectar WhatsApp" no passo 6 da configuração e em Mais > Conexões. Carrega o SDK do Facebook e abre o Embedded Signup v4 com `featureType: whatsapp_business_app_onboarding` (coexistência oferecida). O código vem no retorno do login; WABA e número, no evento `WA_EMBEDDED_SIGNUP` (`FINISH` ou `FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING`, este só com a WABA). Sem `META_APP_ID`, `META_ES_CONFIG_ID`, `META_APP_SECRET` e `META_TOKEN_KEY` o botão some e a tela diz que a conexão não está disponível.
+- API: `POST /api/whatsapp/connect` (só o dono) troca o código pelo token de negócio, grava o token cifrado (`channels.access_token_enc`, AES-256-GCM como os do Google), cria ou atualiza o canal e a rota (`channel_routes`, que nunca é reescrita: número de outra conta volta 409). Depois roda, em ordem, os passos idempotentes gravados em `channels.setup_done`: assinar o app na WABA (`subscribed_apps`), registrar o número com PIN aleatório guardado cifrado (pulado em coexistência, que a Meta já registra), criar os dois modelos UTILITY (`agendamento_confirmado` e `lembrete_agendamento`, pulando os que já existem) e conferir a forma de pagamento da WABA (`primary_funding_id`; nv: confirmar o campo com o primeiro cliente). Erro da Meta para no passo, guarda o código em `channels.setup_error` e o painel mostra a tradução (`provider-errors.ts`); `POST /api/whatsapp/retry` continua de onde parou. O canal só fica `connected` com todos os passos, pagamento incluído.
+- Envio: o canal com token próprio envia com ele; sem, vale `META_ACCESS_TOKEN` (número nosso de teste ou do piloto).
+- Fora do escopo desta etapa: a sincronização de contatos e histórico da coexistência (`smb_app_data`, só uma vez e em até 24 horas; não chamamos, então o histórico anterior não é importado) e o tratamento dos webhooks `history`, `smb_app_state_sync` e `smb_message_echoes`. Os campos de webhook do app são configurados no painel da Meta pelo dono.
+
 Implementação do inbox (E-16 e E-18b, 25/11/2026):
 
 - `lockConversation`, `turnMayDeliver` e `recordOutbound` (em `@app/db`) são a trava de envio de todos os caminhos: turno do worker, mensagem do painel e decisão sobre rascunho. O rascunho só vale com `turn_version` igual ao da conversa e `control = 'ai'`, conferidos sob o lock; rascunho velho volta 409.
