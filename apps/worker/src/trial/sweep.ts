@@ -1,10 +1,11 @@
+import { AlertEvent } from '@app/observability';
 import { trialExpired } from '@app/core';
 import { TenantStatus } from '@app/db';
 import { endTrial } from './end-trial.ts';
 import { remindIfDue } from './reminders.ts';
 import type { SweepDeps, SweepResult } from './sweep-types.ts';
 
-const SWEEP_FAILED = 'trial sweep failed for a tenant';
+const SWEEP_FAILED = 'trial_sweep';
 
 /**
  * S-05: one pass over the trial tenants (those with an end date; the pilot has none). Ends the
@@ -35,7 +36,7 @@ export async function sweepTrials(deps: SweepDeps): Promise<SweepResult> {
         if (await endTrial(deps, tenant.id)) result.ended += 1;
       } else if (await remindIfDue(deps, tenant)) result.reminded += 1;
     } catch (error) {
-      deps.alert({ tenantId: tenant.id, error: String(error) }, SWEEP_FAILED);
+      deps.alert(AlertEvent.jobFailed, { tenantId: tenant.id, code: SWEEP_FAILED }, error);
     }
   }
   return result;

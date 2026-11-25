@@ -1,4 +1,11 @@
-export { NodeEnv, baseEnvSchema, parseEnv, parseEnvWith, type Env } from './env.ts';
+export {
+  NodeEnv,
+  baseEnvSchema,
+  observabilityEnvSchema,
+  parseEnv,
+  parseEnvWith,
+  type Env,
+} from './env.ts';
 export { availableSlots, overlaps } from './agenda/slots.ts';
 export type { AvailabilityRule, Interval, SlotQuery } from './agenda/slots.ts';
 export { MAX_OPTIONS, pickSpread } from './agenda/spread.ts';

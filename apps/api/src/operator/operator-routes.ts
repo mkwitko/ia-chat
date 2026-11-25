@@ -1,3 +1,4 @@
+import { recentOpsEvents } from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
@@ -28,6 +29,7 @@ export function registerOperatorRoutes(app: FastifyInstance): void {
   app.get(`${BASE}/me`, { preHandler }, () => ({ operator: true }));
   app.get(`${BASE}/clients`, { preHandler }, listClients);
   app.get(`${BASE}/funnel`, { preHandler }, (request) => funnelOf(request.server.db));
+  app.get(`${BASE}/problems`, { preHandler }, (request) => recentOpsEvents(request.server.db));
   app.post(`${BASE}/tenants/:tenantId/access`, { preHandler }, grantAccess);
   app.get(`${BASE}/tenants/:tenantId/conversations`, { preHandler }, readConversations);
   app.get(OWNER_VIEW, { preHandler: requireTenant(Permission.billingManage) }, ownerView);

@@ -1,15 +1,23 @@
 import { aiConfigured, createEnvGateway, dbUsageStore, markedStore } from '@app/ai';
 import { NodeEnv } from '@app/core';
 import { createDb, INBOUND_QUEUE, QUEUE_SCHEMA, sendTenantJob } from '@app/db';
+import { AlertEvent, initSentry, logProcessErrors } from '@app/observability';
 import { PgBoss } from 'pg-boss';
 import { buildApp } from './app.ts';
 import { parseApiEnv } from './env.ts';
 import { SIMULATOR_USAGE_PREFIX } from './simulator/simulator-routes.ts';
 
 const LISTEN_HOST = '0.0.0.0';
+const QUEUE_ERROR = 'queue error';
 const NO_EMAIL_PROVIDER = 'No email provider configured for production (E-00f).';
 
 const env = parseApiEnv(process.env);
+const sentryOn = initSentry({
+  service: 'api',
+  dsn: env.SENTRY_DSN,
+  release: env.APP_RELEASE,
+  environment: env.NODE_ENV,
+});
 if (env.NODE_ENV === NodeEnv.production) throw new Error(NO_EMAIL_PROVIDER);
 
 // App role: the queues are created by `pnpm db:migrate` (RN-02).
@@ -42,6 +50,12 @@ const app = buildApp({
   env,
   db,
   enqueueInbound,
+  checkQueue: () => boss.getQueues(),
   ...(simulatorGateway ? { simulatorGateway } : {}),
 });
+boss.on('error', (error) => {
+  app.alert(AlertEvent.queueError);
+  app.log.error({ err: error }, QUEUE_ERROR);
+});
+if (!sentryOn) logProcessErrors(app.log);
 await app.listen({ port: env.PORT, host: LISTEN_HOST });

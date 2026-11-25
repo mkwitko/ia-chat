@@ -336,7 +336,10 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 - [ ] Arquivamento de WAL no R2, backup completo e diferencial, cifrados
 - [ ] Script de restauração em ponto no tempo num servidor descartável, executado com sucesso
 - [ ] Alertas: WAL atrasado, disco, fila parada, canal desconectado, falha de entrega, erro de webhook
+  - Feito no código: `alert(evento, contexto)` (log, Sentry e "Erros recentes" em `/operador`) para tarefa esgotada, falha de entrega, erro de webhook, turno abortado, erro de fila e rotina com falha; `GET /health` e `GET /ready` na API, `GET /ready` no worker (`WORKER_HEALTH_PORT`).
+  - Falta (precisa de conta ou servidor): regras de alerta no Sentry/Axiom, monitor externo em `/ready`, e os alertas de WAL, disco e canal desconectado.
 - [ ] Segredos em cofre; Sentry e Axiom sem conteúdo de mensagem
+  - Feito no código: lista única de redação nos logs e `beforeSend` do Sentry (API, worker e painel), com testes. Falta: o cofre de segredos e criar as contas (`SENTRY_DSN`, `VITE_SENTRY_DSN`, `AXIOM_TOKEN`, `AXIOM_DATASET`).
 - [ ] Procedimento de incidente e de recuperação total, escritos
 - [ ] Teste de carga: rajada de webhooks de 100 clientes
 

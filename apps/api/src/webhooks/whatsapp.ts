@@ -1,4 +1,5 @@
 import { parseCloudWebhook, verifySignature, type InboundBatch } from '@app/channels';
+import { AlertEvent, type Alert } from '@app/observability';
 import type { FastifyInstance } from 'fastify';
 import { HttpStatus } from '../http.ts';
 import { storeBatch, StoreOutcome, type EnqueueInbound } from './store.ts';
@@ -8,7 +9,7 @@ const SIGNATURE_HEADER = 'x-hub-signature-256';
 const SUBSCRIBE = 'subscribe';
 const JSON_TYPE = 'application/json';
 const LOG_BAD_SIGNATURE = 'whatsapp webhook with invalid signature';
-const LOG_UNREADABLE = 'whatsapp webhook body could not be read';
+const CODE_UNREADABLE = 'unreadable_body';
 const LOG_UNKNOWN = 'whatsapp webhook for an account with no channel';
 
 interface VerifyQuery {
@@ -49,7 +50,7 @@ export function registerWhatsappWebhook(app: FastifyInstance, deps: WhatsappWebh
         request.log.warn(LOG_BAD_SIGNATURE);
         return reply.code(HttpStatus.unauthorized).send();
       }
-      const batches = readBatches(body, request.log);
+      const batches = readBatches(body, app.alert, request.id);
       for (const batch of batches) {
         const outcome = await storeBatch(app.db, batch, deps.enqueue);
         if (outcome === StoreOutcome.unknownAccount)
@@ -62,11 +63,11 @@ export function registerWhatsappWebhook(app: FastifyInstance, deps: WhatsappWebh
 }
 
 // A signed body we cannot read is acknowledged and logged: Meta would retry it for 7 days.
-function readBatches(body: Buffer, log: FastifyInstance['log']): InboundBatch[] {
+function readBatches(body: Buffer, alert: Alert, requestId: string): InboundBatch[] {
   try {
     return parseCloudWebhook(body);
-  } catch (error) {
-    log.error({ err: error }, LOG_UNREADABLE);
+  } catch {
+    alert(AlertEvent.webhookError, { requestId, code: CODE_UNREADABLE });
     return [];
   }
 }

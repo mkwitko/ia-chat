@@ -2,11 +2,14 @@ import type { AiGateway } from '@app/ai';
 import { createChannelSender, type ChannelSend } from '@app/channels';
 import { NodeEnv } from '@app/core';
 import type { Db } from '@app/db';
+import type { Alert } from '@app/observability';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { registerAssistantSettingsRoutes } from './assistant/settings-routes.ts';
 import { createAuth, type Auth } from './auth/auth.ts';
 import { registerAgendaRoutes } from './agenda/register.ts';
 import { registerAuthRoutes } from './auth/routes.ts';
+import type { HealthDeps } from './health/health-routes.ts';
+import { fastifyObservability, setupObservability } from './observability.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
 import { registerInboxRoutes } from './conversations/inbox-routes.ts';
 import { registerOperatorRoutes } from './operator/operator-routes.ts';
@@ -33,10 +36,12 @@ declare module 'fastify' {
   interface FastifyInstance {
     auth: Auth;
     db: Db;
+    /** Logs, sends to Sentry and records a problem for the operator panel. */
+    alert: Alert;
   }
 }
 
-export interface AppDeps {
+export interface AppDeps extends HealthDeps {
   env: ApiEnv;
   db: Db;
   /** Defaults to printing emails in the log (development). */
@@ -49,17 +54,15 @@ export interface AppDeps {
   simulatorGateway?: AiGateway;
   /** Checks Turnstile tokens of the public waitlist form. Defaults to Cloudflare's siteverify. */
   verifyTurnstile?: TurnstileVerifier;
+  /** Test seam; defaults to log + Sentry + ops_events. */
+  alert?: Alert;
 }
-
-// Logs never carry message content nor auth headers (RN-38).
-const REDACTED_PATHS = ['req.headers.cookie', 'req.headers.authorization'];
 
 export function buildApp(deps: AppDeps): FastifyInstance {
   const { env, db, email, enqueueInbound, send } = deps;
-  const app = Fastify({
-    logger: env.NODE_ENV !== NodeEnv.test && { redact: REDACTED_PATHS },
-  });
+  const app = Fastify(fastifyObservability(env));
   app.decorate('db', db);
+  setupObservability(app, deps);
   app.decorate('operatorEmails', env.OPERATOR_EMAILS);
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);

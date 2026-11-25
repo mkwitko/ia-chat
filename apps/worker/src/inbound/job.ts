@@ -1,5 +1,6 @@
 import { parseCloudChanges } from '@app/channels';
 import type { AfterCommit, Tx } from '@app/db';
+import { AlertEvent, type Alert } from '@app/observability';
 import * as z from 'zod';
 import type { TurnRequest } from '../conversation/schedule.ts';
 import type { UsageNotice } from '../usage/counters.ts';
@@ -7,11 +8,9 @@ import { applyInboundEvents } from './apply.ts';
 
 const jobData = z.object({ inboundEventId: z.uuid() });
 
-const DELIVERY_ALERT = 'whatsapp delivery failed: operator action needed';
-
 export interface InboundJobDeps {
-  /** RF-25 alert; ponytail: an error log, routed to Sentry/Axiom in E-26. */
-  alert: (fields: object, message: string) => void;
+  /** RF-25: a delivery failure the operator must act on (log, Sentry and the operator panel). */
+  alert: Alert;
   /** Queues the turn (E-11). Runs after commit, so the turn sees the new turn_version. */
   scheduleTurn: (tenantId: string, request: TurnRequest) => Promise<void>;
   /** Pushes the 80% and 100% franchise warnings (E-18). */
@@ -33,7 +32,9 @@ export async function processInboundEvent(
     channelId: stored.channelId,
     events,
   });
-  for (const alert of alerts) deps?.alert({ tenantId: stored.tenantId, ...alert }, DELIVERY_ALERT);
+  for (const { code } of alerts) {
+    deps?.alert(AlertEvent.deliveryFailure, { tenantId: stored.tenantId, code });
+  }
   await tx.inboundEvent.update({
     where: { id: stored.id },
     data: { processedAt: new Date(), error: null },

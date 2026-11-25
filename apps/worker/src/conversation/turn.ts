@@ -8,6 +8,7 @@ import {
   type Db,
   type Tx,
 } from '@app/db';
+import { AlertEvent } from '@app/observability';
 import { handOff } from './handoff.ts';
 import { NotifyReason } from '../notify/reasons.ts';
 
@@ -76,6 +77,11 @@ async function abortTurn(
   await db.withTenant(job.tenantId, async (tx) => {
     await deliver(tx, { job, turnId, reply: busy, deps });
     await finish(tx, turnId, { state: TurnState.failed });
+  });
+  deps.alert?.(AlertEvent.turnAborted, {
+    tenantId: job.tenantId,
+    conversationId: job.conversationId,
+    turnId,
   });
   deps.notify?.({
     tenantId: job.tenantId,

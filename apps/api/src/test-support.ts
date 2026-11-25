@@ -33,6 +33,7 @@ export interface TestAppOptions {
   enqueueInbound?: EnqueueInbound;
   send?: ChannelSend;
   simulatorGateway?: AiGateway;
+  checkQueue?: () => Promise<unknown>;
 }
 
 export async function startTestApp(
@@ -49,6 +50,7 @@ export async function startTestApp(
     ...(options.enqueueInbound ? { enqueueInbound: options.enqueueInbound } : {}),
     ...(options.send ? { send: options.send } : {}),
     ...(options.simulatorGateway ? { simulatorGateway: options.simulatorGateway } : {}),
+    ...(options.checkQueue ? { checkQueue: options.checkQueue } : {}),
   });
   register(app);
   await app.ready();

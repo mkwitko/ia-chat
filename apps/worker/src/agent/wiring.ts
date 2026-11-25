@@ -9,6 +9,7 @@ import {
   sendTenantJob,
   type Db,
 } from '@app/db';
+import { withLogContext, type Alert } from '@app/observability';
 import type { PgBoss } from 'pg-boss';
 import * as z from 'zod';
 import { DRAFT_REMINDER_DELAY_MS } from '../conversation/reminder-job.ts';
@@ -31,6 +32,7 @@ const workerEnvSchema = aiEnvSchema
 interface TurnWiring {
   boss: PgBoss;
   notifier: Notifier;
+  alert: Alert;
   db: Db;
   nodeEnv: string;
   source: Record<string, string | undefined>;
@@ -44,6 +46,7 @@ interface TurnWiring {
 export async function startTurnWorker({
   boss,
   notifier,
+  alert,
   db,
   nodeEnv,
   source,
@@ -56,12 +59,15 @@ export async function startTurnWorker({
     log.warn({}, NO_AI_KEY);
     return { shutdown };
   }
-  const deps = turnDeps({ db, env, nodeEnv, log, boss, notifier });
+  const deps = turnDeps({ db, env, nodeEnv, log, boss, notifier, alert });
   // runTurn opens its own transactions (the model call stays outside any of them).
   await boss.work(TURN_QUEUE.name, async (jobs) => {
     for (const job of jobs) {
       const { tenantId, data } = turnJob.parse(job.data);
-      await runTurn(db, { tenantId, ...data }, deps);
+      const context = { jobId: job.id, queue: TURN_QUEUE.name, tenantId };
+      await withLogContext({ ...context, conversationId: data.conversationId }, () =>
+        runTurn(db, { tenantId, ...data }, deps),
+      );
     }
   });
   return { shutdown };
@@ -71,15 +77,17 @@ interface DepsSources {
   db: Db;
   boss: PgBoss;
   notifier: Notifier;
+  alert: Alert;
   env: z.infer<typeof workerEnvSchema>;
   nodeEnv: string;
   log: TurnWiring['log'];
 }
 
-function turnDeps({ db, boss, notifier, env, nodeEnv, log }: DepsSources): TurnDeps {
+function turnDeps({ db, boss, notifier, alert, env, nodeEnv, log }: DepsSources): TurnDeps {
   const gateway = createEnvGateway({ db, env, nodeEnv });
   return {
     respond: createConversationAgent({ db, gateway, pushEnabled: vapidFrom(env) !== null }),
+    alert,
     notify: (input) => {
       // Fire and forget: a failing push must never fail the turn.
       notifier(input).catch((error: unknown) => {

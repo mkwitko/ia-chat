@@ -1,10 +1,19 @@
 import { formatCents } from '@/lib/money';
+import type { Problem } from './operator-api';
 
 // Panel copy in pt-BR for the platform operator (E-27).
 
 const SHORT_ID = 8;
 const REQUEST = 'Pedir acesso';
 const STATE_LABELS: Record<string, string> = { failed: 'falhou', discarded: 'descartado' };
+const EVENT_LABELS: Record<string, string> = {
+  dead_letter: 'Tarefa esgotou as tentativas',
+  delivery_failure: 'Falha na entrega de mensagem',
+  webhook_error: 'Erro no webhook do WhatsApp',
+  turn_aborted: 'Resposta demorou mais de 45 s',
+  queue_error: 'Erro na fila',
+  job_failed: 'Rotina falhou',
+};
 const shortId = (id: string) => id.slice(0, SHORT_ID);
 
 export const OperatorCopy = {
@@ -48,6 +57,22 @@ export const OperatorCopy = {
     issueLine: (id: string, state: string, turns: number) =>
       `${shortId(id)}: ${STATE_LABELS[state] ?? state} (${String(turns)})`,
     handoffLine: (id: string, reason: string | null) => `${shortId(id)}: ${reason ?? '-'}`,
+  },
+  problems: {
+    heading: 'Erros recentes',
+    hint: 'Só códigos e identificadores, nunca o conteúdo das conversas.',
+    none: 'Nenhum problema registrado.',
+    event: (event: string) => EVENT_LABELS[event] ?? event,
+    details: (p: Problem) =>
+      [
+        new Date(p.createdAt).toLocaleString('pt-BR'),
+        p.code && `código ${p.code}`,
+        p.queue,
+        p.tenantId && `cliente ${shortId(p.tenantId)}`,
+        p.conversationId && `conversa ${shortId(p.conversationId)}`,
+      ]
+        .filter(Boolean)
+        .join(' · '),
   },
   funnel: {
     heading: 'Funil do cadastro',

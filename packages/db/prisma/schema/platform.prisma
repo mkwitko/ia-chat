@@ -113,3 +113,20 @@ model WaitlistEntry {
 
   @@map("waitlist_entries")
 }
+
+/// Platform table (no RLS): problems raised by alert() for the operator panel (E-26). Ids and a
+/// short code only, never message content (RN-38). tenant_id has no FK: the event outlives the tenant.
+model OpsEvent {
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  event          String
+  tenantId       String?  @map("tenant_id") @db.Uuid
+  queue          String?
+  jobId          String?  @map("job_id")
+  conversationId String?  @map("conversation_id") @db.Uuid
+  turnId         String?  @map("turn_id") @db.Uuid
+  code           String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([createdAt(sort: Desc)])
+  @@map("ops_events")
+}

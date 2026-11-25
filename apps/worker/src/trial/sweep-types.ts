@@ -1,5 +1,6 @@
 import type { EmailSender } from '@app/core';
 import type { Db } from '@app/db';
+import type { Alert } from '@app/observability';
 
 export interface TrialUrls {
   /** Resumes the setup (`/configuracao`). */
@@ -14,7 +15,7 @@ export interface SweepDeps {
   now: Date;
   urls: TrialUrls;
   /** Failures of one tenant never stop the others; the next sweep retries them. */
-  alert: (fields: object, message: string) => void;
+  alert: Alert;
   /** Tests: limits the sweep to one tenant (the dev database holds thousands). */
   onlyTenantId?: string;
 }
