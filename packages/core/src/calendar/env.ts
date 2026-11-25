@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-const optionalText = z
+export const optionalText = z
   .string()
   .optional()
   .transform((value) => {

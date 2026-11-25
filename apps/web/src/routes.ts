@@ -20,6 +20,7 @@ export const Route = {
   knowledge: '/mais/assistente/base',
   simulator: '/mais/assistente/simulador',
   services: '/mais/servicos',
+  connections: '/mais/conexoes',
   usage: '/mais/plano-e-uso',
   billing: '/mais/assinatura',
   operator: '/operador',

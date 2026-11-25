@@ -15,3 +15,10 @@ export {
 } from './sender.ts';
 export { phoneKey, toE164, typedPhone } from './phone.ts';
 export * from './types.ts';
+export {
+  createBusinessClient,
+  exchangeSignupCode,
+  templateKey,
+  type BusinessClient,
+  type SignupTemplate,
+} from './cloud-api/signup.ts';

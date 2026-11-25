@@ -1,11 +1,11 @@
 ---
-title: 'Erros da Meta e o que fazer (em breve)'
+title: 'Erros da Meta e o que fazer'
 category: whatsapp
 order: 8
 summary: 'Os avisos da Meta que traduzimos para linguagem comum.'
 ---
 
-**Em breve**, junto com a conexão com o WhatsApp. Estes são os avisos que o painel vai mostrar, e o que fazer.
+Estes são os avisos que o painel mostra na conexão e no envio pelo WhatsApp, e o que fazer.
 
 | Aviso                                                         | O que fazer                                                             |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------- |

@@ -312,11 +312,11 @@ Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding d
 - [x] Fluxo de oito passos com progresso salvo (`/configuracao`; WhatsApp e Google aparecem como "em breve" e podem ser pulados)
 - [x] Telas de criar conta, confirmar e-mail e recuperar senha no painel (a API já faz os três desde a E-04; confirmação testada de ponta a ponta no navegador em 24/11/2026) Feito: telas no painel e passo "Seu consultório" (cria o tenant e leva aos serviços).
 - [x] Modelos de serviços e textos por especialidade (quiropraxia, fisioterapia, psicologia, nutrição; sem preço quando a política veda; H-20)
-- [ ] Conexão oficial: Embedded Signup em coexistência e checagem de pagamento na Meta
+- [x] Conexão oficial: Embedded Signup em coexistência e checagem de pagamento na Meta (`/api/whatsapp`, Mais > Conexões e passo 6; falta o dono criar a configuração do Embedded Signup na Meta e preencher `META_APP_ID`, `META_ES_CONFIG_ID`, `META_TOKEN_KEY`)
 - [ ] Conexão por QR code com o termo de ciência
 - [ ] Conexão do Google
 - [ ] Mensagem de teste e ativação em "aprovar antes de enviar" Feito: ativação mantém "aprovar"; teste pelo simulador. Falta: mensagem de teste pelo canal real (depende da conexão)
-- [ ] Erros da Meta e do Google traduzidos para linguagem comum Feito: módulo `packages/core/src/onboarding/provider-errors.ts` com os códigos conhecidos (H-21). Falta: conferir com a documentação e ligar às telas de conexão
+- [ ] Erros da Meta e do Google traduzidos para linguagem comum Feito: módulo `packages/core/src/onboarding/provider-errors.ts` com os códigos conhecidos (H-21). Ligado à tela de conexão do WhatsApp (E-24). Falta: conferir os códigos com a documentação e ligar à tela do Google
 - [ ] Pessoa de fora da equipe ativa uma conta sem ajuda
 
 ### E-24b Onboarding pelo histórico (opcional)
