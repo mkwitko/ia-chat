@@ -27,6 +27,7 @@ import {
 } from '@app/db';
 import { DeliveryMode, type RespondInput, type TurnReply } from '../conversation/turn.ts';
 import { loadAgentInput, type AgentInput } from './context.ts';
+import { healthGuard, type EventLog } from './health-guard.ts';
 import { refreshSummary } from './summary.ts';
 import { conversationTools, type ToolEffects } from './tools.ts';
 
@@ -43,7 +44,11 @@ export interface AgentDeps {
   pushEnabled?: boolean;
   /** Google Calendar (E-21); without it the agenda runs on our own rules. */
   calendar?: CalendarResolver;
+  /** Structured events without message content. */
+  log?: EventLog | undefined;
 }
+
+const NO_LOG: EventLog = () => undefined;
 
 export function createConversationAgent(
   deps: AgentDeps,
@@ -61,7 +66,7 @@ export function createConversationAgent(
     if (filtered !== undefined) return filtered && introducedReply(filtered, input);
     if (input.autonomy === Autonomy.off)
       return introducedReply(fixed(AgentCopy.away(input.profile), false), input);
-    await refreshSummary(deps.db, deps.gateway, turn);
+    await refreshSummary({ db: deps.db, gateway: deps.gateway, log: deps.log ?? NO_LOG }, turn);
     input = await deps.db.withTenant(turn.tenantId, (tx) =>
       loadAgentInput(tx, turn.conversationId, now),
     );
@@ -133,6 +138,7 @@ async function generate(
         now: deps.now?.() ?? new Date(),
         timezone: input.timezone,
         effects,
+        health: healthGuard({ gateway: deps.gateway, log: deps.log ?? NO_LOG, scope: turn }),
         calendar: deps.calendar,
       },
       input.plan,

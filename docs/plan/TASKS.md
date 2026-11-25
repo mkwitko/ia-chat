@@ -345,6 +345,7 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
   - Falta (precisa de conta ou servidor): regras de alerta no Sentry/Axiom, monitor externo em `/ready`, e os alertas de WAL, disco e canal desconectado.
 - [ ] Segredos em cofre; Sentry e Axiom sem conteúdo de mensagem
   - Feito no código: lista única de redação nos logs e `beforeSend` do Sentry (API, worker e painel), com testes. Falta: o cofre de segredos e criar as contas (`SENTRY_DSN`, `VITE_SENTRY_DSN`, `AXIOM_TOKEN`, `AXIOM_DATASET`).
+- [ ] Retenção de `messages.text` (H-34, M-03): rotina que apaga o texto após `MESSAGE_TEXT_RETENTION_DAYS` (90) da última mensagem da conversa, mantendo os metadados, e exclusão sob pedido do titular; teste com relógio falso. Prazo final depende do parecer jurídico (E-00e)
 - [ ] Procedimento de incidente e de recuperação total, escritos
 - [ ] Teste de carga: rajada de webhooks de 100 clientes
 
@@ -460,6 +461,7 @@ Spec: 11 ("Modelo de template"). Bloqueio: código; gasto com IA para rodar a ba
 Spec: 11 ("Limite de dado de saúde"), 06. Bloqueio: código.
 - [ ] **(teste primeiro)** `registrar_duvida_sem_resposta`, `atualizar_nome_do_contato` e o resumo passam pelo juízo `informacao_de_saude`; se positivo não gravam o texto
 - [ ] Limite de tamanho nas duas ferramentas; nome só se parecer nome
+  - Feito: `registrar_duvida_sem_resposta` (300 caracteres) e o resumo passam por `informacao_de_saude`; positivo ou falha do juízo = não grava, com log sem conteúdo (`health_guard.blocked`). Falta: `atualizar_nome_do_contato` (filtro e "parecer nome").
 - [ ] Política de retenção do conteúdo de mensagem escrita na spec 06 e no aviso de privacidade (jurídico)
 - [ ] Sem campo de nota livre em Clientes
 - Pronto quando: um teste com texto clínico mostra que nada disso chega a `knowledge_items`, `conversations.summary` ou `contacts`.

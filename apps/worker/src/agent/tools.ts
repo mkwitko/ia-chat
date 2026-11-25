@@ -3,6 +3,7 @@ import { KnowledgeSource, Plan, type CalendarResolver, type Db } from '@app/db';
 import { tool, type ToolSet } from 'ai';
 import * as z from 'zod';
 import { agendaTools } from './agenda-tools.ts';
+import type { HealthGuard } from './health-guard.ts';
 
 // Essencial plan tools (spec 04, "Ferramentas"). tenant_id comes from the context, never
 // from the model. The handoff only marks the intent: the turn applies it under the send
@@ -23,6 +24,8 @@ export interface ToolContext {
   now: Date;
   timezone: string;
   effects: ToolEffects;
+  /** M-03: true means the text holds health information (or could not be checked): drop it. */
+  health: HealthGuard;
   /** Google Calendar of the tenant (E-21); absent or without a calendar: our own rules. */
   calendar?: CalendarResolver | undefined;
 }
@@ -42,13 +45,17 @@ export function essentialTools(context: ToolContext): ToolSet {
   };
 }
 
-function recordUnanswered({ db, tenantId }: ToolContext) {
-  return (pergunta: string) =>
-    db.withTenant(tenantId, (tx) =>
+const UNANSWERED_TARGET = 'knowledge_items.question';
+
+function recordUnanswered({ db, tenantId, health }: ToolContext) {
+  return async (pergunta: string) => {
+    if (await health(pergunta, UNANSWERED_TARGET)) return;
+    await db.withTenant(tenantId, (tx) =>
       tx.knowledgeItem.create({
         data: { tenantId, question: pergunta, source: KnowledgeSource.unanswered, active: false },
       }),
     );
+  };
 }
 
 function renameTool({ db, tenantId, contactId }: ToolContext) {
