@@ -9,3 +9,6 @@ coverage/
 generated/
 .impeccable/hook.cache.json
 .impeccable/questions/
+
+# Agent worktrees (local only)
+.claude/worktrees/
