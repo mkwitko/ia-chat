@@ -69,19 +69,6 @@ for (const queue of QUEUES) {
   });
 }
 
-await workTenantQueue({
-  boss,
-  db,
-  queue: INBOUND_QUEUE.name,
-  handler: (tx, data) =>
-    processInboundEvent(tx, data, {
-      alert: (fields, message) => {
-        log.error(fields, message);
-      },
-      scheduleTurn,
-    }),
-});
-
 const appLog = {
   warn: (fields: object, message: string) => {
     log.warn(fields, message);
@@ -96,6 +83,22 @@ const remind = (tenantId: string, reason: NotifyReason) => (conversationId: stri
     log.error({ tenantId, error: String(error) }, REMINDER_FAILED);
   });
 };
+
+await workTenantQueue({
+  boss,
+  db,
+  queue: INBOUND_QUEUE.name,
+  handler: (tx, data) =>
+    processInboundEvent(tx, data, {
+      alert: (fields, message) => {
+        log.error(fields, message);
+      },
+      scheduleTurn,
+      notifyUsage: (tenantId, { reason, conversationId }) => {
+        remind(tenantId, reason)(conversationId);
+      },
+    }),
+});
 
 // RF-36 and RF-13: the reminders push the professional again (spec 10, "Notificações").
 await workTenantQueue({

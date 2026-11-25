@@ -7,6 +7,8 @@ export const NotifyReason = {
   handoffReminder: 'handoff_reminder',
   draftPending: 'draft_pending',
   draftReminder: 'draft_reminder',
+  usageWarning: 'usage_warning',
+  usageFull: 'usage_full',
 } as const;
 export type NotifyReason = (typeof NotifyReason)[keyof typeof NotifyReason];
 
@@ -52,15 +54,29 @@ const COPY: Record<NotifyReason, Copy> = {
     title: 'Rascunho sem aprovação',
     body: 'Uma resposta continua esperando o seu OK. Nada foi enviado ao paciente.',
   },
+  usage_warning: {
+    title: 'Você usou 80% das conversas do mês',
+    body: 'Toque para ver o uso e, se quiser, definir um teto para o excedente.',
+  },
+  usage_full: {
+    title: 'As conversas do mês acabaram',
+    body: 'O atendimento continua. O que passar da franquia é cobrado como excedente.',
+  },
 };
 
 const CONVERSATION_PATH = '/conversas/';
+const USAGE_PATH = '/mais/plano-e-uso';
+const USAGE_REASONS: ReadonlySet<NotifyReason> = new Set([
+  NotifyReason.usageWarning,
+  NotifyReason.usageFull,
+]);
 
 export function buildNotice(reason: NotifyReason, conversationId: string): Notice {
+  const usage = USAGE_REASONS.has(reason); // about the account, not one conversation
   return {
     ...COPY[reason],
-    url: `${CONVERSATION_PATH}${conversationId}`,
-    tag: conversationId,
+    url: usage ? USAGE_PATH : `${CONVERSATION_PATH}${conversationId}`,
+    tag: usage ? reason : conversationId,
     urgent: reason === NotifyReason.urgency,
   };
 }

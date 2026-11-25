@@ -2,6 +2,7 @@ import { parseCloudChanges } from '@app/channels';
 import type { AfterCommit, Tx } from '@app/db';
 import * as z from 'zod';
 import type { TurnRequest } from '../conversation/schedule.ts';
+import type { UsageNotice } from '../usage/counters.ts';
 import { applyInboundEvents } from './apply.ts';
 
 const jobData = z.object({ inboundEventId: z.uuid() });
@@ -13,6 +14,8 @@ export interface InboundJobDeps {
   alert: (fields: object, message: string) => void;
   /** Queues the turn (E-11). Runs after commit, so the turn sees the new turn_version. */
   scheduleTurn: (tenantId: string, request: TurnRequest) => Promise<void>;
+  /** Pushes the 80% and 100% franchise warnings (E-18). */
+  notifyUsage?: (tenantId: string, notice: UsageNotice) => void;
 }
 
 /** inbound.process: turns one stored webhook batch into messages and statuses (RF-21). */
@@ -25,7 +28,7 @@ export async function processInboundEvent(
   const stored = await tx.inboundEvent.findUniqueOrThrow({ where: { id: inboundEventId } });
   if (stored.processedAt || !stored.channelId) return undefined;
   const events = parseCloudChanges(stored.payload);
-  const { alerts, turns } = await applyInboundEvents(tx, {
+  const { alerts, turns, usage } = await applyInboundEvents(tx, {
     tenantId: stored.tenantId,
     channelId: stored.channelId,
     events,
@@ -36,6 +39,7 @@ export async function processInboundEvent(
     data: { processedAt: new Date(), error: null },
   });
   return async () => {
+    for (const notice of usage) deps?.notifyUsage?.(stored.tenantId, notice);
     for (const turn of turns) await deps?.scheduleTurn(stored.tenantId, turn);
   };
 }

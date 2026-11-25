@@ -13,6 +13,7 @@ import { MoreScreen } from './app/screens/more-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
 import { ServicesScreen } from './app/setup/services-screen';
 import { ToneScreen } from './app/setup/tone-screen';
+import { UsageScreen } from './app/usage/usage-screen';
 import { AppShell } from './app/shell/app-shell';
 import { Route } from './routes';
 
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
       { path: Route.tone, element: <ToneScreen /> },
       { path: Route.knowledge, element: <KnowledgeScreen /> },
       { path: Route.services, element: <ServicesScreen /> },
+      { path: Route.usage, element: <UsageScreen /> },
     ],
   },
   { path: '*', element: <Navigate to={Route.conversations} replace /> },

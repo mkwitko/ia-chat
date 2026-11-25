@@ -16,6 +16,7 @@ import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
 import { registerToneRoutes } from './setup/tone-routes.ts';
+import { registerUsageRoutes } from './usage/usage-routes.ts';
 import type { ApiEnv } from './env.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
@@ -54,6 +55,7 @@ export function buildApp({ env, db, email, enqueueInbound, send }: AppDeps): Fas
   registerLocationRoutes(app);
   registerKnowledgeRoutes(app);
   registerToneRoutes(app);
+  registerUsageRoutes(app);
   registerInboxRoutes(app, {
     send:
       send ??
