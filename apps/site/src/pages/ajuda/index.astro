@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { HELP_CATEGORIES } from '../../lib/help-categories.ts';
+
+const articles = (await getCollection('help')).sort((a, b) => a.data.order - b.data.order);
+const groups = Object.entries(HELP_CATEGORIES).map(([id, label]) => ({
+  label,
+  items: articles.filter((article) => article.data.category === id),
+}));
+---
+
+<Base
+  title="Central de ajuda"
+  description="Passo a passo da configuração e o que significa cada aviso do painel."
+  path="/ajuda"
+>
+  <section class="hero prose">
+    <p class="eyebrow">Central de ajuda</p>
+    <h1>Como podemos ajudar?</h1>
+    <div data-help-search>
+      <label for="ajuda-busca">Buscar na ajuda</label>
+      <input id="ajuda-busca" type="search" autocomplete="off" placeholder="Ex.: notificações" />
+      <p data-status role="status" aria-live="polite" class="muted small"></p>
+      <ul></ul>
+    </div>
+  </section>
+
+  {
+    groups.map((group) => (
+      <section class="block prose" aria-label={group.label}>
+        <h2>{group.label}</h2>
+        <ul>
+          {group.items.map((article) => (
+            <li>
+              <a href={`/ajuda/${article.id}`}>{article.data.title}</a>
+              <span class="muted small"> {article.data.summary}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+  <p class="muted small prose">
+    Não achou? Veja o <a href="/status">status do serviço</a> ou escreva para a gente pelo botão
+    "preciso de ajuda" no painel.
+  </p>
+  <script>
+    import '../../scripts/help-search.ts';
+  </script>
+</Base>

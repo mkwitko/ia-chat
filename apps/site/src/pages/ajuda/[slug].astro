@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { HELP_CATEGORIES } from '../../lib/help-categories.ts';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('help');
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+---
+
+<Base
+  title={article.data.title}
+  description={article.data.summary}
+  path={`/ajuda/${article.id}`}
+>
+  <article class="prose block">
+    <p class="eyebrow">
+      <a href="/ajuda">Central de ajuda</a> · {HELP_CATEGORIES[article.data.category]}
+    </p>
+    <h1>{article.data.title}</h1>
+    <Content />
+  </article>
+</Base>

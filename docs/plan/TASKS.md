@@ -395,9 +395,9 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [x] Fim do teste: assistente em "desligado", dados preservados por 30 dias
 
 ### S-06 Central de ajuda e status
-- [ ] Artigos em Markdown para cada passo do onboarding e cada alerta
-- [ ] Busca
-- [ ] Página de status com histórico
+- [x] Artigos em Markdown para cada passo do onboarding e cada alerta
+- [x] Busca
+- [x] Página de status com histórico
 
 ### S-07 Suporte pelo próprio produto
 - [ ] Tenant de suporte com a central de ajuda como base de conhecimento

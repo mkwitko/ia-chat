@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import { STATE_LABEL, STATE_NOTE, status } from '../lib/status.ts';
+
+const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long', timeStyle: 'short' });
+const day = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' });
+---
+
+<Base
+  title="Status"
+  description="Estado atual do Consultório Aberto e histórico de incidentes."
+  path="/status"
+>
+  <section class="hero prose">
+    <p class="eyebrow">Status</p>
+    <h1>{STATE_LABEL[status.state]}</h1>
+    <p class="lede">{STATE_NOTE[status.state]}</p>
+    <p class="muted small">Atualizado em {day.format(new Date(`${status.updatedAt}T12:00:00`))}.</p>
+  </section>
+
+  <section class="block prose" aria-labelledby="historico">
+    <h2 id="historico">Histórico de incidentes</h2>
+    {
+      status.incidents.length === 0 ? (
+        <p class="muted">Nenhum incidente registrado.</p>
+      ) : (
+        status.incidents.map((incident) => (
+          <article class="card">
+            <h3>{incident.title}</h3>
+            <p class="muted small">
+              Início: {dateTime.format(new Date(incident.startedAt))}.{' '}
+              {incident.resolvedAt
+                ? `Resolvido: ${dateTime.format(new Date(incident.resolvedAt))}.`
+                : 'Ainda em andamento.'}
+            </p>
+            <ul>
+              {incident.updates.map((update) => (
+                <li>
+                  <strong>{dateTime.format(new Date(update.at))}</strong> {update.text}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      )
+    }
+  </section>
+</Base>
