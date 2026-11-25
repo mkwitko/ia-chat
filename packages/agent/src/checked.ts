@@ -81,7 +81,10 @@ async function check(
   { turn, input, result }: { turn: CheckedCall['turn']; input: AgentInput; result: GenerateResult },
 ): Promise<Violation[]> {
   const violations = validateReply(result.text, {
-    catalogCents: input.profile.services.map((service) => service.priceCents),
+    catalogCents: [
+      ...input.profile.services.map((service) => service.priceCents),
+      ...(input.profile.business?.packages ?? []).map((item) => item.priceCents),
+    ],
     pricesForbidden: input.profile.pricesForbidden,
     sensitivity: input.profile.sensitivity,
     forbiddenTerms: input.forbiddenTerms,

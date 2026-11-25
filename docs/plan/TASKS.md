@@ -473,11 +473,11 @@ Spec: 11 ("Limite de dado de saúde"), 06. Bloqueio: código.
 
 ### M-04 Perfil do negócio e horário no assistente (P0)
 Spec: 11, 01, 09. Bloqueio: código.
-- [ ] Campos do perfil: descrição, telefone, site e rede social, formas de pagamento aceitas, política de cancelamento
+- [x] Campos do perfil: descrição, telefone, site e rede social, formas de pagamento aceitas, política de cancelamento Feito: `tenants.business_profile` (H-38), tela Mais > Perfil do negócio (`/mais/perfil`), `GET/PUT /api/profile` com auditoria; também prazo de desmarcação, link de avaliação do Google, mensagem de boas-vindas e pacotes com valor exato aceito pela validação de saída
 - [x] Horário de funcionamento derivado das regras de disponibilidade entra no perfil do prompt (`hours`, `cancellationRule`), com preço e horário ainda só vindos de ferramenta Feito: `packages/agent/src/profile.ts` e `hours.ts`; a pergunta "abre sábado?" na bateria ainda não foi conferida
-- [ ] Vários profissionais e locais no perfil, não só o primeiro
+- [x] Vários profissionais e locais no perfil, não só o primeiro Feito: `/api/locations` e `/api/professionals`; o prompt lista todos; o assistente marca só na agenda do primeiro e passa a conversa para os outros (H-38)
 - [ ] Passo de perfil no onboarding, com "a IA sugere, o dono aprova"; nada ativa sem aprovação do resumo
-- [ ] Texto novo da interface com "cliente" e "negócio"
+- [x] Texto novo da interface com "cliente" e "negócio" Feito nas telas novas (perfil e configuração guiada); as telas antigas mudam quando forem mexidas
 - Pronto quando: a pergunta "abre sábado?" é respondida pelo perfil, sem ferramenta e sem "vou verificar", num caso da bateria.
 
 ### M-05 Permissões de Clientes e Resultados (P0)

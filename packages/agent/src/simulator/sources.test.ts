@@ -31,6 +31,22 @@ describe('sourcesOf', () => {
     ]);
   });
 
+  it('names the package whose exact price the answer quotes (M-04)', () => {
+    const business = {
+      paymentMethods: [],
+      packages: [{ name: '4 sessões', priceCents: 80_000 }],
+      team: [],
+      otherPlaces: [],
+    };
+    const sources = sourcesOf(
+      { text: 'O pacote sai R$ 800,00.', ...none },
+      { ...profile, business },
+    );
+    expect(sources).toEqual([
+      { kind: SourceKind.package, label: '4 sessões', detail: 'R$ 800,00' },
+    ]);
+  });
+
   it('does not take R$ 18 for R$ 180 and ignores unrelated answers', () => {
     expect(sourcesOf({ text: 'Fica R$ 18.', ...none }, profile)).toEqual([]);
     expect(sourcesOf({ text: 'Oi, tudo bem?', ...none }, profile)).toEqual([]);

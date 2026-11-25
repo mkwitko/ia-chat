@@ -81,3 +81,32 @@ describe('segment sensitivity (M-02)', () => {
     expect(text(Identity.assistant)).toContain('Chame quem é atendido de "paciente"');
   });
 });
+
+describe('business profile (M-04)', () => {
+  const business = {
+    paymentMethods: ['Pix', 'dinheiro'],
+    packages: [{ name: '4 sessões', priceCents: 80_000 }],
+    team: ['Dr. Rafael Exemplo', 'Dra. Ana Fictícia'],
+    otherPlaces: [{ name: 'Sala Centro', address: 'Rua Exemplo, 10' }],
+    cancellationPolicy: 'Avise com antecedência.',
+  };
+  const withBusiness = (pricesForbidden: boolean) =>
+    conversationBlocks({ ...profile(Identity.assistant), pricesForbidden, business }, state)
+      .map((block) => block.text)
+      .join('\n');
+
+  it('lists packages with their exact price, payment methods, team and other places', () => {
+    const prompt = withBusiness(false);
+    expect(prompt).toContain('- 4 sessões: R$ 800,00');
+    expect(prompt).toContain('Formas de pagamento aceitas: Pix, dinheiro.');
+    expect(prompt).toContain('Profissionais: Dr. Rafael Exemplo, Dra. Ana Fictícia.');
+    expect(prompt).toContain('Sala Centro: Rua Exemplo, 10.');
+    expect(prompt).toContain('Política de cancelamento: Avise com antecedência.');
+  });
+
+  it('drops package prices where the policy forbids prices', () => {
+    const prompt = withBusiness(true);
+    expect(prompt).toContain('- 4 sessões');
+    expect(prompt).not.toContain('R$ 800,00');
+  });
+});

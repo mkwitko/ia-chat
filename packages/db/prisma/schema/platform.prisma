@@ -26,6 +26,8 @@ model Tenant {
   specialtyPolicyId   String?      @map("specialty_policy_id") @db.Uuid
   /// E-24: onboarding step -> done|skipped plus the chosen specialty; shape in packages/core.
   onboardingProgress  Json         @default("{}") @map("onboarding_progress")
+  /// M-04: business profile (packages, payment methods, contacts...); shape in packages/core.
+  businessProfile     Json         @default("{}") @map("business_profile")
   limits              Json         @default("{}")
   /// S-05 (RF-80): the trial ends here; null = no trial (the pilot). Default set in SQL: created + 14 days.
   trialEndsAt         DateTime?    @map("trial_ends_at") @db.Timestamptz
