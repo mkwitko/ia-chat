@@ -1,7 +1,7 @@
 ---
-title: 'Passo 7: conectar o Google Agenda (em breve)'
+title: 'Passo 3: conectar o Google Agenda (em breve)'
 category: whatsapp
-order: 7
+order: 3
 summary: 'A conexão com o Google Agenda ainda não está disponível. É opcional.'
 ---
 

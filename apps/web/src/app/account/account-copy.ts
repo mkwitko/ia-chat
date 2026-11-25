@@ -16,7 +16,10 @@ export const AccountCopy = {
 
 export const SignUpCopy = {
   title: CREATE_ACCOUNT,
-  subtitle: 'Teste o assistente no simulador antes de conectar o seu WhatsApp.',
+  subtitle: (practice: string) =>
+    `Convite para ${practice}. Crie seu acesso para começar a configuração.`,
+  google: 'Criar com o Google',
+  divider: 'ou com e-mail',
   submit: CREATE_ACCOUNT,
   submitting: 'Criando…',
   exists: 'Já existe uma conta com este e-mail. Entre ou recupere a senha.',
@@ -48,11 +51,19 @@ export const ResetCopy = {
   done: 'Senha alterada. Entre com a senha nova.',
 } as const;
 
-export const StartCopy = {
-  title: 'Seu consultório',
-  subtitle: 'Como os pacientes conhecem o seu consultório? Você pode mudar depois.',
-  name: 'Nome do consultório',
-  namePlaceholder: 'Consultório Dr. Rafael',
-  submit: 'Continuar',
-  submitting: 'Criando…',
+const INVITE_ONLY = 'O cadastro é só por convite';
+
+/** H-37: no invite, no account. Shown on /criar-conta, after a refused sign-up and on bad links. */
+export const InviteCopy = {
+  closedTitle: INVITE_ONLY,
+  closedBody:
+    'Estamos abrindo vagas aos poucos. Entre na lista de espera no nosso site e mandamos o seu convite.',
+  waitlist: 'Entrar na lista de espera',
+  required: `${INVITE_ONLY}. Use o link do seu convite ou entre na lista de espera.`,
+  loading: 'Conferindo o convite…',
+  used: 'Este convite já foi usado. Se a conta é sua, é só entrar.',
+  expired: 'Este convite venceu. Peça um link novo a quem te convidou.',
+  cancelled: 'Este convite foi cancelado. Fale com quem te convidou.',
+  invalid: 'Este link de convite não existe. Confira se copiou o endereço inteiro.',
+  noPractice: 'Sua conta ainda não tem um consultório. O acesso é por convite.',
 } as const;

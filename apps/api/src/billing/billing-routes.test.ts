@@ -1,25 +1,16 @@
-import { randomInt } from 'node:crypto';
 import { FakeBilling } from '@app/core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createTenant, signUpVerified, startTestApp, type TestContext } from '../test-support.ts';
+import {
+  createTenant,
+  freshCpf,
+  signUpVerified,
+  startTestApp,
+  type TestContext,
+} from '../test-support.ts';
 
 // E-25: subscribe, change plan, cancel, and the Asaas webhook (idempotent, token-checked).
 
 const TOKEN = 'token-de-teste-do-webhook-asaas-123456';
-const CPF_BASE_LENGTH = 9;
-const CPF_MOD = 11;
-
-/** A valid CPF no other test has used (the document is unique, and the dev database is shared). */
-function freshCpf(): string {
-  const digits = Array.from({ length: CPF_BASE_LENGTH }, () => randomInt(10));
-  const check = (list: number[]) => {
-    const sum = list.reduce((acc, d, i) => acc + d * (list.length + 1 - i), 0);
-    const rest = (sum * 10) % CPF_MOD;
-    return rest === 10 ? 0 : rest;
-  };
-  const first = check(digits);
-  return [...digits, first, check([...digits, first])].join('');
-}
 const CPF = freshCpf();
 
 const fake = new FakeBilling();
@@ -34,6 +25,10 @@ beforeAll(async () => {
   off = await startTestApp();
   cookie = await signUpVerified(ctx);
   tenantId = await createTenant(ctx, cookie);
+  // H-24: the trial clock starts when the WhatsApp connects.
+  await ctx.db.withTenant(tenantId, (tx) =>
+    tx.channel.create({ data: { tenantId, kind: 'cloud_api', status: 'connected' } }),
+  );
 });
 afterAll(async () => {
   await ctx.app.close();

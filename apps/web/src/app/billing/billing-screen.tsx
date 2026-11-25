@@ -6,20 +6,12 @@ import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
 import { Screen } from '../screens/screen';
-import { FormActions, TextField } from '../setup/fields';
-import {
-  useBilling,
-  useCancel,
-  useChangePlan,
-  useSaveDocument,
-  useSubscribe,
-  type Billing,
-} from './billing-api';
+import { useBilling, useCancel, useChangePlan, useSubscribe, type Billing } from './billing-api';
 import { BillingCopy as Copy, PLAN_LABEL } from './billing-copy';
+import { DocumentForm } from './document-form';
 
 const FORBIDDEN = 403;
 const CONFLICT = 409;
-const EMPTY = '';
 
 function onError(error: Error) {
   const status = error instanceof ApiError ? error.status : 0;
@@ -56,34 +48,14 @@ function BillingContent({ billing }: Readonly<{ billing: Billing }>) {
           </a>
         )}
       </section>
-      {!billing.documentSet && !billing.subscribed && <DocumentForm />}
+      {!billing.documentSet && !billing.subscribed && (
+        <div className="px-4 md:px-0">
+          <DocumentForm />
+        </div>
+      )}
       {billing.documentSet && <Plans billing={billing} />}
       {billing.subscribed && <CancelSection />}
     </div>
-  );
-}
-
-function DocumentForm() {
-  const [value, setValue] = useState(EMPTY);
-  const save = useSaveDocument();
-  return (
-    <form
-      className="grid gap-3 px-4 md:px-0"
-      onSubmit={(event) => {
-        event.preventDefault();
-        save.mutate(value, { onSuccess: () => toast.success(Copy.documentSaved), onError });
-      }}
-    >
-      <TextField
-        id="billing-document"
-        label={Copy.documentLabel}
-        value={value}
-        onChange={setValue}
-        inputMode="numeric"
-        hint={Copy.documentHint}
-      />
-      <FormActions pending={save.isPending} disabled={value.trim() === EMPTY} />
-    </form>
   );
 }
 

@@ -13,6 +13,9 @@ interface TenantState {
   billingPaidDueDate: Date | null;
 }
 
+/** Not paying yet (invited consultório before its WhatsApp, H-24; or in the trial). */
+const BEFORE_PAYING: ReadonlySet<TenantStatus> = new Set([TenantStatus.setup, TenantStatus.trial]);
+const REOPENS: ReadonlySet<TenantStatus> = new Set([...BEFORE_PAYING, TenantStatus.restricted]);
 const maxDate = (a: Date | null, b: Date): Date => (a && a > b ? a : b);
 
 /**
@@ -39,10 +42,10 @@ export async function applyPayment(client: Client, payment: ProviderPayment): Pr
   return applyOpen(client, tenant, { payment, due });
 }
 
-/** A paid invoice reopens a trial or restricted tenant, unless an older invoice is still open. */
+/** A paid invoice reopens a setup, trial or restricted tenant, unless an older invoice is still open. */
 async function applyPaid(client: Client, tenant: TenantState, due: Date): Promise<boolean> {
   const clears = !tenant.billingOverdueSince || due >= tenant.billingOverdueSince;
-  const reopen = tenant.status === TenantStatus.trial || tenant.status === TenantStatus.restricted;
+  const reopen = REOPENS.has(tenant.status);
   const backOn = reopen && clears;
   const trialEnded = tenant.trialEndedAt !== null && tenant.autonomy === Autonomy.off;
   await client.tenant.update({
@@ -101,7 +104,7 @@ export async function markSubscriptionCancelled(
   if (!tenant) return false;
   const paidUntil = tenant.billingPaidDueDate ? nextMonth(tenant.billingPaidDueDate) : null;
   const endsAt = paidUntil && paidUntil > now ? paidUntil : null;
-  const keepsOn = endsAt !== null || tenant.status === TenantStatus.trial;
+  const keepsOn = endsAt !== null || BEFORE_PAYING.has(tenant.status);
   await client.tenant.update({
     where: { id: tenant.id },
     data: {

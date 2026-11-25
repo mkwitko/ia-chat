@@ -5,6 +5,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import type { EmailSender } from '../email/outbox.ts';
 import { passwordResetEmail, verificationEmail } from '../email/templates.ts';
 import type { ApiEnv } from '../env.ts';
+import { inviteGate } from '../invites/signup-gate.ts';
 import { tenantPlugin } from './organization.ts';
 
 export const AUTH_BASE_PATH = '/api/auth';
@@ -44,8 +45,11 @@ export function createAuth({ env, db, email }: AuthDeps) {
       sendVerificationEmail: ({ user, url }) => email.send(verificationEmail(user.email, url)),
     },
     socialProviders: googleProvider(env),
-    plugins: [tenantPlugin({ env, db, email })],
-    databaseHooks: { session: { create: { before: withFirstTenant(db) } } },
+    plugins: [tenantPlugin({ env, email })],
+    databaseHooks: {
+      user: { create: inviteGate(db) },
+      session: { create: { before: withFirstTenant(db) } },
+    },
   });
 }
 

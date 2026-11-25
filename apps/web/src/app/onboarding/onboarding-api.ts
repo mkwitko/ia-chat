@@ -3,14 +3,15 @@ import { api } from '@/lib/api';
 
 // Mirrors apps/api/src/onboarding/*; the web does not import server code.
 
+// Order of the guided flow (H-37); the server sends the steps already in this order.
 export const Step = {
   account: 'account',
+  whatsapp: 'whatsapp',
+  google: 'google',
   services: 'services',
   location: 'location',
   tone: 'tone',
   simulator: 'simulator',
-  whatsapp: 'whatsapp',
-  google: 'google',
   activation: 'activation',
 } as const;
 export type Step = (typeof Step)[keyof typeof Step];
@@ -24,7 +25,15 @@ export interface OnboardingView {
   specialty: string | null;
   pricesForbidden: boolean;
   specialties: { specialty: string; label: string }[];
+  documentSet: boolean;
+  whatsappConnected: boolean;
 }
+
+/** Error codes of PUT /api/onboarding/steps/:step (409): what the step still needs. */
+export const StepBlock = {
+  documentRequired: 'document_required',
+  whatsappNotConnected: 'whatsapp_not_connected',
+} as const;
 
 const PATH = '/api/onboarding';
 const POST = 'POST';
@@ -33,6 +42,12 @@ const KEY = [PATH];
 
 export const useOnboarding = () =>
   useQuery({ queryKey: KEY, queryFn: () => api<OnboardingView>(PATH) });
+
+/** After a change made outside the onboarding routes (the CPF/CNPJ, the WhatsApp). */
+export function useRefreshOnboarding() {
+  const client = useQueryClient();
+  return () => void client.invalidateQueries({ queryKey: KEY });
+}
 
 function useWrite<T>(call: (input: T) => Promise<unknown>) {
   const client = useQueryClient();

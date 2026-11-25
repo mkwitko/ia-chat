@@ -1,10 +1,11 @@
-import { AccountCopy, SignUpCopy } from './account-copy';
+import { AccountCopy, InviteCopy, SignUpCopy } from './account-copy';
 
 // Better Auth error codes with their own message; anything else gets the generic one.
 const MESSAGES: Readonly<Record<string, string>> = {
   USER_ALREADY_EXISTS: SignUpCopy.exists,
   USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: SignUpCopy.exists,
   PASSWORD_TOO_SHORT: SignUpCopy.shortPassword,
+  INVITE_REQUIRED: InviteCopy.required,
 };
 
 export function authErrorMessage(code: string | undefined): string {

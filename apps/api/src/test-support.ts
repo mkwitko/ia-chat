@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import type { AiGateway } from '@app/ai';
 import type { ChannelSend } from '@app/channels';
@@ -7,6 +7,8 @@ import { createDb, type Db } from '@app/db';
 import { buildApp } from './app.ts';
 import { AUTH_BASE_PATH } from './auth/auth.ts';
 import { parseApiEnv } from './env.ts';
+import { createInvite } from './invites/invite-store.ts';
+import { INVITE_COOKIE } from './invites/signup-gate.ts';
 import { MemoryOutbox } from './email/outbox.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
 
@@ -31,6 +33,8 @@ const TEST_ENV = {
   META_TOKEN_KEY: undefined,
 };
 const PASSWORD = 'senha-de-teste-123';
+const TEST_NAME = 'Pessoa Teste';
+const TEST_PRACTICE = 'Consultório Teste';
 const SET_COOKIE = 'set-cookie';
 const LINK_PATTERN = /https?:\/\/\S+/;
 
@@ -107,30 +111,62 @@ export function authPost(ctx: TestContext, { path, body, cookie = '' }: AuthRequ
   });
 }
 
-/** Signs up, follows the verification link and returns the session cookie. */
-export async function signUpVerified(ctx: TestContext, email = uniqueEmail()): Promise<string> {
-  await authPost(ctx, {
-    path: '/sign-up/email',
-    body: { email, password: PASSWORD, name: 'Pessoa Teste' },
+/** A fresh onboarding invite (H-37) and the cookie the invite page would have set. */
+export async function inviteCookie(
+  ctx: TestContext,
+  practiceName = TEST_PRACTICE,
+): Promise<string> {
+  const { token } = await createInvite(ctx.db, {
+    practiceName,
+    email: null,
+    operatorId: randomUUID(),
+    now: new Date(),
   });
+  return `${INVITE_COOKIE}=${token}`;
+}
+
+export function signUp(
+  ctx: TestContext,
+  { email, cookie = '' }: { email: string; cookie?: string },
+) {
+  return authPost(ctx, {
+    path: '/sign-up/email',
+    body: { email, password: PASSWORD, name: TEST_NAME },
+    cookie,
+  });
+}
+
+/** Follows the last verification link emailed to this address; returns the session cookie. */
+export async function verify(ctx: TestContext, email: string): Promise<string> {
   const link = new URL(lastLinkTo(ctx.outbox, email));
   const verified = await ctx.app.inject({ method: 'GET', url: link.pathname + link.search });
   return cookieOf(verified);
+}
+
+/**
+ * Signs up through an onboarding invite (the only way in, H-37), follows the verification link and
+ * returns the session cookie. The invite opens the user's consultório, already active.
+ */
+export async function signUpVerified(ctx: TestContext, email = uniqueEmail()): Promise<string> {
+  await signUp(ctx, { email, cookie: await inviteCookie(ctx) });
+  return verify(ctx, email);
 }
 
 export function signIn(ctx: TestContext, email: string) {
   return authPost(ctx, { path: '/sign-in/email', body: { email, password: PASSWORD } });
 }
 
+/** The consultório the invite opened for this session's user (active since sign-up). */
 export async function createTenant(ctx: TestContext, cookie: string): Promise<string> {
-  const slug = `consultorio-${randomUUID()}`;
-  const response = await authPost(ctx, {
-    path: '/organization/create',
-    body: { name: 'Consultório Teste', slug },
-    cookie: cookie,
+  const response = await ctx.app.inject({
+    method: 'GET',
+    url: `${AUTH_BASE_PATH}/get-session`,
+    headers: { cookie },
   });
-  const { id } = response.json<{ id: string }>();
-  return id;
+  const tenantId = response.json<{ session: { activeOrganizationId: string | null } }>().session
+    .activeOrganizationId;
+  if (!tenantId) throw new Error('no consultório for this session');
+  return tenantId;
 }
 
 /** Signs up a new user and joins them to the tenant with the given role. Returns their cookie. */
@@ -139,13 +175,15 @@ export async function joinAs(
   { ownerCookie, tenantId, role }: { ownerCookie: string; tenantId: string; role: string },
 ): Promise<string> {
   const email = uniqueEmail();
-  const cookie = await signUpVerified(ctx, email);
+  // Team invitation first: it is what lets someone without an onboarding invite sign up.
   await authPost(ctx, {
     path: '/organization/invite-member',
     body: { email, role, organizationId: tenantId },
     cookie: ownerCookie,
   });
   const invitationId = lastLinkTo(ctx.outbox, email).split('/').pop();
+  await signUp(ctx, { email });
+  const cookie = await verify(ctx, email);
   await authPost(ctx, { path: '/organization/accept-invitation', body: { invitationId }, cookie });
   return cookie;
 }
@@ -162,4 +200,20 @@ export async function newConversation(ctx: TestContext, tenantId: string): Promi
     });
     return conversation.id;
   });
+}
+
+const CPF_BASE_LENGTH = 9;
+const CPF_MOD = 11;
+const DECIMAL = 10;
+
+/** A valid CPF no other test has used (the document is unique, and the dev database is shared). */
+export function freshCpf(): string {
+  const digits = Array.from({ length: CPF_BASE_LENGTH }, () => randomInt(DECIMAL));
+  const check = (list: number[]) => {
+    const sum = list.reduce((acc, d, i) => acc + d * (list.length + 1 - i), 0);
+    const rest = (sum * DECIMAL) % CPF_MOD;
+    return rest === DECIMAL ? 0 : rest;
+  };
+  const first = check(digits);
+  return [...digits, first, check([...digits, first])].join('');
 }

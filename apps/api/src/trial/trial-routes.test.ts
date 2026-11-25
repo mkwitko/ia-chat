@@ -1,13 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   createTenant,
+  freshCpf,
   signUpVerified,
   startTestApp,
   uniqueEmail,
   type TestContext,
 } from '../test-support.ts';
 
-// S-05: 14-day trial from creation, one trial per document, funnel for the operator.
+// S-05: 14-day trial from the WhatsApp (H-24), one trial per document, operator funnel.
 
 const operatorEmail = uniqueEmail();
 const CPF = '529.982.247-25';
@@ -44,8 +45,12 @@ async function newTenant() {
 }
 
 describe('trial', () => {
-  it('starts on creation, without card, lasting 14 days', async () => {
-    const { call } = await newTenant();
+  it('waits for the WhatsApp, then runs 14 days without card (H-24)', async () => {
+    const { call, tenantId } = await newTenant();
+    expect((await call('GET', '/api/trial')).json<TrialBody>()).toMatchObject({ phase: 'none' });
+    await ctx.db.withTenant(tenantId, (tx) =>
+      tx.channel.create({ data: { tenantId, kind: 'cloud_api', status: 'connected' } }),
+    );
     const body = (await call('GET', '/api/trial')).json<TrialBody>();
     expect(body).toMatchObject({ phase: 'active', daysLeft: TRIAL_DAYS, documentSet: false });
   });
@@ -116,6 +121,7 @@ describe('funnel for the operator (RF-86)', () => {
   it('counts each settled step and a new signup', async () => {
     const before = await funnel();
     const { call } = await newTenant();
+    await call('PUT', '/api/trial/document', { document: freshCpf() });
     await call('POST', '/api/onboarding/specialty', { specialty: 'quiropraxia' });
     await call('PUT', '/api/onboarding/steps/services', { status: 'done' });
     const after = await funnel();

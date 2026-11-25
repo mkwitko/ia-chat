@@ -26,6 +26,8 @@ export const ErrorCode = {
   simulatorOff: 'simulator_off',
   noGrant: 'no_active_grant',
   documentTaken: 'document_taken',
+  inviteClosed: 'invite_closed',
+  whatsappNotConnected: 'whatsapp_not_connected',
   calendarOff: 'calendar_off',
   calendarNeedsReconnect: 'calendar_needs_reconnect',
   billingOff: 'billing_off',

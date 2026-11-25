@@ -8,8 +8,21 @@ import { TemplateId } from './templates-data.ts';
 describe('progress', () => {
   it('resumes at the first unsettled step', () => {
     expect(currentStep(parseProgress({}))).toBe('account');
-    const progress = parseProgress({ steps: { account: StepStatus.done, services: 'skipped' } });
-    expect(currentStep(progress)).toBe('location');
+    const progress = parseProgress({ steps: { account: StepStatus.done, google: 'skipped' } });
+    expect(currentStep(progress)).toBe('whatsapp');
+  });
+
+  it('follows the guided order (H-37): document, WhatsApp, Google, services, simulator, activation', () => {
+    expect(STEP_ORDER).toEqual([
+      'account',
+      'whatsapp',
+      'google',
+      'services',
+      'location',
+      'tone',
+      'simulator',
+      'activation',
+    ]);
   });
 
   it('is null once every step is settled', () => {

@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import { ForgotPasswordPage } from './app/account/forgot-password-page';
 import { ResetPasswordPage } from './app/account/reset-password-page';
+import { InvitePage } from './app/account/invite-page';
 import { SignUpPage } from './app/account/signup-page';
 import { StartPage } from './app/account/start-page';
 import { AgendaScreen } from './app/agenda/agenda-screen';
@@ -29,6 +30,7 @@ import { Route } from './routes';
 export const router = createBrowserRouter([
   { path: Route.login, element: <LoginPage /> },
   { path: Route.signUp, element: <SignUpPage /> },
+  { path: Route.invite, element: <InvitePage /> },
   { path: Route.forgotPassword, element: <ForgotPasswordPage /> },
   { path: Route.resetPassword, element: <ResetPasswordPage /> },
   { path: Route.start, element: <StartPage /> },

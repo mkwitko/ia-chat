@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { slugFor } from './slug';
+import { slugFor } from './slug.ts';
 
 describe('slugFor', () => {
   it('strips accents and symbols and adds a suffix', () => {

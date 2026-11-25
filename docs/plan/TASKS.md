@@ -310,7 +310,8 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 ### E-24 Onboarding
 Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding do canal).
 - [x] Fluxo de oito passos com progresso salvo (`/configuracao`; WhatsApp e Google aparecem como "em breve" e podem ser pulados)
-- [x] Telas de criar conta, confirmar e-mail e recuperar senha no painel (a API já faz os três desde a E-04; confirmação testada de ponta a ponta no navegador em 24/11/2026) Feito: telas no painel e passo "Seu consultório" (cria o tenant e leva aos serviços).
+- [x] Cadastro só por convite (H-37): convites no painel do operador (criar, copiar link, reenviar, cancelar), `/convite/:token`, cadastro por e-mail ou Google só com convite válido (uso único sob concorrência, testado), consultório aberto com o nome do convite; fluxo guiado em sequência (CPF/CNPJ, WhatsApp, Google, serviços, simulador, ativação) com barra de progresso e Voltar; ativação exige WhatsApp conectado; teste de 14 dias começa na conexão do WhatsApp (H-24); site e ajuda dizem que o acesso é por convite
+- [x] Telas de criar conta, confirmar e-mail e recuperar senha no painel (a API já faz os três desde a E-04; confirmação testada de ponta a ponta no navegador em 24/11/2026) Feito: telas no painel. O passo "Seu consultório" saiu: o convite já abre o consultório (H-37).
 - [x] Modelos de serviços e textos por especialidade (quiropraxia, fisioterapia, psicologia, nutrição; sem preço quando a política veda; H-20)
 - [x] Conexão oficial: Embedded Signup em coexistência e checagem de pagamento na Meta (`/api/whatsapp`, Mais > Conexões e passo 6; falta o dono criar a configuração do Embedded Signup na Meta e preencher `META_APP_ID`, `META_ES_CONFIG_ID`, `META_TOKEN_KEY`)
 - [ ] Conexão por QR code com o termo de ciência
@@ -402,7 +403,7 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [x] Calculadora de receita perdida (`/calculadora` e bloco na página inicial; só repete os números digitados)
 
 ### S-05 Cadastro sozinho
-- [x] Teste de 14 dias sem cartão, com os limites de RF-81
+- [x] Teste de 14 dias sem cartão, com os limites de RF-81 (desde 25/11/2026 começa na conexão do WhatsApp; antes disso o consultório fica em `setup`, H-24)
 - [x] Lembretes de abandono em 1 e 3 dias e oferta de configuração assistida
 - [x] Funil medido passo a passo
 - [x] Fim do teste: assistente em "desligado", dados preservados por 30 dias

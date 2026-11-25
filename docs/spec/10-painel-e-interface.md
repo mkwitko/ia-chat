@@ -129,11 +129,11 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
 
 ### Onboarding
 
-Os oito passos de [09](09-site-aquisicao-suporte.md), um por tela, com barra de progresso, possibilidade de voltar e de continuar depois. O simulador vem antes de conectar o WhatsApp.
+O convite (`/convite/:token`) confere o link (página amigável se inválido, vencido, usado ou cancelado) e leva à criação da conta (Google ou e-mail); `/criar-conta` sem convite explica que o acesso é por convite e aponta para a lista de espera. Depois, os passos de [09](09-site-aquisicao-suporte.md) como um fluxo só, um passo por tela, nesta ordem: CPF/CNPJ e especialidade, conectar WhatsApp, Google Agenda, serviços, valores e horários (com endereço e tom de voz), simulador, ativação. Barra de progresso ("Passo X de N"), botão Voltar, continuar depois. O botão de ativar fica desligado até o WhatsApp conectar.
 
 ### Operador (interno)
 
-Fora da navegação do cliente, em endereço e autenticação próprios: clientes, custos, falhas, acesso assistido com motivo e prazo, e o painel "Gasto dos clientes na Meta no mês" (apoio; não é custo nosso): totais de todos os clientes (respostas, mensagens com custo, custo estimado) e os cinco clientes de maior custo, `GET /api/operator/meta-usage`. Só contagens e nomes de clientes, sem conteúdo nem dados de paciente.
+Fora da navegação do cliente, em endereço e autenticação próprios: convites (H-37: "Novo convite" com nome do consultório e e-mail opcional, o link aparece uma vez para copiar; lista com estado aguardando, usado, vencido ou cancelado; gerar novo link, que invalida o anterior, e cancelar), clientes, custos, falhas, acesso assistido com motivo e prazo, e o painel "Gasto dos clientes na Meta no mês" (apoio; não é custo nosso): totais de todos os clientes (respostas, mensagens com custo, custo estimado) e os cinco clientes de maior custo, `GET /api/operator/meta-usage`. Só contagens e nomes de clientes, sem conteúdo nem dados de paciente.
 
 ## Tempo real
 

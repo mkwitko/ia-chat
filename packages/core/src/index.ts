@@ -39,6 +39,8 @@ export * from './onboarding/funnel.ts';
 export * from './trial/trial.ts';
 export * from './trial/document.ts';
 export * from './trial/status.ts';
+export * from './invite/invite.ts';
+export * from './invite/slug.ts';
 export * from './trial/emails.ts';
 export type { EmailMessage, EmailSender } from './trial/email-types.ts';
 export * from './calendar/index.ts';

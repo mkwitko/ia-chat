@@ -1,7 +1,7 @@
 ---
-title: 'Passo 5: simulador e mensagem de teste'
+title: 'Passo 7: simulador e mensagem de teste'
 category: comecar
-order: 5
+order: 7
 summary: 'Converse com o assistente sem WhatsApp e sem cartão.'
 ---
 

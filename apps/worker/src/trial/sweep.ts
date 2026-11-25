@@ -8,17 +8,20 @@ import type { SweepDeps, SweepResult } from './sweep-types.ts';
 const SWEEP_FAILED = 'trial_sweep';
 
 /**
- * S-05: one pass over the trial tenants (those with an end date; the pilot has none). Ends the
- * expired trials and sends the due abandonment reminders. Safe to run any number of times.
+ * S-05: one pass over the trial tenants (those with an end date; the pilot has none) and the invited
+ * ones still in setup. Ends the expired trials and sends the due abandonment reminders. Safe to run any number of times.
  */
 export async function sweepTrials(deps: SweepDeps): Promise<SweepResult> {
   const tenants = await deps.db.client.tenant.findMany({
     where: {
-      status: TenantStatus.trial,
+      // H-24: an invited consultório in "setup" has no clock yet, but still gets the reminders.
+      OR: [
+        { status: TenantStatus.trial, trialEndsAt: { not: null } },
+        { status: TenantStatus.setup },
+      ],
       trialEndedAt: null,
       // E-25: once subscribed, the billing ladder (not the trial clock) decides.
       billingSubscriptionId: null,
-      trialEndsAt: { not: null },
       ...(deps.onlyTenantId ? { id: deps.onlyTenantId } : {}),
     },
     select: {

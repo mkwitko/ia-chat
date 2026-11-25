@@ -5,7 +5,15 @@ import { Step } from './onboarding-api';
 
 export const OnboardingCopy = {
   title: 'Configuração guiada',
-  intro: 'Oito passos para o assistente atender do seu jeito. Seu progresso fica salvo.',
+  intro: 'Um passo de cada vez, nesta ordem. Seu progresso fica salvo e dá para continuar depois.',
+  progress: (index: number, total: number) => `Passo ${String(index)} de ${String(total)}`,
+  back: 'Voltar',
+  allDone: 'Configuração concluída. Toque num passo para revisar.',
+  documentFirst: 'Primeiro, o CPF ou CNPJ de quem atende. Vale um teste grátis por documento.',
+  activationNeedsWhatsapp:
+    'Para ativar, conecte o WhatsApp no passo 2. Os 14 dias de teste começam quando ele conecta.',
+  documentRequired: 'Informe o CPF ou CNPJ antes de seguir.',
+  whatsappRequired: 'O WhatsApp ainda não está conectado. Conecte ou toque em "Conectar depois".',
   loadFailed: 'Não conseguimos carregar. Confira a conexão e tente de novo.',
   statusDone: 'Feito',
   statusSkipped: 'Pulado',
@@ -46,8 +54,8 @@ interface StepInfo {
 
 export const STEP_INFO: Record<Step, StepInfo> = {
   [Step.account]: {
-    title: 'Conta e especialidade',
-    text: 'Escolha sua especialidade para aplicar as regras da sua área.',
+    title: 'CPF ou CNPJ e especialidade',
+    text: 'Informe o documento e escolha sua especialidade para aplicar as regras da sua área.',
   },
   [Step.services]: {
     title: 'Serviços, valores e horários',
@@ -69,7 +77,7 @@ export const STEP_INFO: Record<Step, StepInfo> = {
   },
   [Step.simulator]: {
     title: 'Simulador e mensagem de teste',
-    text: 'Converse com o assistente já configurado. Não precisa de WhatsApp nem de cartão.',
+    text: 'Converse com o assistente já configurado. Nada é enviado a pacientes.',
     to: Route.simulator,
     openLabel: 'Abrir simulador',
   },

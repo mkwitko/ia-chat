@@ -11,7 +11,7 @@ Não é o site. São duas aprovações de terceiros, que precisam estar prontas 
 | Meta, Tech Provider verificado | Só 10 clientes novos por semana. Verificado: 200 |
 | Google, verificação OAuth | Tela de "app não verificado" no cadastro e teto de usuários em modo de teste |
 
-Enquanto não saem, o site funciona com lista de espera e convites em lotes.
+Enquanto não saem, o site funciona com lista de espera e convites em lotes. **Decisão do dono (25/11/2026): a conta só é criada por convite** (H-37): todo "Começar" ou "Teste grátis" do site leva à lista de espera.
 
 ## Site
 
@@ -70,22 +70,22 @@ Não fazer: páginas por cidade geradas em massa nem texto genérico produzido p
 
 ## Cadastro e ativação sem ajuda
 
-Fluxo, com o progresso salvo a cada passo:
+**Entrada só por convite (decisão do dono, 25/11/2026; H-37).** O operador cria em `/operador` um convite com o nome do consultório (e-mail opcional, só para preencher o cadastro). O link `/convite/:token` vale uma vez, por 7 dias; o banco guarda só o hash do token. O link leva direto à criação da conta (Google ou e-mail), que já abre o consultório com o nome do convite e cai na configuração guiada. Sem convite válido, a API recusa o cadastro (e-mail e Google) com mensagem que aponta para a lista de espera; quem já tem conta continua entrando normalmente. Quem foi convidado para a equipe de um consultório (convite de membro) também pode criar o próprio acesso.
 
-1. Conta: e-mail ou Google, nome, especialidade.
-2. Serviços, valores e horários. Modelos prontos por especialidade.
-3. Endereço e instruções de chegada.
-4. Tom de voz: colar mensagens ou responder a quatro perguntas.
-5. **Simulador:** conversa com o assistente já configurado. Até aqui não precisa de WhatsApp nem de cartão.
-6. Conectar WhatsApp (Embedded Signup, coexistência) e forma de pagamento na Meta.
-7. Conectar Google Calendar (opcional no Essencial).
-8. Mensagem de teste e ativação em "aprovar antes de enviar".
+Fluxo guiado, um passo por vez, nesta ordem (decisão do dono, 25/11/2026), com o progresso salvo a cada passo:
+
+1. Conta (pelo convite) e CPF ou CNPJ, com a especialidade. Modelos prontos por especialidade.
+2. Conectar WhatsApp (Embedded Signup, coexistência) e forma de pagamento na Meta. Pode ser pulado para seguir, mas a ativação exige o WhatsApp conectado.
+3. Conectar Google Calendar (opcional no Essencial).
+4. Serviços, valores e horários; endereço e instruções de chegada; tom de voz.
+5. **Simulador:** conversa com o assistente já configurado, sem enviar nada a pacientes.
+6. Ativação em "aprovar antes de enviar"; mensagem de teste pelo canal real quando houver.
 
 | ID | Requisito |
 |---|---|
-| RF-80 | Teste grátis de 14 dias, sem cartão. O custo de IA de um teste é da ordem de poucos reais; a franquia gratuita da Meta cobre as mensagens |
+| RF-80 | Teste grátis de 14 dias, sem cartão, contados a partir da conexão do WhatsApp (H-24); antes disso o consultório fica em configuração, sem prazo. O custo de IA de um teste é da ordem de poucos reais; a franquia gratuita da Meta cobre as mensagens |
 | RF-81 | Limites contra abuso no teste: Turnstile, verificação de e-mail, um teste por CPF ou CNPJ e por número, teto de conversas |
-| RF-82 | O valor aparece antes do passo difícil: o simulador vem antes de conectar o WhatsApp |
+| RF-82 | ~~O simulador vem antes de conectar o WhatsApp~~ Substituído pela decisão do dono (25/11/2026): o WhatsApp vem logo depois do CPF/CNPJ, porque o teste só começa com ele conectado; o simulador continua antes da ativação |
 | RF-83 | Cada passo tem ajuda no próprio lugar (texto curto e vídeo de até 60 segundos) e botão "preciso de ajuda" |
 | RF-84 | Passo abandonado gera lembrete por e-mail em 1 dia e em 3 dias, e oferta de configuração assistida em 15 minutos |
 | RF-85 | Erros da Meta e do Google traduzidos para linguagem comum, com o que fazer |

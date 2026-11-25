@@ -1,7 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createTenant, signUpVerified, startTestApp, type TestContext } from '../test-support.ts';
+import {
+  createTenant,
+  freshCpf,
+  signUpVerified,
+  startTestApp,
+  type TestContext,
+} from '../test-support.ts';
 
-// E-24: progress saved per tenant, example template applied once, policy respected.
+// E-24: progress saved per tenant, example template applied once, policy respected. Guided order
+// and requirements of the invite-only flow (H-37): CPF/CNPJ first, WhatsApp before activation.
 
 interface View {
   steps: { step: string; status: string | null }[];
@@ -29,12 +36,25 @@ async function newTenant() {
   return { call, tenantId };
 }
 
+const connectWhatsapp = (tenantId: string) =>
+  ctx.db.withTenant(tenantId, (tx) =>
+    tx.channel.create({ data: { tenantId, kind: 'cloud_api', status: 'connected' } }),
+  );
+
 describe('progress', () => {
-  it('starts at the first step, saves each step and resumes after the last one done', async () => {
+  it('starts at CPF/CNPJ, saves each step and resumes after the last one done', async () => {
     const { call } = await newTenant();
-    const first = (await call('GET', '/api/onboarding')).json<View>();
-    expect(first.current).toBe('account');
+    expect((await call('GET', '/api/onboarding')).json<View>().current).toBe('account');
     await call('POST', '/api/onboarding/specialty', { specialty: 'quiropraxia' });
+    expect((await call('GET', '/api/onboarding')).json<View>().current).toBe('account');
+    expect(
+      (await call('PUT', '/api/onboarding/steps/account', { status: 'done' })).statusCode,
+    ).toBe(409);
+    await call('PUT', '/api/trial/document', { document: freshCpf() });
+    await call('PUT', '/api/onboarding/steps/account', { status: 'done' });
+    expect((await call('GET', '/api/onboarding')).json<View>().current).toBe('whatsapp');
+    await call('PUT', '/api/onboarding/steps/whatsapp', { status: 'skipped' });
+    await call('PUT', '/api/onboarding/steps/google', { status: 'skipped' });
     await call('PUT', '/api/onboarding/steps/services', { status: 'done' });
     const resumed = (await call('GET', '/api/onboarding')).json<View>();
     expect(resumed.current).toBe('location');
@@ -50,10 +70,16 @@ describe('progress', () => {
     expect((await skip('tone')).statusCode).toBe(400);
   });
 
-  it('keeps activation in "aprovar antes de enviar"', async () => {
+  it('activates only with the WhatsApp connected, in "aprovar antes de enviar"', async () => {
     const { call, tenantId } = await newTenant();
     await ctx.db.client.tenant.update({ where: { id: tenantId }, data: { autonomy: 'auto' } });
-    await call('PUT', '/api/onboarding/steps/activation', { status: 'done' });
+    const activate = () => call('PUT', '/api/onboarding/steps/activation', { status: 'done' });
+    expect((await activate()).json()).toEqual({ error: 'whatsapp_not_connected' });
+    expect(
+      (await call('PUT', '/api/onboarding/steps/whatsapp', { status: 'done' })).statusCode,
+    ).toBe(409);
+    await connectWhatsapp(tenantId);
+    expect((await activate()).statusCode).toBe(200);
     const tenant = await ctx.db.client.tenant.findUniqueOrThrow({ where: { id: tenantId } });
     expect(tenant.autonomy).toBe('approve');
   });
