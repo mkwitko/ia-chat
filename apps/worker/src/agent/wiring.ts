@@ -92,6 +92,7 @@ function turnDeps({ db, boss, notifier, alert, env, nodeEnv, log }: DepsSources)
       db,
       gateway,
       pushEnabled: vapidFrom(env) !== null,
+      log: log.warn,
       ...calendarDeps({ db, env, alert }),
     }),
     alert,

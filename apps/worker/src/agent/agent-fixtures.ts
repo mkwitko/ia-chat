@@ -65,7 +65,13 @@ export function agentWith(
     caps = OPEN_CAPS,
     judge,
     pushEnabled = false,
-  }: { caps?: typeof OPEN_CAPS; judge?: Record<string, number>; pushEnabled?: boolean } = {},
+    log,
+  }: {
+    caps?: typeof OPEN_CAPS;
+    judge?: Record<string, number> | undefined;
+    pushEnabled?: boolean;
+    log?: (fields: object, message: string) => void;
+  } = {},
 ) {
   const gateway = createAiGateway({
     routes: {
@@ -103,6 +109,7 @@ export function agentWith(
     db,
     gateway,
     pushEnabled,
+    log,
     now: () => new Date('2027-01-04T12:00:00Z'),
   });
 }
