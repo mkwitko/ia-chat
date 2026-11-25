@@ -12,6 +12,15 @@ import type { HealthGuard } from './health-guard.ts';
 export { ToolName, type ToolEffects };
 
 const MAX_NAME_LENGTH = 80;
+// ponytail: up to 5 words of letters; longer real names are cut off, the judge catches the rest.
+const MAX_NAME_WORDS = 5;
+const NAME_PATTERN = /^\p{L}[\p{L}'’.-]*$/u;
+const NAME_TARGET = 'contacts.name';
+
+function looksLikeName(text: string): boolean {
+  const words = text.trim().split(/\s+/);
+  return words.length <= MAX_NAME_WORDS && words.every((word) => NAME_PATTERN.test(word));
+}
 
 export interface ToolContext {
   db: Db;
@@ -58,11 +67,12 @@ function recordUnanswered({ db, tenantId, health }: ToolContext) {
   };
 }
 
-function renameTool({ db, tenantId, contactId }: ToolContext) {
+function renameTool({ db, tenantId, contactId, health }: ToolContext) {
   return tool({
     description: 'Atualiza o nome do contato quando o paciente disser como se chama.',
     inputSchema: z.object({ nome: z.string().min(1).max(MAX_NAME_LENGTH) }),
     execute: async ({ nome }) => {
+      if (!looksLikeName(nome) || (await health(nome, NAME_TARGET))) return OK;
       await db.withTenant(tenantId, (tx) =>
         tx.contact.update({ where: { id: contactId }, data: { name: nome } }),
       );
