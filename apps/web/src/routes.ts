@@ -1,5 +1,9 @@
 export const Route = {
   login: '/entrar',
+  signUp: '/criar-conta',
+  forgotPassword: '/esqueci-a-senha',
+  resetPassword: '/nova-senha',
+  start: '/comecar',
   conversations: '/conversas',
   conversation: '/conversas/:id',
   agenda: '/agenda',
