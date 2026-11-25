@@ -6,6 +6,12 @@ export {
   type CloudClient,
 } from './cloud-api/client.ts';
 export { verifySignature } from './cloud-api/signature.ts';
-export { createChannelSender, type ChannelSend, type SenderConfig } from './sender.ts';
+export {
+  createChannelSender,
+  createTemplateSender,
+  type ChannelSend,
+  type ChannelSendTemplate,
+  type SenderConfig,
+} from './sender.ts';
 export { phoneKey, toE164, typedPhone } from './phone.ts';
 export * from './types.ts';

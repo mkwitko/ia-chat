@@ -15,6 +15,7 @@ export const AgendaToolName = {
   book: 'agendar',
   reschedule: 'remarcar',
   cancel: 'cancelar',
+  confirm: 'confirmar_presenca',
   list: 'listar_agendamentos_do_paciente',
 } as const;
 

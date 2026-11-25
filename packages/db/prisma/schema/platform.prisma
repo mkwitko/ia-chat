@@ -13,6 +13,8 @@ model Tenant {
   cancelNoticeMinutes Int        @default(1440) @map("cancel_notice_minutes")
   /// RF-15: local time of day (minutes after midnight) of the nightly agenda push; default 20:00.
   nightlySummaryMinute Int       @default(1200) @map("nightly_summary_minute")
+  /// RF-47: minutes before the appointment of each reminder; default 24 h and 2 h.
+  reminderOffsetsMinutes Int[]   @default([1440, 120]) @map("reminder_offsets_minutes")
   /// How the assistant introduces itself (spec 04, "Identificação").
   assistantName       String       @default("Assistente virtual") @map("assistant_name")
   /// How the assistant presents itself (owner decision, 24/11/2026; spec 01 "Limites").

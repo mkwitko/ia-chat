@@ -290,11 +290,11 @@ Decisão do dono (25/11/2026): para o piloto o **Google é a fonte oficial de di
 - [ ] Verificação do app no Google para uso público (E-00c; só usuários de teste conectam até lá)
 
 ### E-22 Confirmação e lembretes
-- [ ] Templates por especialidade cadastrados no onboarding (conexão oficial)
-- [ ] Confirmação imediata; lembrete em dois tempos (RF-47)
-- [ ] **(teste primeiro)** Não enviar a contato com opt-out nem para agendamento cancelado (A-15)
-- [ ] Opt-out determinístico por palavra
-- [ ] Respostas de confirmar e remarcar tratadas pelo agente
+- [ ] Templates por especialidade cadastrados no onboarding (conexão oficial) Feito: modelo de template (nome, idioma, corpo e variáveis) com textos pt-BR genéricos, sem termo de saúde, em `packages/core/src/reminders/templates.ts`; o envio fora da janela usa `ChannelAdapter.sendTemplate`. Falta: cadastrar na Meta (E-00b, bloqueio externo) e a tela de onboarding
+- [x] Confirmação imediata; lembrete em dois tempos (RF-47) Feito: `bookAppointment` (agente e painel) grava as mensagens em `scheduled_messages` na mesma transação; remarcar e cancelar cancelam as pendentes; varredura `reminders.sweep` a cada minuto envia; deslocamentos por tenant em `tenants.reminder_offsets_minutes` (padrão 24 h e 2 h)
+- [x] **(teste primeiro)** Não enviar a contato com opt-out nem para agendamento cancelado (A-15)
+- [x] Opt-out determinístico por palavra (já feito no filtro `prefilter` da E-13; agora o envio ativo o respeita pelo portão)
+- [x] Respostas de confirmar e remarcar tratadas pelo agente (nova ferramenta `confirmar_presenca`; "remarcar" usa `consultar_horarios` e `remarcar`, orientado em `PLATFORM_RULES`)
 
 ### E-22b Férias e agenda do dia seguinte
 - [x] **(teste primeiro)** Modo férias: nenhum horário do período é oferecido; aviso ao paciente
@@ -433,7 +433,7 @@ Spec: [11-pequenos-negocios.md](../spec/11-pequenos-negocios.md). Inventário: [
 | Transferência para humano, caixa de entrada | E-12, E-16 | E-12 feita; E-16 com 1 tarefa aberta |
 | Agendamento e agenda no painel | E-20, E-23 | Quase feitas (E-20 com 2 e E-23 com 1 tarefa abertas); "realizado" e "faltou" em M-08 |
 | Google Calendar | E-21 | MVP feito (fonte de disponibilidade); sincronização completa adiada; bloqueio Google (verificação do app) |
-| Lembretes e confirmações | E-22 | Aberta; ver M-01 antes |
+| Lembretes e confirmações | E-22 | Feita (PR E-22); falta o cadastro dos templates na Meta |
 | Onboarding | E-24 | Em curso; passo de perfil em M-04 |
 | Assinatura e produção | E-25, E-26 | Abertas; retenção e exclusão de dados em M-03 e E-26 |
 | Piloto | E-28 | Aberta; métricas em M-07 |
@@ -441,7 +441,7 @@ Spec: [11-pequenos-negocios.md](../spec/11-pequenos-negocios.md). Inventário: [
 
 ### M-01 Consentimento e opt-out (P0)
 Spec: 11 (H-28), 03, 06. Bloqueio: código; texto do aviso, jurídico (E-00e).
-- [ ] **(teste primeiro)** Todo envio ativo (lembrete, follow-up, recuperação) checa `opt_out_at` e a ausência de consentimento; falha segura é não enviar
+- [x] **(teste primeiro)** Todo envio ativo (lembrete, follow-up, recuperação) checa `opt_out_at` e a ausência de consentimento; falha segura é não enviar Feito: `proactiveGate` (`packages/db/src/reminders/gate.ts`) lê `opt_out_at` e o último `consent_events` de categoria `all`; todo envio ativo passa por ele. Falta: exigir opt-in registrado (hoje só o opt-out bloqueia)
 - [ ] Registro de opt-in por contato: data, origem (conversa iniciada pelo cliente, formulário, importação do dono), texto exibido; migration com RLS e linha de fixture em `rls.test.ts`
 - [ ] Opt-out grava data e origem, desfaz o consentimento, aparece em Clientes; reativação só por pedido do próprio cliente
 - [ ] Teste A-15 da E-22 passa a depender desta etapa

@@ -57,6 +57,8 @@ model ScheduledMessage {
   conversationId String?               @map("conversation_id") @db.Uuid
   kind           ScheduledMessageKind
   templateName   String?               @map("template_name")
+  /// 0 for the confirmation and the first reminder that goes out; 1 for the next (RF-47).
+  sequence       Int                   @default(0)
   sendAt         DateTime              @map("send_at") @db.Timestamptz
   state          ScheduledMessageState @default(scheduled)
   createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz
@@ -66,7 +68,8 @@ model ScheduledMessage {
   appointment  Appointment?  @relation("ScheduledMessage_appointment", fields: [tenantId, appointmentId], references: [tenantId, id], onDelete: Restrict)
   conversation Conversation? @relation("ScheduledMessage_conversation", fields: [tenantId, conversationId], references: [tenantId, id], onDelete: Restrict)
 
-  @@index([tenantId, sendAt])
+  @@index([tenantId, appointmentId])
+  @@index([tenantId, state, sendAt])
   @@map("scheduled_messages")
 }
 

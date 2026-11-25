@@ -85,7 +85,7 @@ const bookInput = (inicio: string, confirmado = true) => ({
 const appointmentCount = () => db.withTenant(tenantId, (tx) => tx.appointment.count());
 
 describe('plan gating', () => {
-  it('Essencial gets no agenda tool; Agenda gets all five', () => {
+  it('Essencial gets no agenda tool; Agenda gets all six', () => {
     const context = { ...base, now: OFFER_TIME, turnId: 't', effects: { handoff: false } };
     const essential = Object.keys(conversationTools(context, Plan.essencial));
     const agenda = Object.keys(conversationTools(context, Plan.agenda));
@@ -172,19 +172,19 @@ describe('failures never become claims (A-11)', () => {
   });
 });
 
-describe('reschedule and cancel', () => {
-  async function booked() {
-    await offer();
-    await turn(OFFER_TIME).run(AgendaToolName.availability, {
-      servico: 'Sessão',
-      a_partir_de: '2027-01-01',
-    });
-    const out = (await turn(NEXT_TURN).run(AgendaToolName.book, bookInput(MONDAY_9))) as {
-      agendamento: { id: string };
-    };
-    return out.agendamento.id;
-  }
+async function booked() {
+  await offer();
+  await turn(OFFER_TIME).run(AgendaToolName.availability, {
+    servico: 'Sessão',
+    a_partir_de: '2027-01-01',
+  });
+  const out = (await turn(NEXT_TURN).run(AgendaToolName.book, bookInput(MONDAY_9))) as {
+    agendamento: { id: string };
+  };
+  return out.agendamento.id;
+}
 
+describe('reschedule and cancel', () => {
   it('moves to an offered slot only after confirmation', async () => {
     const id = await booked();
     const later = new Date('2027-01-01T12:10:00Z');
@@ -223,6 +223,32 @@ describe('reschedule and cancel', () => {
       ActionKind.cancelled,
     ]);
     expect(await turn(NEXT_TURN).run(AgendaToolName.list, {})).toEqual({ agendamentos: [] });
+  });
+});
+
+describe('confirmar_presenca (reply "confirmar" to a reminder, RF-47)', () => {
+  it('confirms the patient own appointment and keeps it listed', async () => {
+    const id = await booked();
+    const out = await turn(NEXT_TURN).run(AgendaToolName.confirm, { agendamento: id });
+    expect(out).toMatchObject({ agendamento: { id, status: 'confirmed' } });
+    expect(factsFromToolOutputs([{ tool: AgendaToolName.confirm, output: out }]).actions).toEqual([
+      ActionKind.booked,
+    ]);
+    expect(await turn(NEXT_TURN).run(AgendaToolName.list, {})).toMatchObject({
+      agendamentos: [{ id, status: 'confirmed' }],
+    });
+  });
+
+  it('refuses an appointment that is not the contact own', async () => {
+    const id = await booked();
+    const other = await db.withTenant(tenantId, (tx) =>
+      tx.contact.create({ data: { tenantId, bsuid: `BR.${randomUUID()}` } }),
+    );
+    expect(
+      await turn(NEXT_TURN, randomUUID(), other.id).run(AgendaToolName.confirm, {
+        agendamento: id,
+      }),
+    ).toEqual({ erro: 'agendamento_nao_encontrado' });
   });
 });
 

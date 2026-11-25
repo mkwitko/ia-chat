@@ -11,6 +11,7 @@ import { withStageSync } from '../customers/sync.ts';
 import { assertBelowLimit, assertNotice, assertOffered, LIVE } from './guards.ts';
 import { loadScope } from './availability.ts';
 import { toView } from './view.ts';
+import { cancelPendingMessages, scheduleMessages } from '../reminders/schedule.ts';
 import {
   AgendaError,
   AgendaFailure,
@@ -137,6 +138,7 @@ async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
     },
     include: { service: true },
   });
+  await scheduleMessages(tx, { tenantId: req.tenantId, appointment: created, now: req.now });
   return toView(created);
 }
 
@@ -153,6 +155,7 @@ async function moveIn(tx: Tx, req: MoveRequest): Promise<AppointmentView> {
     where: { id: old.id },
     data: { status: AppointmentStatus.cancelled },
   });
+  await cancelPendingMessages(tx, old.id);
   return bookIn(tx, { ...req, serviceId: old.serviceId });
 }
 
@@ -170,6 +173,7 @@ async function cancelIn(tx: Tx, req: CancelRequest): Promise<AppointmentView> {
     data: { status: AppointmentStatus.cancelled },
     include: { service: true },
   });
+  await cancelPendingMessages(tx, found.id);
   return toView(updated);
 }
 

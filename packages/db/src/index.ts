@@ -47,6 +47,7 @@ export {
   SUMMARY_QUEUE,
   SUMMARY_SYNC_QUEUE,
   TRIAL_SWEEP_QUEUE,
+  REMINDER_SWEEP_QUEUE,
   QUEUES,
   QUEUE_SCHEMA,
   deadLetterName,
@@ -114,3 +115,6 @@ export { loadFacts, stageOf, type ContactFacts } from './customers/facts.ts';
 export { logStage, syncStage, withStageSync, type StageSync } from './customers/sync.ts';
 export { ManualStageError, setManualStage, type ManualStage } from './customers/manual.ts';
 export { ConsentActor, recordConsent, type ConsentChange } from './customers/consent.ts';
+export { GateRefusal, proactiveGate, type GateInput, type GateResult } from './reminders/gate.ts';
+export { cancelPendingMessages, scheduleMessages } from './reminders/schedule.ts';
+export { confirmAppointment, type ConfirmRequest } from './agenda/confirm.ts';

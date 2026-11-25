@@ -13,6 +13,8 @@ const ACTION_BY_TOOL: Readonly<Record<string, ActionKind>> = {
   agendar: ActionKind.booked,
   remarcar: ActionKind.rescheduled,
   cancelar: ActionKind.cancelled,
+  // "Está confirmado" claims count as the booking standing (validate.ts maps them to `booked`).
+  confirmar_presenca: ActionKind.booked,
 };
 const TIME_KEYS = new Set(['inicio', 'fim', 'novo_inicio', 'start']);
 const CENTS_KEYS = new Set(['valor_centavos', 'price_cents', 'priceCents']);
