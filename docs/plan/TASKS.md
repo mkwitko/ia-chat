@@ -356,6 +356,7 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 - [x] Custo real por cliente e por conversa, comparado à planilha
 - [x] Conversas com falha, descarte ou reprovação na validação
 - [x] Acesso a um tenant com motivo, prazo e auditoria (RN-35)
+- [x] Uso da Meta por cliente (bloco na tela de uso) e agregado no painel do operador (`meta_message_usage`, spec 03)
 - [ ] Painel do pg-boss (`@pg-boss/dashboard`) só para o operador (movido de E-05: o papel de operador nasce aqui)
   - Não feito: `@pg-boss/dashboard` (v1.14) existe e traz `handler` para montar em outro servidor, mas é um app React Router/Hono com servidor próprio; montá-lo atrás do guarda do Fastify não é barato. Por ora: rodar `pg-boss-dashboard` em processo separado, ligado só em localhost e acessado por túnel SSH.
 

@@ -39,11 +39,19 @@ const contactSchema = z.object({
   profile: z.object({ name: z.string().optional() }).optional(),
 });
 
+/** Present on the status that bills the message (H-05); category is service, utility, marketing... */
+const pricingSchema = z.object({
+  billable: z.boolean(),
+  category: z.string(),
+  type: z.string().optional(),
+});
+
 const statusSchema = z.object({
   id: z.string(),
   status: z.string(),
   timestamp: z.string(),
   errors: z.array(z.object({ code: z.number(), title: z.string().optional() })).optional(),
+  pricing: pricingSchema.optional(),
 });
 
 export const valueSchema = z.looseObject({

@@ -15,6 +15,7 @@ import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts'
 import { resolveContact } from './contacts.ts';
 import { countMessage, MessageCategory, type UsageNotice } from '../usage/counters.ts';
 import { contentColumns } from './message-row.ts';
+import { recordMetaUsage } from './meta-usage.ts';
 
 const WINDOW_MS = 86_400_000; // Meta customer service window: 24 h from the patient's last message
 type ConversationEvent = Extract<
@@ -97,6 +98,7 @@ async function applyOne(tx: Tx, { tenantId, channelId, event, result }: ApplyOne
     return;
   }
   await applyStatus(tx, channelId, event);
+  await recordMetaUsage(tx, { tenantId, channelId, event });
   if (event.error && ALERT_ERROR_CODES.has(event.error.code))
     result.alerts.push({ providerMessageId: event.providerMessageId, code: event.error.code });
 }

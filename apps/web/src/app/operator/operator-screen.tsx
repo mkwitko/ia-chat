@@ -7,6 +7,7 @@ import { Screen } from '../screens/screen';
 import { AccessPanel } from './access-panel';
 import { ClientsTable } from './clients-table';
 import { FunnelPanel } from './funnel-panel';
+import { MetaPanel } from './meta-panel';
 import { ProblemsPanel } from './problems-panel';
 import { useClients, type ClientRow } from './operator-api';
 import { OperatorCopy as Copy } from './operator-copy';
@@ -23,6 +24,7 @@ export function OperatorScreen() {
       {clients.data?.length === 0 && <p className="px-4 md:px-0">{Copy.empty}</p>}
       <div className="grid gap-6 px-4 pb-10 md:px-0">
         <ProblemsPanel />
+        <MetaPanel />
         <FunnelPanel />
         {clients.data && <ClientsTable rows={clients.data} onRequest={setSelected} />}
         {selected && <AccessPanel key={selected.id} client={selected} />}

@@ -87,6 +87,40 @@ describe('usage', () => {
     expect(entries).toHaveLength(2);
   });
 
+  it('reports the Meta allowance and cost of the month, for the owner only', async () => {
+    const month = monthOf(new Date());
+    await ctx.db.withTenant(tenantId, async (tx) => {
+      const channel = await tx.channel.create({ data: { tenantId, kind: 'cloud_api' } });
+      const row = (n: number, category: 'service' | 'utility', billable: boolean) => ({
+        tenantId,
+        channelId: channel.id,
+        providerMessageId: `wamid.${category}.${String(n)}`,
+        month,
+        category,
+        billable,
+      });
+      await tx.metaMessageUsage.createMany({
+        data: [
+          ...Array.from({ length: 640 }, (_, n) => row(n, 'service', false)),
+          ...Array.from({ length: 10 }, (_, n) => row(n, 'utility', true)),
+        ],
+      });
+    });
+    expect((await call('GET', '/api/usage/meta')).json()).toMatchObject({
+      serviceUsed: 640,
+      serviceFree: 1000,
+      serviceOver: 0,
+      billable: { utility: 10 },
+      estimatedCostCents: 35, // 10 x R$ 0,035
+    });
+    const professional = await joinAs(ctx, {
+      ownerCookie: owner,
+      tenantId,
+      role: Role.professional,
+    });
+    expect((await call('GET', '/api/usage/meta', { cookie: professional })).statusCode).toBe(403);
+  });
+
   it('lets only the owner change the cap', async () => {
     const professional = await joinAs(ctx, {
       ownerCookie: owner,

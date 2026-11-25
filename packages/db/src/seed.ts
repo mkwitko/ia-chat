@@ -117,6 +117,9 @@ async function seedConversation(tx: Tx, ids: Ids): Promise<void> {
     data: { tenantId, conversationId, turnId: turn.id, ...FIXTURE.aiUsage },
   });
   await tx.usageCounter.create({ data: { tenantId, ...FIXTURE.usage } });
+  await tx.metaMessageUsage.create({
+    data: { tenantId, channelId, providerMessageId: `wamid.out.${tenantId}`, ...FIXTURE.metaUsage },
+  });
   const user = await tx.user.create({
     data: { name: FIXTURE.userName, email: `seed-${randomUUID()}@exemplo.test` },
   });

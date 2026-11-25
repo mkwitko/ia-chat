@@ -100,6 +100,12 @@ export const statuses = wrap('messages', {
       status: 'delivered',
       timestamp: '1798981400',
       recipient_id: '5541999990001',
+      pricing: {
+        billable: false,
+        pricing_model: 'PMP',
+        category: 'service',
+        type: 'free_customer_service',
+      },
     },
     {
       id: 'wamid.OUT2',

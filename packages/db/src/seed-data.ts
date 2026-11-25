@@ -36,6 +36,12 @@ export const FIXTURE = {
     costMicroUsd: 15n,
   },
   usage: { month: new Date('2027-01-01'), conversations: 1 },
+  metaUsage: {
+    month: new Date('2027-01-01'),
+    category: 'service',
+    billable: false,
+    pricingType: 'free_customer_service',
+  },
   audit: { actorType: 'system', action: 'seed', entity: 'tenant' },
   inboundProvider: 'cloud_api',
   userName: 'Pessoa Fictícia',

@@ -70,6 +70,7 @@ describe('Cloud API webhook normalization', () => {
         providerMessageId: 'wamid.OUT1',
         status: 'delivered',
         error: undefined,
+        pricing: { billable: false, category: 'service', type: 'free_customer_service' },
         at: new Date(1798981400 * 1000),
       },
       {
