@@ -51,6 +51,27 @@ describe('conversation agent (E-13)', () => {
     expect(fake.prompts).toHaveLength(0);
   });
 
+  it('lets the client come back with "voltar", and only the client', async () => {
+    const scope = await conversation();
+    const fake = scripted([{ text: 'Claro, qual dia?' }]);
+    await agentWith(fake.model)(turnOf(scope, ['SAIR']));
+    expect((await agentWith(fake.model)(turnOf(scope, ['voltar'])))?.text).toContain(
+      AgentCopy.optInConfirmation,
+    );
+    const contact = await db.withTenant(scope.tenantId, (tx) =>
+      tx.contact.findUniqueOrThrow({ where: { id: scope.contactId } }),
+    );
+    expect(contact.optOutAt).toBeNull();
+    const log = await db.withTenant(scope.tenantId, (tx) =>
+      tx.consentEvent.findMany({ where: { contactId: scope.contactId, kind: 'opt_in' } }),
+    );
+    expect(log).toMatchObject([
+      { category: 'all', source: 'patient_message', actorType: 'contact' },
+    ]);
+    // Not opted out: the word is an ordinary message for the model.
+    expect((await agentWith(fake.model)(turnOf(scope, ['voltar'])))?.text).toContain('qual dia');
+  });
+
   it('introduces the assistant in the first answer and sends the catalog in the prompt', async () => {
     const scope = await conversation();
     const fake = scripted([{ text: 'Oi! A avaliação custa R$ 180,00.' }]);

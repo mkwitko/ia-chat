@@ -10,6 +10,7 @@ import {
   GateRefusal,
   recordConsent,
   ConsentActor,
+  MessageCategory,
 } from '../index.ts';
 
 // A-15: nothing proactive goes to a contact who opted out, or for a cancelled appointment.
@@ -49,7 +50,7 @@ beforeEach(async () => {
   }));
 });
 
-const gate = (input: { appointmentId?: string; now?: Date } = {}) =>
+const gate = (input: { appointmentId?: string; now?: Date; category?: MessageCategory } = {}) =>
   db.withTenant(tenantId, (tx) => proactiveGate(tx, { contactId, now: NOW, ...input }));
 
 const optOut = (
@@ -91,6 +92,42 @@ describe('proactiveGate', () => {
   it('ignores a marketing-only opt-out: the appointment reminder is a service message', async () => {
     await optOut(ConsentKind.opt_out, ConsentCategory.marketing);
     expect(await gate({ appointmentId })).toEqual({ ok: true });
+  });
+
+  it('marketing needs a recorded marketing opt-in; reminders stay transactional', async () => {
+    const marketing = () => gate({ category: MessageCategory.marketing });
+    expect(await marketing()).toEqual({ ok: false, reason: GateRefusal.noMarketingConsent });
+    await optOut(ConsentKind.opt_in, ConsentCategory.service);
+    expect(await marketing()).toEqual({ ok: false, reason: GateRefusal.noMarketingConsent });
+    expect(await gate({ appointmentId })).toEqual({ ok: true });
+    await optOut(ConsentKind.opt_in, ConsentCategory.marketing);
+    expect(await marketing()).toEqual({ ok: true });
+    await optOut(ConsentKind.opt_out, ConsentCategory.marketing);
+    expect(await marketing()).toEqual({ ok: false, reason: GateRefusal.noMarketingConsent });
+    await optOut(ConsentKind.opt_in, ConsentCategory.marketing);
+    await optOut();
+    expect(await marketing()).toEqual({ ok: false, reason: GateRefusal.optOut });
+  });
+
+  it('keeps the date, origin and text shown of an opt-in', async () => {
+    await db.withTenant(tenantId, (tx) =>
+      recordConsent(tx, {
+        tenantId,
+        contactId,
+        kind: ConsentKind.opt_in,
+        category: ConsentCategory.marketing,
+        source: ConsentSource.form,
+        actor: { type: ConsentActor.contact },
+        noticeText: 'Aceito receber novidades.',
+        now: NOW,
+      }),
+    );
+    const [event] = await db.withTenant(tenantId, (tx) => tx.consentEvent.findMany());
+    expect(event).toMatchObject({
+      source: 'form',
+      noticeText: 'Aceito receber novidades.',
+      createdAt: NOW,
+    });
   });
 
   it.each([AppointmentStatus.cancelled, AppointmentStatus.completed, AppointmentStatus.no_show])(

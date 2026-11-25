@@ -9,8 +9,13 @@ export const GateRefusal = {
   optOut: 'opt_out',
   appointmentNotLive: 'appointment_not_live',
   contactMissing: 'contact_missing',
+  noMarketingConsent: 'no_marketing_consent',
 } as const;
 export type GateRefusal = (typeof GateRefusal)[keyof typeof GateRefusal];
+
+/** Reminders of a booked appointment are transactional; follow-ups and recovery are marketing. */
+export const MessageCategory = { transactional: 'transactional', marketing: 'marketing' } as const;
+export type MessageCategory = (typeof MessageCategory)[keyof typeof MessageCategory];
 
 export type GateResult = { ok: true } | { ok: false; reason: GateRefusal };
 
@@ -18,6 +23,8 @@ export interface GateInput {
   contactId: string;
   /** Messages about an appointment also need it live and still in the future. */
   appointmentId?: string | undefined;
+  /** Default transactional. Marketing also needs a recorded marketing opt-in. */
+  category?: MessageCategory | undefined;
   now: Date;
 }
 
@@ -41,17 +48,30 @@ export async function proactiveGate(tx: Tx, input: GateInput): Promise<GateResul
     !(await appointmentIsLive(tx, { appointmentId: input.appointmentId, now: input.now }))
   )
     return refuse(GateRefusal.appointmentNotLive);
+  if (
+    input.category === MessageCategory.marketing &&
+    !(await hasMarketingOptIn(tx, input.contactId))
+  )
+    return refuse(GateRefusal.noMarketingConsent);
   return { ok: true };
 }
 
 /** The latest event for "everything" decides; `opt_out_at` is only the fast copy of it. */
-async function lastOptOutIsActive(tx: Tx, contactId: string): Promise<boolean> {
+async function lastKind(tx: Tx, contactId: string, category: ConsentCategory) {
   const latest = await tx.consentEvent.findFirst({
-    where: { contactId, category: ConsentCategory.all },
+    where: { contactId, category },
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     select: { kind: true },
   });
-  return latest?.kind === ConsentKind.opt_out;
+  return latest?.kind;
+}
+
+async function lastOptOutIsActive(tx: Tx, contactId: string): Promise<boolean> {
+  return (await lastKind(tx, contactId, ConsentCategory.all)) === ConsentKind.opt_out;
+}
+
+async function hasMarketingOptIn(tx: Tx, contactId: string): Promise<boolean> {
+  return (await lastKind(tx, contactId, ConsentCategory.marketing)) === ConsentKind.opt_in;
 }
 
 async function appointmentIsLive(

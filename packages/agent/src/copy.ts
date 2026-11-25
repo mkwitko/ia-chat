@@ -35,6 +35,8 @@ export const AgentCopy = {
       : 'Recebemos sua mensagem. O profissional vai responder assim que puder.',
   optOutConfirmation:
     'Pronto, você não vai mais receber mensagens automáticas daqui. Se precisar de algo, é só escrever.',
+  optInConfirmation:
+    'Pronto, você volta a receber nossas mensagens. Se quiser parar de novo, é só dizer "parar".',
   /** Fixed text for the model to relay (RF-14); the date is computed, never written by the model. */
   vacation: (returnDate: string) =>
     `O consultório está de férias e volta a atender em ${returnDate}. Avise o paciente dessa data e só ofereça horários a partir dela.`,

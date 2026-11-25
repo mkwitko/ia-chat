@@ -15,18 +15,10 @@ import {
   prefilter,
   PrefilterKind,
 } from '@app/agent';
-import {
-  Autonomy,
-  ConsentActor,
-  ConsentCategory,
-  ConsentKind,
-  ConsentSource,
-  recordConsent,
-  type CalendarResolver,
-  type Db,
-} from '@app/db';
+import { Autonomy, ConsentKind, type CalendarResolver, type Db } from '@app/db';
 import { DeliveryMode, type RespondInput, type TurnReply } from '../conversation/turn.ts';
 import { loadAgentInput, type AgentInput } from './context.ts';
+import { isOptedOut, recordClientConsent } from './client-consent.ts';
 import { healthGuard, type EventLog } from './health-guard.ts';
 import { refreshSummary } from './summary.ts';
 import { conversationTools, type ToolEffects } from './tools.ts';
@@ -106,18 +98,21 @@ async function applyPrefilter(
   if (kind === PrefilterKind.ignore) return null;
   if (kind === PrefilterKind.unsupported) return fixed(AgentCopy.unsupported, false);
   if (kind === PrefilterKind.optOut) {
-    await db.withTenant(turn.tenantId, (tx) =>
-      recordConsent(tx, {
-        tenantId: turn.tenantId,
-        contactId: input.contactId,
-        kind: ConsentKind.opt_out,
-        category: ConsentCategory.all,
-        source: ConsentSource.patient_message,
-        actor: { type: ConsentActor.contact },
-        now: new Date(),
-      }),
-    );
+    await recordClientConsent(db, {
+      tenantId: turn.tenantId,
+      contactId: input.contactId,
+      kind: ConsentKind.opt_out,
+    });
     return fixed(AgentCopy.optOutConfirmation, false);
+  }
+  // Only the client brings consent back, and only after an opt-out; otherwise it is just a word.
+  if (kind === PrefilterKind.optIn && (await isOptedOut(db, turn.tenantId, input.contactId))) {
+    await recordClientConsent(db, {
+      tenantId: turn.tenantId,
+      contactId: input.contactId,
+      kind: ConsentKind.opt_in,
+    });
+    return fixed(AgentCopy.optInConfirmation, false);
   }
   return undefined;
 }

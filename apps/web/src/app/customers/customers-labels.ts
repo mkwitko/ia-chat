@@ -50,6 +50,8 @@ export const ConsentSourceLabel: Record<ConsentSource, string> = {
   [ConsentSource.patientMessage]: 'Mensagem do paciente',
   [ConsentSource.ownerPanel]: 'Painel',
   [ConsentSource.backfill]: 'Histórico anterior',
+  [ConsentSource.form]: 'Formulário',
+  [ConsentSource.ownerImport]: 'Importação do profissional',
 };
 
 export const AppointmentStatusLabel: Record<string, string> = {

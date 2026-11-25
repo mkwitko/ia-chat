@@ -15,6 +15,8 @@ export interface ConsentChange {
   category: ConsentCategory;
   source: ConsentSource;
   actor: { type: ConsentActor; id?: string | undefined };
+  /** The wording the client saw when agreeing, when there was one (form, import). */
+  noticeText?: string | undefined;
   now: Date;
 }
 
@@ -40,6 +42,7 @@ export async function recordConsent(tx: Tx, change: ConsentChange): Promise<bool
       source: change.source,
       actorType: change.actor.type,
       actorId: change.actor.id ?? null,
+      noticeText: change.noticeText ?? null,
       createdAt: change.now,
     },
   });

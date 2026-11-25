@@ -6,6 +6,7 @@ import { MessageType } from '@app/db';
 export const PrefilterKind = {
   urgency: 'urgency',
   optOut: 'opt_out',
+  optIn: 'opt_in',
   ignore: 'ignore',
   unsupported: 'unsupported',
   model: 'model',
@@ -49,6 +50,13 @@ const OPT_OUT_PHRASES = [
   'me tira da lista',
   'nao me mandem mais',
 ];
+const OPT_IN_WORDS = new Set(['voltar', 'reativar']);
+const OPT_IN_PHRASES = [
+  'quero voltar a receber',
+  'pode voltar a mandar',
+  'volte a me mandar',
+  'quero receber de novo',
+];
 const READABLE = new Set<MessageType>([MessageType.text, MessageType.interactive_reply]);
 const DIACRITICS = /\p{Diacritic}/gu;
 const SPACES = /\s+/g;
@@ -63,6 +71,7 @@ export function prefilter(
   if (texts.some((value) => urgency.some((pattern) => pattern.test(value))))
     return { kind: PrefilterKind.urgency };
   if (texts.some(isOptOut)) return { kind: PrefilterKind.optOut };
+  if (texts.some(isOptIn)) return { kind: PrefilterKind.optIn };
   if (messages.every((message) => message.type === MessageType.sticker))
     return { kind: PrefilterKind.ignore };
   const readable = messages.some(
@@ -84,6 +93,13 @@ function isOptOut(value: string): boolean {
   return (
     STOP_WORDS.has(trimEndPunctuation(value)) ||
     OPT_OUT_PHRASES.some((phrase) => value.includes(phrase))
+  );
+}
+
+function isOptIn(value: string): boolean {
+  return (
+    OPT_IN_WORDS.has(trimEndPunctuation(value)) ||
+    OPT_IN_PHRASES.some((phrase) => value.includes(phrase))
   );
 }
 

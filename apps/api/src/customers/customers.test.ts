@@ -177,14 +177,17 @@ describe('customer changes', () => {
         .statusCode,
     ).toBe(200);
     expect((await customers('?q=Fábio')).at(0)?.optedOut).toBe(true);
-    await call('POST', `/api/customers/${id}/consent`, { kind: 'opt_in' });
+    // The owner cannot bring consent back; only the client can, by writing.
+    expect(
+      (await call('POST', `/api/customers/${id}/consent`, { kind: 'opt_in' })).statusCode,
+    ).toBe(400);
     const detail = (await call('GET', `/api/customers/${id}`)).json<{
       optedOut: boolean;
       consent: { kind: string; source: string; actorType: string }[];
     }>();
-    expect(detail.optedOut).toBe(false);
-    expect(detail.consent.map((e) => e.kind)).toEqual(['opt_in', 'opt_out']);
-    expect(detail.consent[1]).toMatchObject({ source: 'owner_panel', actorType: 'user' });
+    expect(detail.optedOut).toBe(true);
+    expect(detail.consent.map((e) => e.kind)).toEqual(['opt_out']);
+    expect(detail.consent[0]).toMatchObject({ source: 'owner_panel', actorType: 'user' });
   });
 });
 

@@ -442,10 +442,11 @@ Spec: [11-pequenos-negocios.md](../spec/11-pequenos-negocios.md). Inventário: [
 
 ### M-01 Consentimento e opt-out (P0)
 Spec: 11 (H-28), 03, 06. Bloqueio: código; texto do aviso, jurídico (E-00e).
-- [x] **(teste primeiro)** Todo envio ativo (lembrete, follow-up, recuperação) checa `opt_out_at` e a ausência de consentimento; falha segura é não enviar Feito: `proactiveGate` (`packages/db/src/reminders/gate.ts`) lê `opt_out_at` e o último `consent_events` de categoria `all`; todo envio ativo passa por ele. Falta: exigir opt-in registrado (hoje só o opt-out bloqueia)
-- [ ] Registro de opt-in por contato: data, origem (conversa iniciada pelo cliente, formulário, importação do dono), texto exibido; migration com RLS e linha de fixture em `rls.test.ts`
-- [ ] Opt-out grava data e origem, desfaz o consentimento, aparece em Clientes; reativação só por pedido do próprio cliente
-- [ ] Teste A-15 da E-22 passa a depender desta etapa
+- [x] **(teste primeiro)** Todo envio ativo (lembrete, follow-up, recuperação) checa `opt_out_at` e a ausência de consentimento; falha segura é não enviar Feito: `proactiveGate` (`packages/db/src/reminders/gate.ts`) lê `opt_out_at` e o último `consent_events` de categoria `all`; todo envio ativo passa por ele. Marketing exige opt-in registrado; lembrete de agendamento é transacional (H-36)
+- [x] Registro de opt-in por contato: data, origem (conversa iniciada pelo cliente, formulário, importação do dono), texto exibido; migration com RLS e linha de fixture em `rls.test.ts` Feito: `consent_events` ganhou `notice_text` e as origens `form` e `owner_import` (migration `consent_optin_record`); a tabela já tinha RLS e linha de fixture; a primeira mensagem do cliente grava o opt-in de `service`. Formulário e importação ainda não existem; só a coluna e a origem estão prontas
+- [x] Opt-out grava data e origem, desfaz o consentimento, aparece em Clientes; reativação só por pedido do próprio cliente Feito: a rota do painel só aceita opt-out; o cliente volta escrevendo "voltar" (pré-filtro `optIn`, grava `all`); Clientes mostra data, origem e texto. Opt-in de marketing: H-36
+- [x] **(teste primeiro)** Marketing e follow-up exigem opt-in de `marketing` (`MessageCategory.marketing` em `proactiveGate`); lembrete de agendamento segue transacional (H-36)
+- [x] Teste A-15 da E-22 passa a depender desta etapa
 - Pronto quando: um contato com opt-out não recebe nenhum envio ativo em teste de integração, e o registro mostra quando e como consentiu.
 
 ### M-02 Template por segmento aberto (P0)
@@ -469,7 +470,7 @@ Spec: 11 ("Limite de dado de saúde"), 06. Bloqueio: código.
 ### M-04 Perfil do negócio e horário no assistente (P0)
 Spec: 11, 01, 09. Bloqueio: código.
 - [ ] Campos do perfil: descrição, telefone, site e rede social, formas de pagamento aceitas, política de cancelamento
-- [ ] Horário de funcionamento derivado das regras de disponibilidade entra no perfil do prompt (`hours`, `cancellationRule`), com preço e horário ainda só vindos de ferramenta
+- [x] Horário de funcionamento derivado das regras de disponibilidade entra no perfil do prompt (`hours`, `cancellationRule`), com preço e horário ainda só vindos de ferramenta Feito: `packages/agent/src/profile.ts` e `hours.ts`; a pergunta "abre sábado?" na bateria ainda não foi conferida
 - [ ] Vários profissionais e locais no perfil, não só o primeiro
 - [ ] Passo de perfil no onboarding, com "a IA sugere, o dono aprova"; nada ativa sem aprovação do resumo
 - [ ] Texto novo da interface com "cliente" e "negócio"
@@ -483,20 +484,20 @@ Spec: 11, 06. Bloqueio: código.
 
 ### M-06 Clientes, etapa do funil e origem (P0) — **em andamento**
 Fatia vertical em outro PR. Spec: 11 ("Funil simples", H-25), 10.
-- [ ] Tela Clientes; etapa do funil com histórico; origem do contato; registros de consentimento (liga com M-01)
-- [ ] Navegação Início, Conversas, Agenda, Clientes, Resultados, Configurações
+- [x] Tela Clientes; etapa do funil com histórico; origem do contato; registros de consentimento (liga com M-01) Feito: `apps/web/src/app/customers`, com consentimento de M-01
+- [x] Navegação Início, Conversas, Agenda, Clientes, Resultados, Configurações Feito: barra Início, Conversas, Agenda, Clientes e Mais (`nav-items.ts`); Resultados abre a partir de Início (`/resultados`) e Configurações fica em Mais
 - Pronto quando: os critérios do PR da fatia; esta etapa só confere que M-01 e M-05 foram respeitados.
 
 ### M-07 Início e Resultados (P0) — **em andamento**
 Fatia vertical em outro PR. Spec: 11 ("Métricas do piloto").
-- [ ] Início com "o que precisa de atenção" (substitui o texto falso de Hoje)
-- [ ] Resultados com as métricas 1 a 7, 10, 11 e 15 e a linha de base
+- [x] Início com "o que precisa de atenção" (substitui o texto falso de Hoje) Feito: `apps/web/src/app/home/attention-section.tsx`
+- [ ] Resultados com as métricas 1 a 7, 10, 11 e 15 e a linha de base Feito: tela, rota `/resultados` e nota de linha de base. Falta: conferir cada número com a consulta de referência da spec 11
 - Pronto quando: cada número da tela bate com a consulta de referência da spec 11 sobre dados fictícios.
 
 ### M-08 Realizado e faltou (P0)
 Spec: 05, 11 (métrica 9). Bloqueio: código.
-- [ ] Rota para marcar `completed` e `no_show` (permissão `agenda: book`), com auditoria e teste
-- [ ] Botões na agenda; envia o cliente a "atendido" no funil (M-06)
+- [x] Rota para marcar `completed` e `no_show` (permissão `agenda: book`), com auditoria e teste Feito: `POST /api/agenda/appointments/:id/attendance` (`attendance-route.ts`), teste em `customers.test.ts`
+- [ ] Botões na agenda; envia o cliente a "atendido" no funil (M-06) Feito: `AttendanceButtons` em Início e no histórico do cliente; o status "Cliente" vem derivado de compareceu (H-31). Falta: botões na tela Agenda
 - Pronto quando: a taxa de falta da spec 11 sai de dados reais.
 
 ### M-09 Cancelamento com remarcação e lista de espera (P1)
@@ -527,7 +528,7 @@ Spec: 11 (métricas 13 e 14). Bloqueio: código; depende de M-08 e E-22.
 Gerador de página, Google Meu Negócio, campanhas, automações avançadas, insights de IA, templates de outros segmentos. Sem tarefas até o piloto entregar a linha de base e a decisão do nome (H-30).
 
 ### M-14 Higiene da especificação (rápida)
-- [ ] Renumerar a hipótese H-23 duplicada e o buraco em H-20, varrendo as referências no código
+- [x] Renumerar a hipótese H-23 duplicada e o buraco em H-20, varrendo as referências no código Feito: H-20 a H-24 únicas e em ordem no README; as referências no código (H-23, H-24) apontam para a linha certa
 - [ ] Atualizar spec 01 e 10 com o posicionamento e a navegação novos quando a fatia M-06/M-07 fechar
 ### SMB-01 Clientes, Início e Resultados (fatia vertical do MVP enxuto)
 - [x] Origem, log de consentimento e status derivado do cliente (migração `customers_pipeline`)

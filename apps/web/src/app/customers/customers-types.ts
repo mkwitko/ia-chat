@@ -36,6 +36,8 @@ export const ConsentSource = {
   patientMessage: 'patient_message',
   ownerPanel: 'owner_panel',
   backfill: 'backfill',
+  form: 'form',
+  ownerImport: 'owner_import',
 } as const;
 export type ConsentSource = (typeof ConsentSource)[keyof typeof ConsentSource];
 
@@ -76,6 +78,7 @@ export interface ConsentEntry {
   category: ConsentCategory;
   source: ConsentSource;
   actorType: string;
+  noticeText: string | null;
   at: string;
 }
 

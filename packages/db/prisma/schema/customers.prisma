@@ -53,6 +53,8 @@ enum ConsentSource {
   patient_message
   owner_panel
   backfill
+  form
+  owner_import
 }
 
 model ContactStageEvent {
@@ -83,6 +85,8 @@ model ConsentEvent {
   source    ConsentSource
   actorType String          @map("actor_type")
   actorId   String?         @map("actor_id")
+  /// The wording the client saw when agreeing (form, import); null when none was shown.
+  noticeText String?        @map("notice_text")
   createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
 
   tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
