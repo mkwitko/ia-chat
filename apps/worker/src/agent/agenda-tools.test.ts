@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { ActionKind, factsFromToolOutputs } from '@app/ai';
+import { FakeCalendar, FakeFailure } from '@app/core';
 import { createDb, Plan } from '@app/db';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { AgendaToolName } from './agenda-tools.ts';
@@ -222,5 +223,40 @@ describe('reschedule and cancel', () => {
       ActionKind.cancelled,
     ]);
     expect(await turn(NEXT_TURN).run(AgendaToolName.list, {})).toEqual({ agendamentos: [] });
+  });
+});
+
+describe('Google Calendar as the source of availability (E-21)', () => {
+  const HOUR_MS = 3_600_000;
+  const run = async (google: FakeCalendar) => {
+    const effects = { handoff: false };
+    const calendar = () =>
+      Promise.resolve({ provider: google, calendarId: 'c', onFailure: () => Promise.resolve() });
+    const tools = conversationTools(
+      { ...base, now: OFFER_TIME, turnId: 't', effects, calendar },
+      Plan.agenda,
+    );
+    const execute = tools[AgendaToolName.availability]?.execute as Execute;
+    const input = { servico: 'sessao', a_partir_de: '2027-01-01' };
+    const out = await execute(input, { toolCallId: 'call', messages: [], context: {} });
+    return { out: out as { opcoes?: { inicio: string }[]; erro?: string }, effects };
+  };
+
+  it('does not offer a time that is busy on Google', async () => {
+    const google = new FakeCalendar();
+    google.externalBusy = [
+      { start: new Date(MONDAY_9), end: new Date(Date.parse(MONDAY_9) + HOUR_MS) },
+    ];
+    const { out } = await run(google);
+    expect(out.opcoes?.map((one) => one.inicio)).not.toContain(MONDAY_9);
+    expect(out.opcoes?.map((one) => one.inicio)).toContain(MONDAY_10);
+  });
+
+  it('offers nothing and hands the patient to the professional when Google is unreachable', async () => {
+    const google = new FakeCalendar();
+    google.failWith = FakeFailure.auth;
+    const { out, effects } = await run(google);
+    expect(out).toEqual({ erro: 'agenda_externa_indisponivel' });
+    expect(effects.handoff).toBe(true);
   });
 });

@@ -100,6 +100,7 @@ async function createAppointment(request: FastifyRequest, reply: FastifyReply) {
     key: `${KEY_PREFIX}:${body.key}`,
     createdBy: AppointmentCreator.human,
     now: new Date(),
+    calendar: await calendarOf(request, tenant),
   });
   if (result.ok) await record(tenant, result.value.id, AuditAction.create);
   return respond(reply, result, HttpStatus.created);
@@ -121,6 +122,7 @@ async function rescheduleOne(request: FastifyRequest, reply: FastifyReply) {
     key: `${KEY_PREFIX}:${body.key}`,
     createdBy: AppointmentCreator.human,
     now: new Date(),
+    calendar: await calendarOf(request, tenant),
   });
   if (result.ok) await record(tenant, result.value.id, AuditAction.update);
   return respond(reply, result, HttpStatus.ok);
@@ -140,9 +142,15 @@ async function cancelOne(request: FastifyRequest, reply: FastifyReply) {
     appointmentId: old.id,
     createdBy: AppointmentCreator.human,
     now: new Date(),
+    calendar: await calendarOf(request, tenant),
   });
   if (result.ok) await record(tenant, old.id, AuditAction.archive);
   return respond(reply, result, HttpStatus.ok);
+}
+
+/** E-21: the panel books through the same calendar path as the assistant. */
+export function calendarOf(request: FastifyRequest, tenant: TenantContext) {
+  return request.server.calendar.resolve(tenant.tenantId).then((link) => link ?? undefined);
 }
 
 /** RLS: another tenant's appointment is simply not found. */

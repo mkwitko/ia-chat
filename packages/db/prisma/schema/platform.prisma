@@ -62,6 +62,7 @@ model Tenant {
   contactStageEvents ContactStageEvent[]
   consentEvents      ConsentEvent[]
   pushSubscriptions PushSubscription[]
+  calendarIntegration CalendarIntegration?
 
   @@map("tenants")
 }

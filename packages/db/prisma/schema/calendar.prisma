@@ -1,0 +1,34 @@
+// Google Calendar integration (E-21). One per tenant; the tokens are AES-GCM ciphertext (spec 06).
+
+enum CalendarStatus {
+  connected
+  /// The token was revoked or expired for good: no slots are offered until the user reconnects.
+  needs_reconnect
+}
+
+enum CalendarSyncState {
+  /// The tenant had no calendar connected when the appointment was written.
+  none
+  synced
+  /// Our booking exists but Google has not accepted the write: never confirmed to the patient.
+  failed
+}
+
+model CalendarIntegration {
+  id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId        String         @unique @map("tenant_id") @db.Uuid
+  status          CalendarStatus @default(connected)
+  refreshTokenEnc String         @map("refresh_token_enc")
+  accessTokenEnc  String?        @map("access_token_enc")
+  accessExpiresAt DateTime?      @map("access_expires_at") @db.Timestamptz
+  /// Null until the user picks the calendar: the integration then offers nothing yet.
+  calendarId      String?        @map("calendar_id")
+  calendarName    String?        @map("calendar_name")
+  connectedByUser String?        @map("connected_by_user") @db.Uuid
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@map("calendar_integrations")
+}

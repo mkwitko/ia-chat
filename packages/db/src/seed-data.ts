@@ -39,6 +39,11 @@ export const FIXTURE = {
   audit: { actorType: 'system', action: 'seed', entity: 'tenant' },
   inboundProvider: 'cloud_api',
   userName: 'Pessoa Fictícia',
+  // Ciphertext placeholder: never a real token.
+  calendarIntegration: {
+    refreshTokenEnc: 'v1.fixture.fixture.fixture',
+    calendarName: 'Atendimentos',
+  },
   pushSubscription: {
     endpoint: 'https://push.example.test/',
     p256dh: 'p256dh-fake',

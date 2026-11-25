@@ -31,3 +31,4 @@ export * from './trial/document.ts';
 export * from './trial/status.ts';
 export * from './trial/emails.ts';
 export type { EmailMessage, EmailSender } from './trial/email-types.ts';
+export * from './calendar/index.ts';

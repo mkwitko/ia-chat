@@ -12,9 +12,11 @@ import { tool, type ToolSet } from 'ai';
 import * as z from 'zod';
 import {
   appointmentOutput,
+  calendarOf,
   confirmationError,
   failure,
   findService,
+  needsProfessional,
   serviceMissing,
   ToolError,
   AgendaToolName,
@@ -65,12 +67,7 @@ function bookTool(context: ToolContext) {
         confirmed: confirmado,
       });
       if (refused) return failure(refused);
-      await db.withTenant(tenantId, (tx) =>
-        tx.contact.updateMany({
-          where: { id: contactId, name: null },
-          data: { name: nome_paciente },
-        }),
-      );
+      await rememberName(context, nome_paciente);
       const result = await bookAppointment(db, {
         tenantId,
         contactId,
@@ -79,10 +76,17 @@ function bookTool(context: ToolContext) {
         key: `${turnId}:${AgendaToolName.book}:${startsAt.toISOString()}`,
         createdBy: AppointmentCreator.ai,
         now,
+        calendar: await calendarOf(context),
       });
       return outcome(context, result);
     },
   });
+}
+
+function rememberName({ db, tenantId, contactId }: ToolContext, name: string) {
+  return db.withTenant(tenantId, (tx) =>
+    tx.contact.updateMany({ where: { id: contactId, name: null }, data: { name } }),
+  );
 }
 
 function rescheduleTool(context: ToolContext) {
@@ -115,6 +119,7 @@ function rescheduleTool(context: ToolContext) {
         key: `${turnId}:${AgendaToolName.reschedule}:${agendamento}:${startsAt.toISOString()}`,
         createdBy: AppointmentCreator.ai,
         now,
+        calendar: await calendarOf(context),
       });
       return outcome(context, result);
     },
@@ -139,6 +144,7 @@ function cancelTool(context: ToolContext) {
         contactId,
         appointmentId: agendamento,
         now,
+        calendar: await calendarOf(context),
       });
       return outcome(context, result);
     },
@@ -156,9 +162,10 @@ function listTool({ db, tenantId, contactId, now, timezone }: ToolContext) {
   });
 }
 
-/** A late cancellation or move goes to the professional (RF-44): the handoff is marked here. */
+/** A late cancellation or move, or a calendar that failed, goes to the professional (RF-44, A-13). */
 function outcome(context: ToolContext, result: AgendaResult<AppointmentView>) {
   if (result.ok) return { agendamento: appointmentOutput(result.value, context.timezone) };
-  if (result.error === AgendaError.tooLateToCancel) context.effects.handoff = true;
+  if (result.error === AgendaError.tooLateToCancel || needsProfessional(result.error))
+    context.effects.handoff = true;
   return failure(result.error);
 }

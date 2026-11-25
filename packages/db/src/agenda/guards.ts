@@ -37,6 +37,7 @@ export async function assertOffered(
     professionalId: scope.professionalId,
     timezone: scope.timezone,
     durationMinutes,
+    calendar: req.calendar,
     from: req.startsAt,
     to: new Date(req.startsAt.getTime() + ONE_MS),
     now: req.now,

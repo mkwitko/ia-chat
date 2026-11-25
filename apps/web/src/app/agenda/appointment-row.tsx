@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { feedback } from '../setup/feedback';
 import { AgendaCopy as Copy } from './agenda-copy';
 import { dayOf, timeLabel } from './agenda-dates';
-import { CreatedBy, useCancel, type AppointmentItem } from './agenda-api';
+import { CalendarSync, CreatedBy, useCancel, type AppointmentItem } from './agenda-api';
 import type { BookingTarget } from './booking-form';
 
 interface RowProps {
@@ -36,6 +36,7 @@ export function AppointmentRow({ item, timezone, onMove }: Readonly<RowProps>) {
           <span className="block truncate text-sm text-muted-foreground">
             {item.serviceName} · {Copy.status[item.status] ?? item.status} ·{' '}
             {item.createdBy === CreatedBy.ai ? Copy.byAssistant : Copy.byYou}
+            {item.calendarSync === CalendarSync.failed && ` · ${Copy.notSynced}`}
           </span>
         </span>
       </button>

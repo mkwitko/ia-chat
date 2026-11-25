@@ -22,6 +22,8 @@ E-18 → E-25 → S-04
 tudo da fase 3 → E-26 → E-27 → E-28 → E-28b
 ```
 
+Fase 6 (pequenos negócios, spec 11): M-01 e M-03 antes de E-22 e de qualquer envio ativo; M-02 antes de M-04 e de segundo segmento; M-06 a M-08 em andamento em paralelo.
+
 Podem correr em paralelo: E-05 com E-06; E-08 com E-02 a E-07; E-09 com E-09b; E-19 a E-23 com E-16 a E-18b; a trilha S com o produto.
 
 ---
@@ -277,12 +279,15 @@ Spec: `05-agenda-e-pagamentos.md`.
 - [ ] Bateria: casos de agenda em 95% ou mais; A-11 (pede chamadas pagas; não executada. A parte de A-11 com ferramenta forçada a falhar está coberta em `agenda-tools.test.ts`)
 
 ### E-21 Google Calendar
-- [ ] OAuth, escolha do calendário, tokens cifrados
-- [ ] Escrita de evento com nova tentativa e estado "não sincronizado"
-- [ ] Leitura por canal de notificação e sincronização incremental em `external_busy` (A-12)
-- [ ] Job diário de renovação dos canais; tratamento de token de sincronização inválido
-- [ ] Token revogado: parar de oferecer horários e avisar (A-13)
-- [ ] Alerta de conflito externo
+Decisão do dono (25/11/2026): para o piloto o **Google é a fonte oficial de disponibilidade**; sem sincronização paralela da agenda. Spec: `05-agenda-e-pagamentos.md` (seção Google Calendar). Escopos: `calendar.events.freebusy`, `calendar.events.owned`, `calendar.calendarlist.readonly`.
+- [x] OAuth, escolha do calendário, tokens cifrados (AES-256-GCM, `GOOGLE_TOKEN_KEY`)
+- [x] **(teste primeiro)** Oferta = regras menos `freeBusy`; nova consulta antes de gravar; reserva dupla: uma vence e o Google recebe um insert só
+- [x] Escrita de evento com id determinístico (repetir não duplica) e estado "não sincronizado"; sem confirmação ao paciente se o Google falha
+- [x] Remarcar e cancelar seguem o evento; painel e assistente usam o mesmo caminho
+- [x] Token revogado: parar de oferecer horários, `alert()` e faixa "Reconectar" no painel (A-13)
+- [ ] **Depois (não construir agora):** canal de notificação (watch) e sincronização incremental com `syncToken` em `external_busy` (A-12); job diário de renovação dos canais; tratamento de 410; alerta de conflito externo; job que repete eventos `calendar_sync = failed`
+- [ ] Passo do Google no onboarding (E-24) usar a seção "Google Agenda" da tela Disponibilidade
+- [ ] Verificação do app no Google para uso público (E-00c; só usuários de teste conectam até lá)
 
 ### E-22 Confirmação e lembretes
 - [ ] Templates por especialidade cadastrados no onboarding (conexão oficial)
@@ -413,6 +418,115 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [ ] Página da primeira especialidade e de três problemas
 - [ ] Search Console configurado
 
+---
+
+## Fase 6 — Pequenos negócios
+
+Spec: [11-pequenos-negocios.md](../spec/11-pequenos-negocios.md). Inventário: [AUDITORIA-2026-11-25.md](AUDITORIA-2026-11-25.md). Não duplica etapas existentes: onde a capacidade já tem etapa E-xx ou S-xx, a linha só aponta para ela. "Bloqueio" é conta externa (Meta, Google, Asaas, R2, jurídico) ou código.
+
+### Mapa sobre as etapas existentes
+
+| Capacidade (spec 11) | Etapa existente | Situação |
+|---|---|---|
+| Serviços, horários, perfil de profissional | E-17, E-19 | Feitas; perfil do negócio em M-04 |
+| WhatsApp assistente | E-09 (oficial, bloqueada pela Meta), E-09b (QR code, caminho do piloto) | Abertas |
+| Transferência para humano, caixa de entrada | E-12, E-16 | E-12 feita; E-16 com 1 tarefa aberta |
+| Agendamento e agenda no painel | E-20, E-23 | Quase feitas (E-20 com 2 e E-23 com 1 tarefa abertas); "realizado" e "faltou" em M-08 |
+| Google Calendar | E-21 | MVP feito (fonte de disponibilidade); sincronização completa adiada; bloqueio Google (verificação do app) |
+| Lembretes e confirmações | E-22 | Aberta; ver M-01 antes |
+| Onboarding | E-24 | Em curso; passo de perfil em M-04 |
+| Assinatura e produção | E-25, E-26 | Abertas; retenção e exclusão de dados em M-03 e E-26 |
+| Piloto | E-28 | Aberta; métricas em M-07 |
+| Follow-up, reativação, sinal Pix | Fase 4 (sem tarefas ainda) | M-10 detalha a reativação |
+
+### M-01 Consentimento e opt-out (P0)
+Spec: 11 (H-28), 03, 06. Bloqueio: código; texto do aviso, jurídico (E-00e).
+- [ ] **(teste primeiro)** Todo envio ativo (lembrete, follow-up, recuperação) checa `opt_out_at` e a ausência de consentimento; falha segura é não enviar
+- [ ] Registro de opt-in por contato: data, origem (conversa iniciada pelo cliente, formulário, importação do dono), texto exibido; migration com RLS e linha de fixture em `rls.test.ts`
+- [ ] Opt-out grava data e origem, desfaz o consentimento, aparece em Clientes; reativação só por pedido do próprio cliente
+- [ ] Teste A-15 da E-22 passa a depender desta etapa
+- Pronto quando: um contato com opt-out não recebe nenhum envio ativo em teste de integração, e o registro mostra quando e como consentiu.
+
+### M-02 Template por segmento aberto (P0)
+Spec: 11 ("Modelo de template"). Bloqueio: código; gasto com IA para rodar a bateria (precisa de aprovação).
+- [ ] Trocar o enum `Specialty` por chave aberta de template; migrar `specialty_policies` (campos `sensitivity`, `vocabulary`, `followUps`, `funnelStages`)
+- [ ] Tirar "profissional de saúde" de `PLATFORM_RULES`, e `CLINICAL` e urgência de `validate.ts`, para o template
+- [ ] **(teste primeiro)** Segmento sem saúde (`sensitivity = none`) responde sem as regras clínicas; segmento de saúde mantém todas
+- [ ] Quiropraxia vira só um template; os outros três de saúde seguem como estão
+- [ ] Rodar de novo a bateria nos modelos candidatos de produção, com orçamento aprovado
+- Pronto quando: `grep -rn "quiropraxia" packages/*/src` só acha dados de template, e os testes de validação e agente passam.
+
+### M-03 Limite de dado de saúde (P0)
+Spec: 11 ("Limite de dado de saúde"), 06. Bloqueio: código.
+- [ ] **(teste primeiro)** `registrar_duvida_sem_resposta`, `atualizar_nome_do_contato` e o resumo passam pelo juízo `informacao_de_saude`; se positivo não gravam o texto
+- [ ] Limite de tamanho nas duas ferramentas; nome só se parecer nome
+- [ ] Política de retenção do conteúdo de mensagem escrita na spec 06 e no aviso de privacidade (jurídico)
+- [ ] Sem campo de nota livre em Clientes
+- Pronto quando: um teste com texto clínico mostra que nada disso chega a `knowledge_items`, `conversations.summary` ou `contacts`.
+
+### M-04 Perfil do negócio e horário no assistente (P0)
+Spec: 11, 01, 09. Bloqueio: código.
+- [ ] Campos do perfil: descrição, telefone, site e rede social, formas de pagamento aceitas, política de cancelamento
+- [ ] Horário de funcionamento derivado das regras de disponibilidade entra no perfil do prompt (`hours`, `cancellationRule`), com preço e horário ainda só vindos de ferramenta
+- [ ] Vários profissionais e locais no perfil, não só o primeiro
+- [ ] Passo de perfil no onboarding, com "a IA sugere, o dono aprova"; nada ativa sem aprovação do resumo
+- [ ] Texto novo da interface com "cliente" e "negócio"
+- Pronto quando: a pergunta "abre sábado?" é respondida pelo perfil, sem ferramenta e sem "vou verificar", num caso da bateria.
+
+### M-05 Permissões de Clientes e Resultados (P0)
+Spec: 11, 06. Bloqueio: código.
+- [ ] Permissões `customers` e `results` em `access.ts`; recepcionista lê e atualiza etapa, não exporta; padrão conservador, registrado como hipótese
+- [ ] Teste de papéis para as rotas novas
+- Pronto quando: a tabela de papéis tem as duas permissões com teste.
+
+### M-06 Clientes, etapa do funil e origem (P0) — **em andamento**
+Fatia vertical em outro PR. Spec: 11 ("Funil simples", H-25), 10.
+- [ ] Tela Clientes; etapa do funil com histórico; origem do contato; registros de consentimento (liga com M-01)
+- [ ] Navegação Início, Conversas, Agenda, Clientes, Resultados, Configurações
+- Pronto quando: os critérios do PR da fatia; esta etapa só confere que M-01 e M-05 foram respeitados.
+
+### M-07 Início e Resultados (P0) — **em andamento**
+Fatia vertical em outro PR. Spec: 11 ("Métricas do piloto").
+- [ ] Início com "o que precisa de atenção" (substitui o texto falso de Hoje)
+- [ ] Resultados com as métricas 1 a 7, 10, 11 e 15 e a linha de base
+- Pronto quando: cada número da tela bate com a consulta de referência da spec 11 sobre dados fictícios.
+
+### M-08 Realizado e faltou (P0)
+Spec: 05, 11 (métrica 9). Bloqueio: código.
+- [ ] Rota para marcar `completed` e `no_show` (permissão `agenda: book`), com auditoria e teste
+- [ ] Botões na agenda; envia o cliente a "atendido" no funil (M-06)
+- Pronto quando: a taxa de falta da spec 11 sai de dados reais.
+
+### M-09 Cancelamento com remarcação e lista de espera (P1)
+Spec: 05, 11. Bloqueio: código; depende de E-22 e M-01.
+- [ ] Ao cancelar, oferecer remarcação; marcar remarcação à parte (métrica 8)
+- [ ] Lista de espera de horários: cliente entra, horário liberado avisa o primeiro, com checagem de opt-out; sem disparo em massa
+- Pronto quando: um cancelamento libera o horário para o primeiro da lista em teste.
+
+### M-10 Recuperação de lead e follow-up (P1)
+Spec: 11, 03. Bloqueio: código; Meta para fora da janela de 24 h (E-00b); depende de M-01 e E-22.
+- [ ] Regra simples: lead `conversando` sem resposta há N dias recebe uma mensagem aprovada pelo dono, uma vez
+- [ ] Respeita controle humano (RF-31), opt-out e limite de envio
+- Pronto quando: o envio só acontece com consentimento e o dono aprovou o texto.
+
+### M-11 Indicação (P1)
+Spec: 11 ("Modelo de indicação"), H-27. Bloqueio: código; recompensa é decisão do dono.
+- [ ] Código e link por negócio assinante; registro de cadastro por código; tela mínima em Configurações
+- [ ] **(teste primeiro)** Nenhum caminho de código envia mensagem a um indicado
+- Pronto quando: um cadastro com código aparece como indicação do negócio que o gerou.
+
+### M-12 Avaliações e relatório simples (P1)
+Spec: 11 (métricas 13 e 14). Bloqueio: código; depende de M-08 e E-22.
+- [ ] Pedido de avaliação depois do atendimento realizado, com consentimento; link do perfil público que o dono informa
+- [ ] Relatório semanal de uma tela, por e-mail ou push, com as métricas de Resultados
+- Pronto quando: o relatório do piloto sai sem número calculado à mão.
+
+### M-13 Outros segmentos e P2 (depois do piloto)
+Gerador de página, Google Meu Negócio, campanhas, automações avançadas, insights de IA, templates de outros segmentos. Sem tarefas até o piloto entregar a linha de base e a decisão do nome (H-30).
+
+### M-14 Higiene da especificação (rápida)
+- [ ] Renumerar a hipótese H-23 duplicada e o buraco em H-20, varrendo as referências no código
+- [ ] Atualizar spec 01 e 10 com o posicionamento e a navegação novos quando a fatia M-06/M-07 fechar
 ### SMB-01 Clientes, Início e Resultados (fatia vertical do MVP enxuto)
 - [x] Origem, log de consentimento e status derivado do cliente (migração `customers_pipeline`)
 - [x] Presença (compareceu/faltou) no atendimento

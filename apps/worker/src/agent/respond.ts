@@ -22,6 +22,7 @@ import {
   ConsentKind,
   ConsentSource,
   recordConsent,
+  type CalendarResolver,
   type Db,
 } from '@app/db';
 import { DeliveryMode, type RespondInput, type TurnReply } from '../conversation/turn.ts';
@@ -40,6 +41,8 @@ export interface AgentDeps {
   now?: () => Date;
   /** Web Push keys are configured; without them no professional can be warned. */
   pushEnabled?: boolean;
+  /** Google Calendar (E-21); without it the agenda runs on our own rules. */
+  calendar?: CalendarResolver;
 }
 
 export function createConversationAgent(
@@ -130,6 +133,7 @@ async function generate(
         now: deps.now?.() ?? new Date(),
         timezone: input.timezone,
         effects,
+        calendar: deps.calendar,
       },
       input.plan,
     );

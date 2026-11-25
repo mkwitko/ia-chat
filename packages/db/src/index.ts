@@ -77,18 +77,26 @@ export { findPendingDraft, type PendingDraft } from './conversation/draft.ts';
 export {
   bookAppointment,
   cancelAppointment,
-  listUpcoming,
   rescheduleAppointment,
   type BookRequest,
   type CancelRequest,
   type MoveRequest,
 } from './agenda/appointments.ts';
+export {
+  calendarAccessToken,
+  createCalendarResolver,
+  googleClientOf,
+  type ResolverOptions,
+} from './calendar/resolver.ts';
+export { externalBusyOf, type CalendarLink, type CalendarResolver } from './calendar/link.ts';
+export { listUpcoming } from './agenda/upcoming.ts';
 export { loadScope, slotsIn } from './agenda/availability.ts';
 export { recordOffers, wasOfferedBefore } from './agenda/offers.ts';
 export { dayBounds, isoDay, localDayRange, tomorrowCount } from './agenda/day.ts';
 export { vacationReturn } from './agenda/vacation.ts';
 export {
   AgendaError,
+  AgendaFailure,
   MAX_FUTURE_APPOINTMENTS,
   isExclusionViolation,
   type AgendaResult,

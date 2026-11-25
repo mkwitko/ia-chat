@@ -1,5 +1,5 @@
 import { handoffTool, OK, ToolName, unansweredTool, type ToolEffects } from '@app/agent';
-import { KnowledgeSource, Plan, type Db } from '@app/db';
+import { KnowledgeSource, Plan, type CalendarResolver, type Db } from '@app/db';
 import { tool, type ToolSet } from 'ai';
 import * as z from 'zod';
 import { agendaTools } from './agenda-tools.ts';
@@ -23,6 +23,8 @@ export interface ToolContext {
   now: Date;
   timezone: string;
   effects: ToolEffects;
+  /** Google Calendar of the tenant (E-21); absent or without a calendar: our own rules. */
+  calendar?: CalendarResolver | undefined;
 }
 
 /** Spec 04: the tools of the tenant's plan. Agenda tools only where the plan includes Agenda. */

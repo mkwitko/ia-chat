@@ -1,9 +1,16 @@
 import { MS_PER_MINUTE } from '@app/core';
-import { AppointmentCreator, AppointmentStatus } from '../../generated/prisma/enums.ts';
+import {
+  AppointmentCreator,
+  AppointmentStatus,
+  CalendarSyncState,
+} from '../../generated/prisma/enums.ts';
 import type { Db, Tx } from '../index.ts';
+import { finishBook, removeEvent } from '../calendar/sync.ts';
+import type { CalendarLink } from '../calendar/link.ts';
 import { withStageSync } from '../customers/sync.ts';
-import { loadScope } from './availability.ts';
 import { assertBelowLimit, assertNotice, assertOffered, LIVE } from './guards.ts';
+import { loadScope } from './availability.ts';
+import { toView } from './view.ts';
 import {
   AgendaError,
   AgendaFailure,
@@ -24,6 +31,8 @@ export interface BookRequest {
   key: string;
   createdBy: AppointmentCreator;
   now: Date;
+  /** The tenant's connected calendar (E-21): availability is revalidated against it and the event written. */
+  calendar?: CalendarLink | undefined;
 }
 
 export interface MoveRequest extends Omit<BookRequest, 'serviceId'> {
@@ -37,42 +46,36 @@ export interface CancelRequest {
   contactId: string;
   appointmentId: string;
   now: Date;
+  calendar?: CalendarLink | undefined;
 }
 
-export const bookAppointment = (db: Db, req: BookRequest) =>
-  runAgenda(
-    db,
-    req.tenantId,
-    synced(req, (tx) => bookIn(tx, req)),
-  );
+export async function bookAppointment(db: Db, req: BookRequest) {
+  const result = await runAgenda(db, req.tenantId, synced(req, (tx) => bookIn(tx, req)));
+  if (!result.ok) return result;
+  return finishBook(db, req.calendar, { view: result.value, tenantId: req.tenantId });
+}
 
 /** RF-43: the old time is released only if the new one was written (one transaction). */
-export const rescheduleAppointment = (db: Db, req: MoveRequest) =>
-  runAgenda(
-    db,
-    req.tenantId,
-    synced(req, (tx) => moveIn(tx, req)),
-  );
+export async function rescheduleAppointment(db: Db, req: MoveRequest) {
+  const moved = await runAgenda(db, req.tenantId, synced(req, (tx) => moveIn(tx, req)));
+  if (!moved.ok) return moved;
+  const booked = await finishBook(db, req.calendar, { view: moved.value, tenantId: req.tenantId });
+  if (booked.ok)
+    await removeEvent(db, req.calendar, {
+      tenantId: req.tenantId,
+      appointmentId: req.appointmentId,
+    });
+  return booked;
+}
 
-export const cancelAppointment = (db: Db, req: CancelRequest) =>
-  runAgenda(
-    db,
-    req.tenantId,
-    synced(req, (tx) => cancelIn(tx, req)),
-  );
-
-export async function listUpcoming(
-  db: Db,
-  req: { tenantId: string; contactId: string; now: Date },
-): Promise<AppointmentView[]> {
-  const rows = await db.withTenant(req.tenantId, (tx) =>
-    tx.appointment.findMany({
-      where: { contactId: req.contactId, status: { in: LIVE }, startsAt: { gte: req.now } },
-      include: { service: true },
-      orderBy: { startsAt: 'asc' },
-    }),
-  );
-  return rows.map(toView);
+export async function cancelAppointment(db: Db, req: CancelRequest) {
+  const result = await runAgenda(db, req.tenantId, synced(req, (tx) => cancelIn(tx, req)));
+  if (result.ok)
+    await removeEvent(db, req.calendar, {
+      tenantId: req.tenantId,
+      appointmentId: req.appointmentId,
+    });
+  return result;
 }
 
 /** The customer's stage history follows the booking, in the same transaction (spec 10, "Clientes"). */
@@ -118,6 +121,7 @@ async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
       endsAt,
       createdBy: req.createdBy,
       idempotencyKey: req.key,
+      calendarSync: req.calendar ? CalendarSyncState.failed : CalendarSyncState.none,
     },
     include: { service: true },
   });
@@ -170,18 +174,4 @@ async function ownedLive(tx: Tx, req: MoveRequest) {
   return found;
 }
 
-function toView(row: {
-  id: string;
-  startsAt: Date;
-  endsAt: Date;
-  status: string;
-  service: { name: string };
-}): AppointmentView {
-  return {
-    id: row.id,
-    startsAt: row.startsAt,
-    endsAt: row.endsAt,
-    serviceName: row.service.name,
-    status: row.status,
-  };
 }
