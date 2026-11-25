@@ -6,8 +6,10 @@ export const HttpStatus = {
   forbidden: 403,
   notFound: 404,
   conflict: 409,
+  tooManyRequests: 429,
   internalError: 500,
   badGateway: 502,
+  unavailable: 503,
 } as const;
 
 export const ErrorCode = {
@@ -20,6 +22,8 @@ export const ErrorCode = {
   notFound: 'not_found',
   staleDraft: 'stale_draft',
   sendFailed: 'send_failed',
+  rateLimited: 'rate_limited',
+  simulatorOff: 'simulator_off',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

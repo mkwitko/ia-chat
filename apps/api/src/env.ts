@@ -1,10 +1,11 @@
+import { aiEnvSchema } from '@app/ai';
 import { baseEnvSchema, parseEnvWith } from '@app/core';
 import * as z from 'zod';
 
 const MIN_SECRET_LENGTH = 32;
 const DEFAULT_PORT = 3000;
 
-export const apiEnvSchema = baseEnvSchema.extend({
+export const apiEnvSchema = baseEnvSchema.extend(aiEnvSchema.shape).extend({
   PORT: z.coerce.number().int().positive().default(DEFAULT_PORT),
   BETTER_AUTH_SECRET: z.string().min(MIN_SECRET_LENGTH),
   /** Public base URL of this API. */

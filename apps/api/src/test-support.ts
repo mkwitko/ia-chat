@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
+import type { AiGateway } from '@app/ai';
 import type { ChannelSend } from '@app/channels';
 import { createDb, type Db } from '@app/db';
 import { buildApp } from './app.ts';
@@ -31,6 +32,7 @@ export interface TestAppOptions {
   env?: Record<string, string>;
   enqueueInbound?: EnqueueInbound;
   send?: ChannelSend;
+  simulatorGateway?: AiGateway;
 }
 
 export async function startTestApp(
@@ -46,6 +48,7 @@ export async function startTestApp(
     email: outbox,
     ...(options.enqueueInbound ? { enqueueInbound: options.enqueueInbound } : {}),
     ...(options.send ? { send: options.send } : {}),
+    ...(options.simulatorGateway ? { simulatorGateway: options.simulatorGateway } : {}),
   });
   register(app);
   await app.ready();

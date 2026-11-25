@@ -21,6 +21,7 @@
     "dev": "node --env-file-if-exists=../../.env --watch src/index.ts"
   },
   "devDependencies": {
-    "@types/pg": "8.23.1"
+    "@types/pg": "8.23.1",
+    "ai": "7.0.173"
   }
 }

@@ -241,7 +241,7 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 - [x] Serviços e valores, endereço e instruções de chegada
 - [x] Base de conhecimento e lista "perguntas que o assistente não soube", com conversão em resposta num toque
 - [x] Tom de voz: mensagens de exemplo e as quatro perguntas
-- [ ] Simulador: conversa com o assistente configurado, sem enviar nada ao WhatsApp
+- [x] Simulador: conversa com o assistente configurado, sem enviar nada ao WhatsApp
 - [x] Auditoria das alterações
 
 ### E-18 Uso e limites

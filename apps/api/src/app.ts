@@ -1,3 +1,4 @@
+import type { AiGateway } from '@app/ai';
 import { createChannelSender, type ChannelSend } from '@app/channels';
 import { NodeEnv } from '@app/core';
 import type { Db } from '@app/db';
@@ -15,6 +16,7 @@ import type { EmailSender } from './email/outbox.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
+import { registerSimulatorRoutes } from './simulator/simulator-routes.ts';
 import { registerToneRoutes } from './setup/tone-routes.ts';
 import { registerUsageRoutes } from './usage/usage-routes.ts';
 import type { ApiEnv } from './env.ts';
@@ -37,12 +39,15 @@ export interface AppDeps {
   enqueueInbound?: EnqueueInbound;
   /** Sends the professional's messages. Defaults to the Cloud API (records only in dev without token). */
   send?: ChannelSend;
+  /** Model access of the simulator (spec 10); without it the simulator answers 503. */
+  simulatorGateway?: AiGateway;
 }
 
 // Logs never carry message content nor auth headers (RN-38).
 const REDACTED_PATHS = ['req.headers.cookie', 'req.headers.authorization'];
 
-export function buildApp({ env, db, email, enqueueInbound, send }: AppDeps): FastifyInstance {
+export function buildApp(deps: AppDeps): FastifyInstance {
+  const { env, db, email, enqueueInbound, send } = deps;
   const app = Fastify({
     logger: env.NODE_ENV !== NodeEnv.test && { redact: REDACTED_PATHS },
   });
@@ -56,6 +61,7 @@ export function buildApp({ env, db, email, enqueueInbound, send }: AppDeps): Fas
   registerKnowledgeRoutes(app);
   registerToneRoutes(app);
   registerUsageRoutes(app);
+  registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
   registerInboxRoutes(app, {
     send:
       send ??
