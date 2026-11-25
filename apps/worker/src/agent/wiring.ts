@@ -1,16 +1,4 @@
-import {
-  aiEnvSchema,
-  createAiGateway,
-  DEFAULT_CAPS,
-  dbUsageStore,
-  devModelResolver,
-  gatewayModelResolver,
-  GROQ_DEV_ROUTES,
-  PRICE_TABLE,
-  routeTable,
-  startTracing,
-  typeSafeJudge,
-} from '@app/ai';
+import { aiConfigured, aiEnvSchema, createEnvGateway, startTracing } from '@app/ai';
 import { createChannelSender } from '@app/channels';
 import { NodeEnv } from '@app/core';
 import {
@@ -30,7 +18,6 @@ import { createConversationAgent } from './respond.ts';
 
 const NOTIFY_FAILED = 'push notification failed';
 const NO_AI_KEY = 'VERCEL_API_KEY missing: conversation turns are not consumed';
-const JUDGE_OFF = { ask: () => Promise.reject(new Error('TYPESAFE_API_KEY missing')) };
 // RN-03: the job carries its tenant; runTurn enters withTenant for every read and write.
 const turnJob = z.object({
   tenantId: z.uuid(),
@@ -62,12 +49,11 @@ export async function startTurnWorker({
   const env = workerEnvSchema.parse(source);
   const tracing = startTracing(env, nodeEnv);
   const shutdown = async () => tracing?.shutdown();
-  const dev = env.AI_DEV_PROVIDER !== undefined;
-  if (!dev && !env.VERCEL_API_KEY) {
+  if (!aiConfigured(env)) {
     log.warn({}, NO_AI_KEY);
     return { shutdown };
   }
-  const deps = turnDeps({ db, env, nodeEnv, log, dev, boss, notifier });
+  const deps = turnDeps({ db, env, nodeEnv, log, boss, notifier });
   // runTurn opens its own transactions (the model call stays outside any of them).
   await boss.work(TURN_QUEUE.name, async (jobs) => {
     for (const job of jobs) {
@@ -85,20 +71,10 @@ interface DepsSources {
   env: z.infer<typeof workerEnvSchema>;
   nodeEnv: string;
   log: TurnWiring['log'];
-  dev: boolean;
 }
 
-function turnDeps({ db, boss, notifier, env, nodeEnv, log, dev }: DepsSources): TurnDeps {
-  const gateway = createAiGateway({
-    routes: dev ? GROQ_DEV_ROUTES : routeTable(env.AI_ROUTES),
-    resolver: dev
-      ? devModelResolver(env, nodeEnv === NodeEnv.production)
-      : gatewayModelResolver(env),
-    prices: PRICE_TABLE,
-    caps: DEFAULT_CAPS,
-    store: dbUsageStore(db),
-    judgeProvider: env.TYPESAFE_API_KEY ? typeSafeJudge(env.TYPESAFE_API_KEY) : JUDGE_OFF,
-  });
+function turnDeps({ db, boss, notifier, env, nodeEnv, log }: DepsSources): TurnDeps {
+  const gateway = createEnvGateway({ db, env, nodeEnv });
   return {
     respond: createConversationAgent({ db, gateway }),
     notify: (input) => {

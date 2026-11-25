@@ -5,6 +5,7 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
+    "@app/agent": "workspace:*",
     "@app/ai": "workspace:*",
     "@app/channels": "workspace:*",
     "@app/core": "workspace:*",

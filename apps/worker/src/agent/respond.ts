@@ -1,6 +1,5 @@
 import {
   BudgetExceededError,
-  Identity,
   JUDGE_QUESTIONS,
   JUDGE_THRESHOLDS,
   JudgeKind,
@@ -8,12 +7,17 @@ import {
   modelKey,
   type AiGateway,
 } from '@app/ai';
+import {
+  AgentCopy,
+  generateChecked,
+  identified,
+  introducedAfter,
+  prefilter,
+  PrefilterKind,
+} from '@app/agent';
 import { Autonomy, type Db } from '@app/db';
 import { DeliveryMode, type RespondInput, type TurnReply } from '../conversation/turn.ts';
-import { generateChecked } from './checked.ts';
 import { loadAgentInput, type AgentInput } from './context.ts';
-import { AgentCopy } from './copy.ts';
-import { prefilter, PrefilterKind } from './prefilter.ts';
 import { refreshSummary } from './summary.ts';
 import { conversationTools, type ToolEffects } from './tools.ts';
 
@@ -21,14 +25,6 @@ import { conversationTools, type ToolEffects } from './tools.ts';
 
 const NO_MODEL = 'none';
 const NO_COST = 0n;
-// The model already introduced itself when the answer holds the mode's key words.
-const INTRO_MARKER: Readonly<Record<Identity, string>> = {
-  [Identity.assistant]: 'assistente virtual',
-  [Identity.clinic]: 'consultório de',
-  [Identity.professional]: '',
-};
-// The intro already greets: drop the model's own "Oi!" or "Olá," at the start.
-const LEADING_GREETING = /^(?:oi|olá|ola|bom dia|boa tarde|boa noite)[!,.]?\s*/i;
 
 export interface AgentDeps {
   db: Db;
@@ -48,9 +44,9 @@ export function createConversationAgent(
     // null (nothing to answer) is a decision too; only undefined goes on to the judge.
     const filtered =
       prefiltered === undefined ? await judgedUrgency(deps.gateway, turn) : prefiltered;
-    if (filtered !== undefined) return filtered && introducedAfter(filtered, input);
+    if (filtered !== undefined) return filtered && introducedReply(filtered, input);
     if (input.autonomy === Autonomy.off)
-      return introducedAfter(fixed(AgentCopy.away(input.profile), false), input);
+      return introducedReply(fixed(AgentCopy.away(input.profile), false), input);
     await refreshSummary(deps.db, deps.gateway, turn);
     input = await deps.db.withTenant(turn.tenantId, (tx) =>
       loadAgentInput(tx, turn.conversationId, now),
@@ -136,23 +132,9 @@ async function generate(
   }
 }
 
-/** Spec 04, "Identificação": the first answer of a conversation always introduces the assistant. */
-function identified(text: string, input: AgentInput): string {
-  const intro = AgentCopy.identification(input.profile);
-  if (
-    !input.state.firstMessage ||
-    !intro ||
-    text.toLowerCase().includes(INTRO_MARKER[input.profile.identity])
-  )
-    return text;
-  return `${intro} ${text.replace(LEADING_GREETING, '')}`;
-}
-
 /** Fixed answers keep their message first (SAMU before anything) and introduce after. */
-function introducedAfter(reply: TurnReply, input: AgentInput): TurnReply {
-  const intro = AgentCopy.identification(input.profile);
-  if (!input.state.firstMessage || !intro) return reply;
-  return { ...reply, text: `${reply.text} ${intro.replace(LEADING_GREETING, '')}` };
+function introducedReply(reply: TurnReply, input: AgentInput): TurnReply {
+  return { ...reply, text: introducedAfter(reply.text, input) };
 }
 
 function urgentReply(): TurnReply {

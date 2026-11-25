@@ -17,20 +17,15 @@ import {
   findService,
   serviceMissing,
   ToolError,
-} from './agenda-support.ts';
-import { availabilityTool } from './agenda-availability.ts';
+  AgendaToolName,
+  availabilityTool,
+} from '@app/agent';
 import type { ToolContext } from './tools.ts';
 
 // Agenda plan tools (spec 04, "Ferramentas"; spec 05). Booking, moving and cancelling happen
 // only after the patient confirmed a slot offered in an earlier turn; the code checks it.
 
-export const AgendaToolName = {
-  availability: 'consultar_horarios',
-  book: 'agendar',
-  reschedule: 'remarcar',
-  cancel: 'cancelar',
-  list: 'listar_agendamentos_do_paciente',
-} as const;
+export { AgendaToolName };
 
 const MAX_NAME_LENGTH = 80;
 

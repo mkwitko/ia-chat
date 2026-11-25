@@ -14,7 +14,7 @@ import {
   type ToolOutput,
 } from '@app/ai';
 import type { ModelMessage, ToolSet } from 'ai';
-import type { AgentInput } from './context.ts';
+import type { AgentInput } from './input.ts';
 
 // Spec 04, "Validação da saída": check, retry once with the correction, then give up
 // (the caller hands off). Jev complements the rules and fails safe (null = rules only).
@@ -38,7 +38,7 @@ const TOOL_RESULT = 'tool-result';
 
 export interface CheckedCall {
   gateway: AiGateway;
-  turn: { tenantId: string; conversationId: string; turnId: string };
+  turn: { tenantId: string; conversationId?: string; turnId?: string };
   input: AgentInput;
   tools: ToolSet;
 }
