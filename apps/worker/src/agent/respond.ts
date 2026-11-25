@@ -101,7 +101,7 @@ async function applyPrefilter(
   turn: RespondInput,
   { input, urgent }: { input: AgentInput; urgent: TurnReply },
 ): Promise<TurnReply | null | undefined> {
-  const { kind } = prefilter(turn.messages, input.specialtyTerms);
+  const { kind } = prefilter(turn.messages, input.urgencyTerms);
   if (kind === PrefilterKind.urgency) return urgent;
   if (kind === PrefilterKind.ignore) return null;
   if (kind === PrefilterKind.unsupported) return fixed(AgentCopy.unsupported, false);

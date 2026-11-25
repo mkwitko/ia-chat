@@ -1,4 +1,4 @@
-import { parsePolicy, resolveTemplate, type Specialty } from '@app/core';
+import { parsePolicy, resolveTemplate } from '@app/core';
 import { KnowledgeSource, type Tx } from '@app/db';
 
 export interface TemplateResult {
@@ -12,7 +12,7 @@ export interface TemplateResult {
  */
 export async function applyTemplate(
   tx: Tx,
-  { tenantId, specialty }: { tenantId: string; specialty: Specialty },
+  { tenantId, specialty }: { tenantId: string; specialty: string },
 ): Promise<TemplateResult> {
   const tenant = await tx.tenant.findUniqueOrThrow({
     where: { id: tenantId },

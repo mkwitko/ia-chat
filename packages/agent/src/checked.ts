@@ -13,6 +13,7 @@ import {
   type GenerateResult,
   type ToolOutput,
 } from '@app/ai';
+import { Sensitivity } from '@app/core';
 import type { ModelMessage, ToolSet } from 'ai';
 import type { AgentInput } from './input.ts';
 
@@ -82,12 +83,13 @@ async function check(
   const violations = validateReply(result.text, {
     catalogCents: input.profile.services.map((service) => service.priceCents),
     pricesForbidden: input.profile.pricesForbidden,
+    sensitivity: input.profile.sensitivity,
     forbiddenTerms: input.forbiddenTerms,
     // Times the tenant wrote anywhere in its profile are facts too (hours, knowledge, arrival).
     allowedTimes: profileTimes(input),
     facts: factsFromToolOutputs(toolOutputsOf(result.messages)),
   });
-  if (violations.length) return violations;
+  if (violations.length || input.profile.sensitivity !== Sensitivity.health) return violations;
   const { clinical } = await gateway.judge(turn, {
     state: { resposta_da_recepcao: result.text },
     questions: { clinical: JUDGE_QUESTIONS[JudgeQuestionId.clinicalAdvice] },

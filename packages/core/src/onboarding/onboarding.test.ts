@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { Provider, translateProviderError, GENERIC_ERRORS } from './provider-errors.ts';
-import { currentStep, parseProgress, Specialty, StepStatus, STEP_ORDER } from './steps.ts';
-import { resolveTemplate } from './templates.ts';
+import { currentStep, parseProgress, StepStatus, STEP_ORDER } from './steps.ts';
+import { parsePolicy, Sensitivity } from '../policy.ts';
+import { isTemplateKey, resolveTemplate, SPECIALTY_OPTIONS } from './templates.ts';
+import { TemplateId } from './templates-data.ts';
 
 describe('progress', () => {
   it('resumes at the first unsettled step', () => {
@@ -16,15 +18,30 @@ describe('progress', () => {
   });
 });
 
-describe('templates', () => {
-  it.each(Object.values(Specialty))('%s: no price when forbidden', (specialty) => {
-    const template = resolveTemplate({ specialty, pricesForbidden: true });
-    expect(template.services.every((service) => service.priceCents === 0)).toBe(true);
-    expect(template.answers.some((item) => item.mentionsPrice)).toBe(false);
+describe('open template key (M-02)', () => {
+  it('accepts registry keys only, and a missing policy stays health', () => {
+    expect(isTemplateKey(TemplateId.salaoDeBeleza)).toBe(true);
+    expect(isTemplateKey('inexistente')).toBe(false);
+    expect(parsePolicy(undefined).sensitivity).toBe(Sensitivity.health);
+    expect(parsePolicy({ sensitivity: Sensitivity.none }).sensitivity).toBe(Sensitivity.none);
   });
+});
+
+describe('templates', () => {
+  it.each(SPECIALTY_OPTIONS.map((option) => option.specialty))(
+    '%s: no price when forbidden',
+    (specialty) => {
+      const template = resolveTemplate({ specialty, pricesForbidden: true });
+      expect(template.services.every((service) => service.priceCents === 0)).toBe(true);
+      expect(template.answers.some((item) => item.mentionsPrice)).toBe(false);
+    },
+  );
 
   it('keeps example prices when allowed and marks everything as an example', () => {
-    const template = resolveTemplate({ specialty: Specialty.quiropraxia, pricesForbidden: false });
+    const template = resolveTemplate({
+      specialty: TemplateId.salaoDeBeleza,
+      pricesForbidden: false,
+    });
     expect(template.services.every((service) => service.priceCents > 0)).toBe(true);
     expect(template.services.every((service) => service.name.endsWith('(exemplo)'))).toBe(true);
   });

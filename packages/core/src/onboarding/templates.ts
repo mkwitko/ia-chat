@@ -1,4 +1,3 @@
-import { Specialty } from './steps.ts';
 import {
   SPECIALTY_TEMPLATES,
   type TemplateAnswer,
@@ -9,8 +8,14 @@ import {
 export const EXAMPLE_SUFFIX = ' (exemplo)';
 export const EXAMPLE_PREFIX = '[Exemplo, edite] ';
 
+const UNKNOWN_TEMPLATE = 'unknown template: ';
+
+export function isTemplateKey(key: string): boolean {
+  return key in SPECIALTY_TEMPLATES;
+}
+
 export interface TemplateOptions {
-  specialty: Specialty;
+  specialty: string;
   pricesForbidden: boolean;
 }
 
@@ -22,6 +27,7 @@ export interface ResolvedTemplate {
 /** The template for a specialty, shaped by its policy: no prices when the policy forbids them. */
 export function resolveTemplate({ specialty, pricesForbidden }: TemplateOptions): ResolvedTemplate {
   const template = SPECIALTY_TEMPLATES[specialty];
+  if (!template) throw new Error(UNKNOWN_TEMPLATE + specialty);
   return {
     services: template.services.map((service) => ({
       ...service,
@@ -34,7 +40,6 @@ export function resolveTemplate({ specialty, pricesForbidden }: TemplateOptions)
   };
 }
 
-export const SPECIALTY_OPTIONS = Object.values(Specialty).map((specialty) => ({
-  specialty,
-  label: SPECIALTY_TEMPLATES[specialty].label,
-}));
+export const SPECIALTY_OPTIONS = Object.entries(SPECIALTY_TEMPLATES).map(
+  ([specialty, template]) => ({ specialty, label: template.label }),
+);

@@ -1,3 +1,4 @@
+import { Sensitivity } from '@app/core';
 import { conversationBlocks, Identity, type AgentProfile } from '../src/agent/prompt.ts';
 import type { CacheableBlock } from '../src/gateway.ts';
 import type { Appointment } from './agenda.ts';
@@ -37,6 +38,8 @@ function clinicProfile(pricesForbidden: boolean): AgentProfile {
     assistantName: CLINIC.assistantName,
     professionalName: CLINIC.professional,
     specialty: CLINIC.specialty,
+    sensitivity: Sensitivity.health,
+    vocabulary: 'paciente',
     tone: CLINIC.tone,
     examples: CLINIC.examples,
     services: SERVICES.map(({ id, name, minutes, priceCents }) => ({

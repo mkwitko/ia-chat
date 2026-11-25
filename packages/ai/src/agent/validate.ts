@@ -1,3 +1,4 @@
+import { Sensitivity } from '@app/core';
 import { ActionKind, type ToolFacts } from './facts.ts';
 
 export { factsFromToolOutputs, type ToolFacts, type ToolOutput } from './facts.ts';
@@ -20,6 +21,8 @@ export type Violation = (typeof Violation)[keyof typeof Violation];
 export interface ReplyRules {
   catalogCents: readonly number[];
   pricesForbidden: boolean;
+  /** Clinical conduct is checked only for `health` segments. */
+  sensitivity: Sensitivity;
   /** Specialty terms (promises of result, "cura"...). */
   forbiddenTerms: readonly string[];
   /** HH:MM allowed without a tool: opening hours and existing appointments. */
@@ -66,7 +69,9 @@ export function validateReply(text: string, rules: ReplyRules): Violation[] {
     rules.forbiddenTerms.some((term) => termPattern(term).test(text))
       ? Violation.forbiddenTerm
       : null,
-    CLINICAL.some((pattern) => pattern.test(text)) ? Violation.clinicalConduct : null,
+    rules.sensitivity === Sensitivity.health && CLINICAL.some((pattern) => pattern.test(text))
+      ? Violation.clinicalConduct
+      : null,
   ];
   return found.filter((violation) => violation !== null);
 }

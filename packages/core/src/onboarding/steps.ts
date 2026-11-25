@@ -25,17 +25,10 @@ export const SKIPPABLE_STEPS: ReadonlySet<OnboardingStep> = new Set([
   OnboardingStep.google,
 ]);
 
-export const Specialty = {
-  quiropraxia: 'quiropraxia',
-  fisioterapia: 'fisioterapia',
-  psicologia: 'psicologia',
-  nutricao: 'nutricao',
-} as const;
-export type Specialty = (typeof Specialty)[keyof typeof Specialty];
-
 export const onboardingProgressSchema = z.object({
   steps: z.partialRecord(z.enum(OnboardingStep), z.enum(StepStatus)).default({}),
-  specialty: z.enum(Specialty).optional(),
+  /** Open template key (spec 11): any key of the template registry. */
+  specialty: z.string().optional(),
   /** S-05: when each step was last settled (ISO), for the funnel and the abandonment reminders. */
   at: z.partialRecord(z.enum(OnboardingStep), z.iso.datetime()).default({}),
 });

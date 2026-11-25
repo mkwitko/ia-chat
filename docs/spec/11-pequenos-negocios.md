@@ -73,7 +73,7 @@ Seis itens: **Início, Conversas, Agenda, Clientes, Resultados, Configurações.
 
 ## Modelo de template por segmento
 
-Hoje o segmento é o enum `Specialty` (quatro áreas de saúde) e a política é uma linha de `specialty_policies`. Para atender outros negócios sem código novo por segmento:
+O segmento é uma chave aberta de template (registro em `packages/core/src/onboarding/templates-data.ts`) e a política é uma linha de `specialty_policies` (coluna `specialty` guarda a chave; `rules` guarda `sensitivity`, `vocabulary`, `followUps`, `funnelStages`). Sem linha de política, vale `sensitivity = health` e "paciente" (o mais conservador). Para atender outros negócios sem código novo por segmento:
 
 | Campo do template | Para que serve | Exemplo (fictício) |
 |---|---|---|
@@ -91,7 +91,7 @@ Hoje o segmento é o enum `Specialty` (quatro áreas de saúde) e a política é
 Regras:
 
 - Lógica compartilhada (agente, validação, funil, métricas) **não** conhece nenhum segmento pelo nome. Ela lê o template. Quiropraxia é um template, não um `if`.
-- O prompt de plataforma deixa de dizer "profissional de saúde": a frase de papel e as listas clínicas (`CLINICAL`, termos de urgência) passam a vir do template, com `sensitivity = health` ligando-as. Mudança em `packages/ai/src/agent/rules.ts` e `validate.ts`, com a bateria de avaliação rodando de novo (gasto pago: precisa de aprovação).
+- O prompt de plataforma deixa de dizer "profissional de saúde": a frase de papel e as listas clínicas (`CLINICAL`, termos de urgência) passam a vir do template, com `sensitivity = health` ligando-as. Feito em M-02: `HEALTH_RULES` (`rules.ts`), a lista clínica e o juiz clínico (`validate.ts`, `checked.ts`) e o piso de urgência (`HEALTH_URGENCY_TERMS` em `prefilter.ts`) só valem com `sensitivity = health`; o termo de urgência próprio do template vale sempre. Falta rodar de novo a bateria de avaliação (gasto pago: precisa de aprovação).
 - Etapas do funil têm um conjunto fixo no sistema para as métricas serem comparáveis; o template só renomeia.
 - Dados de exemplo continuam fictícios e marcados para o dono editar (H-23, quarta linha de políticas).
 - Primeiro template: quiropraxia (o piloto). Salão, estética, clínica de outro tipo e aulas só depois (P2).
