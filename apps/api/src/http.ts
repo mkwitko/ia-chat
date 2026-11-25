@@ -24,6 +24,7 @@ export const ErrorCode = {
   sendFailed: 'send_failed',
   rateLimited: 'rate_limited',
   simulatorOff: 'simulator_off',
+  noGrant: 'no_active_grant',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

@@ -5,6 +5,17 @@ import * as z from 'zod';
 const MIN_SECRET_LENGTH = 32;
 const DEFAULT_PORT = 3000;
 
+const operatorEmails = z
+  .string()
+  .default('')
+  .transform((list) =>
+    list
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean),
+  )
+  .pipe(z.array(z.email()));
+
 export const apiEnvSchema = baseEnvSchema.extend(aiEnvSchema.shape).extend({
   PORT: z.coerce.number().int().positive().default(DEFAULT_PORT),
   BETTER_AUTH_SECRET: z.string().min(MIN_SECRET_LENGTH),
@@ -25,6 +36,8 @@ export const apiEnvSchema = baseEnvSchema.extend(aiEnvSchema.shape).extend({
   /** Public site origin (S-01): the only origin allowed to call the waitlist route. */
   SITE_ORIGIN: z.url().optional(),
   /** Cloudflare Turnstile secret key (S-01). Without it and SITE_ORIGIN the waitlist route is off. */
+  /** Platform operators (E-27, H-23): comma-separated emails. Empty means nobody. */
+  OPERATOR_EMAILS: operatorEmails,
   TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
 });
 

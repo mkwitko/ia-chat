@@ -16,6 +16,7 @@ import { KnowledgeScreen } from './app/setup/knowledge-screen';
 import { ServicesScreen } from './app/setup/services-screen';
 import { ToneScreen } from './app/setup/tone-screen';
 import { SimulatorScreen } from './app/simulator/simulator-screen';
+import { OperatorScreen } from './app/operator/operator-screen';
 import { UsageScreen } from './app/usage/usage-screen';
 import { AppShell } from './app/shell/app-shell';
 import { Route } from './routes';
@@ -43,6 +44,7 @@ export const router = createBrowserRouter([
       { path: Route.services, element: <ServicesScreen /> },
       { path: Route.onboarding, element: <OnboardingScreen /> },
       { path: Route.usage, element: <UsageScreen /> },
+      { path: Route.operator, element: <OperatorScreen /> },
     ],
   },
   { path: '*', element: <Navigate to={Route.conversations} replace /> },
