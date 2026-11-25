@@ -1,4 +1,4 @@
-import { phoneKey, toE164 } from '@app/channels';
+import { phoneKey, typedPhone } from '@app/channels';
 import {
   AgendaError,
   AppointmentCreator,
@@ -69,8 +69,10 @@ function respond(reply: FastifyReply, result: AgendaResult<unknown>, status: num
 async function contactFor(tx: Tx, tenantId: string, body: z.infer<typeof bookSchema>) {
   if (body.contactId) return tx.contact.findFirst({ where: { id: body.contactId } });
   const patient = body.newPatient;
-  const key = patient ? phoneKey(patient.phone) : null;
-  if (!patient || !key) return null;
+  // Typed in the panel: "11 99999-0001" is a Brazilian number (spec 03, RF-23b).
+  const e164 = patient ? typedPhone(patient.phone) : null;
+  const key = e164 ? phoneKey(e164) : null;
+  if (!patient || !e164 || !key) return null;
   const known = await tx.contact.findUnique({
     where: { tenantId_phoneKey: { tenantId, phoneKey: key } },
   });
@@ -80,7 +82,7 @@ async function contactFor(tx: Tx, tenantId: string, body: z.infer<typeof bookSch
       tenantId,
       name: patient.name,
       phoneKey: key,
-      phoneE164: toE164(patient.phone),
+      phoneE164: e164,
       origin: ContactOrigin.manual,
     },
   });

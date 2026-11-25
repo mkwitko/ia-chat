@@ -173,5 +173,3 @@ async function ownedLive(tx: Tx, req: MoveRequest) {
   if (!found) throw new AgendaFailure(AgendaError.appointmentNotFound);
   return found;
 }
-
-}

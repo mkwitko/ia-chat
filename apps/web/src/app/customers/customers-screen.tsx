@@ -75,7 +75,7 @@ function FilterBar({
   onChange,
 }: Readonly<{ value: Stage | null; onChange: (stage: Stage | null) => void }>) {
   return (
-    <fieldset className="flex gap-2 overflow-x-auto [scrollbar-width:none] px-4 py-2 md:px-0">
+    <fieldset className="relative flex min-w-0 gap-2 overflow-x-auto [scrollbar-width:none] px-4 py-2 md:px-0">
       <legend className="sr-only">{Copy.filterLabel}</legend>
       {FILTERS.map((option) => (
         <label

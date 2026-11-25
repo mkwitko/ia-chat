@@ -1,3 +1,4 @@
+import { typedPhone } from './phone.ts';
 import { describe, expect, it } from 'vitest';
 import { phoneKey, toE164 } from './phone.ts';
 
@@ -19,5 +20,15 @@ describe('phone key (RF-23b)', () => {
   it('returns null for something that is not a phone number', () => {
     expect(toE164('abc')).toBeNull();
     expect(phoneKey('')).toBeNull();
+  });
+});
+
+describe('typedPhone', () => {
+  it('assumes Brazil when the professional types a number with DDD only', () => {
+    expect(typedPhone('11999990001')).toBe('+5511999990001');
+    expect(typedPhone('(11) 3333-4444')).toBe('+551133334444');
+    expect(typedPhone('+55 11 99999-0001')).toBe('+5511999990001');
+    expect(typedPhone('5511999990001')).toBe('+5511999990001');
+    expect(typedPhone('123')).toBeNull();
   });
 });
