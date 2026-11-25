@@ -12,7 +12,6 @@ import {
   QUEUES,
   QUEUE_SCHEMA,
   RECONCILE_QUEUE,
-  TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,
   DRAFT_REMINDER_QUEUE,
   SUMMARY_QUEUE,
@@ -20,7 +19,6 @@ import {
   TRIAL_SWEEP_QUEUE,
   createDb,
   recordOpsEvent,
-  sendTenantJob,
   watchDeadLetters,
   workTenantQueue,
 } from '@app/db';
@@ -30,29 +28,16 @@ import { remindDraft, remindHandoff, tenantOf } from './conversation/reminder-jo
 import { NotifyReason, startNotifier, startSummaryNotifier } from './notify/index.ts';
 import { sendNightlySummary } from './agenda/nightly-summary.ts';
 import { syncSummarySchedules } from './agenda/summary-schedule.ts';
-import type { TurnRequest } from './conversation/schedule.ts';
+import { turnScheduler } from './conversation/turn-scheduler.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
 import { logEmailSender } from './trial/log-sender.ts';
 import { sweepTrials } from './trial/sweep.ts';
+import { startReminderSweep } from './reminders/wiring.ts';
 
 const WORKER_READY = 'worker ready';
 const RECONCILE_CODE = 'no_status_after_1h';
 const TRIAL_SWEPT = 'trial sweep done';
-// E-11: one job per (conversation, version); an older version finds a newer one and skips.
-// ponytail: conversation.turn has no consumer until the agent exists (E-13); jobs wait there.
-async function scheduleTurn(tenantId: string, request: TurnRequest): Promise<void> {
-  await sendTenantJob({
-    boss,
-    queue: TURN_QUEUE.name,
-    job: { tenantId, data: { conversationId: request.conversationId, version: request.version } },
-    options: {
-      startAfter: new Date(Date.now() + request.delayMs),
-      singletonKey: `${request.conversationId}:${String(request.version)}`,
-    },
-  });
-}
-
 const SHUTDOWN_SIGNALS = ['SIGTERM', 'SIGINT'] as const;
 const REMINDER_FAILED = 'reminder push failed';
 // RF-26: every morning, in the clinics' time zone.
@@ -117,7 +102,7 @@ await workTenantQueue({
   handler: (tx, data) =>
     processInboundEvent(tx, data, {
       alert,
-      scheduleTurn,
+      scheduleTurn: turnScheduler(boss),
       notifyUsage: (tenantId, { reason, conversationId }) => {
         remind(tenantId, reason)(conversationId);
       },
@@ -184,6 +169,16 @@ await boss.work(TRIAL_SWEEP_QUEUE.name, async () => {
     alert,
   });
   log.info(result, TRIAL_SWEPT);
+});
+
+// E-22 (RF-46, RF-47): confirmations and reminders, every minute.
+await startReminderSweep({
+  boss,
+  db,
+  alert,
+  nodeEnv: env.NODE_ENV,
+  accessToken: process.env.META_ACCESS_TOKEN,
+  log: appLog.info,
 });
 
 const turns = await startTurnWorker({

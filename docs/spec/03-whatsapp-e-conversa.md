@@ -189,7 +189,7 @@ Impede resposta atrasada depois que o humano assumiu ou que o paciente escreveu 
 
 - Cada conversa tem `turn_version`, incrementado a cada mensagem do paciente, a cada eco do dono e a cada mudança de controle.
 - O turno lê a versão ao começar. O envio ocorre dentro de uma transação que faz `select ... for update` na conversa e confere: `control = 'ai'` **e** `turn_version` igual ao lido. Diferente, a resposta é descartada e registrada como `discarded`.
-- A mesma verificação vale para mensagens agendadas ligadas à conversa.
+- A mesma verificação vale para mensagens agendadas ligadas à conversa. Exceção (E-22, RF-31): confirmação e lembretes de agendamento seguem mesmo com a conversa em controle humano; eles tomam o `for update` da conversa e passam por `proactiveGate`, mas não conferem `control` nem `turn_version`.
 - Efeitos de ferramentas já executados (um agendamento criado) não são desfeitos pelo descarte. O turno seguinte recebe no contexto o que foi feito.
 
 Implementação (E-11 e E-12, 24/11/2026):

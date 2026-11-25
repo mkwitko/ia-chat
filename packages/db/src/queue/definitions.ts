@@ -49,6 +49,9 @@ export const SUMMARY_SYNC_QUEUE: QueueDefinition = { name: 'agenda.summary_sync'
 /** S-05: hourly sweep of trial tenants: abandonment reminders and the end of the trial. */
 export const TRIAL_SWEEP_QUEUE: QueueDefinition = { name: 'trial.sweep' };
 
+/** E-22 (RF-46, RF-47): every minute, sends the confirmations and reminders that are due. */
+export const REMINDER_SWEEP_QUEUE: QueueDefinition = { name: 'reminders.sweep' };
+
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
   INBOUND_QUEUE,
@@ -59,4 +62,5 @@ export const QUEUES: readonly QueueDefinition[] = [
   SUMMARY_QUEUE,
   SUMMARY_SYNC_QUEUE,
   TRIAL_SWEEP_QUEUE,
+  REMINDER_SWEEP_QUEUE,
 ];

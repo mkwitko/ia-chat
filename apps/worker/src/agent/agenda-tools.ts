@@ -3,6 +3,7 @@ import {
   AppointmentCreator,
   bookAppointment,
   cancelAppointment,
+  confirmAppointment,
   listUpcoming,
   rescheduleAppointment,
   type AgendaResult,
@@ -42,6 +43,7 @@ export function agendaTools(context: ToolContext): ToolSet {
     [AgendaToolName.book]: bookTool(context),
     [AgendaToolName.reschedule]: rescheduleTool(context),
     [AgendaToolName.cancel]: cancelTool(context),
+    [AgendaToolName.confirm]: confirmTool(context),
     [AgendaToolName.list]: listTool(context),
   };
 }
@@ -148,6 +150,20 @@ function cancelTool(context: ToolContext) {
       });
       return outcome(context, result);
     },
+  });
+}
+
+function confirmTool(context: ToolContext) {
+  const { db, tenantId, contactId, now } = context;
+  return tool({
+    description:
+      'Marca como confirmado o agendamento do paciente quando ele responde "confirmar" a um lembrete.',
+    inputSchema: z.object({ agendamento: z.uuid() }),
+    execute: async ({ agendamento }) =>
+      outcome(
+        context,
+        await confirmAppointment(db, { tenantId, contactId, appointmentId: agendamento, now }),
+      ),
   });
 }
 
