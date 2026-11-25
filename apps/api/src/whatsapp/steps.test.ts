@@ -55,13 +55,13 @@ describe('runSetup', () => {
     expect(isReady(result.done)).toBe(true);
   });
 
-  it('never registers a coexistence number; without a card at Meta it is not ready', async () => {
+  it('never registers a coexistence number; without a card at Meta it is still ready', async () => {
     const { client, calls } = fakeClient(false, false);
     const result = await runSetup(context(client, { coexistence: true }), []);
     expect(calls.some((call) => call.startsWith('register'))).toBe(false);
     expect(result.error).toBeNull();
     expect(result.done).not.toContain(SetupStep.paymentMethod);
-    expect(isReady(result.done)).toBe(false);
+    expect(isReady(result.done)).toBe(true);
   });
 
   it('stops at the failing step with the Meta code, and skips what was done on retry', async () => {
