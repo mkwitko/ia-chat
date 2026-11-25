@@ -211,4 +211,4 @@ e) lucros cessantes, perda de clientes ou de agendamentos, salvo dolo ou culpa g
 
 18.1. Estes Termos seguem a lei brasileira.
 
-18.2. Fica eleito o foro da comarca de Florianópolis (SC), salvo quando a lei garantir ao Cliente o foro do seu domicílio.
+18.2. Fica eleito o foro da comarca de Porto Alegre (RS), salvo quando a lei garantir ao Cliente o foro do seu domicílio.
