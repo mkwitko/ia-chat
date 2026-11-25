@@ -30,6 +30,8 @@ export interface AgentDeps {
   db: Db;
   gateway: AiGateway;
   now?: () => Date;
+  /** Web Push keys are configured; without them no professional can be warned. */
+  pushEnabled?: boolean;
 }
 
 export function createConversationAgent(
@@ -40,10 +42,11 @@ export function createConversationAgent(
     let input = await deps.db.withTenant(turn.tenantId, (tx) =>
       loadAgentInput(tx, turn.conversationId, now),
     );
-    const prefiltered = await applyPrefilter(deps.db, turn, input);
+    const urgent = urgentReply(await canWarn(deps, turn.tenantId));
+    const prefiltered = await applyPrefilter(deps.db, turn, { input, urgent });
     // null (nothing to answer) is a decision too; only undefined goes on to the judge.
     const filtered =
-      prefiltered === undefined ? await judgedUrgency(deps.gateway, turn) : prefiltered;
+      prefiltered === undefined ? await judgedUrgency(deps.gateway, turn, urgent) : prefiltered;
     if (filtered !== undefined) return filtered && introducedReply(filtered, input);
     if (input.autonomy === Autonomy.off)
       return introducedReply(fixed(AgentCopy.away(input.profile), false), input);
@@ -59,30 +62,31 @@ export function createConversationAgent(
 async function judgedUrgency(
   gateway: AiGateway,
   turn: RespondInput,
+  urgent: TurnReply,
 ): Promise<TurnReply | undefined> {
   const mensagem = turn.messages
     .map((message) => message.text ?? '')
     .join('\n')
     .trim();
   if (!mensagem) return undefined;
-  const { urgent } = await gateway.judge(turn, {
+  const { urgent: judged } = await gateway.judge(turn, {
     state: { mensagem },
     questions: { urgent: JUDGE_QUESTIONS[JudgeQuestionId.urgent] },
   });
   const isUrgent =
-    urgent?.kind === JudgeKind.noul &&
-    urgent.probability >= JUDGE_THRESHOLDS[JudgeQuestionId.urgent];
-  return isUrgent ? urgentReply() : undefined;
+    judged?.kind === JudgeKind.noul &&
+    judged.probability >= JUDGE_THRESHOLDS[JudgeQuestionId.urgent];
+  return isUrgent ? urgent : undefined;
 }
 
 /** undefined: go on to the model. null or a reply: the pre-filter decided. */
 async function applyPrefilter(
   db: Db,
   turn: RespondInput,
-  input: AgentInput,
+  { input, urgent }: { input: AgentInput; urgent: TurnReply },
 ): Promise<TurnReply | null | undefined> {
   const { kind } = prefilter(turn.messages, input.specialtyTerms);
-  if (kind === PrefilterKind.urgency) return urgentReply();
+  if (kind === PrefilterKind.urgency) return urgent;
   if (kind === PrefilterKind.ignore) return null;
   if (kind === PrefilterKind.unsupported) return fixed(AgentCopy.unsupported, false);
   if (kind === PrefilterKind.optOut) {
@@ -137,8 +141,15 @@ function introducedReply(reply: TurnReply, input: AgentInput): TurnReply {
   return { ...reply, text: introducedAfter(reply.text, input) };
 }
 
-function urgentReply(): TurnReply {
-  return { ...fixed(AgentCopy.emergency, true), urgent: true };
+function urgentReply(notified: boolean): TurnReply {
+  return { ...fixed(AgentCopy.emergency(notified), true), urgent: true };
+}
+
+/** The emergency answer may only say "já avisei" when a push can really reach someone. */
+async function canWarn(deps: AgentDeps, tenantId: string): Promise<boolean> {
+  if (!deps.pushEnabled) return false;
+  const devices = await deps.db.withTenant(tenantId, (tx) => tx.pushSubscription.count());
+  return devices > 0;
 }
 
 /** Deterministic answers skip approval: an emergency message must not wait for a draft. */

@@ -1,7 +1,7 @@
 import { Identity } from '@app/ai';
 import { Autonomy, IdentityMode, KnowledgeSource, MessageType } from '@app/db';
 import { afterAll, describe, expect, it } from 'vitest';
-import { agentWith, conversation, db, scripted, turnOf } from './agent-fixtures.ts';
+import { agentWith, conversation, db, scripted, subscribePush, turnOf } from './agent-fixtures.ts';
 import { AgentCopy } from '@app/agent';
 import { ToolName } from './tools.ts';
 
@@ -13,12 +13,24 @@ describe('conversation agent (E-13)', () => {
     const fake = scripted([]);
     const reply = await agentWith(fake.model)(turnOf(scope, ['to com dor no peito agora']));
     expect(reply).toMatchObject({
-      text: `${AgentCopy.emergency} Aqui é Lia, assistente virtual do consultório de Dr. Rafael Exemplo.`,
+      text: `${AgentCopy.emergency(false)} Aqui é Lia, assistente virtual do consultório de Dr. Rafael Exemplo.`,
       handoff: true,
       mode: 'send',
       model: 'none',
     });
     expect(fake.prompts).toHaveLength(0);
+  });
+
+  it('says the professional was warned only when a push really reaches them', async () => {
+    const scope = await conversation({ autonomy: Autonomy.approve });
+    const urgent = turnOf(scope, ['to com dor no peito agora']);
+    const noKeys = await agentWith(scripted([]).model, { pushEnabled: false })(urgent);
+    expect(noKeys?.text).not.toContain('avisei');
+    const noDevice = await agentWith(scripted([]).model, { pushEnabled: true })(urgent);
+    expect(noDevice?.text).not.toContain('avisei');
+    await subscribePush(scope.tenantId);
+    const warned = await agentWith(scripted([]).model, { pushEnabled: true })(urgent);
+    expect(warned?.text).toContain('Já avisei o profissional');
   });
 
   it('registers opt-out and ignores a lone sticker without calling the model', async () => {
@@ -55,8 +67,10 @@ describe('conversation agent (E-13)', () => {
       'Oi! Aqui é do consultório de Dra. Ana Exemplo.',
     );
     expect(AgentCopy.identification({ ...persona, identity: Identity.professional })).toBeNull();
-    // The push notice (E-16) goes out with the emergency answer, so the copy may say so.
-    expect(AgentCopy.emergency).toContain('Já avisei o profissional');
+    // Only a professional who really gets the push (E-16) is said to be warned.
+    expect(AgentCopy.emergency(true)).toContain('Já avisei o profissional');
+    expect(AgentCopy.emergency(false)).not.toContain('avisei');
+    expect(AgentCopy.emergency(false)).toContain('192');
   });
 
   it('speaks as the professional without any introduction in that mode', async () => {

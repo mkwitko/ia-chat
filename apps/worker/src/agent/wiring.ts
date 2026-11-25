@@ -1,4 +1,5 @@
 import { aiConfigured, aiEnvSchema, createEnvGateway, startTracing } from '@app/ai';
+import { pushEnvSchema, vapidFrom } from '../notify/push.ts';
 import { createChannelSender } from '@app/channels';
 import { NodeEnv } from '@app/core';
 import {
@@ -23,7 +24,9 @@ const turnJob = z.object({
   tenantId: z.uuid(),
   data: z.object({ conversationId: z.uuid(), version: z.number().int() }),
 });
-const workerEnvSchema = aiEnvSchema.extend({ META_ACCESS_TOKEN: z.string().min(1).optional() });
+const workerEnvSchema = aiEnvSchema
+  .extend({ META_ACCESS_TOKEN: z.string().min(1).optional() })
+  .extend(pushEnvSchema.shape);
 
 interface TurnWiring {
   boss: PgBoss;
@@ -76,7 +79,7 @@ interface DepsSources {
 function turnDeps({ db, boss, notifier, env, nodeEnv, log }: DepsSources): TurnDeps {
   const gateway = createEnvGateway({ db, env, nodeEnv });
   return {
-    respond: createConversationAgent({ db, gateway }),
+    respond: createConversationAgent({ db, gateway, pushEnabled: vapidFrom(env) !== null }),
     notify: (input) => {
       // Fire and forget: a failing push must never fail the turn.
       notifier(input).catch((error: unknown) => {

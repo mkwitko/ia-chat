@@ -61,7 +61,11 @@ const OPEN_CAPS = { turn: 1_000_000n, conversation: 1_000_000n, tenantMonth: 1_0
 /** judge: probability per question key the agent asks (urgent, clinical); absent = Jev down. */
 export function agentWith(
   model: MockLanguageModelV3,
-  { caps = OPEN_CAPS, judge }: { caps?: typeof OPEN_CAPS; judge?: Record<string, number> } = {},
+  {
+    caps = OPEN_CAPS,
+    judge,
+    pushEnabled = false,
+  }: { caps?: typeof OPEN_CAPS; judge?: Record<string, number>; pushEnabled?: boolean } = {},
 ) {
   const gateway = createAiGateway({
     routes: {
@@ -95,7 +99,12 @@ export function agentWith(
           : Promise.reject(new Error('Jev down')),
     },
   });
-  return createConversationAgent({ db, gateway, now: () => new Date('2027-01-04T12:00:00Z') });
+  return createConversationAgent({
+    db,
+    gateway,
+    pushEnabled,
+    now: () => new Date('2027-01-04T12:00:00Z'),
+  });
 }
 
 export async function conversation({
@@ -161,3 +170,21 @@ export const turnOf = (
   turnId: randomUUID(),
   messages: texts.map((text) => ({ id: randomUUID(), type, text })),
 });
+
+/** A panel user of the tenant with notifications turned on in one browser. */
+export async function subscribePush(tenantId: string): Promise<void> {
+  const user = await db.client.user.create({
+    data: { name: 'Pessoa Teste', email: `push-${randomUUID()}@example.com`, emailVerified: true },
+  });
+  await db.withTenant(tenantId, (tx) =>
+    tx.pushSubscription.create({
+      data: {
+        tenantId,
+        userId: user.id,
+        endpoint: `https://push.example/${randomUUID()}`,
+        p256dh: 'k',
+        auth: 'a',
+      },
+    }),
+  );
+}
