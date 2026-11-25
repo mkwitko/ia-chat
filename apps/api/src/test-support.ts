@@ -17,6 +17,12 @@ const TEST_ENV = {
   BETTER_AUTH_SECRET: 'test-secret-that-is-at-least-32-characters-long',
   BETTER_AUTH_URL: 'http://localhost:3000',
   WEB_ORIGIN: 'http://localhost:5173',
+  // Integrations stay off unless a test turns one on: a developer's .env must not change results.
+  GOOGLE_CLIENT_ID: undefined,
+  GOOGLE_CLIENT_SECRET: undefined,
+  GOOGLE_TOKEN_KEY: undefined,
+  SENTRY_DSN: undefined,
+  AXIOM_TOKEN: undefined,
 };
 const PASSWORD = 'senha-de-teste-123';
 const SET_COOKIE = 'set-cookie';
