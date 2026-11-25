@@ -39,6 +39,7 @@ model Channel {
 
   conversations Conversation[] @relation("Conversation_channel")
   inboundEvents InboundEvent[] @relation("InboundEvent_channel")
+  metaUsages    MetaMessageUsage[] @relation("MetaMessageUsage_channel")
   routes        ChannelRoute[] @relation("ChannelRoute_channel")
 
   @@unique([tenantId, id])

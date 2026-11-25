@@ -57,8 +57,20 @@ export const UsageCopy = {
   capForbidden: 'Só o dono da conta pode mudar o teto.',
   capSaveFailed: 'Não conseguimos salvar o teto. Tente de novo.',
   capSaved: 'Teto salvo.',
-  metaHeading: 'Custo na Meta',
-  metaNote:
-    'A Meta cobra à parte, direto de você, as mensagens enviadas ao paciente fora da janela de 24 horas (lembretes, confirmações e mensagens ativas). Responder a quem escreveu primeiro não tem custo. Isso não entra na sua fatura nem no excedente, e o valor depende da tabela da Meta para o Brasil.',
+  meta: {
+    heading: 'WhatsApp (Meta)',
+    freeLine: (used: number, free: number) =>
+      `Respostas grátis da Meta este mês: ${used.toLocaleString('pt-BR')} de ${free.toLocaleString('pt-BR')}`,
+    barLabel: 'Respostas grátis da Meta usadas no mês',
+    over: (count: number) =>
+      `${count.toLocaleString('pt-BR')} respostas passaram da cota grátis da Meta neste mês.`,
+    utility: (count: number) =>
+      `Lembretes e confirmações com custo: ${count.toLocaleString('pt-BR')}`,
+    marketing: (count: number) =>
+      `Mensagens de divulgação com custo: ${count.toLocaleString('pt-BR')}`,
+    estimate: (cents: number) => `Custo estimado da Meta este mês: ${formatCents(cents)}`,
+    note: 'Quem paga a Meta somos nós, e isso não entra na sua fatura. Mostramos aqui só para você acompanhar o volume.',
+    loadFailed: 'Não conseguimos carregar o uso do WhatsApp agora.',
+  },
   loadFailed: 'Não conseguimos carregar o uso. Confira a conexão e tente de novo.',
 } as const;

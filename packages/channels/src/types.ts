@@ -78,9 +78,18 @@ export type InboundEvent =
       providerMessageId: string;
       status: DeliveryStatus;
       error?: ProviderError | undefined;
+      /** What Meta charged for this message, when the status carries it (H-05). */
+      pricing?: MessagePricing | undefined;
       at: Date;
     }
   | { kind: typeof InboundKind.channelState; state: ChannelState; at: Date };
+
+export interface MessagePricing {
+  billable: boolean;
+  /** As Meta sent it: service, utility, marketing... */
+  category: string;
+  type?: string | undefined;
+}
 
 /** Events of one provider account (Cloud API phone_number_id), routed to one channel. */
 export interface InboundBatch {

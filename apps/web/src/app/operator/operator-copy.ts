@@ -74,6 +74,19 @@ export const OperatorCopy = {
         .filter(Boolean)
         .join(' · '),
   },
+  meta: {
+    heading: 'WhatsApp (Meta) no mês',
+    hint: 'Uso somado de todos os clientes. Quem paga a Meta somos nós; o valor é estimativa. Só contagens, nunca o conteúdo das conversas.',
+    service: (used: number, over: number) =>
+      `Respostas de atendimento: ${String(used)} (${String(over)} acima da cota grátis)`,
+    templates: (utility: number, marketing: number) =>
+      `Com custo: ${String(utility)} lembretes e confirmações, ${String(marketing)} de divulgação`,
+    total: (cents: number) => `Custo estimado: ${formatCents(cents)}`,
+    topHeading: 'Clientes com maior custo',
+    none: 'Nenhum custo neste mês.',
+    topLine: (name: string, cents: number, used: number) =>
+      `${name}: ${formatCents(cents)} (${String(used)} respostas)`,
+  },
   funnel: {
     heading: 'Funil do cadastro',
     signups: (total: number) => `${String(total)} cadastros`,

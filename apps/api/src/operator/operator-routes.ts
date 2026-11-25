@@ -15,6 +15,7 @@ import {
 } from './grants.ts';
 import { requireOperator } from './operator-guard.ts';
 import { funnelOf } from './funnel.ts';
+import { metaOverview } from './meta-overview.ts';
 import { clientRows } from './overview.ts';
 import { tenantConversations } from './tenant-conversations.ts';
 
@@ -29,6 +30,9 @@ export function registerOperatorRoutes(app: FastifyInstance): void {
   app.get(`${BASE}/me`, { preHandler }, () => ({ operator: true }));
   app.get(`${BASE}/clients`, { preHandler }, listClients);
   app.get(`${BASE}/funnel`, { preHandler }, (request) => funnelOf(request.server.db));
+  app.get(`${BASE}/meta-usage`, { preHandler }, (request) =>
+    metaOverview(request.server.db, new Date()),
+  );
   app.get(`${BASE}/problems`, { preHandler }, (request) => recentOpsEvents(request.server.db));
   app.post(`${BASE}/tenants/:tenantId/access`, { preHandler }, grantAccess);
   app.get(`${BASE}/tenants/:tenantId/conversations`, { preHandler }, readConversations);

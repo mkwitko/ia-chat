@@ -124,7 +124,7 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
 
 ### Plano e uso
 
-- Plano atual, conversas usadas na franquia, previsão para o mês e estimativa de gasto na Meta.
+- Plano atual, conversas usadas na franquia, previsão para o mês e o bloco "WhatsApp (Meta)": respostas grátis da Meta usadas no mês (ex.: "640 de 1.000"), mensagens com custo por categoria e custo estimado, `GET /api/usage/meta`. Redigido como informação, não como cobrança: a Meta é paga por nós e não entra na fatura do cliente.
 - Teto de excedente, troca de plano, faturas, cancelamento.
 
 ### Onboarding
@@ -133,7 +133,7 @@ Os oito passos de [09](09-site-aquisicao-suporte.md), um por tela, com barra de 
 
 ### Operador (interno)
 
-Fora da navegação do cliente, em endereço e autenticação próprios: clientes, custos, falhas, acesso assistido com motivo e prazo.
+Fora da navegação do cliente, em endereço e autenticação próprios: clientes, custos, falhas, acesso assistido com motivo e prazo, e o painel "WhatsApp (Meta) no mês": totais de todos os clientes (respostas, mensagens com custo, custo estimado) e os cinco clientes de maior custo, `GET /api/operator/meta-usage`. Só contagens e nomes de clientes, sem conteúdo nem dados de paciente.
 
 ## Tempo real
 

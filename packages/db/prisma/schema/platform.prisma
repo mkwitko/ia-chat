@@ -74,6 +74,7 @@ model Tenant {
   scheduledMessages ScheduledMessage[]
   payments          Payment[]
   aiUsages          AiUsage[]
+  metaUsages        MetaMessageUsage[]
   usageCounters     UsageCounter[]
   auditLogs         AuditLog[]
   contactStageEvents ContactStageEvent[]
