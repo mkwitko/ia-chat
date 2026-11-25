@@ -48,7 +48,8 @@ export const CustomerCopy = {
   consentEmpty: 'Nenhum registro de consentimento ainda.',
   consentCategory: (category: string) => `para ${category}`,
   recordOptOut: 'Registrar que pediu para parar',
-  recordOptIn: 'Registrar que voltou a aceitar',
+  optedOutNote:
+    'Esta pessoa pediu para parar. Só ela pode voltar a receber mensagens, escrevendo "voltar" no WhatsApp.',
   optOutConfirm:
     'Registrar que esta pessoa pediu para parar? O assistente deixa de mandar mensagens por iniciativa própria.',
   consentSaved: 'Consentimento registrado.',

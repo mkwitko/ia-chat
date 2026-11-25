@@ -59,6 +59,16 @@ describe('deterministic pre-filters (spec 04, "Fluxo de um turno")', () => {
     });
   });
 
+  it('reads a bare "voltar" or an explicit request as the client asking to come back', () => {
+    expect(prefilter([text('Voltar!')], [])).toEqual({ kind: PrefilterKind.optIn });
+    expect(prefilter([text('quero voltar a receber mensagens')], [])).toEqual({
+      kind: PrefilterKind.optIn,
+    });
+    expect(prefilter([text('preciso voltar na quinta')], [])).toEqual({
+      kind: PrefilterKind.model,
+    });
+  });
+
   it('ignores a lone sticker and asks to write when nothing is readable', () => {
     expect(prefilter([{ type: MessageType.sticker, text: null }], HEALTH_URGENCY_TERMS)).toEqual({
       kind: PrefilterKind.ignore,

@@ -117,6 +117,7 @@ const consentView = (e: ConsentEvent) => ({
   category: e.category,
   source: e.source,
   actorType: e.actorType,
+  noticeText: e.noticeText,
   at: e.createdAt,
 });
 

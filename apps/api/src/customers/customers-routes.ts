@@ -47,7 +47,8 @@ const stageSchema = z
     lostReason: z.enum(LostReason).optional(),
   })
   .strict();
-const consentSchema = z.object({ kind: z.enum(ConsentKind) }).strict();
+// Only the client brings consent back (by writing "voltar"); the owner can only record an opt-out.
+const consentSchema = z.object({ kind: z.literal(ConsentKind.opt_out) }).strict();
 
 export function registerCustomerRoutes(app: FastifyInstance): void {
   const read = { preHandler: requireTenant() };
