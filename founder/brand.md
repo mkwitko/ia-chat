@@ -72,3 +72,47 @@ Confusão com concorrente: nenhum nome da lista curta é parecido com Cloudia, C
 Continuar com o `DESIGN.md` e a paleta de `docs/brand.md` (azul-petróleo `#0B6E7A`, laranja-atenção `#B8480F`, tinta `#13191C`; contrastes AA já medidos lá) para não refazer o painel. Tipografia: Figtree (OFL). Logo: brief novo em torno de "balão de conversa que vira horário/relógio"; evitar cruz, robô, faísca de IA, verde do WhatsApp, e qualquer semelhança com o logo da Vivo (roxo, "V" e "o"). Conceitos de IA são conceitos; o logo final passa por designer.
 
 Cinco pontos de contato: página inicial, onboarding, confirmação ao dono, primeiro post, resposta à primeira reclamação; mesmo roteiro de `docs/brand.md`, trocando "paciente" por "cliente" e "consultório" por "negócio".
+
+## Segunda rodada (25/11/2026)
+
+A primeira lista não convenceu. Critério novo: soar como algo que o brasileiro já fala ao marcar horário, ser fácil de soletrar ao telefone, sem "IA", "bot" ou "zap".
+
+Consultei o RDAP de uns 80 nomes. Quase toda palavra comum já tem dono: marquei, encaixe, vaguinha, marca aí, atendi, tá marcado (.com.br), pode deixar, até lá, agendinha, combinado. Sobraram, com .com.br e .com sem registro:
+
+| Nome | O que diz | Ao telefone | Risco |
+| --- | --- | --- | --- |
+| **Marcadinha** | "tá marcadinha", carinho e certeza. Uma palavra, escreve como fala | "marcadinha, tudo junto" | Diminutivo pode soar pouco sério para clínica; INPI: palavra comum, registro fraco sem logo |
+| **Ficou Marcado** | É a frase que o assistente diz ao fechar. A promessa no nome | "ficou marcado, tudo junto" | Longo (13 letras) para ícone; descritivo, marca mais fraca |
+| **Já Tem Vaga** | A pergunta que o paciente faz e o produto responde | "já tem vaga" | Fala do paciente, não do dono; frase, não nome |
+| **Oi Vaga** | Curto, cumprimento de WhatsApp | "oi vaga" | **Oi** é marca de telecom (Oi S.A.), classe 38. Evitar sem parecer |
+| **Recepviva** | Da primeira rodada, continua livre | "recepviva" | Parecido com Vivo |
+
+**Recomendação: Marcadinha.** É a única que é uma palavra só, fala a linguagem do cliente final do pequeno negócio e cabe num ícone ("M"). Plano B: Ficou Marcado, como slogan ou nome.
+
+Checar antes de decidir: INPI (https://busca.inpi.gov.br/pePI/) nas classes 9, 35, 38 e 42; Registro.br; Instagram e TikTok com o nome. Busca pública não é parecer; quem confirma é advogado de marcas, e nada está reservado até o registro.
+
+### Tá Marcado: descartado
+
+`tamarcado.com.br` é de outra empresa desde 2020 e mostra no ar a "TáMarcado!", uma plataforma de agendamento online, que é o nosso segmento. `tamarcado.com` está à venda na Afternic. O risco de colisão é alto.
+
+## Terceira rodada (25/11/2026)
+
+Consultei mais 80 nomes. Com .com.br e .com sem registro, e sem produto de mesmo nome na busca web:
+
+| Nome | Promessa | Observação |
+| --- | --- | --- |
+| **Agenda Cheinha** | o resultado que o dono quer | fala de ganho, não de ferramenta |
+| **Confirmadinho** | o horário confirmado, sem falta | combina com o lembrete |
+| **Marcadinha** | "tá marcadinha" | uma palavra |
+| **Ninguém Falta** | ataca a falta | frase longa |
+| **Atentinha** | a recepcionista atenta | persona |
+| **Cliente Chega** | o cliente aparece | descritivo |
+| **Marcadeira** | quem marca por você | soa a profissão |
+| **Quem Marca** | "quem marca é ela" | ambíguo sozinho |
+| **Recepçãozinha / Balcãozinho** | a recepção pequena | o "ç" e o "ã" atrapalham no domínio |
+
+Livres apenas no .com.br: Prontinha, Recepcionando.
+
+## Decisão (25/11/2026)
+
+O dono manteve **Consultório Aberto**: as rodadas acima soaram leves demais. `consultorioaberto.com.br` e `.com` estavam sem registro nesta data, e a busca web não achou produto com esse nome (o mais próximo é Consultorio.me). Limite conhecido: o nome fala de saúde. Se o produto for para salão ou barbearia, revisitar o nome ou criar uma linha com outro nome.
