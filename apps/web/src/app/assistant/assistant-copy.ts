@@ -1,3 +1,4 @@
+import { Route } from '@/routes';
 import { Autonomy, IdentityMode } from './settings-api';
 
 // Spec 10, "Assistente": each level says what happens in practice. Spec 01: identity modes.
@@ -7,6 +8,15 @@ export const DEFAULT_ASSISTANT_NAME = 'Assistente virtual';
 export const AssistantCopy = {
   title: 'Assistente',
   back: 'Mais',
+  sectionsLabel: 'Configurações do assistente',
+  sections: [
+    { label: 'Tom de voz', hint: 'Como o assistente escreve', to: Route.tone },
+    {
+      label: 'Base de conhecimento',
+      hint: 'Perguntas e respostas, e o que ele não soube',
+      to: Route.knowledge,
+    },
+  ],
   autonomyLegend: 'Quanto o assistente faz sozinho',
   autonomy: [
     {

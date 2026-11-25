@@ -6,6 +6,8 @@ model Professional {
   name             String
   toneOfVoice      String?  @map("tone_of_voice")
   messageExamples  String[] @default([]) @map("message_examples")
+  /// The four tone questions as answered in the panel; tone_of_voice is derived from them.
+  toneAnswers      Json     @default("{}") @map("tone_answers")
   googleCalendarId String?  @map("google_calendar_id")
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz

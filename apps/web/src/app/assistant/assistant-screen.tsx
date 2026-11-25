@@ -1,4 +1,4 @@
-import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { LoadingCopy } from '@/copy';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
+import { BackLink } from '../screens/back-link';
 import { Screen } from '../screens/screen';
 import { AssistantCopy as Copy, DEFAULT_ASSISTANT_NAME, introPreview } from './assistant-copy';
 import { ChoiceList } from './choice-list';
@@ -28,13 +29,25 @@ export function AssistantScreen() {
   const settings = useAssistantSettings();
   return (
     <Screen title={Copy.title}>
-      <Link
-        to={Route.more}
-        className="flex min-h-11 items-center gap-1 px-4 text-sm font-semibold text-primary md:px-0"
+      <BackLink to={Route.more} label={Copy.back} />
+      <nav
+        aria-label={Copy.sectionsLabel}
+        className="mx-4 mb-6 divide-y rounded-xl border bg-card md:mx-0"
       >
-        <ChevronLeft className="size-4" aria-hidden="true" />
-        {Copy.back}
-      </Link>
+        {Copy.sections.map((section) => (
+          <Link
+            key={section.to}
+            to={section.to}
+            className="flex min-h-14 items-center gap-3 px-4 hover:bg-muted"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">{section.label}</span>
+              <span className="block truncate text-sm text-muted-foreground">{section.hint}</span>
+            </span>
+            <ChevronRight className="size-5 text-muted-foreground" aria-hidden="true" />
+          </Link>
+        ))}
+      </nav>
       {settings.isPending && (
         <p className="px-4 py-6 text-muted-foreground md:px-0">{LoadingCopy}</p>
       )}
