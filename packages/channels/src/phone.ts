@@ -23,7 +23,8 @@ export function phoneKey(raw: string): string | null {
   return `+${BRAZIL}${national.slice(0, DDD_LENGTH)}${national.slice(DDD_LENGTH + 1)}`;
 }
 
-const NATIONAL_LENGTHS = new Set([10, 11]); // DDD + 8 (landline) or DDD + 9 (mobile)
+const LANDLINE_WITH_DDD = MOBILE_WITH_NINE - 1; // DDD + 8 digits
+const NATIONAL_LENGTHS = new Set([LANDLINE_WITH_DDD, MOBILE_WITH_NINE]);
 
 /**
  * A number the professional typed in the panel: with only DDD and number it is Brazilian, so
