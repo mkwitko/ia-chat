@@ -43,13 +43,14 @@ export async function refreshSummary(deps: SummaryDeps, scope: Scope): Promise<v
       },
     ],
   });
-  // M-03: a summary with health information is not kept; the window still moves on.
+  // M-03: a summary with health information is not kept; the previous one was already checked,
+  // so it stays, and the window still moves on.
   const blocked = await healthGuard({ gateway, log: deps.log, scope })(text, SUMMARY_TARGET);
   const until = older.messages.at(-1)?.createdAt ?? null;
   await db.withTenant(scope.tenantId, (tx) =>
     tx.conversation.update({
       where: { id: scope.conversationId },
-      data: { summary: blocked ? null : text, summaryUntil: until },
+      data: { summary: blocked ? older.previous : text, summaryUntil: until },
     }),
   );
 }
