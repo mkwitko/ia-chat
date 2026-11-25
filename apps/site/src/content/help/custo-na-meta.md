@@ -2,9 +2,11 @@
 title: 'Custo na Meta'
 category: conta
 order: 2
-summary: 'Quem paga a Meta pelas mensagens do WhatsApp.'
+summary: 'O que a Meta cobra à parte e o que não cobra.'
 ---
 
-A Meta cobra pelas mensagens que o assistente envia pelo WhatsApp oficial. Esse custo é nosso: já está na sua mensalidade e no excedente. Você não cadastra cartão na Meta nem recebe fatura dela.
+A Meta cobra à parte, direto de você, as mensagens enviadas ao paciente **fora da janela de 24 horas**: lembretes, confirmações e mensagens ativas. Responder a quem escreveu primeiro não tem custo.
 
-As respostas que você mesmo envia pelo celular continuam sem custo.
+Esse valor não entra na sua fatura nem no excedente, e depende da tabela da Meta para o Brasil. Na [página de preços](/precos) há uma estimativa para o seu volume.
+
+A conexão com a Meta ainda não está disponível (**em breve**).

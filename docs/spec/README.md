@@ -61,7 +61,7 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | H-02 | Aceita usar Google Calendar como espelho da agenda | Precisa de integração com outro sistema ou só agenda interna | Perguntar qual agenda usa hoje |
 | H-03 | Não é fisioterapeuta registrado no COFFITO | Se for, divulgação de preço fica restrita | Perguntar formação e registro |
 | H-04 | Recebe entre 150 e 400 conversas por mês | Muda franquia e custo de Meta | Pedir contagem aproximada de uma semana |
-| H-05 | Pagamos a Meta por todos os clientes (decisão do dono, 25/11/2026) | Pela documentação da Meta (Soluções multiparceiro, lida em 25/11/2026), só um Parceiro de Soluções (BSP) compartilha linha de crédito com a conta do cliente; Provedor de Tecnologia não. Caminho: solução multiparceiro com um BSP, que paga a Meta e nos fatura. No piloto, cartão nosso cadastrado na conta WhatsApp do cliente (não verificado se a Meta aceita cartão de terceiro). Sem forma de pagamento, as mensagens param após as 1.000 gratuitas do mês | Escolher o BSP antes do segundo cliente |
+| H-05 | Aceita cadastrar forma de pagamento na Meta | Mensagens param após a franquia gratuita | Explicar no onboarding com estimativa de valor |
 | H-06 | Aceita que o assistente se identifique como virtual na primeira mensagem | Conflito com transparência exigida; não negociável | Mostrar exemplo de conversa |
 | H-07 | Sessões têm duração fixa por serviço e sem sobreposição | Precisa de regra de capacidade | Levantar serviços e durações |
 | H-08 | Tem ou aceita abrir conta no Mercado Pago | Sinal Pix só com confirmação manual | Perguntar que conta usa para receber Pix hoje |
