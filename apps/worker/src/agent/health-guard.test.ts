@@ -45,6 +45,8 @@ describe('registrar_duvida_sem_resposta (M-03)', () => {
     expect(await stored(scope.tenantId)).toHaveLength(0);
     expect(events).toHaveLength(1);
     expect(JSON.stringify(events)).not.toContain('lombar');
+    // The turn's own messages must not ride along in the scope (usage rows, logs).
+    expect(JSON.stringify(events)).not.toContain('estacionamento');
   });
 
   it('rejects a question over the length cap', async () => {

@@ -24,7 +24,9 @@ interface GuardDeps {
   scope: { tenantId: string; conversationId: string };
 }
 
-export function healthGuard({ gateway, log, scope }: GuardDeps): HealthGuard {
+export function healthGuard({ gateway, log, scope: source }: GuardDeps): HealthGuard {
+  // Only the ids: callers may pass the whole turn, whose messages must not reach usage or logs.
+  const scope = { tenantId: source.tenantId, conversationId: source.conversationId };
   return async (text, target) => {
     const answers = await gateway.judge(scope, {
       state: { mensagem: text },
