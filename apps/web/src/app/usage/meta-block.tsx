@@ -4,7 +4,7 @@ import { UsageCopy } from './usage-copy';
 const Copy = UsageCopy.meta;
 const FULL_PERCENT = 100;
 
-/** H-05: how much of Meta's free allowance was used. Information only: we pay Meta (H-05). */
+/** H-05: how much of Meta's free allowance was used. Estimate of what Meta charges the client's own card. */
 export function MetaBlock() {
   const meta = useMetaUsage();
   return (

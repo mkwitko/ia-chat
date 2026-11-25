@@ -1,5 +1,5 @@
-// Meta WhatsApp pricing (research 01 §6, spec 03). We pay Meta for every client (H-05), so
-// this is information for the professional and the operator, never an invoice line.
+// Meta WhatsApp pricing (research 01 §6, spec 03). Each client pays Meta on their own card, so
+// this is an estimate shown to the professional and the operator, never an invoice line.
 
 export const MetaCategory = {
   service: 'service',

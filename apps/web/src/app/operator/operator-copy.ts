@@ -75,13 +75,13 @@ export const OperatorCopy = {
         .join(' · '),
   },
   meta: {
-    heading: 'WhatsApp (Meta) no mês',
-    hint: 'Uso somado de todos os clientes. Quem paga a Meta somos nós; o valor é estimativa. Só contagens, nunca o conteúdo das conversas.',
+    heading: 'Gasto dos clientes na Meta no mês',
+    hint: 'Gasto dos clientes na Meta, somado, para apoio. Cada cliente paga a Meta no próprio cartão; o valor é estimativa. Só contagens, nunca o conteúdo das conversas.',
     service: (used: number, over: number) =>
       `Respostas de atendimento: ${String(used)} (${String(over)} acima da cota grátis)`,
     templates: (utility: number, marketing: number) =>
       `Com custo: ${String(utility)} lembretes e confirmações, ${String(marketing)} de divulgação`,
-    total: (cents: number) => `Custo estimado: ${formatCents(cents)}`,
+    total: (cents: number) => `Gasto estimado dos clientes: ${formatCents(cents)}`,
     topHeading: 'Clientes com maior custo',
     none: 'Nenhum custo neste mês.',
     topLine: (name: string, cents: number, used: number) =>

@@ -68,8 +68,8 @@ export const UsageCopy = {
       `Lembretes e confirmações com custo: ${count.toLocaleString('pt-BR')}`,
     marketing: (count: number) =>
       `Mensagens de divulgação com custo: ${count.toLocaleString('pt-BR')}`,
-    estimate: (cents: number) => `Custo estimado da Meta este mês: ${formatCents(cents)}`,
-    note: 'Quem paga a Meta somos nós, e isso não entra na sua fatura. Mostramos aqui só para você acompanhar o volume.',
+    estimate: (cents: number) => `Estimativa da Meta no seu cartão: ${formatCents(cents)}`,
+    note: 'A Meta cobra direto no cartão que você cadastrou nela. Isso não entra na sua fatura daqui, e o valor final é o que a Meta informar.',
     loadFailed: 'Não conseguimos carregar o uso do WhatsApp agora.',
   },
   loadFailed: 'Não conseguimos carregar o uso. Confira a conexão e tente de novo.',
