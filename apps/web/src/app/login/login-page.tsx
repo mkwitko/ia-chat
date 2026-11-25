@@ -1,11 +1,12 @@
-import { Navigate } from 'react-router';
+import { Link, Navigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LoginCopy, PRODUCT_NAME } from '@/copy';
+import { LoginCopy } from '@/copy';
 import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
-import { BrandMark } from '../brand-mark';
+import { AccountCopy } from '../account/account-copy';
+import { AuthFrame } from '../account/auth-frame';
 import { LoginField, useEmailLogin } from './use-email-login';
 
 const GOOGLE = 'google';
@@ -14,33 +15,31 @@ export function LoginPage() {
   const session = authClient.useSession();
   if (session.data) return <Navigate to={Route.conversations} replace />;
   return (
-    <main className="flex min-h-full items-start justify-center px-4 py-10 sm:items-center">
-      <div className="flex w-full max-w-sm flex-col gap-8">
-        <div className="flex items-center gap-3">
-          <BrandMark size={40} />
-          <span className="text-lg">{PRODUCT_NAME}</span>
-        </div>
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl">{LoginCopy.title}</h1>
-          <p className="text-sm text-muted-foreground">{LoginCopy.subtitle}</p>
-        </div>
-        <EmailForm />
-        <div className="flex items-center gap-3 text-xs text-muted-foreground" aria-hidden="true">
-          <span className="h-px flex-1 bg-border" />
-          {LoginCopy.divider}
-          <span className="h-px flex-1 bg-border" />
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() =>
-            void authClient.signIn.social({ provider: GOOGLE, callbackURL: Route.conversations })
-          }
-        >
-          {LoginCopy.google}
-        </Button>
+    <AuthFrame title={LoginCopy.title} subtitle={LoginCopy.subtitle}>
+      <EmailForm />
+      <div className="flex items-center gap-3 text-xs text-muted-foreground" aria-hidden="true">
+        <span className="h-px flex-1 bg-border" />
+        {LoginCopy.divider}
+        <span className="h-px flex-1 bg-border" />
       </div>
-    </main>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() =>
+          void authClient.signIn.social({ provider: GOOGLE, callbackURL: Route.conversations })
+        }
+      >
+        {LoginCopy.google}
+      </Button>
+      <div className="flex justify-between text-sm font-semibold">
+        <Link to={Route.signUp} className="text-primary">
+          {AccountCopy.createAccount}
+        </Link>
+        <Link to={Route.forgotPassword} className="text-primary">
+          {AccountCopy.forgotPassword}
+        </Link>
+      </div>
+    </AuthFrame>
   );
 }
 

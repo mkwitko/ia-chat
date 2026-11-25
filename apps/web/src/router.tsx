@@ -1,4 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router';
+import { ForgotPasswordPage } from './app/account/forgot-password-page';
+import { ResetPasswordPage } from './app/account/reset-password-page';
+import { SignUpPage } from './app/account/signup-page';
+import { StartPage } from './app/account/start-page';
 import { AssistantScreen } from './app/assistant/assistant-screen';
 import { LoginPage } from './app/login/login-page';
 import { ConversationScreen } from './app/inbox/conversation-screen';
@@ -14,6 +18,10 @@ import { Route } from './routes';
 
 export const router = createBrowserRouter([
   { path: Route.login, element: <LoginPage /> },
+  { path: Route.signUp, element: <SignUpPage /> },
+  { path: Route.forgotPassword, element: <ForgotPasswordPage /> },
+  { path: Route.resetPassword, element: <ResetPasswordPage /> },
+  { path: Route.start, element: <StartPage /> },
   {
     element: <AppShell />,
     children: [

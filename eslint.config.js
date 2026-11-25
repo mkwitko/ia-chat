@@ -17,6 +17,7 @@ export default tseslint.config(
       '**/dist/**',
       '.remember/**',
       '.playwright-mcp/**',
+      '.claude/**',
       '**/generated/**',
       'apps/web/public/**',
     ],

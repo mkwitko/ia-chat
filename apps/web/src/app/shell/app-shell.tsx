@@ -15,6 +15,8 @@ export function AppShell() {
   const session = authClient.useSession();
   if (session.isPending) return <p className="p-6 text-sm text-muted-foreground">{LoadingCopy}</p>;
   if (!session.data) return <Navigate to={Route.login} replace />;
+  // Signed in but no consultório yet (new account): create it first.
+  if (!session.data.session.activeOrganizationId) return <Navigate to={Route.start} replace />;
   return <Frame />;
 }
 
