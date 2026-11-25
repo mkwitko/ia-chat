@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "tsc -p tsconfig.json && tsc -p apps/web/tsconfig.json && tsc -p apps/site/tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json && tsc -p apps/web/tsconfig.json && pnpm --filter @app/site exec astro sync && tsc -p apps/site/tsconfig.json",
     "site:dev": "pnpm --filter @app/site dev",
     "site:build": "pnpm --filter @app/site build",
     "test": "vitest run",
