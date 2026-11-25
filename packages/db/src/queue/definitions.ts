@@ -40,6 +40,12 @@ export const HANDOFF_REMINDER_QUEUE: QueueDefinition = { name: 'conversation.han
 /** E-18b (RF-13): a draft nobody approved; the professional is reminded, nothing is sent. */
 export const DRAFT_REMINDER_QUEUE: QueueDefinition = { name: 'conversation.draft_reminder' };
 
+/** E-22b (RF-15): the nightly agenda push of one tenant; one pg-boss schedule per tenant. */
+export const SUMMARY_QUEUE: QueueDefinition = { name: 'agenda.nightly_summary' };
+
+/** E-22b: re-reads the tenants' summary times and refreshes their schedules (every 15 minutes). */
+export const SUMMARY_SYNC_QUEUE: QueueDefinition = { name: 'agenda.summary_sync' };
+
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
   INBOUND_QUEUE,
@@ -47,4 +53,6 @@ export const QUEUES: readonly QueueDefinition[] = [
   TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,
   DRAFT_REMINDER_QUEUE,
+  SUMMARY_QUEUE,
+  SUMMARY_SYNC_QUEUE,
 ];

@@ -5,6 +5,7 @@ import type { Db } from '@app/db';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { registerAssistantSettingsRoutes } from './assistant/settings-routes.ts';
 import { createAuth, type Auth } from './auth/auth.ts';
+import { registerAgendaRoutes } from './agenda/register.ts';
 import { registerAuthRoutes } from './auth/routes.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
 import { registerInboxRoutes } from './conversations/inbox-routes.ts';
@@ -21,6 +22,8 @@ import { registerToneRoutes } from './setup/tone-routes.ts';
 import { registerUsageRoutes } from './usage/usage-routes.ts';
 import type { ApiEnv } from './env.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
+import { registerWaitlistIfConfigured } from './waitlist/waitlist-routes.ts';
+import type { TurnstileVerifier } from './waitlist/turnstile.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
 
 declare module 'fastify' {
@@ -41,6 +44,8 @@ export interface AppDeps {
   send?: ChannelSend;
   /** Model access of the simulator (spec 10); without it the simulator answers 503. */
   simulatorGateway?: AiGateway;
+  /** Checks Turnstile tokens of the public waitlist form. Defaults to Cloudflare's siteverify. */
+  verifyTurnstile?: TurnstileVerifier;
 }
 
 // Logs never carry message content nor auth headers (RN-38).
@@ -62,6 +67,8 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   registerToneRoutes(app);
   registerUsageRoutes(app);
   registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
+  registerSettingsRoutes(app);
+  registerWaitlistIfConfigured(app, deps);
   registerInboxRoutes(app, {
     send:
       send ??
@@ -82,4 +89,15 @@ export function buildApp(deps: AppDeps): FastifyInstance {
     registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
   }
   return app;
+}
+
+/** Panel settings and agenda: each module registers its own guarded routes. */
+function registerSettingsRoutes(app: FastifyInstance): void {
+  registerAssistantSettingsRoutes(app);
+  registerServiceRoutes(app);
+  registerLocationRoutes(app);
+  registerKnowledgeRoutes(app);
+  registerToneRoutes(app);
+  registerUsageRoutes(app);
+  registerAgendaRoutes(app);
 }

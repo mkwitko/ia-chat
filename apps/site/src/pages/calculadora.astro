@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+---
+
+<Base
+  title="Calculadora de receita perdida"
+  description="Estime quanto você deixa de receber por mês com mensagens sem resposta rápida e com faltas, usando os seus próprios números."
+  path="/calculadora"
+>
+  <section class="hero prose">
+    <p class="eyebrow">Calculadora</p>
+    <h1>Quanto você deixa de receber por mês</h1>
+    <p class="lede">
+      Quem manda mensagem para um consultório quase sempre manda para outros ao mesmo tempo. Quem
+      responde primeiro, marca. Coloque os seus números e veja a conta.
+    </p>
+    <Calculator />
+    <p class="muted small">
+      O resultado só repete os números que você digitou. Não é uma promessa de recuperação de
+      receita nem de aumento de faturamento.
+    </p>
+    <div class="actions"><a class="btn" href="/#lista">Entrar na lista de espera</a></div>
+  </section>
+</Base>

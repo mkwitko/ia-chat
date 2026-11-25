@@ -1,5 +1,6 @@
 import { toLocalIso } from '@app/core';
 import { AgendaError, wasOfferedBefore, type AppointmentView, type Db, type Tx } from '@app/db';
+import { AgentCopy } from './copy.ts';
 
 // Shared pieces of the agenda tools: the confirmation gate, service lookup and output shape.
 // Key names (`inicio`, `fim`, `erro`) are what the output validation reads as facts.
@@ -81,4 +82,10 @@ export function slotOutput(slot: { start: Date; end: Date }, timezone: string) {
     fim: toLocalIso(slot.end, timezone),
     dia_da_semana: slot.start.toLocaleDateString(LOCALE, { weekday: 'long', timeZone: timezone }),
   };
+}
+
+/** RF-14: the return date comes from the database, formatted here; the model only repeats it. */
+export function vacationOutput(returnsAt: Date, timezone: string) {
+  const retorno = returnsAt.toLocaleDateString(LOCALE, { timeZone: timezone });
+  return { ferias: { retorno, aviso: AgentCopy.vacation(retorno) } };
 }

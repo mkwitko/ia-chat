@@ -7,6 +7,8 @@ import {
   TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,
   DRAFT_REMINDER_QUEUE,
+  SUMMARY_QUEUE,
+  SUMMARY_SYNC_QUEUE,
   createDb,
   sendTenantJob,
   watchDeadLetters,
@@ -16,7 +18,9 @@ import { PgBoss } from 'pg-boss';
 import pino from 'pino';
 import { startTurnWorker } from './agent/wiring.ts';
 import { remindDraft, remindHandoff, tenantOf } from './conversation/reminder-job.ts';
-import { NotifyReason, startNotifier } from './notify/index.ts';
+import { NotifyReason, startNotifier, startSummaryNotifier } from './notify/index.ts';
+import { sendNightlySummary } from './agenda/nightly-summary.ts';
+import { syncSummarySchedules } from './agenda/summary-schedule.ts';
 import type { TurnRequest } from './conversation/schedule.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
@@ -43,6 +47,7 @@ const STALE_MESSAGES = 'outbound messages without delivery status after 1 hour';
 // RF-26: every morning, in the clinics' time zone.
 const RECONCILE_CRON = '0 7 * * *';
 const RECONCILE_TZ = 'America/Sao_Paulo';
+const SUMMARY_SYNC_CRON = '*/15 * * * *';
 
 const env = parseEnv(process.env);
 const log = pino();
@@ -119,6 +124,28 @@ await workTenantQueue({
 await boss.schedule(RECONCILE_QUEUE.name, RECONCILE_CRON, null, { tz: RECONCILE_TZ });
 await boss.work(RECONCILE_QUEUE.name, async () => {
   for (const stale of await findStaleMessages(db, new Date())) log.error(stale, STALE_MESSAGES);
+});
+
+// RF-15: the professional's agenda for tomorrow, at the time each tenant chose (default 20:00).
+const summaryNotifier = startSummaryNotifier({
+  db,
+  nodeEnv: env.NODE_ENV,
+  source: process.env,
+  log: appLog,
+});
+await workTenantQueue({
+  boss,
+  db,
+  queue: SUMMARY_QUEUE.name,
+  handler: (tx, _data, job) =>
+    sendNightlySummary(tx, { tenantId: tenantOf(job), now: new Date() }, (summary) =>
+      summaryNotifier({ tenantId: tenantOf(job), ...summary }),
+    ),
+});
+await syncSummarySchedules(db, boss);
+await boss.schedule(SUMMARY_SYNC_QUEUE.name, SUMMARY_SYNC_CRON);
+await boss.work(SUMMARY_SYNC_QUEUE.name, async () => {
+  await syncSummarySchedules(db, boss);
 });
 
 const turns = await startTurnWorker({

@@ -1,0 +1,44 @@
+---
+import { PLANS } from '@app/core';
+import { FEATURED_PLAN, PLAN_NAMES } from '../lib/plans-view.ts';
+import { formatBrl } from '../lib/money.ts';
+
+// Defaults reproduce the approved sales example (2 evaluations of R$ 180). They are examples:
+// the visitor replaces them with their own numbers.
+const planName = PLAN_NAMES[FEATURED_PLAN];
+const planPrice = formatBrl(PLANS[FEATURED_PLAN].monthlyCents);
+---
+
+<form data-calculator class="card" aria-labelledby="calc-titulo">
+  <h2 id="calc-titulo">Quanto você deixa de receber por mês</h2>
+  <p class="muted">Troque os números de exemplo pelos seus. A conta é só multiplicação.</p>
+  <div class="field">
+    <label for="c-unanswered">Mensagens de pacientes novos sem resposta rápida, por mês</label>
+    <input id="c-unanswered" name="unanswered" type="number" min="0" step="1" value="20" />
+  </div>
+  <div class="field">
+    <label for="c-booking">Dessas, quantas % marcariam se fossem respondidas na hora</label>
+    <input id="c-booking" name="booking" type="number" min="0" max="100" step="1" value="10" />
+    <p class="hint">Estime com cuidado. Não é um resultado garantido.</p>
+  </div>
+  <div class="field">
+    <label for="c-noshows">Faltas por mês</label>
+    <input id="c-noshows" name="noShows" type="number" min="0" step="1" value="2" />
+  </div>
+  <div class="field">
+    <label for="c-consult">Valor de uma consulta, em reais</label>
+    <input id="c-consult" name="consult" type="number" min="0" step="1" value="180" />
+  </div>
+  <div class="result" role="status" aria-live="polite">
+    <p class="small muted">Por mensagens sem resposta: <span data-out="unanswered" class="num"></span></p>
+    <p class="small muted">Por faltas: <span data-out="noShows" class="num"></span></p>
+    <strong class="num" data-out="total"></strong>
+    <p class="small muted">
+      de receita em risco por mês. Para comparar, o plano {planName} custa {planPrice} por mês.
+    </p>
+  </div>
+</form>
+
+<script>
+  import '../scripts/calculator.ts';
+</script>

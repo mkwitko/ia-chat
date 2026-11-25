@@ -3,12 +3,13 @@ import { ForgotPasswordPage } from './app/account/forgot-password-page';
 import { ResetPasswordPage } from './app/account/reset-password-page';
 import { SignUpPage } from './app/account/signup-page';
 import { StartPage } from './app/account/start-page';
+import { AgendaScreen } from './app/agenda/agenda-screen';
+import { AvailabilityScreen } from './app/agenda/availability-screen';
 import { AssistantScreen } from './app/assistant/assistant-screen';
 import { LoginPage } from './app/login/login-page';
 import { ConversationScreen } from './app/inbox/conversation-screen';
 import { ConversationsScreen } from './app/inbox/conversations-screen';
 import { TodayScreen } from './app/inbox/today-screen';
-import { AgendaScreen } from './app/screens/main-screens';
 import { MoreScreen } from './app/screens/more-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
 import { ServicesScreen } from './app/setup/services-screen';
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
       { path: Route.conversations, element: <ConversationsScreen /> },
       { path: Route.conversation, element: <ConversationScreen /> },
       { path: Route.agenda, element: <AgendaScreen /> },
+      { path: Route.agendaAvailability, element: <AvailabilityScreen /> },
       { path: Route.today, element: <TodayScreen /> },
       { path: Route.more, element: <MoreScreen /> },
       { path: Route.assistant, element: <AssistantScreen /> },

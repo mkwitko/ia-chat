@@ -12,3 +12,4 @@ generated/
 
 # Agent worktrees (local only)
 .claude/worktrees/
+apps/site/.astro/
