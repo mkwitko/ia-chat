@@ -144,7 +144,14 @@ async function judgeAndRecord<Q extends JudgeQuestions>(
     output: result.usage.outputTokens,
   };
   const cost = costMicroUsd(priceFor(deps.prices, modelKey(model), now()), usage);
-  await deps.store.record({ ...scope, task: JUDGE_TASK, ...usageColumns(model, usage, cost) });
+  // Callers may pass a wider object (a whole turn): only the ids belong in the usage row.
+  const { tenantId, conversationId, turnId } = scope;
+  const ids = {
+    tenantId,
+    ...(conversationId ? { conversationId } : {}),
+    ...(turnId ? { turnId } : {}),
+  };
+  await deps.store.record({ ...ids, task: JUDGE_TASK, ...usageColumns(model, usage, cost) });
   return result.answers;
 }
 
