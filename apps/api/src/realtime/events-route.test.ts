@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import http from 'node:http';
 import * as z from 'zod';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   createTenant,
   newConversation,
@@ -12,6 +12,9 @@ import {
 import { createInboxHub, type InboxChange } from './inbox-hub.ts';
 
 const DATA_PREFIX = 'data: ';
+const STREAM_TIMEOUT = { timeout: 5000, interval: 50 };
+// Time left for a leak to tenant B to show up after A received its change.
+const GRACE_MS = 300;
 const changeSchema = z.object({ conversationId: z.string() });
 
 // E-16: SSE over Postgres LISTEN/NOTIFY, and never across tenants.
@@ -85,12 +88,14 @@ describe('SSE stream', () => {
     const streamB = await openStream(cookieB);
     expect(streamA.contentType).toBe('text/event-stream');
     const conversationId = await newConversation(ctx, tenantA);
-    await wait(500);
+    const changesOfA = () => streamA.events.map((line) => changeSchema.parse(JSON.parse(line)));
+    // Wait for the change itself instead of a fixed delay (LISTEN/NOTIFY timing varies in CI).
+    await vi.waitFor(() => {
+      expect(changesOfA()).toContainEqual({ conversationId });
+    }, STREAM_TIMEOUT);
+    await wait(GRACE_MS);
     streamA.close();
     streamB.close();
-    expect(streamA.events.map((line) => changeSchema.parse(JSON.parse(line)))).toContainEqual({
-      conversationId,
-    });
     expect(streamB.events).toEqual([]);
   });
 
