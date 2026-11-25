@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { FOOTER_LEGAL_PAGES } from '../lib/legal-pages.ts';
 
 interface Props {
   title: string;
@@ -47,6 +48,9 @@ const fullTitle = path === '/' ? title : `${title} | Consultório Aberto`;
         <p>
           Consultório Aberto. Não prometemos resultado clínico nem aumento de faturamento.
         </p>
+        <nav class="foot-links" aria-label="Documentos legais">
+          {FOOTER_LEGAL_PAGES.map((page) => <a href={`/${page.slug}`}>{page.title}</a>)}
+        </nav>
       </div>
     </footer>
   </body>

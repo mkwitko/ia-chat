@@ -1,21 +1,12 @@
 # Termo de Consentimento do Cliente Piloto — Depoimento e Métricas
 
-> **MINUTA — revisar com advogado antes de publicar.**
->
-> Pontos em aberto para o advogado:
->
-> 1. Base legal: consentimento (LGPD, art. 7º, I) para o uso de nome, imagem e voz, e direito de imagem (Código Civil, art. 20).
-> 2. Efeito da revogação sobre material já publicado (item 5.2).
-> 3. Se o piloto tem condição comercial especial (gratuidade, desconto), que deve ficar em documento próprio e não condicionar o consentimento.
-> 4. Assinatura eletrônica ou física.
-
-Versão: [DATA DA VERSÃO]
+**Versão 1.0 — vigente a partir de 25/11/2026**
 
 ## 1. Partes
 
 1.1. **Piloto:** [NOME DO PROFISSIONAL], [CPF], responsável por [NOME DO NEGÓCIO], [CNPJ, SE HOUVER], [ENDEREÇO].
 
-1.2. **Consultório Aberto:** [RAZÃO SOCIAL], CNPJ [CNPJ], [ENDEREÇO].
+1.2. **Consultório Aberto:** Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, [ENDEREÇO].
 
 ## 2. O que eu autorizo
 
@@ -44,11 +35,11 @@ Marque o que autoriza. Cada item é independente; posso autorizar um e não outr
 
 5.1. Posso **revogar este consentimento a qualquer momento**, no todo ou em parte, por escrito para [E-MAIL DE CONTATO], sem custo e sem justificar.
 
-5.2. Após a revogação, o Consultório Aberto deixa de usar o material em até [10] dias úteis e remove o que estiver sob seu controle (site, redes, materiais). Material já impresso ou já distribuído a terceiros antes da revogação não pode ser recolhido. [PONTO PARA O ADVOGADO.]
+5.2. Após a revogação, o Consultório Aberto deixa de usar o material em até 10 dias úteis e remove o que estiver sob seu controle (site, redes, materiais). Material já impresso ou já distribuído a terceiros antes da revogação não pode ser recolhido.
 
 ## 6. Prazo
 
-6.1. Este consentimento vale por [24 meses] a partir da assinatura, salvo revogação antes.
+6.1. Este consentimento vale por 24 meses a partir da assinatura, salvo revogação antes.
 
 ## 7. Dados pessoais
 

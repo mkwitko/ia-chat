@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { LEGAL_PAGES } from '../lib/legal-pages.ts';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('legal');
+  return LEGAL_PAGES.map((page) => ({
+    params: { slug: page.slug },
+    props: { page, entry: entries.find((e) => e.id === page.id)! },
+  }));
+}
+
+const { page, entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Base title={page.title} description={page.description} path={`/${page.slug}`}>
+  <article class="prose block">
+    <Content />
+  </article>
+</Base>
