@@ -9,8 +9,10 @@ import { createInvite } from '../src/invites/invite-store.ts';
 const COMMAND_LINE_OPERATOR = '00000000-0000-0000-0000-000000000000';
 const INVITE_PATH = '/convite/';
 const USAGE = 'Uso: pnpm invite "Nome do consultório" [email]';
+/** argv: node, script path, then our arguments. */
+const FIRST_ARG = 2;
 
-const [practiceName, email] = process.argv.slice(2);
+const [practiceName, email] = process.argv.slice(FIRST_ARG);
 const databaseUrl = process.env.DATABASE_URL;
 const webOrigin = process.env.WEB_ORIGIN;
 if (!practiceName) throw new Error(USAGE);
