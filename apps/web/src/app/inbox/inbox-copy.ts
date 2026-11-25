@@ -92,15 +92,6 @@ export const DraftCopy = {
   stale: 'Chegou mensagem nova ou a conversa mudou. O rascunho antigo saiu da tela.',
 } as const;
 
-export const TodayCopy = {
-  attentionTitle: NEEDS_YOU,
-  attentionEmpty: 'Nada esperando por você agora.',
-  attentionFailed: 'Não conseguimos carregar o que precisa de você.',
-  openAll: 'Ver todas as conversas',
-  todayAppointmentsTitle: 'Atendimentos de hoje',
-  appointmentsEmpty: 'A agenda ainda não está conectada. Os atendimentos do dia aparecem aqui.',
-} as const;
-
 export const PushCopy = {
   alert: 'Notificações desligadas. Você não será avisado quando um paciente precisar de você.',
   enable: 'Ativar',

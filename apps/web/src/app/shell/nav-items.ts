@@ -1,4 +1,4 @@
-import { CalendarDays, Menu, MessageSquare, Sun, type LucideIcon } from 'lucide-react';
+import { CalendarDays, House, Menu, MessageSquare, Users, type LucideIcon } from 'lucide-react';
 import { NavCopy } from '@/copy';
 import { Route } from '@/routes';
 
@@ -8,10 +8,11 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
-// Spec 10: everything the professional needs in the day fits in three screens, plus "Mais".
+// Lean MVP: Início, Conversas, Agenda, Clientes and "Mais".
 export const NAV_ITEMS: readonly NavItem[] = [
+  { to: Route.home, label: NavCopy.home, icon: House },
   { to: Route.conversations, label: NavCopy.conversations, icon: MessageSquare },
   { to: Route.agenda, label: NavCopy.agenda, icon: CalendarDays },
-  { to: Route.today, label: NavCopy.today, icon: Sun },
+  { to: Route.customers, label: NavCopy.customers, icon: Users },
   { to: Route.more, label: NavCopy.more, icon: Menu },
 ];

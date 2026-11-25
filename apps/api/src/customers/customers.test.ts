@@ -41,8 +41,13 @@ beforeAll(async () => {
 afterAll(() => ctx.app.close());
 
 type Method = 'GET' | 'POST' | 'PATCH';
-const call = (method: Method, url: string, payload?: object, cookie = owner) =>
-  ctx.app.inject({ method, url, headers: { cookie }, ...(payload ? { payload } : {}) });
+const call = (method: Method, url: string, ...rest: [payload?: object, cookie?: string]) =>
+  ctx.app.inject({
+    method,
+    url,
+    headers: { cookie: rest[1] ?? owner },
+    ...(rest[0] ? { payload: rest[0] } : {}),
+  });
 
 interface Customer {
   id: string;
@@ -54,6 +59,7 @@ interface Customer {
 const customers = async (query = '', cookie = owner) =>
   (await call('GET', `/api/customers${query}`, undefined, cookie)).json<Customer[]>();
 
+let phoneSeq = 10_000_000;
 async function newContact(name: string, createdDaysAgo = 0) {
   return ctx.db.withTenant(tenantId, async (tx) => {
     const contact = await tx.contact.create({
@@ -61,7 +67,7 @@ async function newContact(name: string, createdDaysAgo = 0) {
         tenantId,
         name,
         bsuid: `BR.${randomUUID()}`,
-        phoneE164: `+5541${String(Math.floor(Math.random() * 1e8)).padStart(8, '9')}`,
+        phoneE164: `+5541${String(phoneSeq++).padStart(8, '9')}`,
         createdAt: new Date(Date.now() - createdDaysAgo * DAY),
       },
     });
@@ -93,7 +99,9 @@ describe('customers list', () => {
     const quiet = await newContact('Bruno Sumido', 10);
     const booked = await newContact('Carla Agendada');
     await appointmentFor(booked, 48);
-    const byName = Object.fromEntries((await customers()).map((c) => [c.name, c]));
+    const byName: Record<string, Customer | undefined> = Object.fromEntries(
+      (await customers()).map((c) => [c.name ?? '', c]),
+    );
     expect(byName['Ana Nova']).toMatchObject({
       id: fresh,
       stage: 'new_contact',
@@ -109,7 +117,7 @@ describe('customers list', () => {
   it('keeps another consultório out: empty list, 404 on detail, edit and attendance', async () => {
     const mine = await newContact('Dani Isolada');
     const appointment = await appointmentFor(mine, -2);
-    expect((await customers('?q=Isolada', other)).length).toBe(0);
+    expect(await customers('?q=Isolada', other)).toHaveLength(0);
     expect((await call('GET', `/api/customers/${mine}`, undefined, other)).statusCode).toBe(404);
     const edit = await call('PATCH', `/api/customers/${mine}`, { name: 'X' }, other);
     expect(edit.statusCode).toBe(404);

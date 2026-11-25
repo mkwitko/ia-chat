@@ -20,9 +20,10 @@ export const LoginCopy = {
 } as const;
 
 export const NavCopy = {
+  home: 'Início',
+  customers: 'Clientes',
   conversations: 'Conversas',
   agenda: 'Agenda',
-  today: 'Hoje',
   more: 'Mais',
   label: 'Navegação principal',
 } as const;
@@ -31,10 +32,6 @@ export const EmptyCopy = {
   conversations: {
     title: 'Nenhuma conversa ainda',
     body: 'Quando um paciente mandar mensagem no seu WhatsApp, a conversa aparece aqui. Antes disso, teste o assistente no simulador.',
-  },
-  today: {
-    title: 'Nada para hoje',
-    body: 'Aqui aparecem os atendimentos do dia e o que precisa de você: conversas aguardando, rascunhos para aprovar e perguntas que o assistente não soube.',
   },
 } as const;
 

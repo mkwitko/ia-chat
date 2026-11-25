@@ -9,7 +9,11 @@ export const Route = {
   conversation: '/conversas/:id',
   agenda: '/agenda',
   agendaAvailability: '/agenda/disponibilidade',
-  today: '/hoje',
+  home: '/inicio',
+  legacyToday: '/hoje',
+  customers: '/clientes',
+  customer: '/clientes/:id',
+  results: '/resultados',
   more: '/mais',
   assistant: '/mais/assistente',
   tone: '/mais/assistente/tom',
@@ -21,3 +25,4 @@ export const Route = {
 } as const;
 
 export const conversationPath = (id: string) => `${Route.conversations}/${id}`;
+export const customerPath = (id: string) => `${Route.customers}/${id}`;

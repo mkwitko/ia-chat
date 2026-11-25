@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router';
 import { NavCopy, PRODUCT_NAME } from '@/copy';
 import { cn } from '@/lib/utils';
+import { Route } from '@/routes';
 import { BrandMark } from '../brand-mark';
 import { NAV_ITEMS, type NavItem } from './nav-items';
 
@@ -15,10 +16,10 @@ export function Navigation({ pending }: Readonly<{ pending: number }>) {
         <BrandMark size={28} />
         <span className="font-semibold">{PRODUCT_NAME}</span>
       </div>
-      <ul className="grid grid-cols-4 md:flex md:flex-col md:gap-1">
-        {NAV_ITEMS.map((item, index) => (
+      <ul className="grid grid-cols-5 md:flex md:flex-col md:gap-1">
+        {NAV_ITEMS.map((item) => (
           <li key={item.to}>
-            <Item item={item} badge={index === 0 ? pending : 0} />
+            <Item item={item} badge={item.to === Route.conversations ? pending : 0} />
           </li>
         ))}
       </ul>
@@ -33,7 +34,7 @@ function Item({ item, badge }: Readonly<{ item: NavItem; badge: number }>) {
       to={item.to}
       className={({ isActive }) =>
         cn(
-          'relative flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs text-muted-foreground transition-colors',
+          'relative flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 text-xs text-muted-foreground transition-colors',
           'md:min-h-11 md:flex-row md:justify-start md:gap-3 md:rounded-lg md:px-3 md:text-base',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
           isActive && 'font-semibold text-primary md:bg-brand-soft',
