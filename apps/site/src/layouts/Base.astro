@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+}
+const { title, description, path } = Astro.props;
+const canonical = new URL(path, Astro.site).href;
+const fullTitle = path === '/' ? title : `${title} | Consultório Aberto`;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta name="theme-color" content="#0B6E7A" />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/">Consultório Aberto</a>
+        <nav aria-label="Principal">
+          <a href="/precos">Preços</a>
+          <a href="/calculadora">Calculadora</a>
+          <a class="btn" href="/#lista">Lista de espera</a>
+        </nav>
+      </div>
+    </header>
+    <main id="conteudo" class="wrap">
+      <slot />
+    </main>
+    <footer class="foot">
+      <div class="wrap">
+        <p>
+          Consultório Aberto. Não prometemos resultado clínico nem aumento de faturamento.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

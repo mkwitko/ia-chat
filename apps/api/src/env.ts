@@ -21,6 +21,10 @@ export const apiEnvSchema = baseEnvSchema.extend({
   META_ACCESS_TOKEN: z.string().min(1).optional(),
   /** Web Push public key (VAPID), handed to the panel so the browser can subscribe (E-16). */
   PUSH_VAPID_PUBLIC_KEY: z.string().min(1).optional(),
+  /** Public site origin (S-01): the only origin allowed to call the waitlist route. */
+  SITE_ORIGIN: z.url().optional(),
+  /** Cloudflare Turnstile secret key (S-01). Without it and SITE_ORIGIN the waitlist route is off. */
+  TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
 });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;

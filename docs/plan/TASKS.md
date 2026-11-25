@@ -367,11 +367,11 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 Spec: `09-site-aquisicao-suporte.md`.
 
 ### S-01 Site e lista de espera
-- [ ] `apps/site` em Astro no Cloudflare Pages, com os tokens do `DESIGN.md`
-- [ ] Página inicial com os blocos da especificação, sem depoimento ou número inventado
-- [ ] Lista de espera com Turnstile e confirmação por e-mail
-- [ ] Medição de uso e banner de consentimento
-- [ ] CI com Lighthouse: LCP abaixo de 2 segundos, acessibilidade 95 ou mais
+- [x] `apps/site` em Astro no Cloudflare Pages, com os tokens do `DESIGN.md` (saída estática; `pnpm site:build`; o deploy fica para quando houver a conta e o domínio)
+- [x] Página inicial com os blocos da especificação, sem depoimento ou número inventado (o botão da demonstração entra com S-03; até lá a ação principal é a lista de espera)
+- [x] Lista de espera com Turnstile e confirmação por e-mail (`POST /api/waitlist`, tabela `waitlist_entries`, CORS só para `SITE_ORIGIN`)
+- [ ] Medição de uso e banner de consentimento (não feito: a medição sem cookie ainda exige conta e token, por exemplo Cloudflare Web Analytics; sem medição, não há o que consentir)
+- [ ] CI com Lighthouse: LCP abaixo de 2 segundos, acessibilidade 95 ou mais (não feito: exige Chrome no CI e um passo novo no workflow; as páginas são HTML estático sem fonte externa nem imagem)
 - [ ] Revisão com `impeccable`
 
 ### S-02 Páginas legais
@@ -383,9 +383,9 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [ ] Botão e QR code no site
 
 ### S-04 Preços e calculadora
-- [ ] Fonte única de planos e preços lida pelo site e pelo painel
-- [ ] Página de preços com franquia, excedente e estimativa de gasto na Meta
-- [ ] Calculadora de receita perdida
+- [x] Fonte única de planos e preços lida pelo site e pelo painel (`PLANS` em `packages/core/src/plans.ts`; a implantação de R$ 497 ainda mora em `apps/site/src/lib/plans-view.ts`, hipótese da spec 07)
+- [x] Página de preços com franquia, excedente e estimativa de gasto na Meta
+- [x] Calculadora de receita perdida (`/calculadora` e bloco na página inicial; só repete os números digitados)
 
 ### S-05 Cadastro sozinho
 - [ ] Teste de 14 dias sem cartão, com os limites de RF-81

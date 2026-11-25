@@ -43,6 +43,7 @@ Enquanto não saem, o site funciona com lista de espera e convites em lotes.
 | RF-72 | Preço e franquia do site lidos da mesma fonte que o painel usa, para nunca divergirem |
 | RF-73 | Ação principal em toda página: demonstração no WhatsApp ou teste grátis |
 | RF-74 | Formulários com Turnstile; lista de espera com confirmação por e-mail |
+| RF-74a | Lista de espera (S-01): `POST /api/waitlist` na API, com o site em outra origem (CORS só para `SITE_ORIGIN`). Turnstile verificado no servidor, limite de 10 envios por minuto por endereço (em memória, por processo) e e-mail guardado em minúsculas: repetir o e-mail não duplica nem reenvia a confirmação. Enquanto a demonstração (S-03) e o cadastro (S-05) não existem, a ação principal do site é a lista de espera |
 
 ### Busca (SEO)
 

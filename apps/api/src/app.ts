@@ -19,6 +19,8 @@ import { registerToneRoutes } from './setup/tone-routes.ts';
 import { registerUsageRoutes } from './usage/usage-routes.ts';
 import type { ApiEnv } from './env.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
+import { registerWaitlistIfConfigured } from './waitlist/waitlist-routes.ts';
+import type { TurnstileVerifier } from './waitlist/turnstile.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
 
 declare module 'fastify' {
@@ -37,12 +39,15 @@ export interface AppDeps {
   enqueueInbound?: EnqueueInbound;
   /** Sends the professional's messages. Defaults to the Cloud API (records only in dev without token). */
   send?: ChannelSend;
+  /** Checks Turnstile tokens of the public waitlist form. Defaults to Cloudflare's siteverify. */
+  verifyTurnstile?: TurnstileVerifier;
 }
 
 // Logs never carry message content nor auth headers (RN-38).
 const REDACTED_PATHS = ['req.headers.cookie', 'req.headers.authorization'];
 
-export function buildApp({ env, db, email, enqueueInbound, send }: AppDeps): FastifyInstance {
+export function buildApp(deps: AppDeps): FastifyInstance {
+  const { env, db, email, enqueueInbound, send } = deps;
   const app = Fastify({
     logger: env.NODE_ENV !== NodeEnv.test && { redact: REDACTED_PATHS },
   });
@@ -56,6 +61,7 @@ export function buildApp({ env, db, email, enqueueInbound, send }: AppDeps): Fas
   registerKnowledgeRoutes(app);
   registerToneRoutes(app);
   registerUsageRoutes(app);
+  registerWaitlistIfConfigured(app, deps);
   registerInboxRoutes(app, {
     send:
       send ??

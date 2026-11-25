@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import PlansTable from '../components/PlansTable.astro';
+import Waitlist from '../components/Waitlist.astro';
+import { FAQS } from '../lib/faq.ts';
+---
+
+<Base
+  title="Consultório Aberto: seu paciente respondido no WhatsApp"
+  description="Assistente no WhatsApp para profissionais de saúde autônomos: responde preço e endereço, agenda e lembra a consulta. Você assume a conversa quando quiser."
+  path="/"
+>
+  <section class="hero">
+    <p class="eyebrow">Para profissionais de saúde autônomos</p>
+    <h1>Seu paciente respondido no WhatsApp em segundos, mesmo durante a sessão.</h1>
+    <p class="lede prose">
+      Seu consultório atende mesmo quando você está atendendo. Um assistente no seu tom informa
+      preço e endereço, marca, remarca e lembra a consulta. Você assume a conversa quando quiser.
+    </p>
+    <div class="actions">
+      <a class="btn" href="#lista">Entrar na lista de espera</a>
+      <a class="btn ghost" href="/precos">Ver preços</a>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="demo">
+    <p class="eyebrow">Demonstração</p>
+    <h2 id="demo">Assim fica uma conversa</h2>
+    <p class="muted small">
+      Exemplo ilustrativo, escrito por nós. A demonstração no seu próprio WhatsApp chega em breve.
+    </p>
+    <div class="chat" aria-label="Exemplo de conversa">
+      <p class="in">oi! quanto é a avaliação? tem horário essa semana?</p>
+      <p class="out">
+        Oi, Joana! Aqui é a assistente do Dr. Rafael. A avaliação custa R$ 180 e dura 1 hora. Tenho
+        quinta às 15h ou sexta às 9h. Qual prefere?
+      </p>
+      <p class="in">quinta 15h</p>
+      <p class="out">
+        Prontinho, avaliação marcada para quinta, às 15h. Te mando um lembrete um dia antes.
+      </p>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="como">
+    <p class="eyebrow">Como funciona</p>
+    <h2 id="como">Três passos</h2>
+    <ol class="steps grid three">
+      <li><span><strong>Conecte o WhatsApp.</strong> Você continua usando o seu número.</span></li>
+      <li><span><strong>Cadastre serviços e horários.</strong> Valores, endereço e regras de agenda.</span></li>
+      <li><span><strong>Ative.</strong> Comece aprovando cada resposta antes de enviar.</span></li>
+    </ol>
+  </section>
+
+  <section class="block" aria-labelledby="controle">
+    <p class="eyebrow">Controle</p>
+    <h2 id="controle">Você responde pelo celular e o assistente se cala</h2>
+    <div class="grid three">
+      <div class="card">
+        <h3>Aprovar antes de enviar</h3>
+        <p>
+          Todo cliente começa assim: o assistente escreve, e você envia, edita ou descarta com um
+          toque.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Assuma quando quiser</h3>
+        <p>O painel mostra primeiro as conversas que pediram você. Um toque e a conversa é sua.</p>
+      </div>
+      <div class="card">
+        <h3>Automático, quando confiar</h3>
+        <p>Você libera o modo automático e o assistente chama você só quando precisa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="seguranca">
+    <p class="eyebrow">Segurança</p>
+    <h2 id="seguranca">Cuidado com o paciente e com os dados</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Não inventa preço nem horário</h3>
+        <p>Tudo vem do seu cadastro e da sua agenda, e toda resposta é conferida antes de sair.</p>
+      </div>
+      <div class="card">
+        <h3>Não dá orientação clínica</h3>
+        <p>
+          Também não pede informação de saúde. Em urgência, orienta ligar para o SAMU 192 e avisa
+          você na hora.
+        </p>
+      </div>
+      <div class="card">
+        <h3>LGPD</h3>
+        <p>
+          Dados protegidos conforme a LGPD, sem uso para treinar modelos de IA. Cada profissional vê
+          só os seus pacientes.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="conta">
+    <p class="eyebrow">Calculadora</p>
+    <h2 id="conta">Faça a conta com os seus números</h2>
+    <div class="prose"><Calculator /></div>
+  </section>
+
+  <section class="block" aria-labelledby="planos">
+    <p class="eyebrow">Preços</p>
+    <h2 id="planos">Mensalidade com franquia de conversas</h2>
+    <PlansTable />
+    <p><a href="/precos">Ver detalhes, excedente e custo da Meta</a></p>
+  </section>
+
+  <section class="block" aria-labelledby="faq">
+    <p class="eyebrow">Perguntas frequentes</p>
+    <h2 id="faq">Dúvidas de quem está pensando em assinar</h2>
+    <div class="prose">
+      {
+        FAQS.map((faq) => (
+          <details>
+            <summary>{faq.question}</summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="block prose" id="lista" aria-label="Lista de espera">
+    <p class="eyebrow">Primeiros consultórios</p>
+    <Waitlist />
+  </section>
+</Base>
