@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PlansTable from '../components/PlansTable.astro';
 import Waitlist from '../components/Waitlist.astro';
 import { PLANS, WARNING_PERCENT } from '@app/core';
+import { META_ESTIMATE_DATE, META_PROFILES } from '../lib/meta-estimate.ts';
 import { formatBrl, formatCount } from '../lib/money.ts';
 import { FEATURED_PLAN, SETUP_FEE_CENTS } from '../lib/plans-view.ts';
 
@@ -11,7 +12,7 @@ const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
 
 <Base
   title="Preços"
-  description="Mensalidade com franquia de conversas e valor do excedente, com o custo da Meta incluído."
+  description="Mensalidade com franquia de conversas, valor do excedente e estimativa do custo da Meta para o seu volume."
   path="/precos"
 >
   <section class="hero">
@@ -50,11 +51,41 @@ const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
     </p>
   </section>
 
-  <section class="block prose" aria-labelledby="meta">
-    <h2 id="meta">Custo da Meta incluído</h2>
-    <p>
-      O que a Meta cobra pelas mensagens do WhatsApp oficial já está na mensalidade e no excedente.
-      Você não cadastra cartão na Meta nem recebe fatura dela.
+  <section class="block" aria-labelledby="meta">
+    <h2 id="meta">Custo da Meta, pago por você</h2>
+    <p class="prose">
+      As mensagens que o assistente envia ativamente pelo WhatsApp oficial, como lembretes, têm
+      custo da Meta, cobrado direto no seu cartão. Respostas enviadas por você no celular não são
+      cobradas. Estimativa para três perfis de uso, em {META_ESTIMATE_DATE}:
+    </p>
+    <div class="scroll">
+      <table>
+        <caption class="skip">Estimativa mensal do custo da Meta por perfil de uso</caption>
+        <thead>
+          <tr>
+            <th scope="col">Perfil</th>
+            <th scope="col">Conversas</th>
+            <th scope="col">Agendamentos</th>
+            <th scope="col">Meta, por mês</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            META_PROFILES.map((profile) => (
+              <tr>
+                <th scope="row">{profile.name}</th>
+                <td class="num">{formatCount(profile.conversations)}</td>
+                <td class="num">{formatCount(profile.appointments)}</td>
+                <td class="num">{formatBrl(profile.metaCents)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="muted small prose">
+      Estimativa, não é cotação: depende da tabela da Meta, que pode mudar, e do seu volume real.
+      No cadastro mostramos a estimativa para o volume que você informar.
     </p>
   </section>
 
