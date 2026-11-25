@@ -1,5 +1,5 @@
 import { createChannelSender, createTemplateSender } from '@app/channels';
-import { NodeEnv } from '@app/core';
+import { NodeEnv, channelTokenReader } from '@app/core';
 import { REMINDER_SWEEP_QUEUE, type Db } from '@app/db';
 import type { Alert } from '@app/observability';
 import type { PgBoss } from 'pg-boss';
@@ -14,6 +14,8 @@ export interface ReminderWiring {
   alert: Alert;
   nodeEnv: string;
   accessToken: string | undefined;
+  /** META_TOKEN_KEY: reads each channel's own token (E-24). */
+  tokenKey: string | undefined;
   log: (fields: object, message: string) => void;
 }
 
@@ -22,6 +24,7 @@ export async function startReminderSweep(wiring: ReminderWiring): Promise<void> 
   const { boss, db, alert, log } = wiring;
   const config = {
     accessToken: wiring.accessToken,
+    readChannelToken: channelTokenReader(wiring.tokenKey),
     devFallback: wiring.nodeEnv !== NodeEnv.production,
     log,
   };

@@ -32,6 +32,14 @@ model Channel {
   wabaId         String?       @map("waba_id")
   coexistence    Boolean       @default(false)
   gatewaySession String?       @map("gateway_session")
+  /// Business token from the Embedded Signup code exchange, encrypted (META_TOKEN_KEY).
+  accessTokenEnc String?       @map("access_token_enc")
+  /// Two-step verification PIN we set when registering the number, encrypted.
+  registerPinEnc String?       @map("register_pin_enc")
+  /// Embedded Signup steps already done at Meta (subscribed, registered, templates, payment_method).
+  setupDone      String[]      @default([]) @map("setup_done")
+  /// Meta error code of the last failed step; null when the last run went through.
+  setupError     String?       @map("setup_error")
   createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 

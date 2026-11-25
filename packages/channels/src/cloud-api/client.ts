@@ -23,7 +23,7 @@ export class CloudApiError extends Error {
 export interface CloudClientConfig {
   phoneNumberId: string;
   accessToken: string;
-  fetch?: typeof fetch;
+  fetch?: typeof fetch | undefined;
 }
 
 export type CloudClient = ReturnType<typeof createCloudClient>;
@@ -78,7 +78,7 @@ async function downloadMedia(
   return { bytes: Buffer.from(await response.arrayBuffer()), mime: info.mime_type };
 }
 
-type GraphCall = (path: string, body?: object) => Promise<unknown>;
+export type GraphCall = (path: string, body?: object) => Promise<unknown>;
 
 function templateBody(template: TemplateRef, vars: readonly string[]) {
   const parameters = vars.map((value) => ({ type: 'text', text: value }));
@@ -86,7 +86,7 @@ function templateBody(template: TemplateRef, vars: readonly string[]) {
   return { name: template.name, language: { code: template.language }, components };
 }
 
-function graphCaller(config: CloudClientConfig): GraphCall {
+export function graphCaller(config: Pick<CloudClientConfig, 'accessToken' | 'fetch'>): GraphCall {
   return async (path: string, body?: object): Promise<unknown> => {
     const init: RequestInit = body
       ? {
@@ -125,6 +125,7 @@ function sent(payload: unknown): SendResult {
   return { providerMessageId: id };
 }
 
-function auth(config: CloudClientConfig): Record<string, string> {
-  return { authorization: `Bearer ${config.accessToken}` };
+/** No token (the code exchange authenticates by app secret in the query): no header. */
+function auth(config: Pick<CloudClientConfig, 'accessToken'>): Record<string, string> {
+  return config.accessToken ? { authorization: `Bearer ${config.accessToken}` } : {};
 }

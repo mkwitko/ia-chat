@@ -29,6 +29,7 @@ export const OnboardingCopy = {
     'O assistente começa em "aprovar antes de enviar": toda resposta vira um rascunho e nada sai sem o seu toque. Você pode mudar isso depois em Mais > Assistente.',
   activate: 'Ativar o assistente',
   activated: 'Tudo pronto. O assistente está ativo em "aprovar antes de enviar".',
+  skipWhatsapp: 'Conectar depois',
   testNote:
     'A mensagem de teste usa o simulador enquanto o WhatsApp não está conectado: nada é enviado a ninguém.',
 } as const;
@@ -74,8 +75,7 @@ export const STEP_INFO: Record<Step, StepInfo> = {
   },
   [Step.whatsapp]: {
     title: 'Conectar o WhatsApp',
-    text: 'A conexão com o WhatsApp ainda não está disponível. Você pode seguir sem ela.',
-    soon: true,
+    text: 'Conecte o número do consultório pela janela da Meta e cadastre lá o seu cartão. Dá para pular e conectar depois em Mais > Conexões.',
   },
   [Step.google]: {
     title: 'Conectar o Google Agenda',

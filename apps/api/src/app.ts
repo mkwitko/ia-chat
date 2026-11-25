@@ -1,6 +1,6 @@
 import type { AiGateway } from '@app/ai';
 import { createChannelSender, type ChannelSend } from '@app/channels';
-import { NodeEnv, type BillingProvider } from '@app/core';
+import { NodeEnv, channelTokenReader, whatsappSignupConfig, type BillingProvider } from '@app/core';
 import type { Db } from '@app/db';
 import type { Alert } from '@app/observability';
 import Fastify, { type FastifyInstance } from 'fastify';
@@ -38,6 +38,7 @@ import type { EnqueueInbound } from './webhooks/store.ts';
 import { registerWaitlistIfConfigured } from './waitlist/waitlist-routes.ts';
 import type { TurnstileVerifier } from './waitlist/turnstile.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
+import { registerWhatsappSignupRoutes } from './whatsapp/routes.ts';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -67,6 +68,8 @@ export interface AppDeps extends HealthDeps {
   alert?: Alert;
   /** Test seam: the `fetch` used for Google (OAuth and Calendar). */
   calendarFetch?: typeof fetch;
+  /** Test seam: the `fetch` used for the Graph API in Embedded Signup (E-24). */
+  metaFetch?: typeof fetch;
 }
 
 export function buildApp(deps: AppDeps): FastifyInstance {
@@ -88,6 +91,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
       send ??
       createChannelSender({
         accessToken: env.META_ACCESS_TOKEN,
+        readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
         devFallback: env.NODE_ENV !== NodeEnv.production,
         log: (fields, message) => {
           app.log.info(fields, message);
@@ -104,6 +108,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   }
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
+  registerWhatsappSignupRoutes(app, { config: whatsappSignupConfig(env), fetch: deps.metaFetch });
   return app;
 }
 

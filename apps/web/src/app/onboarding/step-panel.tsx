@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { notifySaveError } from '../setup/feedback';
 import { Status, Step, useSaveStep, type OnboardingView } from './onboarding-api';
 import { OnboardingCopy as Copy, STEP_INFO } from './onboarding-copy';
+import { WhatsappSection } from '../whatsapp/whatsapp-section';
 import { SpecialtyPicker } from './specialty-picker';
 
 interface PanelProps {
@@ -23,6 +24,13 @@ export function StepPanel({ step, view, onSettled }: Readonly<PanelProps>) {
       <p className="text-sm">{info.text}</p>
       {step === Step.account && <SpecialtyPicker view={view} />}
       {step === Step.simulator && <p className="text-sm text-muted-foreground">{Copy.testNote}</p>}
+      {step === Step.whatsapp && (
+        <WhatsappStep
+          onSkip={() => {
+            settle(Status.skipped);
+          }}
+        />
+      )}
       {info.to && (
         <Button asChild variant="outline">
           <Link to={info.to}>{info.openLabel}</Link>
@@ -44,4 +52,16 @@ export function StepPanel({ step, view, onSettled }: Readonly<PanelProps>) {
 function actionLabel(step: Step): string {
   if (STEP_INFO[step].soon) return Copy.skip;
   return step === Step.activation ? Copy.activate : Copy.next;
+}
+
+/** The connection lives in its own section; the step can still be left for later. */
+function WhatsappStep({ onSkip }: Readonly<{ onSkip: () => void }>) {
+  return (
+    <>
+      <WhatsappSection />
+      <Button variant="outline" onClick={onSkip}>
+        {Copy.skipWhatsapp}
+      </Button>
+    </>
+  );
 }
