@@ -43,7 +43,7 @@ describe('output validation in the turn (E-14)', () => {
       turnOf(scope, ['estou passando muito mal, acho que vou apagar']),
     );
     expect(reply).toMatchObject({
-      text: AgentCopy.emergency,
+      text: AgentCopy.emergency(false),
       handoff: true,
     });
     expect(fake.prompts).toHaveLength(0);
