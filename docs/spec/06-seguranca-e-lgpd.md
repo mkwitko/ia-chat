@@ -14,8 +14,8 @@ Mensagem de paciente a profissional de saúde pode conter dado sensível mesmo q
 
 | ID | Regra |
 |---|---|
-| RN-20 | O assistente não solicita informação de saúde. Também é exigência da política da Meta |
-| RN-21 | Informação de saúde que o paciente envia espontaneamente fica só no texto da mensagem. Não é extraída para campos de cadastro, CRM, resumos de longo prazo ou relatórios |
+| RN-20 | O assistente pode perguntar a queixa (o que incomoda e há quanto tempo) (decisão do dono, 25/11/2026), sem insistir e sem avaliar. Antes era proibido; o risco (dado sensível pela LGPD, art. 11) fica aceito pelo dono. O aviso de privacidade da primeira mensagem (M-01) deve citar que a queixa pode ser perguntada |
+| RN-21 | Informação de saúde que o paciente envia, espontaneamente ou porque o assistente perguntou, fica só no texto da mensagem. Não é extraída para campos de cadastro, CRM, resumos de longo prazo ou relatórios |
 | RN-22 | Imagens e documentos não são enviados a modelo de IA |
 | RN-23 | Relatórios e análises trabalham com metadados e categorias administrativas |
 | RN-24 | Traços de IA têm nome e telefone mascarados |

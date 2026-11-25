@@ -37,7 +37,7 @@ export const FAQS: readonly Faq[] = [
   {
     question: 'Ele dá orientação clínica?',
     answer:
-      'Não, e também não pede informação de saúde. Em caso de urgência, orienta ligar para o SAMU 192 e avisa você na hora.',
+      'Não. Ele pode perguntar o que está incomodando, para você chegar preparado, mas não avalia nem orienta. Em caso de urgência, orienta ligar para o SAMU 192 e avisa você na hora.',
   },
   {
     question: 'Posso assumir uma conversa?',
