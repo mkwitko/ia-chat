@@ -25,6 +25,20 @@ export interface Funnel {
   steps: { step: Step; count: number }[];
 }
 
+/** Mirrors apps/api/src/operator/meta-overview.ts (H-05). */
+export interface MetaOverview {
+  month: string;
+  tenants: number;
+  totals: {
+    serviceUsed: number;
+    serviceOver: number;
+    utilityBillable: number;
+    marketingBillable: number;
+    estimatedCostCents: number;
+  };
+  top: { id: string; name: string; serviceUsed: number; estimatedCostCents: number }[];
+}
+
 export interface TenantConversations {
   costs: { conversationId: string; costCents: number }[];
   issues: { conversationId: string; state: string; turns: number }[];
@@ -53,6 +67,7 @@ export interface OwnerGrant {
 const ME_PATH = '/api/operator/me';
 const CLIENTS_PATH = '/api/operator/clients';
 const FUNNEL_PATH = '/api/operator/funnel';
+const META_PATH = '/api/operator/meta-usage';
 const PROBLEMS_PATH = '/api/operator/problems';
 const OWNER_PATH = '/api/operator-access';
 const POST = 'POST';
@@ -71,6 +86,13 @@ export const useClients = () =>
 
 export const useFunnel = () =>
   useQuery({ queryKey: [FUNNEL_PATH], queryFn: () => api<Funnel>(FUNNEL_PATH), retry: false });
+
+export const useMetaOverview = () =>
+  useQuery({
+    queryKey: [META_PATH],
+    queryFn: () => api<MetaOverview>(META_PATH),
+    retry: false,
+  });
 
 export const useProblems = () =>
   useQuery({

@@ -111,6 +111,7 @@ function statusEvent(status: WebhookStatus): InboundEvent[] {
       providerMessageId: status.id,
       status: status.status as DeliveryStatus,
       error: error ? { code: String(error.code), title: error.title } : undefined,
+      pricing: status.pricing,
       at: at(status.timestamp),
     },
   ];

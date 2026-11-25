@@ -5,9 +5,11 @@ import { Permission } from '../auth/access.ts';
 import { requireTenant } from '../auth/tenant-guard.ts';
 import { audit, AuditAction } from '../setup/audit.ts';
 import { parsed, tenantOf } from '../setup/guarded.ts';
+import { readMetaSummary } from './meta-usage.ts';
 
 const PATH = '/api/usage';
 const CAP_PATH = '/api/usage/cap';
+const META_PATH = '/api/usage/meta';
 const ENTITY = 'overage_cap';
 const MONTH_KEY_LENGTH = 7; // YYYY-MM
 
@@ -16,7 +18,15 @@ const capSchema = z.object({ capCents: z.int().min(0).nullable() }).strict();
 /** Spec 10, "Plano e uso": the month's conversations, overage and the owner's cap (E-18). */
 export function registerUsageRoutes(app: FastifyInstance): void {
   app.get(PATH, { preHandler: requireTenant(Permission.billingRead) }, readUsage);
+  app.get(META_PATH, { preHandler: requireTenant(Permission.billingRead) }, readMeta);
   app.put(CAP_PATH, { preHandler: requireTenant(Permission.billingManage) }, saveCap);
+}
+
+/** H-05: Meta's free service messages used this month and the estimated cost (information only). */
+async function readMeta(request: FastifyRequest) {
+  const month = monthOf(new Date());
+  const summary = await tenantOf(request).withTenant((tx) => readMetaSummary(tx, month));
+  return { month: month.toISOString().slice(0, MONTH_KEY_LENGTH), ...summary };
 }
 
 async function readUsage(request: FastifyRequest) {

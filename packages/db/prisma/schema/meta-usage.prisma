@@ -1,0 +1,31 @@
+// Meta WhatsApp usage (H-05).
+
+enum MetaCategory {
+  service
+  utility
+  marketing
+  authentication
+  other
+}
+
+/// One delivered business message per row, from the Cloud API status webhook `pricing`.
+/// Idempotent per provider message id; metadata only, no message content.
+model MetaMessageUsage {
+  id                String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId          String       @map("tenant_id") @db.Uuid
+  channelId         String       @map("channel_id") @db.Uuid
+  providerMessageId String       @map("provider_message_id")
+  month             DateTime     @db.Date
+  category          MetaCategory
+  billable          Boolean
+  /// Meta's pricing type as sent: regular, free_customer_service, free_entry_point...
+  pricingType       String?      @map("pricing_type")
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  channel Channel @relation("MetaMessageUsage_channel", fields: [tenantId, channelId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, channelId, providerMessageId])
+  @@index([tenantId, month])
+  @@map("meta_message_usage")
+}

@@ -8,6 +8,7 @@ import { CapForm } from './cap-form';
 import { useUsage, type Usage } from './usage-api';
 import { monthLabel, UsageCopy as Copy } from './usage-copy';
 import { UsageBar } from './usage-bar';
+import { MetaBlock } from './meta-block';
 import { OperatorAccessNotice } from '../operator/operator-notices';
 
 /** Spec 10, "Plano e uso": the month's conversations, overage, owner's cap and Meta cost. */
@@ -44,10 +45,7 @@ function UsageContent({ usage }: Readonly<{ usage: Usage }>) {
       )}
       <CapForm usage={usage} />
       <OperatorAccessNotice />
-      <section className="grid gap-2 px-4 md:px-0">
-        <h2 className="text-lg">{Copy.metaHeading}</h2>
-        <p className="text-sm text-muted-foreground">{Copy.metaNote}</p>
-      </section>
+      <MetaBlock />
     </div>
   );
 }

@@ -21,6 +21,17 @@ export interface Usage {
   restricted: boolean;
 }
 
+/** Mirrors GET /api/usage/meta (H-05). */
+export interface MetaUsage {
+  month: string;
+  serviceUsed: number;
+  serviceFree: number;
+  serviceOver: number;
+  billable: { utility: number; marketing: number };
+  estimatedCostCents: number;
+}
+
+const META_PATH = '/api/usage/meta';
 const USAGE_PATH = '/api/usage';
 const CAP_PATH = '/api/usage/cap';
 const PUT = 'PUT';
@@ -35,3 +46,6 @@ export function useSaveCap() {
     onSuccess: () => client.invalidateQueries({ queryKey: [USAGE_PATH] }),
   });
 }
+
+export const useMetaUsage = () =>
+  useQuery({ queryKey: [META_PATH], queryFn: () => api<MetaUsage>(META_PATH) });
