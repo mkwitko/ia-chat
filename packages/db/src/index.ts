@@ -44,6 +44,8 @@ export {
   TURN_QUEUE,
   HANDOFF_REMINDER_QUEUE,
   DRAFT_REMINDER_QUEUE,
+  SUMMARY_QUEUE,
+  SUMMARY_SYNC_QUEUE,
   QUEUES,
   QUEUE_SCHEMA,
   deadLetterName,
@@ -82,6 +84,8 @@ export {
 } from './agenda/appointments.ts';
 export { loadScope, slotsIn } from './agenda/availability.ts';
 export { recordOffers, wasOfferedBefore } from './agenda/offers.ts';
+export { dayBounds, isoDay, localDayRange, tomorrowCount } from './agenda/day.ts';
+export { vacationReturn } from './agenda/vacation.ts';
 export {
   AgendaError,
   MAX_FUTURE_APPOINTMENTS,

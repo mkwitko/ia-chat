@@ -117,6 +117,8 @@ model TimeOff {
   startsAt       DateTime @map("starts_at") @db.Timestamptz
   endsAt         DateTime @map("ends_at") @db.Timestamptz
   reason         String?
+  /// RF-14: a vacation is a time off the assistant announces with the return date (endsAt).
+  kind           TimeOffKind @default(block)
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
@@ -124,6 +126,11 @@ model TimeOff {
 
   @@index([tenantId, professionalId, startsAt])
   @@map("time_off")
+}
+
+enum TimeOffKind {
+  block
+  vacation
 }
 
 model Location {

@@ -1,5 +1,5 @@
 import { MS_PER_MINUTE } from '@app/core';
-import { AppointmentStatus, type AppointmentCreator } from '../../generated/prisma/enums.ts';
+import { AppointmentCreator, AppointmentStatus } from '../../generated/prisma/enums.ts';
 import type { Db, Tx } from '../index.ts';
 import { loadScope, slotsIn, type AgendaScope } from './availability.ts';
 import {
@@ -33,6 +33,8 @@ export interface MoveRequest extends Omit<BookRequest, 'serviceId'> {
 }
 
 export interface CancelRequest {
+  /** The professional (human) is not bound by the patient's notice window (RF-44 is for patients). */
+  createdBy?: AppointmentCreator;
   tenantId: string;
   contactId: string;
   appointmentId: string;
@@ -113,7 +115,8 @@ async function moveIn(tx: Tx, req: MoveRequest): Promise<AppointmentView> {
   });
   if (done) return toView(done);
   const old = await ownedLive(tx, req);
-  await assertNotice(tx, { startsAt: old.startsAt, now: req.now });
+  if (req.createdBy !== AppointmentCreator.human)
+    await assertNotice(tx, { startsAt: old.startsAt, now: req.now });
   await tx.appointment.update({
     where: { id: old.id },
     data: { status: AppointmentStatus.cancelled },
@@ -128,7 +131,8 @@ async function cancelIn(tx: Tx, req: CancelRequest): Promise<AppointmentView> {
   });
   if (!found) throw new AgendaFailure(AgendaError.appointmentNotFound);
   if (found.status === AppointmentStatus.cancelled) return toView(found);
-  await assertNotice(tx, { startsAt: found.startsAt, now: req.now });
+  if (req.createdBy !== AppointmentCreator.human)
+    await assertNotice(tx, { startsAt: found.startsAt, now: req.now });
   const updated = await tx.appointment.update({
     where: { id: found.id },
     data: { status: AppointmentStatus.cancelled },
