@@ -1,0 +1,43 @@
+# Domains come from the environment (docker-compose.prod.yml). Certificates are automatic.
+{
+	email {$ACME_EMAIL}
+}
+
+(common) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+}
+
+# Panel: the SPA, with the API under the same origin (cookies stay first-party).
+{$PANEL_DOMAIN} {
+	import common
+	@api path /api/* /health /ready
+	handle @api {
+		reverse_proxy api:3000
+	}
+	handle {
+		root * /srv/web
+		@shell path / /index.html /sw.js
+		header @shell Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# API alone: webhooks (Meta, Asaas) and the public waitlist form.
+{$API_DOMAIN} {
+	import common
+	reverse_proxy api:3000
+}
+
+{$SITE_DOMAIN} {
+	import common
+	root * /srv/site
+	try_files {path} {path}/index.html
+	file_server
+}

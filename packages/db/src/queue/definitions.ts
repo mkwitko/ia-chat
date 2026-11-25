@@ -55,6 +55,9 @@ export const REMINDER_SWEEP_QUEUE: QueueDefinition = { name: 'reminders.sweep' }
 /** E-25: daily reconciliation with Asaas, the overdue ladder and the overage charge. */
 export const BILLING_RECONCILE_QUEUE: QueueDefinition = { name: 'billing.reconcile' };
 
+/** E-26 (RF-63): daily erasure of the data of accounts closed for 30 days. */
+export const TENANT_DELETION_QUEUE: QueueDefinition = { name: 'retention.tenant_deletion' };
+
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
   INBOUND_QUEUE,
@@ -67,4 +70,5 @@ export const QUEUES: readonly QueueDefinition[] = [
   TRIAL_SWEEP_QUEUE,
   REMINDER_SWEEP_QUEUE,
   BILLING_RECONCILE_QUEUE,
+  TENANT_DELETION_QUEUE,
 ];
