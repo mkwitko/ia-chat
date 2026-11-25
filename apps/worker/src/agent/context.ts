@@ -1,17 +1,11 @@
 import type { AgentProfile, AgentState } from '@app/ai';
+import { parsePolicy, type SpecialtyPolicy } from '@app/core';
 import { MessageAuthor, MessageType, type IdentityMode, type Plan, type Tx } from '@app/db';
 import type { ModelMessage } from 'ai';
-import * as z from 'zod';
 
 // Spec 04, "Contexto do prompt": everything the agent knows comes from here, read inside
 // the tenant transaction. Recent history: the last 20 messages; older ones are summarized.
 export const HISTORY_LIMIT = 20;
-
-const policySchema = z.object({
-  pricesForbidden: z.boolean().default(false),
-  urgencyTerms: z.array(z.string()).default([]),
-  forbiddenTerms: z.array(z.string()).default([]),
-});
 
 const PLACEHOLDER: Partial<Record<MessageType, string>> = {
   [MessageType.audio]: '[áudio ainda sem transcrição]',
@@ -59,7 +53,7 @@ export async function loadAgentInput(
     where: { id: conversation.tenantId },
     include: { specialtyPolicy: true },
   });
-  const policy = policySchema.parse(tenant.specialtyPolicy?.rules ?? {});
+  const policy = parsePolicy(tenant.specialtyPolicy?.rules);
   const profile = await loadProfile(tx, {
     tenant,
     policy,
@@ -91,7 +85,7 @@ function settingsOf(tenant: { autonomy: string; plan: Plan; timezone: string }) 
   return { autonomy: tenant.autonomy, plan: tenant.plan, timezone: tenant.timezone };
 }
 
-function termsOf(policy: z.infer<typeof policySchema>) {
+function termsOf(policy: SpecialtyPolicy) {
   return { specialtyTerms: policy.urgencyTerms, forbiddenTerms: policy.forbiddenTerms };
 }
 
@@ -141,7 +135,7 @@ async function loadHistory(
 
 interface ProfileSources {
   tenant: { id: string; name: string; assistantName: string; identityMode: IdentityMode };
-  policy: z.infer<typeof policySchema>;
+  policy: SpecialtyPolicy;
   specialty: string | undefined;
 }
 

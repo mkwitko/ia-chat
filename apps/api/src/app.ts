@@ -12,6 +12,10 @@ import { registerEventsRoute } from './realtime/events-route.ts';
 import { createInboxHub } from './realtime/inbox-hub.ts';
 import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
+import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
+import { registerLocationRoutes } from './setup/location-routes.ts';
+import { registerServiceRoutes } from './setup/services-routes.ts';
+import { registerToneRoutes } from './setup/tone-routes.ts';
 import type { ApiEnv } from './env.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
@@ -46,6 +50,10 @@ export function buildApp({ env, db, email, enqueueInbound, send }: AppDeps): Fas
   registerAuthRoutes(app);
   registerControlRoutes(app);
   registerAssistantSettingsRoutes(app);
+  registerServiceRoutes(app);
+  registerLocationRoutes(app);
+  registerKnowledgeRoutes(app);
+  registerToneRoutes(app);
   registerInboxRoutes(app, {
     send:
       send ??
