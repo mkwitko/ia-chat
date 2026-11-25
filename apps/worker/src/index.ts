@@ -182,6 +182,7 @@ await startReminderSweep({
   alert,
   nodeEnv: env.NODE_ENV,
   accessToken: process.env.META_ACCESS_TOKEN,
+  tokenKey: process.env.META_TOKEN_KEY,
   log: appLog.info,
 });
 

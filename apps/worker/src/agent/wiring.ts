@@ -1,7 +1,12 @@
 import { aiConfigured, aiEnvSchema, createEnvGateway, startTracing } from '@app/ai';
 import { pushEnvSchema, vapidFrom } from '../notify/push.ts';
 import { createChannelSender } from '@app/channels';
-import { NodeEnv, googleCalendarConfig, googleCalendarEnvSchema } from '@app/core';
+import {
+  NodeEnv,
+  channelTokenReader,
+  googleCalendarConfig,
+  googleCalendarEnvSchema,
+} from '@app/core';
 import {
   createCalendarResolver,
   DRAFT_REMINDER_QUEUE,
@@ -28,7 +33,10 @@ const turnJob = z.object({
   data: z.object({ conversationId: z.uuid(), version: z.number().int() }),
 });
 const workerEnvSchema = aiEnvSchema
-  .extend({ META_ACCESS_TOKEN: z.string().min(1).optional() })
+  .extend({
+    META_ACCESS_TOKEN: z.string().min(1).optional(),
+    META_TOKEN_KEY: z.string().min(1).optional(),
+  })
   .extend(pushEnvSchema.shape)
   .extend(googleCalendarEnvSchema.shape);
 
@@ -109,6 +117,7 @@ function turnDeps({ db, boss, notifier, alert, env, nodeEnv, log }: DepsSources)
     scheduleReminder: reminderScheduler(boss),
     send: createChannelSender({
       accessToken: env.META_ACCESS_TOKEN,
+      readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
       devFallback: nodeEnv !== NodeEnv.production,
       log: log.info,
     }),

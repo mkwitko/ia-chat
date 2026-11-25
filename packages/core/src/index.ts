@@ -47,4 +47,5 @@ export * from './calendar/index.ts';
 export * from './reminders/plan.ts';
 export * from './reminders/templates.ts';
 export * from './billing/index.ts';
+export * from './whatsapp/signup.ts';
 export * from './meta/pricing.ts';

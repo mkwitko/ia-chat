@@ -35,6 +35,9 @@ export const ErrorCode = {
   noSubscription: 'no_subscription',
   alreadySubscribed: 'already_subscribed',
   billingFailed: 'billing_failed',
+  whatsappOff: 'whatsapp_off',
+  whatsappTaken: 'whatsapp_taken',
+  whatsappFailed: 'whatsapp_failed',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

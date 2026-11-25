@@ -5,7 +5,8 @@ import { defaultStatements, memberAc, ownerAc } from 'better-auth/plugins/organi
 // nor change integrations. Billing is the owner's (hypothesis H-10). Assistant settings
 // (autonomy, identity) speak to patients: receptionist only reads them (hypothesis H-14).
 // Agenda: the receptionist views and books; availability, blocks and vacation are the owner's
-// and the professional's (hypothesis H-18).
+// and the professional's (hypothesis H-18). Connecting the WhatsApp number is the owner's alone:
+// it binds the clinic's number to us; the clinic pays Meta with its own card (H-05, E-24).
 
 export const Role = {
   owner: 'owner',
@@ -23,6 +24,7 @@ const statement = {
   integrations: [Action.read, Action.manage],
   assistant: [Action.read, Action.manage],
   agenda: [Action.read, Action.book, Action.manage],
+  whatsapp: [Action.manage],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -34,6 +36,7 @@ export const roles = {
     integrations: [Action.read, Action.manage],
     assistant: [Action.read, Action.manage],
     agenda: [Action.read, Action.book, Action.manage],
+    whatsapp: [Action.manage],
   }),
   [Role.professional]: ac.newRole({
     ...memberAc.statements,
@@ -61,6 +64,7 @@ export const Permission = {
   agendaRead: { agenda: [Action.read] },
   agendaBook: { agenda: [Action.book] },
   agendaManage: { agenda: [Action.manage] },
+  whatsappManage: { whatsapp: [Action.manage] },
 } as const satisfies Record<string, PermissionRequest>;
 
 export function isRole(value: string): value is Role {

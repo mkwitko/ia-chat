@@ -16,6 +16,7 @@ import { CustomersScreen } from './app/customers/customers-screen';
 import { HomeScreen } from './app/home/home-screen';
 import { ResultsScreen } from './app/results/results-screen';
 import { MoreScreen } from './app/screens/more-screen';
+import { ConnectionsScreen } from './app/whatsapp/connections-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
 import { ServicesScreen } from './app/setup/services-screen';
 import { ToneScreen } from './app/setup/tone-screen';
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
       { path: Route.simulator, element: <SimulatorScreen /> },
       { path: Route.services, element: <ServicesScreen /> },
       { path: Route.onboarding, element: <OnboardingScreen /> },
+      { path: Route.connections, element: <ConnectionsScreen /> },
       { path: Route.usage, element: <UsageScreen /> },
       { path: Route.billing, element: <BillingScreen /> },
       { path: Route.operator, element: <OperatorScreen /> },

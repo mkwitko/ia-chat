@@ -8,8 +8,10 @@ const DEV_SENT = 'dev sender: message not sent to WhatsApp';
 const NOT_CLOUD = 'only the Cloud API channel can send for now (QR code: E-09b)';
 
 export interface SenderConfig {
-  /** Meta system-user token. ponytail: one token from env until per-channel tokens (E-24). */
+  /** Our own system-user token (test or pilot number): used when the channel has none. */
   accessToken: string | undefined;
+  /** Decrypts a channel's own token from Embedded Signup (E-24); absent without META_TOKEN_KEY. */
+  readChannelToken?: ((stored: string) => string) | undefined;
   /** Without a token in development: log instead of sending, so the flow can be tried locally. */
   devFallback: boolean;
   log: (fields: object, message: string) => void;
@@ -34,18 +36,21 @@ async function targetOf(tx: Tx, config: SenderConfig, conversationId: string): P
     where: { id: conversationId },
     include: { contact: true, channel: true },
   });
-  if (!config.accessToken && config.devFallback) return { dev: true };
   const { channel, contact } = conversation;
-  if (channel.kind !== ChannelKind.cloud_api || !channel.phoneNumberId || !config.accessToken)
+  const accessToken = tokenOf(config, channel.accessTokenEnc);
+  if (!accessToken && config.devFallback) return { dev: true };
+  if (channel.kind !== ChannelKind.cloud_api || !channel.phoneNumberId || !accessToken)
     throw new Error(NOT_CLOUD);
-  const client = createCloudClient({
-    phoneNumberId: channel.phoneNumberId,
-    accessToken: config.accessToken,
-  });
+  const client = createCloudClient({ phoneNumberId: channel.phoneNumberId, accessToken });
   return {
     client,
     to: { bsuid: contact.bsuid ?? undefined, phoneE164: contact.phoneE164 ?? undefined },
   };
+}
+
+/** The channel's own token when it has one, else ours. */
+function tokenOf(config: SenderConfig, stored: string | null): string | undefined {
+  return stored && config.readChannelToken ? config.readChannelToken(stored) : config.accessToken;
 }
 
 function devResult(config: SenderConfig, conversationId: string, characters: number) {

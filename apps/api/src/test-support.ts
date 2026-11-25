@@ -28,6 +28,9 @@ const TEST_ENV = {
   AXIOM_TOKEN: undefined,
   ASAAS_API_KEY: undefined,
   ASAAS_WEBHOOK_TOKEN: undefined,
+  META_APP_ID: undefined,
+  META_ES_CONFIG_ID: undefined,
+  META_TOKEN_KEY: undefined,
 };
 const PASSWORD = 'senha-de-teste-123';
 const TEST_NAME = 'Pessoa Teste';
@@ -48,6 +51,7 @@ export interface TestAppOptions {
   simulatorGateway?: AiGateway;
   checkQueue?: () => Promise<unknown>;
   calendarFetch?: typeof fetch;
+  metaFetch?: typeof fetch;
   billing?: BillingProvider;
 }
 
@@ -68,6 +72,7 @@ export async function startTestApp(
     ...(options.checkQueue ? { checkQueue: options.checkQueue } : {}),
     ...(options.calendarFetch ? { calendarFetch: options.calendarFetch } : {}),
     ...(options.billing ? { billing: options.billing } : {}),
+    ...(options.metaFetch ? { metaFetch: options.metaFetch } : {}),
   });
   register(app);
   await app.ready();
