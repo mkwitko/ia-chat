@@ -43,6 +43,10 @@ describe('conversation agent (E-13)', () => {
       tx.contact.findUniqueOrThrow({ where: { id: scope.contactId } }),
     );
     expect(contact.optOutAt).not.toBeNull();
+    const log = await db.withTenant(scope.tenantId, (tx) =>
+      tx.consentEvent.findMany({ where: { contactId: scope.contactId } }),
+    );
+    expect(log).toMatchObject([{ kind: 'opt_out', category: 'all', source: 'patient_message' }]);
     expect(await agentWith(fake.model)(turnOf(scope, [null], MessageType.sticker))).toBeNull();
     expect(fake.prompts).toHaveLength(0);
   });

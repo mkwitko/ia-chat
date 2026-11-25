@@ -3,6 +3,7 @@ import {
   AgendaError,
   AppointmentCreator,
   AppointmentStatus,
+  ContactOrigin,
   bookAppointment,
   cancelAppointment,
   rescheduleAppointment,
@@ -75,7 +76,13 @@ async function contactFor(tx: Tx, tenantId: string, body: z.infer<typeof bookSch
   });
   if (known) return known;
   return tx.contact.create({
-    data: { tenantId, name: patient.name, phoneKey: key, phoneE164: toE164(patient.phone) },
+    data: {
+      tenantId,
+      name: patient.name,
+      phoneKey: key,
+      phoneE164: toE164(patient.phone),
+      origin: ContactOrigin.manual,
+    },
   });
 }
 

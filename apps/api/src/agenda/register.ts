@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { registerAvailabilityRoutes } from './availability-routes.ts';
+import { registerAttendanceRoute } from './attendance-route.ts';
 import { registerBookingRoutes } from './booking-routes.ts';
 import { registerTimeOffRoutes } from './time-off-routes.ts';
 import { registerAgendaViewRoutes } from './view-routes.ts';
@@ -8,6 +9,7 @@ import { registerAgendaViewRoutes } from './view-routes.ts';
 export function registerAgendaRoutes(app: FastifyInstance): void {
   registerAgendaViewRoutes(app);
   registerBookingRoutes(app);
+  registerAttendanceRoute(app);
   registerAvailabilityRoutes(app);
   registerTimeOffRoutes(app);
 }

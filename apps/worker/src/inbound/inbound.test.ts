@@ -91,6 +91,23 @@ describe('applying inbound events', () => {
     });
   });
 
+  it('a first message creates a direct-WhatsApp contact with one opt-in and a first stage entry', async () => {
+    const { tenantId, channelId } = await newChannel();
+    const event = text('wamid.FIRST', { bsuid: 'BR.F6', phoneE164: '+5541999990003' });
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      await db.withTenant(tenantId, (tx) =>
+        applyInboundEvents(tx, { tenantId, channelId, events: [event] }),
+      );
+    }
+    await db.withTenant(tenantId, async (tx) => {
+      expect(await tx.contact.findFirstOrThrow()).toMatchObject({ origin: 'whatsapp_direct' });
+      expect(await tx.consentEvent.findMany()).toMatchObject([
+        { kind: 'opt_in', category: 'service', source: 'patient_message', actorType: 'contact' },
+      ]);
+      expect(await tx.contactStageEvent.findMany()).toMatchObject([{ toStage: 'new_contact' }]);
+    });
+  });
+
   it('records the owner echo as the professional writing, in the same conversation', async () => {
     const { tenantId, channelId } = await newChannel();
     const contact = { bsuid: 'BR.F6' };
