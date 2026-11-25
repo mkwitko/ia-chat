@@ -11,6 +11,8 @@ model Tenant {
   timezone          String       @default("America/Sao_Paulo")
   /// RF-44: a patient cancels at least this long before the appointment (hypothesis: 24 h).
   cancelNoticeMinutes Int        @default(1440) @map("cancel_notice_minutes")
+  /// RF-15: local time of day (minutes after midnight) of the nightly agenda push; default 20:00.
+  nightlySummaryMinute Int       @default(1200) @map("nightly_summary_minute")
   /// How the assistant introduces itself (spec 04, "Identificação").
   assistantName     String       @default("Assistente virtual") @map("assistant_name")
   /// How the assistant presents itself (owner decision, 24/11/2026; spec 01 "Limites").

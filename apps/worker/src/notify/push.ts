@@ -1,6 +1,6 @@
 import type { Db } from '@app/db';
 import * as z from 'zod';
-import { buildNotice, type NotifyReason } from './reasons.ts';
+import { buildNotice, type Notice, type NotifyReason } from './reasons.ts';
 
 // The push service says the browser unsubscribed: the stored subscription is dead.
 const HTTP_NOT_FOUND = 404;
@@ -65,14 +65,15 @@ export function vapidFrom(env: z.infer<typeof pushEnvSchema>): VapidConfig | nul
   return { publicKey, privateKey, subject: env.PUSH_SUBJECT };
 }
 
-/** Sends the notice to every browser the tenant's users subscribed; drops dead subscriptions. */
-export function createNotifier({ db, vapid, send, log }: NotifierDeps): Notifier {
-  return async ({ tenantId, conversationId, reason }) => {
+export type Deliver = (tenantId: string, notice: Notice, fields: object) => Promise<void>;
+
+/** Sends one notice to every browser the tenant's users subscribed; drops dead subscriptions. */
+export function createDelivery({ db, vapid, send, log }: NotifierDeps): Deliver {
+  return async (tenantId, notice, fields) => {
     if (!vapid) {
-      log.warn({ tenantId, conversationId, reason }, NO_KEYS);
+      log.warn({ tenantId, ...fields }, NO_KEYS);
       return;
     }
-    const notice = buildNotice(reason, conversationId);
     const payload = JSON.stringify(notice);
     const options: PushOptions = {
       vapidDetails: vapid,
@@ -86,8 +87,7 @@ export function createNotifier({ db, vapid, send, log }: NotifierDeps): Notifier
           () => null,
           (error: unknown) => error,
         );
-        if (failure !== null && !isGone(failure))
-          log.warn({ tenantId, conversationId, reason }, PUSH_FAILED);
+        if (failure !== null && !isGone(failure)) log.warn({ tenantId, ...fields }, PUSH_FAILED);
         return failure !== null && isGone(failure) ? id : null;
       }),
     );
@@ -96,8 +96,14 @@ export function createNotifier({ db, vapid, send, log }: NotifierDeps): Notifier
       await db.withTenant(tenantId, (tx) =>
         tx.pushSubscription.deleteMany({ where: { id: { in: gone } } }),
       );
-    log.info({ tenantId, conversationId, reason, devices: subscriptions.length }, NOTIFIED);
+    log.info({ tenantId, ...fields, devices: subscriptions.length }, NOTIFIED);
   };
+}
+
+export function createNotifier(deps: NotifierDeps): Notifier {
+  const deliver = createDelivery(deps);
+  return ({ tenantId, conversationId, reason }) =>
+    deliver(tenantId, buildNotice(reason, conversationId), { conversationId, reason });
 }
 
 const failureSchema = z.object({ statusCode: z.number() });

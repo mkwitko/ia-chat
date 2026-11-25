@@ -30,6 +30,9 @@ export const AgentCopy = {
       : 'Recebemos sua mensagem. O profissional vai responder assim que puder.',
   optOutConfirmation:
     'Pronto, você não vai mais receber mensagens automáticas daqui. Se precisar de algo, é só escrever.',
+  /** Fixed text for the model to relay (RF-14); the date is computed, never written by the model. */
+  vacation: (returnDate: string) =>
+    `O consultório está de férias e volta a atender em ${returnDate}. Avise o paciente dessa data e só ofereça horários a partir dela.`,
   unsupported: 'Não consegui abrir essa mensagem. Pode escrever em texto, por favor?',
   /** First answer of a conversation; null in the professional mode (it speaks as them). */
   identification: ({ identity, assistantName, professionalName }: Persona): string | null => {
