@@ -8,6 +8,8 @@ export const AgendaError = {
   tooLateToCancel: 'cancelamento_fora_do_prazo',
   limitReached: 'limite_de_agendamentos',
   noProfessional: 'sem_profissional',
+  notMarkable: 'presenca_indisponivel',
+  notStarted: 'atendimento_nao_comecou',
 } as const;
 export type AgendaError = (typeof AgendaError)[keyof typeof AgendaError];
 

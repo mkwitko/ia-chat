@@ -15,7 +15,15 @@ import {
   prefilter,
   PrefilterKind,
 } from '@app/agent';
-import { Autonomy, type Db } from '@app/db';
+import {
+  Autonomy,
+  ConsentActor,
+  ConsentCategory,
+  ConsentKind,
+  ConsentSource,
+  recordConsent,
+  type Db,
+} from '@app/db';
 import { DeliveryMode, type RespondInput, type TurnReply } from '../conversation/turn.ts';
 import { loadAgentInput, type AgentInput } from './context.ts';
 import { refreshSummary } from './summary.ts';
@@ -91,7 +99,15 @@ async function applyPrefilter(
   if (kind === PrefilterKind.unsupported) return fixed(AgentCopy.unsupported, false);
   if (kind === PrefilterKind.optOut) {
     await db.withTenant(turn.tenantId, (tx) =>
-      tx.contact.update({ where: { id: input.contactId }, data: { optOutAt: new Date() } }),
+      recordConsent(tx, {
+        tenantId: turn.tenantId,
+        contactId: input.contactId,
+        kind: ConsentKind.opt_out,
+        category: ConsentCategory.all,
+        source: ConsentSource.patient_message,
+        actor: { type: ConsentActor.contact },
+        now: new Date(),
+      }),
     );
     return fixed(AgentCopy.optOutConfirmation, false);
   }

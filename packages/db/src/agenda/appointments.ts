@@ -1,11 +1,12 @@
 import { MS_PER_MINUTE } from '@app/core';
 import { AppointmentCreator, AppointmentStatus } from '../../generated/prisma/enums.ts';
 import type { Db, Tx } from '../index.ts';
-import { loadScope, slotsIn, type AgendaScope } from './availability.ts';
+import { withStageSync } from '../customers/sync.ts';
+import { loadScope } from './availability.ts';
+import { assertBelowLimit, assertNotice, assertOffered, LIVE } from './guards.ts';
 import {
   AgendaError,
   AgendaFailure,
-  MAX_FUTURE_APPOINTMENTS,
   isExclusionViolation,
   type AgendaResult,
   type AppointmentView,
@@ -13,9 +14,6 @@ import {
 
 // Spec 05: the appointments table is the source of truth; the exclusion constraint decides
 // double bookings (A-10). Every function is one transaction, so a failure leaves nothing behind.
-
-const LIVE = [AppointmentStatus.scheduled, AppointmentStatus.confirmed];
-const ONE_MS = 1;
 
 export interface BookRequest {
   tenantId: string;
@@ -42,14 +40,26 @@ export interface CancelRequest {
 }
 
 export const bookAppointment = (db: Db, req: BookRequest) =>
-  runAgenda(db, req.tenantId, (tx) => bookIn(tx, req));
+  runAgenda(
+    db,
+    req.tenantId,
+    synced(req, (tx) => bookIn(tx, req)),
+  );
 
 /** RF-43: the old time is released only if the new one was written (one transaction). */
 export const rescheduleAppointment = (db: Db, req: MoveRequest) =>
-  runAgenda(db, req.tenantId, (tx) => moveIn(tx, req));
+  runAgenda(
+    db,
+    req.tenantId,
+    synced(req, (tx) => moveIn(tx, req)),
+  );
 
 export const cancelAppointment = (db: Db, req: CancelRequest) =>
-  runAgenda(db, req.tenantId, (tx) => cancelIn(tx, req));
+  runAgenda(
+    db,
+    req.tenantId,
+    synced(req, (tx) => cancelIn(tx, req)),
+  );
 
 export async function listUpcoming(
   db: Db,
@@ -64,6 +74,12 @@ export async function listUpcoming(
   );
   return rows.map(toView);
 }
+
+/** The customer's stage history follows the booking, in the same transaction (spec 10, "Clientes"). */
+const synced =
+  <T>(req: { tenantId: string; contactId: string; now: Date }, work: (tx: Tx) => Promise<T>) =>
+  (tx: Tx) =>
+    withStageSync(tx, req, () => work(tx));
 
 async function runAgenda<T>(
   db: Db,
@@ -152,49 +168,6 @@ async function ownedLive(tx: Tx, req: MoveRequest) {
   });
   if (!found) throw new AgendaFailure(AgendaError.appointmentNotFound);
   return found;
-}
-
-/** RF-44: inside the notice window the patient is handed to the professional instead. */
-async function assertNotice(tx: Tx, { startsAt, now }: { startsAt: Date; now: Date }) {
-  const { cancelNoticeMinutes } = await loadScope(tx);
-  if (startsAt.getTime() - now.getTime() < cancelNoticeMinutes * MS_PER_MINUTE)
-    throw new AgendaFailure(AgendaError.tooLateToCancel);
-}
-
-async function assertBelowLimit(tx: Tx, { contactId, now }: BookRequest) {
-  const count = await tx.appointment.count({
-    where: { contactId, status: { in: LIVE }, startsAt: { gte: now } },
-  });
-  if (count >= MAX_FUTURE_APPOINTMENTS) throw new AgendaFailure(AgendaError.limitReached);
-}
-
-/** The slot must still come out of `availableSlots` (rules, time off, notice, other bookings). */
-async function assertOffered(
-  tx: Tx,
-  {
-    scope,
-    req,
-    durationMinutes,
-  }: { scope: AgendaScope; req: BookRequest; durationMinutes: number },
-) {
-  const slots = await slotsIn(tx, {
-    professionalId: scope.professionalId,
-    timezone: scope.timezone,
-    durationMinutes,
-    from: req.startsAt,
-    to: new Date(req.startsAt.getTime() + ONE_MS),
-    now: req.now,
-  });
-  if (slots.some((slot) => slot.start.getTime() === req.startsAt.getTime())) return;
-  const taken = await tx.appointment.count({
-    where: {
-      professionalId: scope.professionalId,
-      status: { not: AppointmentStatus.cancelled },
-      startsAt: { lt: new Date(req.startsAt.getTime() + durationMinutes * MS_PER_MINUTE) },
-      endsAt: { gt: req.startsAt },
-    },
-  });
-  throw new AgendaFailure(taken > 0 ? AgendaError.slotTaken : AgendaError.slotUnavailable);
 }
 
 function toView(row: {

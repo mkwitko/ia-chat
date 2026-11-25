@@ -1,0 +1,93 @@
+// Customers (Clientes): origin, simple pipeline and consent log. Spec 10, "Clientes".
+// Health data stays out: no complaint, diagnosis or free-text note lives on these tables.
+
+/// Where the person came from. Only what evidence supports is set automatically.
+enum ContactOrigin {
+  whatsapp_direct
+  referral
+  site
+  ad_click
+  imported
+  manual
+}
+
+/// Four automatic stages plus the owner's manual `lost`, derived from facts
+/// (packages/db/src/customers/stage.ts). `not_booked` is the recovery list.
+enum PipelineStage {
+  new_contact
+  booked
+  attended
+  not_booked
+  lost
+}
+
+/// Short fixed list: the owner never types why in free text.
+enum LostReason {
+  price
+  distance
+  chose_other
+  no_longer_needed
+  wrong_number
+  other
+}
+
+enum StageSource {
+  derived
+  manual
+}
+
+enum ConsentKind {
+  opt_in
+  opt_out
+}
+
+/// `all` is every proactive message (what the opt-out keyword means); `service` is the
+/// patient's own conversation.
+enum ConsentCategory {
+  service
+  marketing
+  all
+}
+
+enum ConsentSource {
+  patient_message
+  owner_panel
+  backfill
+}
+
+model ContactStageEvent {
+  id         String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId   String         @map("tenant_id") @db.Uuid
+  contactId  String         @map("contact_id") @db.Uuid
+  fromStage  PipelineStage? @map("from_stage")
+  toStage    PipelineStage  @map("to_stage")
+  source     StageSource
+  actorId    String?        @map("actor_id")
+  lostReason LostReason?    @map("lost_reason")
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  contact Contact @relation("ContactStageEvent_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, contactId, createdAt])
+  @@index([tenantId, createdAt])
+  @@map("contact_stage_events")
+}
+
+model ConsentEvent {
+  id        String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId  String          @map("tenant_id") @db.Uuid
+  contactId String          @map("contact_id") @db.Uuid
+  kind      ConsentKind
+  category  ConsentCategory
+  source    ConsentSource
+  actorType String          @map("actor_type")
+  actorId   String?         @map("actor_id")
+  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  contact Contact @relation("ConsentEvent_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, contactId, createdAt])
+  @@map("consent_events")
+}
