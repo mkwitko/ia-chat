@@ -14,6 +14,8 @@ export type EventLog = (fields: object, message: string) => void;
 export type HealthGuard = (text: string, target: string) => Promise<boolean>;
 
 const HEALTH_BLOCKED = 'health_guard.blocked';
+/** The judge did not answer (down, slow or no key): the wiring turns this into an alert. */
+export const HEALTH_JUDGE_DOWN = 'health_guard.judge_down';
 const QUESTION = 'health';
 
 interface GuardDeps {
@@ -34,7 +36,10 @@ export function healthGuard({ gateway, log, scope }: GuardDeps): HealthGuard {
       answer.probability < JUDGE_THRESHOLDS[JudgeQuestionId.healthInfo];
     // Never log the text: only where it would have gone and whether the judge answered.
     if (!safe) {
-      log({ ...scope, target, judged: answer != null }, HEALTH_BLOCKED);
+      log(
+        { ...scope, target, judged: answer != null },
+        answer ? HEALTH_BLOCKED : HEALTH_JUDGE_DOWN,
+      );
     }
     return !safe;
   };

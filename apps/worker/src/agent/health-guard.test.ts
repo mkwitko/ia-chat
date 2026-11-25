@@ -12,6 +12,7 @@ const CLINICAL = 'minha lombar dói quando sento muito tempo, e a protusão na L
 const HANDOFF_TEXT = 'Vou verificar com o Dr. Rafael.';
 const OLDER_MESSAGES = 24;
 const SUMMARY_TEXT = 'Paciente pediu horário.';
+const PREVIOUS_SUMMARY = 'Paciente perguntou o endereço.';
 const unanswered = (pergunta: string) => ({ tool: ToolName.unanswered, input: { pergunta } });
 
 async function stored(tenantId: string) {
@@ -56,9 +57,15 @@ describe('registrar_duvida_sem_resposta (M-03)', () => {
 });
 
 describe('conversation summary (M-03)', () => {
-  async function summaryAfter(judge: Record<string, number> | undefined) {
+  async function summaryAfter(judge: Record<string, number> | undefined, previous?: string) {
     const scope = await conversation({ answered: true });
     await db.withTenant(scope.tenantId, async (tx) => {
+      if (previous) {
+        await tx.conversation.update({
+          where: { id: scope.conversationId },
+          data: { summary: previous, summaryUntil: new Date(0) },
+        });
+      }
       const channel = await tx.channel.findFirstOrThrow();
       await tx.message.createMany({
         data: Array.from({ length: OLDER_MESSAGES }, (_unused, index) => ({
@@ -89,5 +96,10 @@ describe('conversation summary (M-03)', () => {
     const result = await summaryAfter(judge);
     expect(result.summary).toBeNull();
     expect(result.summaryUntil).not.toBeNull();
+  });
+
+  it('keeps the previous, already checked summary when the new one is blocked', async () => {
+    const result = await summaryAfter({ health: 0.95 }, PREVIOUS_SUMMARY);
+    expect(result.summary).toBe(PREVIOUS_SUMMARY);
   });
 });

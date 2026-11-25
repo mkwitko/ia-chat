@@ -10,7 +10,7 @@ import {
   sendTenantJob,
   type Db,
 } from '@app/db';
-import { withLogContext, type Alert } from '@app/observability';
+import { AlertEvent, withLogContext, type Alert } from '@app/observability';
 import type { PgBoss } from 'pg-boss';
 import * as z from 'zod';
 import { DRAFT_REMINDER_DELAY_MS } from '../conversation/reminder-job.ts';
@@ -18,6 +18,7 @@ import { HANDOFF_REMINDER_DELAY_MS } from '../conversation/handoff.ts';
 import { ReminderKind, runTurn, type TurnDeps } from '../conversation/turn.ts';
 import type { Notifier } from '../notify/index.ts';
 import { createConversationAgent } from './respond.ts';
+import { HEALTH_JUDGE_DOWN, type EventLog } from './health-guard.ts';
 
 const NOTIFY_FAILED = 'push notification failed';
 const NO_AI_KEY = 'VERCEL_API_KEY missing: conversation turns are not consumed';
@@ -92,7 +93,7 @@ function turnDeps({ db, boss, notifier, alert, env, nodeEnv, log }: DepsSources)
       db,
       gateway,
       pushEnabled: vapidFrom(env) !== null,
-      log: log.warn,
+      log: alertOnJudgeDown(log.warn, alert),
       ...calendarDeps({ db, env, alert }),
     }),
     alert,
@@ -131,5 +132,17 @@ function reminderScheduler(boss: PgBoss): NonNullable<TurnDeps['scheduleReminder
       job: { tenantId, data: { conversationId, turnId } },
       options: { startAfter: new Date(Date.now() + delayMs), singletonKey: turnId },
     });
+  };
+}
+
+const JUDGE_DOWN_CODE = 'health_judge_down';
+
+/** A judge that does not answer means nothing gets stored (M-03): the operator must know. */
+function alertOnJudgeDown(log: EventLog, alert: Alert): EventLog {
+  return (fields, message) => {
+    log(fields, message);
+    if (message !== HEALTH_JUDGE_DOWN) return;
+    const { tenantId } = fields as { tenantId?: string };
+    alert(AlertEvent.jobFailed, { ...(tenantId ? { tenantId } : {}), code: JUDGE_DOWN_CODE });
   };
 }

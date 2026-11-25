@@ -20,7 +20,7 @@ Outras variáveis: `APP_RELEASE` e `VITE_RELEASE` (versão nos erros), `LOG_LEVE
 2. Procure o identificador nos logs. Toda linha traz `service` (`api` ou `worker`) e, quando existem, `requestId` (a API devolve o mesmo valor no cabeçalho `x-request-id`), `jobId`, `queue`, `tenantId`, `conversationId` e `turnId`.
 3. No Sentry, cada tipo de alerta vira uma issue só (agrupada por evento, fila e código); o `tenantId` e os demais ids ficam como tags.
 
-Alertas (`alert(evento, contexto)` em `packages/observability`): `dead_letter` (tarefa esgotou as tentativas), `delivery_failure` (falha de entrega, RF-25), `webhook_error`, `turn_aborted` (resposta passou de 45 s), `queue_error`, `job_failed`.
+Alertas (`alert(evento, contexto)` em `packages/observability`): `dead_letter` (tarefa esgotou as tentativas), `delivery_failure` (falha de entrega, RF-25), `webhook_error`, `turn_aborted` (resposta passou de 45 s), `queue_error`, `job_failed` (código `health_judge_down`: o juízo de saúde não respondeu e o assistente deixou de gravar dúvida, nome ou resumo; conferir `TYPESAFE_API_KEY` e o status da TypeSafe).
 
 ## Saúde
 
