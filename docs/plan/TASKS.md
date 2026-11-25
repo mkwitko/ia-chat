@@ -245,9 +245,9 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 - [x] Auditoria das alterações
 
 ### E-18 Uso e limites
-- [ ] Contadores de conversa por mês e por categoria de mensagem
-- [ ] **(teste primeiro)** Avisos de 80% e 100%; excedente com teto; modo restrito com resposta fixa
-- [ ] Tela de uso do mês com estimativa de gasto na Meta
+- [x] Contadores de conversa por mês e por categoria de mensagem
+- [x] **(teste primeiro)** Avisos de 80% e 100%; excedente com teto; modo restrito com resposta fixa
+- [x] Tela de uso do mês com estimativa de gasto na Meta
 
 ### E-18b Níveis de autonomia
 Spec: `01-produto-e-planos.md` (RF-13).
@@ -305,7 +305,7 @@ Spec: `10-painel-e-interface.md`, `DESIGN.md`.
 ### E-24 Onboarding
 Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding do canal).
 - [ ] Fluxo de oito passos com progresso salvo
-- [ ] Telas de criar conta, confirmar e-mail e recuperar senha no painel (a API já faz os três desde a E-04; confirmação testada de ponta a ponta no navegador em 24/11/2026)
+- [x] Telas de criar conta, confirmar e-mail e recuperar senha no painel (a API já faz os três desde a E-04; confirmação testada de ponta a ponta no navegador em 24/11/2026) Feito: telas no painel e passo "Seu consultório" (cria o tenant e leva aos serviços).
 - [ ] Modelos de serviços e textos por especialidade
 - [ ] Conexão oficial: Embedded Signup em coexistência e checagem de pagamento na Meta
 - [ ] Conexão por QR code com o termo de ciência

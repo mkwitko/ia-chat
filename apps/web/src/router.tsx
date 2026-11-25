@@ -1,4 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router';
+import { ForgotPasswordPage } from './app/account/forgot-password-page';
+import { ResetPasswordPage } from './app/account/reset-password-page';
+import { SignUpPage } from './app/account/signup-page';
+import { StartPage } from './app/account/start-page';
 import { AgendaScreen } from './app/agenda/agenda-screen';
 import { AvailabilityScreen } from './app/agenda/availability-screen';
 import { AssistantScreen } from './app/assistant/assistant-screen';
@@ -10,11 +14,16 @@ import { MoreScreen } from './app/screens/more-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
 import { ServicesScreen } from './app/setup/services-screen';
 import { ToneScreen } from './app/setup/tone-screen';
+import { UsageScreen } from './app/usage/usage-screen';
 import { AppShell } from './app/shell/app-shell';
 import { Route } from './routes';
 
 export const router = createBrowserRouter([
   { path: Route.login, element: <LoginPage /> },
+  { path: Route.signUp, element: <SignUpPage /> },
+  { path: Route.forgotPassword, element: <ForgotPasswordPage /> },
+  { path: Route.resetPassword, element: <ResetPasswordPage /> },
+  { path: Route.start, element: <StartPage /> },
   {
     element: <AppShell />,
     children: [
@@ -29,6 +38,7 @@ export const router = createBrowserRouter([
       { path: Route.tone, element: <ToneScreen /> },
       { path: Route.knowledge, element: <KnowledgeScreen /> },
       { path: Route.services, element: <ServicesScreen /> },
+      { path: Route.usage, element: <UsageScreen /> },
     ],
   },
   { path: '*', element: <Navigate to={Route.conversations} replace /> },

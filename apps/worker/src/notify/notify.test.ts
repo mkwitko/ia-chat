@@ -46,7 +46,8 @@ describe('notice text (RN-38)', () => {
     for (const reason of Object.values(NotifyReason)) {
       const notice = buildNotice(reason, conversationId);
       expect(JSON.stringify(notice)).not.toContain(SECRET_TEXT);
-      expect(notice.url).toBe(`/conversas/${conversationId}`);
+      const usage = reason === NotifyReason.usageWarning || reason === NotifyReason.usageFull;
+      expect(notice.url).toBe(usage ? '/mais/plano-e-uso' : `/conversas/${conversationId}`);
       expect(notice.title.length).toBeGreaterThan(0);
     }
     expect(buildNotice(NotifyReason.urgency, conversationId).urgent).toBe(true);

@@ -13,6 +13,7 @@ import { NotifyReason } from '../notify/reasons.ts';
 
 import { realClock } from './clock.ts';
 import { pacedDelayMs } from './pacing.ts';
+import { isRestricted, restrictedReply } from './restricted.ts';
 import { generateInTime } from './timing.ts';
 import {
   BUSY_MESSAGE,
@@ -20,9 +21,9 @@ import {
   TurnOutcome,
   type TurnDeps,
   type TurnJob,
-  type TurnMessage,
   ReminderKind,
   type TurnReply,
+  type Claimed,
 } from './turn-types.ts';
 
 export * from './turn-types.ts';
@@ -39,7 +40,9 @@ export async function runTurn(db: Db, job: TurnJob, deps: TurnDeps): Promise<Tur
   const clock = deps.clock ?? realClock;
   const started = clock.now();
   try {
-    const generated = await generateInTime(deps, { ...job, ...claimed });
+    const generated = claimed.restricted
+      ? { aborted: false as const, reply: restrictedReply() }
+      : await generateInTime(deps, { ...job, ...claimed });
     if (generated.aborted) return await abortTurn(db, { job, turnId: claimed.turnId, deps });
     const { reply } = generated;
     // E-15: a plausible delay, counting the time already spent generating.
@@ -106,14 +109,7 @@ function noticeReason(outcome: TurnOutcome, reply: TurnReply | null): NotifyReas
   return reply.urgent ? NotifyReason.urgency : NotifyReason.handoff;
 }
 
-async function claim(
-  tx: Tx,
-  job: TurnJob,
-): Promise<{
-  turnId: string;
-  messages: TurnMessage[];
-  lastProviderMessageId: string | null;
-} | null> {
+async function claim(tx: Tx, job: TurnJob): Promise<Claimed | null> {
   const conversation = await tx.conversation.findUnique({ where: { id: job.conversationId } });
   if (
     conversation?.control !== ConversationControl.ai ||
@@ -144,6 +140,7 @@ async function claim(
     turnId: turn.id,
     messages: messages.map(({ id, type, text }) => ({ id, type, text })),
     lastProviderMessageId: messages.at(-1)?.providerMessageId ?? null,
+    restricted: await isRestricted(tx, job.tenantId),
   };
 }
 
