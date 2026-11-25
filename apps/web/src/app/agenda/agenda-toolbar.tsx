@@ -65,7 +65,10 @@ function DayNav({ day, view, onChange }: Readonly<Omit<ToolbarProps, 'onNew'>>) 
       <Button variant="ghost" size="icon" aria-label={Copy.previous} onClick={move(-step)}>
         <ChevronLeft aria-hidden="true" />
       </Button>
-      <p className="min-w-0 flex-1 text-center font-semibold first-letter:uppercase" aria-live="polite">
+      <p
+        className="min-w-0 flex-1 text-center font-semibold first-letter:uppercase"
+        aria-live="polite"
+      >
         {rangeLabel(day, view)}
       </p>
       <Button variant="ghost" size="icon" aria-label={Copy.next} onClick={move(step)}>
