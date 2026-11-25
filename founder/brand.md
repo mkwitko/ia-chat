@@ -116,3 +116,10 @@ Livres apenas no .com.br: Prontinha, Recepcionando.
 ## Decisão (25/11/2026)
 
 O dono manteve **Consultório Aberto**: as rodadas acima soaram leves demais. `consultorioaberto.com.br` e `.com` estavam sem registro nesta data, e a busca web não achou produto com esse nome (o mais próximo é Consultorio.me). Limite conhecido: o nome fala de saúde. Se o produto for para salão ou barbearia, revisitar o nome ou criar uma linha com outro nome.
+
+### Família "Sempre Aberto" (25/11/2026)
+
+- **Sempre Aberto**: `sempreaberto.com.br` foi registrado em 30/08/2026 por pessoa física, com DNS na AWS e site fora do ar; pode ser projeto em andamento. Livres: `sempreaberto.com`, `.app.br`, `.ia.br`, `.net.br`, `sempreabertoapp.com.br`. A busca web não achou produto com esse nome; o mais próximo é o Atendente24h.
+- Com .com.br e .com livres: Agenda Sempre Aberta, Consultório Sempre Aberto, Recepção Sempre Aberta, Porta Sempre Aberta, Aberto o Dia Todo (`abertotododia`), Aberto 24h (`abertoate24h`), Sempre Atendendo, Não Fecha Nunca.
+- **Tamo Aberto**: descartado. `tamoaberto.com.br` está no ar desde 10/2026 como "Tamo Aberto: sua loja de delivery sem comissão", um SaaS para pequeno negócio vendido pelo WhatsApp e por link. É público vizinho e o nome é igual. Variações livres (.com.br e .com): Tamos Aberto, Estamos Abertos.
+- **Marca AI / Marca Aí**: descartado. Já existem dois produtos com esse nome: "MarcaAí — Agende sua quadra" (`usemarcaai.com`, agendamento de quadras esportivas) e "Marca Aí — desafios e check-ins" (`marcaaiapp.com`). `marcaai.com.br` (desde 2013), `.com`, `.ia.br` e `.app.br` têm dono, e `marca.ai` está à venda na Spaceship. "Marca" também quer dizer brand, o que confunde a busca.
