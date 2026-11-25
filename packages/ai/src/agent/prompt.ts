@@ -1,5 +1,6 @@
+import { Sensitivity } from '@app/core';
 import type { CacheableBlock } from '../gateway.ts';
-import { PLATFORM_RULES, PRICES_ALLOWED, PRICES_FORBIDDEN } from './rules.ts';
+import { HEALTH_RULES, PLATFORM_RULES, PRICES_ALLOWED, PRICES_FORBIDDEN } from './rules.ts';
 
 // Spec 04, "Contexto do prompt": blocks from the most stable to the most volatile.
 
@@ -24,6 +25,10 @@ export interface AgentProfile {
   assistantName: string;
   professionalName: string;
   specialty: string | undefined;
+  /** From the template: `health` turns the clinical rules on (spec 11). */
+  sensitivity: Sensitivity;
+  /** What to call who is served ("cliente", "paciente"...). */
+  vocabulary: string;
   tone: string | undefined;
   examples: readonly string[];
   services: readonly AgentService[];
@@ -52,6 +57,7 @@ const NONE = 'nenhum';
 export function conversationBlocks(profile: AgentProfile, state: AgentState): CacheableBlock[] {
   return [
     { text: PLATFORM_RULES, cache: true },
+    ...(profile.sensitivity === Sensitivity.health ? [{ text: HEALTH_RULES, cache: true }] : []),
     { text: profile.pricesForbidden ? PRICES_FORBIDDEN : PRICES_ALLOWED, cache: true },
     { text: profileBlock(profile), cache: true },
     { text: stateBlock(profile, state), cache: false },
@@ -70,6 +76,7 @@ function profileBlock(profile: AgentProfile): string {
   const specialty = profile.specialty ? ` (${profile.specialty})` : '';
   return [
     identityLine(profile) + specialty,
+    `Chame quem é atendido de "${profile.vocabulary}".`,
     profile.tone ? `Tom de voz: ${profile.tone}` : '',
     profile.examples.length
       ? `Exemplos de mensagens do profissional:\n${bullets(profile.examples)}`

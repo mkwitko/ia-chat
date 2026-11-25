@@ -17,7 +17,8 @@ export interface PrefilterMessage {
   text: string | null;
 }
 
-const URGENCY_TERMS = [
+/** Emergency floor for segments with `sensitivity = health` (spec 11); others bring their own terms. */
+export const HEALTH_URGENCY_TERMS = [
   'dor no peito',
   'falta de ar',
   'nao consigo respirar',
@@ -56,10 +57,10 @@ const END_PUNCTUATION = '.!?';
 
 export function prefilter(
   messages: readonly PrefilterMessage[],
-  specialtyTerms: readonly string[],
+  urgencyTerms: readonly string[],
 ): { kind: PrefilterKind } {
   const texts = messages.map((message) => normalize(message.text ?? ''));
-  const urgency = [...URGENCY_TERMS, ...specialtyTerms.map(normalize)].map(loosePattern);
+  const urgency = urgencyTerms.map(normalize).map(loosePattern);
   if (texts.some((value) => urgency.some((pattern) => pattern.test(value))))
     return { kind: PrefilterKind.urgency };
   if (texts.some(isOptOut)) return { kind: PrefilterKind.optOut };

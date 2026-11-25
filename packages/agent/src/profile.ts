@@ -1,7 +1,8 @@
 import type { AgentProfile } from '@app/ai';
-import { parsePolicy, type SpecialtyPolicy } from '@app/core';
+import { parsePolicy, Sensitivity, type SpecialtyPolicy } from '@app/core';
 import type { Plan, Tx } from '@app/db';
 import { cancellationText, hoursLines } from './hours.ts';
+import { HEALTH_URGENCY_TERMS } from './prefilter.ts';
 
 /** The tenant-wide part of the agent context: the same for a real chat and the simulator. */
 export interface TenantContext {
@@ -10,7 +11,7 @@ export interface TenantContext {
   plan: Plan;
   timezone: string;
   profile: AgentProfile;
-  specialtyTerms: string[];
+  urgencyTerms: string[];
   forbiddenTerms: string[];
   /** Names that stay out of traces: the professional's; a conversation adds the contact's. */
   personalNames: string[];
@@ -30,10 +31,16 @@ export async function loadTenantContext(tx: Tx, tenantId: string): Promise<Tenan
     plan: tenant.plan,
     timezone: tenant.timezone,
     profile,
-    specialtyTerms: policy.urgencyTerms,
+    urgencyTerms: urgencyTermsOf(policy),
     forbiddenTerms: policy.forbiddenTerms,
     personalNames: [profile.professionalName],
   };
+}
+
+function urgencyTermsOf(policy: SpecialtyPolicy): string[] {
+  return policy.sensitivity === Sensitivity.health
+    ? [...HEALTH_URGENCY_TERMS, ...policy.urgencyTerms]
+    : policy.urgencyTerms;
 }
 
 interface ProfileSources {
@@ -70,6 +77,8 @@ async function loadProfile(
     assistantName: tenant.assistantName,
     professionalName: professional?.name ?? tenant.name,
     specialty,
+    sensitivity: policy.sensitivity,
+    vocabulary: policy.vocabulary,
     tone: professional?.toneOfVoice ?? undefined,
     examples: professional?.messageExamples ?? [],
     services: services.map(serviceOf),

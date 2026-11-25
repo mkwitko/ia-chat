@@ -81,7 +81,7 @@ function toModelMessage({ role, text }: SimulatedMessage): ModelMessage {
 
 /** Pre-filter answers and the autonomy "off" notice: no model involved. */
 function fixedReply(input: AgentInput, last: string): string | undefined {
-  const { kind } = prefilter([{ type: MessageType.text, text: last }], input.specialtyTerms);
+  const { kind } = prefilter([{ type: MessageType.text, text: last }], input.urgencyTerms);
   // The simulator warns nobody, so it shows the answer that promises no warning.
   if (kind === PrefilterKind.urgency) return AgentCopy.emergency(false);
   if (kind === PrefilterKind.optOut) return AgentCopy.optOutConfirmation;

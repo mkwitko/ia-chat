@@ -450,10 +450,10 @@ Spec: 11 (H-28), 03, 06. Bloqueio: código; texto do aviso, jurídico (E-00e).
 
 ### M-02 Template por segmento aberto (P0)
 Spec: 11 ("Modelo de template"). Bloqueio: código; gasto com IA para rodar a bateria (precisa de aprovação).
-- [ ] Trocar o enum `Specialty` por chave aberta de template; migrar `specialty_policies` (campos `sensitivity`, `vocabulary`, `followUps`, `funnelStages`)
-- [ ] Tirar "profissional de saúde" de `PLATFORM_RULES`, e `CLINICAL` e urgência de `validate.ts`, para o template
-- [ ] **(teste primeiro)** Segmento sem saúde (`sensitivity = none`) responde sem as regras clínicas; segmento de saúde mantém todas
-- [ ] Quiropraxia vira só um template; os outros três de saúde seguem como estão
+- [x] Trocar o enum `Specialty` por chave aberta de template; migrar `specialty_policies` (campos `sensitivity`, `vocabulary`, `followUps`, `funnelStages`)
+- [x] Tirar "profissional de saúde" de `PLATFORM_RULES`, e `CLINICAL` e urgência de `validate.ts`, para o template
+- [x] **(teste primeiro)** Segmento sem saúde (`sensitivity = none`) responde sem as regras clínicas; segmento de saúde mantém todas
+- [x] Quiropraxia vira só um template; os outros três de saúde seguem como estão
 - [ ] Rodar de novo a bateria nos modelos candidatos de produção, com orçamento aprovado
 - Pronto quando: `grep -rn "quiropraxia" packages/*/src` só acha dados de template, e os testes de validação e agente passam.
 

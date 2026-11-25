@@ -1,3 +1,4 @@
+import { Sensitivity } from '@app/core';
 import { describe, expect, it } from 'vitest';
 import {
   factsFromToolOutputs,
@@ -10,6 +11,7 @@ import {
 const rules = (overrides: Partial<ReplyRules> = {}): ReplyRules => ({
   catalogCents: [18_000, 65_000],
   pricesForbidden: false,
+  sensitivity: Sensitivity.health,
   forbiddenTerms: ['cura', 'garantido'],
   allowedTimes: ['08:00', '12:00'],
   facts: { cents: [], times: [], actions: [] },
@@ -66,6 +68,14 @@ describe('output validation (spec 04, A-07)', () => {
       Violation.forbiddenTerm,
     ]);
     expect(validateReply('Tome um relaxante muscular e faça compressa quente.', rules())).toEqual([
+      Violation.clinicalConduct,
+    ]);
+  });
+
+  it('applies the clinical conduct list only to health segments (M-02)', () => {
+    const reply = 'Tome um relaxante muscular e faça compressa quente.';
+    expect(validateReply(reply, rules({ sensitivity: Sensitivity.none }))).toEqual([]);
+    expect(validateReply(reply, rules({ sensitivity: Sensitivity.health }))).toEqual([
       Violation.clinicalConduct,
     ]);
   });

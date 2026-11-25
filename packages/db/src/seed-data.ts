@@ -9,7 +9,7 @@ export const FIXTURE = {
     messageExamples: ['Oi! Tudo bem? Posso te ajudar a marcar um horário.'],
   },
   channel: { displayPhone: '+55 11 90000-0000' },
-  service: { name: 'Sessão de quiropraxia', durationMinutes: 50, priceCents: 18_000 },
+  service: { name: 'Sessão de avaliação', durationMinutes: 50, priceCents: 18_000 },
   location: { name: 'Consultório', address: 'Rua Exemplo, 100 - São Paulo, SP' },
   availability: {
     weekday: 1,

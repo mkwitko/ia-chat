@@ -7,6 +7,8 @@ const profile: AgentProfile = {
   assistantName: 'Lia',
   professionalName: 'Dr. Exemplo',
   specialty: undefined,
+  sensitivity: 'health',
+  vocabulary: 'paciente',
   tone: undefined,
   examples: [],
   services: [{ id: 's1', name: 'Avaliação', minutes: 60, priceCents: 18_000 }],

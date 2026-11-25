@@ -1,5 +1,3 @@
-import { Specialty } from './steps.ts';
-
 // FICTITIOUS example values. The professional edits every item before the assistant uses it.
 
 export interface TemplateService {
@@ -13,6 +11,15 @@ export interface TemplateAnswer {
   /** Dropped when the specialty policy forbids prices. */
   mentionsPrice?: boolean;
 }
+/** Keys of the built-in templates; the registry is open: any string key may be added as data. */
+export const TemplateId = {
+  quiropraxia: 'quiropraxia',
+  fisioterapia: 'fisioterapia',
+  psicologia: 'psicologia',
+  nutricao: 'nutricao',
+  salaoDeBeleza: 'salao-de-beleza',
+} as const;
+
 export interface SpecialtyTemplate {
   label: string;
   services: TemplateService[];
@@ -27,8 +34,8 @@ const CANCEL = 'Posso remarcar ou cancelar?';
 const CANCEL_ANSWER = 'Pode, avisando com 24 horas de antecedência. É só responder aqui.';
 const PRICE_ANSWER = 'O valor depende do serviço. Veja a lista de serviços e valores.';
 
-export const SPECIALTY_TEMPLATES: Record<Specialty, SpecialtyTemplate> = {
-  [Specialty.quiropraxia]: {
+export const SPECIALTY_TEMPLATES: Readonly<Record<string, SpecialtyTemplate>> = {
+  [TemplateId.quiropraxia]: {
     label: 'Quiropraxia',
     services: [
       { name: 'Avaliação inicial', durationMinutes: 60, priceCents: 18000 },
@@ -44,7 +51,7 @@ export const SPECIALTY_TEMPLATES: Record<Specialty, SpecialtyTemplate> = {
       { question: CANCEL, answer: CANCEL_ANSWER },
     ],
   },
-  [Specialty.fisioterapia]: {
+  [TemplateId.fisioterapia]: {
     label: 'Fisioterapia',
     services: [
       { name: 'Avaliação fisioterapêutica', durationMinutes: 50, priceCents: 15000 },
@@ -57,7 +64,7 @@ export const SPECIALTY_TEMPLATES: Record<Specialty, SpecialtyTemplate> = {
       { question: CANCEL, answer: CANCEL_ANSWER },
     ],
   },
-  [Specialty.psicologia]: {
+  [TemplateId.psicologia]: {
     label: 'Psicologia',
     services: [
       { name: 'Primeira sessão', durationMinutes: 50, priceCents: 20000 },
@@ -73,7 +80,7 @@ export const SPECIALTY_TEMPLATES: Record<Specialty, SpecialtyTemplate> = {
       { question: CANCEL, answer: CANCEL_ANSWER },
     ],
   },
-  [Specialty.nutricao]: {
+  [TemplateId.nutricao]: {
     label: 'Nutrição',
     services: [
       { name: 'Primeira consulta', durationMinutes: 60, priceCents: 22000 },
@@ -84,6 +91,21 @@ export const SPECIALTY_TEMPLATES: Record<Specialty, SpecialtyTemplate> = {
       {
         question: 'Preciso levar exames?',
         answer: 'Se tiver exames recentes, traga. Não é obrigatório.',
+      },
+      { question: HOW_MUCH, answer: PRICE_ANSWER, mentionsPrice: true },
+      { question: CANCEL, answer: CANCEL_ANSWER },
+    ],
+  },
+  [TemplateId.salaoDeBeleza]: {
+    label: 'Salão de beleza',
+    services: [
+      { name: 'Corte', durationMinutes: 45, priceCents: 8000 },
+      { name: 'Escova', durationMinutes: 40, priceCents: 6000 },
+    ],
+    answers: [
+      {
+        question: 'Aceita cartão?',
+        answer: 'Informe aqui as formas de pagamento que você aceita.',
       },
       { question: HOW_MUCH, answer: PRICE_ANSWER, mentionsPrice: true },
       { question: CANCEL, answer: CANCEL_ANSWER },

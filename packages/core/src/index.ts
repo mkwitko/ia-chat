@@ -19,11 +19,21 @@ export {
   MINUTES_PER_DAY,
   type LocalDate,
 } from './agenda/zoned.ts';
-export { parsePolicy, specialtyPolicySchema, type SpecialtyPolicy } from './policy.ts';
+export {
+  DEFAULT_VOCABULARY,
+  parsePolicy,
+  Sensitivity,
+  specialtyPolicySchema,
+  type SpecialtyPolicy,
+} from './policy.ts';
 export * from './plans.ts';
 export * from './onboarding/steps.ts';
 export * from './onboarding/templates.ts';
-export type { TemplateAnswer, TemplateService } from './onboarding/templates-data.ts';
+export {
+  TemplateId,
+  type TemplateAnswer,
+  type TemplateService,
+} from './onboarding/templates-data.ts';
 export * from './onboarding/provider-errors.ts';
 export * from './onboarding/funnel.ts';
 export * from './trial/trial.ts';

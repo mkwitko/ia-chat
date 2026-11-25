@@ -11,7 +11,7 @@ export interface AgentInput {
   profile: AgentProfile;
   state: AgentState;
   history: ModelMessage[];
-  specialtyTerms: string[];
+  urgencyTerms: string[];
   forbiddenTerms: string[];
   personalNames: string[];
 }

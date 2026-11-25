@@ -1,4 +1,4 @@
-import { markStep, OnboardingStep, SKIPPABLE_STEPS, Specialty, StepStatus } from '@app/core';
+import { markStep, OnboardingStep, isTemplateKey, SKIPPABLE_STEPS, StepStatus } from '@app/core';
 import { Autonomy, TenantStatus } from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
@@ -20,7 +20,7 @@ const ENTITY = 'onboarding';
 
 const stepBody = z.object({ status: z.enum(StepStatus) }).strict();
 const stepParams = z.object({ step: z.enum(OnboardingStep) });
-const specialtyBody = z.object({ specialty: z.enum(Specialty) }).strict();
+const specialtyBody = z.object({ specialty: z.string().refine(isTemplateKey) }).strict();
 
 export function registerOnboardingRoutes(app: FastifyInstance): void {
   const read = { preHandler: requireTenant(Permission.assistantRead) };
