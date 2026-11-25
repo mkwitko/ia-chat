@@ -159,3 +159,12 @@ Princípio: **medir antes de afirmar.** O piloto começa com uma linha de base e
 ## Hipóteses novas
 
 H-25 a H-30 em [README.md](README.md).
+
+## Canais de WhatsApp (decisão do dono em 25/11/2026)
+
+Os dois canais continuam no produto, atrás do mesmo `ChannelAdapter`:
+
+- **Oficial (padrão):** Cloud API com Coexistence, mantendo o número e o aplicativo WhatsApp Business do profissional. É o canal recomendado e o único usado em mensagens fora da janela de 24 horas (templates).
+- **Alternativo (opcional):** conexão por QR code via gateway externo (WAHA), para quem não pode ou não quer passar pelo processo da Meta. Não é autorizado pela Meta e o número pode ser bloqueado; só é ativado com o termo de ciência assinado (RF-27), com limites de envio e sem mensagem ativa em massa (RF-28), como já está em `03-whatsapp-e-conversa.md` e na E-09b.
+
+O piloto começa no canal oficial assim que a conta Meta existir; o alternativo serve de ponte se a aprovação da Meta atrasar, sempre com o risco explicado ao profissional.

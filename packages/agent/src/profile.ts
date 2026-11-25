@@ -1,6 +1,7 @@
 import type { AgentProfile } from '@app/ai';
 import { parsePolicy, type SpecialtyPolicy } from '@app/core';
 import type { Plan, Tx } from '@app/db';
+import { cancellationText, hoursLines } from './hours.ts';
 
 /** The tenant-wide part of the agent context: the same for a real chat and the simulator. */
 export interface TenantContext {
@@ -36,7 +37,12 @@ export async function loadTenantContext(tx: Tx, tenantId: string): Promise<Tenan
 }
 
 interface ProfileSources {
-  tenant: { name: string; assistantName: string; identityMode: AgentProfile['identity'] };
+  tenant: {
+    name: string;
+    assistantName: string;
+    identityMode: AgentProfile['identity'];
+    cancelNoticeMinutes: number;
+  };
   policy: SpecialtyPolicy;
   specialty: string | undefined;
 }
@@ -55,6 +61,10 @@ async function loadProfile(
     where: { active: true, answer: { not: null } },
     orderBy: { createdAt: 'asc' },
   });
+  // The professional's weekly rules; without any, the assistant has no hours to state.
+  const rules = professional
+    ? await tx.availabilityRule.findMany({ where: { professionalId: professional.id } })
+    : [];
   return {
     identity: tenant.identityMode,
     assistantName: tenant.assistantName,
@@ -62,17 +72,26 @@ async function loadProfile(
     specialty,
     tone: professional?.toneOfVoice ?? undefined,
     examples: professional?.messageExamples ?? [],
-    services: services.map((service) => ({
-      id: service.id,
-      name: service.name,
-      minutes: service.durationMinutes,
-      priceCents: service.priceCents,
-    })),
+    services: services.map(serviceOf),
     pricesForbidden: policy.pricesForbidden,
-    hours: [], // ponytail: availability rules are shown by the agenda tools (E-19)
-    cancellationRule: undefined,
+    hours: hoursLines(rules),
+    cancellationRule: cancellationText(tenant.cancelNoticeMinutes),
     address: location?.address,
     arrival: location?.arrivalInstructions ?? undefined,
     knowledge: knowledge.map((item) => ({ question: item.question, answer: item.answer ?? '' })),
+  };
+}
+
+function serviceOf(service: {
+  id: string;
+  name: string;
+  durationMinutes: number;
+  priceCents: number;
+}): AgentProfile['services'][number] {
+  return {
+    id: service.id,
+    name: service.name,
+    minutes: service.durationMinutes,
+    priceCents: service.priceCents,
   };
 }

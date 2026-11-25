@@ -33,3 +33,4 @@ export {
 } from './simulator/simulate.ts';
 export { SourceKind, sourcesOf, type Source } from './simulator/sources.ts';
 export { buildState } from './state.ts';
+export { cancellationText, hoursLines, type HoursRule } from './hours.ts';
