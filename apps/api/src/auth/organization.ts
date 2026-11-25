@@ -1,3 +1,4 @@
+import type { Db } from '@app/db';
 import { organization } from 'better-auth/plugins';
 import type { EmailSender } from '../email/outbox.ts';
 import { invitationEmail } from '../email/templates.ts';
@@ -16,15 +17,25 @@ const TENANT_SCHEMA = {
 
 export interface TenantPluginDeps {
   env: ApiEnv;
+  db: Db;
   email: EmailSender;
 }
 
-export function tenantPlugin({ env, email }: TenantPluginDeps) {
+export function tenantPlugin({ env, db, email }: TenantPluginDeps) {
   return organization({
     ac,
     roles,
     creatorRole: Role.owner,
     schema: TENANT_SCHEMA,
+    organizationHooks: {
+      // Agenda, tone and the agent all speak for the first professional: create it with the
+      // tenant, named after the owner (editable in "Tom de voz").
+      afterCreateOrganization: async ({ organization: tenant, user }) => {
+        await db.withTenant(tenant.id, (tx) =>
+          tx.professional.create({ data: { tenantId: tenant.id, name: user.name } }),
+        );
+      },
+    },
     sendInvitationEmail: (data) =>
       email.send(
         invitationEmail({
