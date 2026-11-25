@@ -31,10 +31,23 @@ export function subscribedTenants(deps: BillingDeps) {
 export async function reconcileTenant(deps: BillingDeps, subscriptionId: string): Promise<void> {
   const subscription = await deps.provider.getSubscription(subscriptionId);
   if (!subscription.active) {
-    await markSubscriptionCancelled(deps.db.client, subscriptionId);
+    await markSubscriptionCancelled(deps.db.client, subscriptionId, deps.now);
     return;
   }
   const payments = await deps.provider.listPayments(subscriptionId);
   payments.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
   for (const payment of payments) await applyPayment(deps.db.client, payment);
+}
+
+/** A cancelled subscription whose paid period is over: the assistant stops now. */
+export async function endPaidPeriods(deps: BillingDeps): Promise<number> {
+  const done = await deps.db.client.tenant.updateMany({
+    where: {
+      billingEndsAt: { lte: deps.now },
+      status: { not: TenantStatus.cancelled },
+      ...(deps.onlyTenantId ? { id: deps.onlyTenantId } : {}),
+    },
+    data: { status: TenantStatus.cancelled, billingEndsAt: null },
+  });
+  return done.count;
 }

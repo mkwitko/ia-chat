@@ -20,6 +20,8 @@ export interface Billing {
   /** ISO date of the oldest unpaid invoice, or null. */
   overdueSince: string | null;
   invoiceUrl: string | null;
+  /** Cancelled subscription: ISO moment the assistant stops (end of the paid period), or null. */
+  endsAt: string | null;
   plans: BillingPlan[];
 }
 

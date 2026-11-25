@@ -47,6 +47,7 @@ function readBilling(request: FastifyRequest, enabled: boolean) {
         billingSubscriptionId: true,
         billingOverdueSince: true,
         billingInvoiceUrl: true,
+        billingEndsAt: true,
       },
     });
     return {
@@ -57,6 +58,7 @@ function readBilling(request: FastifyRequest, enabled: boolean) {
       documentSet: row.document !== null,
       overdueSince: row.billingOverdueSince,
       invoiceUrl: row.billingInvoiceUrl,
+      endsAt: row.billingEndsAt,
       trial: trialView({ ...row, now: new Date() }),
       plans: Object.values(PlanId).map((id) => ({ id, ...PLANS[id] })),
     };

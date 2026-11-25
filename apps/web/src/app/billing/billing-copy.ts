@@ -39,7 +39,9 @@ export const BillingCopy = {
   documentInvalid: 'Confira o CPF ou CNPJ.',
   cancel: 'Cancelar assinatura',
   cancelConfirm:
-    'Cancelar agora? O assistente para de atender e os dados ficam guardados por 30 dias.',
+    'Cancelar? Não há novas cobranças. O assistente atende até o fim do período já pago; depois para, e os dados ficam guardados por 30 dias.',
+  endsAt: (iso: string) =>
+    `Assinatura cancelada. O assistente atende até ${new Date(iso).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}.`,
   cancelYes: 'Sim, cancelar',
   cancelNo: 'Voltar',
   subscribed: 'Assinatura criada. A primeira fatura chega por e-mail.',

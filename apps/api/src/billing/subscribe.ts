@@ -18,12 +18,15 @@ interface TenantRow {
   name: string;
   status: TenantStatus;
   trialEndsAt: Date | null;
+  billingEndsAt: Date | null;
   billingCustomerId: string | null;
 }
 
-const firstDueDate = (trialEndsAt: Date | null, now: Date): string => {
+/** After the trial, or after a period already paid before a cancellation; at least tomorrow. */
+const firstDueDate = (row: TenantRow, now: Date): string => {
   const tomorrow = new Date(now.getTime() + MS_PER_DAY);
-  return dateKey(trialEndsAt && trialEndsAt > tomorrow ? trialEndsAt : tomorrow);
+  const dates = [row.trialEndsAt, row.billingEndsAt].filter((date) => date !== null);
+  return dateKey(new Date(Math.max(tomorrow.getTime(), ...dates.map((date) => date.getTime()))));
 };
 
 /** Customer (once) and subscription at the provider; the first invoice's link comes along. */
@@ -45,7 +48,7 @@ async function createRemote(
   const subscription = await provider.createSubscription({
     customerId,
     cents: PLANS[input.plan].monthlyCents,
-    firstDueDate: firstDueDate(row.trialEndsAt, input.now),
+    firstDueDate: firstDueDate(row, input.now),
     description: DESCRIPTION,
     tenantId: row.id,
   });
@@ -70,6 +73,7 @@ async function save(tx: Tx, tenant: TenantContext, { row, plan, now, remote }: S
       billingInvoiceUrl: remote.invoiceUrl,
       billingOverdueSince: null,
       billingNoticeStep: 0,
+      billingEndsAt: null,
       // The trial's usage is not billed as overage: counting starts with the current month.
       billingOverageThrough: previousMonth(now),
       // A cancelled tenant waits for its first payment in restricted mode.

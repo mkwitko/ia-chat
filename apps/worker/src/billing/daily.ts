@@ -1,17 +1,23 @@
 import { AlertEvent } from '@app/observability';
 import { climbLadder } from './ladder.ts';
 import { chargeOverage } from './overage.ts';
-import { reconcileTenant, subscribedTenants } from './reconcile.ts';
+import { endPaidPeriods, reconcileTenant, subscribedTenants } from './reconcile.ts';
 import type { BillingDeps, BillingResult } from './types.ts';
 
 const BILLING_FAILED = 'billing_daily';
 
 /**
  * E-25, once a day: reconcile every subscription with Asaas, climb the overdue ladder, charge the
- * closed month's overage. Safe to run any number of times.
+ * closed month's overage, stop cancelled subscriptions whose paid period is over. Safe to run any number of times.
  */
 export async function runBillingDaily(deps: BillingDeps): Promise<BillingResult> {
-  const result: BillingResult = { reconciled: 0, noticed: 0, restricted: 0, overageCharged: 0 };
+  const result: BillingResult = {
+    reconciled: 0,
+    noticed: 0,
+    restricted: 0,
+    overageCharged: 0,
+    ended: 0,
+  };
   // One at a time: a parallel burst would starve the connection pool and hit the provider's rate limit.
   for (const tenant of await subscribedTenants(deps)) {
     try {
@@ -23,5 +29,6 @@ export async function runBillingDaily(deps: BillingDeps): Promise<BillingResult>
     }
   }
   Object.assign(result, await climbLadder(deps));
+  result.ended = await endPaidPeriods(deps);
   return result;
 }

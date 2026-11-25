@@ -1,5 +1,5 @@
 import { PLANS, type BillingProvider } from '@app/core';
-import { TenantStatus } from '@app/db';
+import { markSubscriptionCancelled } from '@app/db';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { audit, AuditAction } from '../setup/audit.ts';
@@ -47,7 +47,7 @@ export async function changePlan(
   return { ok: true };
 }
 
-/** Cancelled by the customer: the subscription ends at once and so does the assistant (hypothesis). */
+/** Cancelled by the customer: no more invoices; the assistant works until the paid period ends. */
 export async function cancelSubscription(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -61,22 +61,10 @@ export async function cancelSubscription(
   } catch (error) {
     return providerFailed(request, reply, error);
   }
-  await tenant.withTenant(async (tx) => {
-    await tx.tenant.update({
-      where: { id: tenant.tenantId },
-      data: {
-        status: TenantStatus.cancelled,
-        billingSubscriptionId: null,
-        billingOverdueSince: null,
-        billingNoticeStep: 0,
-        billingInvoiceUrl: null,
-      },
-    });
-    await audit(tx, tenant, {
-      entity: ENTITY,
-      entityId: tenant.tenantId,
-      action: AuditAction.archive,
-    });
-  });
+  // Same path as the provider's SUBSCRIPTION_DELETED webhook; whichever comes first wins.
+  await markSubscriptionCancelled(request.server.db.client, row.billingSubscriptionId);
+  await tenant.withTenant((tx) =>
+    audit(tx, tenant, { entity: ENTITY, entityId: tenant.tenantId, action: AuditAction.archive }),
+  );
   return { ok: true };
 }
