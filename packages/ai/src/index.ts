@@ -1,5 +1,6 @@
 export { BudgetExceededError, DEFAULT_CAPS, type Caps } from './budget.ts';
 export { aiEnvSchema, type AiEnv } from './env.ts';
+export { aiConfigured, createEnvGateway, markedStore } from './env-gateway.ts';
 export {
   createAiGateway,
   type AiGateway,

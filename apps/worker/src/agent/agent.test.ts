@@ -2,7 +2,7 @@ import { Identity } from '@app/ai';
 import { Autonomy, IdentityMode, KnowledgeSource, MessageType } from '@app/db';
 import { afterAll, describe, expect, it } from 'vitest';
 import { agentWith, conversation, db, scripted, turnOf } from './agent-fixtures.ts';
-import { AgentCopy } from './copy.ts';
+import { AgentCopy } from '@app/agent';
 import { ToolName } from './tools.ts';
 
 afterAll(() => db.client.$disconnect());

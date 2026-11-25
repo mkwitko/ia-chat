@@ -16,6 +16,11 @@ export const AssistantCopy = {
       hint: 'Perguntas e respostas, e o que ele não soube',
       to: Route.knowledge,
     },
+    {
+      label: 'Simulador',
+      hint: 'Converse com o assistente sem enviar nada a pacientes',
+      to: Route.simulator,
+    },
   ],
   autonomyLegend: 'Quanto o assistente faz sozinho',
   autonomy: [

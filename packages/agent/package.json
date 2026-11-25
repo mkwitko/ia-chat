@@ -1,0 +1,14 @@
+{
+  "name": "@app/agent",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@app/ai": "workspace:*",
+    "@app/core": "workspace:*",
+    "@app/db": "workspace:*",
+    "ai": "7.0.173",
+    "zod": "4.6.7"
+  }
+}

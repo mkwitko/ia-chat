@@ -1,8 +1,10 @@
+import { aiConfigured, createEnvGateway, dbUsageStore, markedStore } from '@app/ai';
 import { NodeEnv } from '@app/core';
 import { createDb, INBOUND_QUEUE, QUEUE_SCHEMA, sendTenantJob } from '@app/db';
 import { PgBoss } from 'pg-boss';
 import { buildApp } from './app.ts';
 import { parseApiEnv } from './env.ts';
+import { SIMULATOR_USAGE_PREFIX } from './simulator/simulator-routes.ts';
 
 const LISTEN_HOST = '0.0.0.0';
 const NO_EMAIL_PROVIDER = 'No email provider configured for production (E-00f).';
@@ -26,5 +28,20 @@ const enqueueInbound = async (tenantId: string, inboundEventId: string) => {
   });
 };
 
-const app = buildApp({ env, db: createDb(env.DATABASE_URL), enqueueInbound });
+const db = createDb(env.DATABASE_URL);
+// Simulator (spec 10): same gateway as production, usage rows tagged `simulator:`.
+const simulatorGateway = aiConfigured(env)
+  ? createEnvGateway({
+      db,
+      env,
+      nodeEnv: env.NODE_ENV,
+      store: markedStore(dbUsageStore(db), SIMULATOR_USAGE_PREFIX),
+    })
+  : undefined;
+const app = buildApp({
+  env,
+  db,
+  enqueueInbound,
+  ...(simulatorGateway ? { simulatorGateway } : {}),
+});
 await app.listen({ port: env.PORT, host: LISTEN_HOST });

@@ -1,3 +1,4 @@
+import { handoffTool, OK, ToolName, unansweredTool, type ToolEffects } from '@app/agent';
 import { KnowledgeSource, Plan, type Db } from '@app/db';
 import { tool, type ToolSet } from 'ai';
 import * as z from 'zod';
@@ -7,18 +8,9 @@ import { agendaTools } from './agenda-tools.ts';
 // from the model. The handoff only marks the intent: the turn applies it under the send
 // lock, after the notice reaches the patient (RF-35).
 
-export const ToolName = {
-  handoff: 'transferir_para_humano',
-  unanswered: 'registrar_duvida_sem_resposta',
-  rename: 'atualizar_nome_do_contato',
-} as const;
+export { ToolName, type ToolEffects };
 
 const MAX_NAME_LENGTH = 80;
-const OK = { ok: true } as const;
-
-export interface ToolEffects {
-  handoff: boolean;
-}
 
 export interface ToolContext {
   db: Db;
@@ -43,37 +35,18 @@ export function conversationTools(context: ToolContext, plan: Plan): ToolSet {
 export function essentialTools(context: ToolContext): ToolSet {
   return {
     [ToolName.handoff]: handoffTool(context.effects),
-    [ToolName.unanswered]: unansweredTool(context),
+    [ToolName.unanswered]: unansweredTool(recordUnanswered(context)),
     [ToolName.rename]: renameTool(context),
   };
 }
 
-function handoffTool(effects: ToolEffects) {
-  return tool({
-    description:
-      'Passa a conversa para o profissional: pedido do paciente, reclamação, urgência ou assunto que você não resolve.',
-    inputSchema: z.object({ motivo: z.string() }),
-    execute: () => {
-      effects.handoff = true;
-      return Promise.resolve(OK);
-    },
-  });
-}
-
-function unansweredTool({ db, tenantId }: ToolContext) {
-  return tool({
-    description:
-      'Registra uma pergunta sobre o consultório que o perfil não responde, para o profissional completar a base.',
-    inputSchema: z.object({ pergunta: z.string().min(1) }),
-    execute: async ({ pergunta }) => {
-      await db.withTenant(tenantId, (tx) =>
-        tx.knowledgeItem.create({
-          data: { tenantId, question: pergunta, source: KnowledgeSource.unanswered, active: false },
-        }),
-      );
-      return OK;
-    },
-  });
+function recordUnanswered({ db, tenantId }: ToolContext) {
+  return (pergunta: string) =>
+    db.withTenant(tenantId, (tx) =>
+      tx.knowledgeItem.create({
+        data: { tenantId, question: pergunta, source: KnowledgeSource.unanswered, active: false },
+      }),
+    );
 }
 
 function renameTool({ db, tenantId, contactId }: ToolContext) {

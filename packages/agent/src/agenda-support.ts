@@ -1,7 +1,6 @@
 import { toLocalIso } from '@app/core';
-import { AgendaError, wasOfferedBefore, type AppointmentView, type Tx } from '@app/db';
+import { AgendaError, wasOfferedBefore, type AppointmentView, type Db, type Tx } from '@app/db';
 import { AgentCopy } from './copy.ts';
-import type { ToolContext } from './tools.ts';
 
 // Shared pieces of the agenda tools: the confirmation gate, service lookup and output shape.
 // Key names (`inicio`, `fim`, `erro`) are what the output validation reads as facts.
@@ -10,6 +9,14 @@ export const ToolError = {
   notConfirmed: 'confirmacao_pendente',
   notOffered: 'horario_nao_oferecido',
 } as const;
+
+/** What the agenda tools need of a turn; the worker's ToolContext satisfies it. */
+export interface OfferContext {
+  db: Db;
+  tenantId: string;
+  conversationId: string;
+  now: Date;
+}
 
 const LOCALE = 'pt-BR';
 
@@ -26,7 +33,7 @@ export interface Gate {
  * to a slot the assistant offered in an earlier turn. Returns the error to hand back, if any.
  */
 export async function confirmationError(
-  context: ToolContext,
+  context: OfferContext,
   gate: Gate,
 ): Promise<string | undefined> {
   if (!gate.confirmed) return ToolError.notConfirmed;

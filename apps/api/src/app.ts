@@ -1,3 +1,4 @@
+import type { AiGateway } from '@app/ai';
 import { createChannelSender, type ChannelSend } from '@app/channels';
 import { NodeEnv } from '@app/core';
 import type { Db } from '@app/db';
@@ -16,6 +17,7 @@ import type { EmailSender } from './email/outbox.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
+import { registerSimulatorRoutes } from './simulator/simulator-routes.ts';
 import { registerToneRoutes } from './setup/tone-routes.ts';
 import { registerUsageRoutes } from './usage/usage-routes.ts';
 import type { ApiEnv } from './env.ts';
@@ -40,6 +42,8 @@ export interface AppDeps {
   enqueueInbound?: EnqueueInbound;
   /** Sends the professional's messages. Defaults to the Cloud API (records only in dev without token). */
   send?: ChannelSend;
+  /** Model access of the simulator (spec 10); without it the simulator answers 503. */
+  simulatorGateway?: AiGateway;
   /** Checks Turnstile tokens of the public waitlist form. Defaults to Cloudflare's siteverify. */
   verifyTurnstile?: TurnstileVerifier;
 }
@@ -56,6 +60,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
   registerControlRoutes(app);
+  registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
   registerSettingsRoutes(app);
   registerWaitlistIfConfigured(app, deps);
   registerInboxRoutes(app, {

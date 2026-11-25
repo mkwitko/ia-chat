@@ -13,6 +13,7 @@ export const Route = {
   assistant: '/mais/assistente',
   tone: '/mais/assistente/tom',
   knowledge: '/mais/assistente/base',
+  simulator: '/mais/assistente/simulador',
   services: '/mais/servicos',
   usage: '/mais/plano-e-uso',
 } as const;

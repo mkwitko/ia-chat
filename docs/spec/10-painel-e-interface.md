@@ -68,6 +68,9 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsA
 - Base de conhecimento: perguntas e respostas.
 - **Perguntas que o assistente não soube**: lista com um toque para escrever a resposta e incluí-la na base.
 - **Simulador**: conversa de teste que não envia nada ao WhatsApp, com a indicação de qual informação o assistente usou.
+  - Roda o mesmo caminho do turno real (pré-filtros, prompt, validação da saída; código em `packages/agent`), sem conversa, contato nem mensagem gravados: a conversa de teste vive só na tela. O que sai de cada resposta ("O que o assistente usou") vem das chamadas de ferramenta e da comparação da resposta com os dados cadastrados (serviço e preço, endereço, como chegar, base de conhecimento), nunca do que o modelo diz ter usado.
+  - Ferramentas: consulta de horários roda de verdade, mas sem registrar ofertas; agendar, remarcar e cancelar não existem no simulador (a tela avisa); transferir e registrar dúvida só marcam o que aconteceria. A checagem de urgência por Jev (julgamento extra antes do modelo) não roda aqui; a lista de palavras sim.
+  - Custo: usa o gateway de IA como a produção (em desenvolvimento, Groq grátis). O uso entra em `ai_usage` com `task` iniciada por `simulator:` e sem `turn_id`/`conversation_id`. Limite de 30 mensagens por hora por consultório (resposta 429); o limite fica em memória do processo da API (hipótese: uma instância).
 
 ### Serviços e local
 

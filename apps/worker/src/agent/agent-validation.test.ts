@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { agentWith, conversation, db, scripted, turnOf } from './agent-fixtures.ts';
-import { AgentCopy } from './copy.ts';
+import { AgentCopy } from '@app/agent';
 
 afterAll(() => db.client.$disconnect());
 
