@@ -9,6 +9,7 @@ import { registerAgendaRoutes } from './agenda/register.ts';
 import { registerAuthRoutes } from './auth/routes.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
 import { registerInboxRoutes } from './conversations/inbox-routes.ts';
+import { registerOperatorRoutes } from './operator/operator-routes.ts';
 import { registerPushRoutes } from './push/push-routes.ts';
 import { registerEventsRoute } from './realtime/events-route.ts';
 import { createInboxHub } from './realtime/inbox-hub.ts';
@@ -57,8 +58,10 @@ export function buildApp(deps: AppDeps): FastifyInstance {
     logger: env.NODE_ENV !== NodeEnv.test && { redact: REDACTED_PATHS },
   });
   app.decorate('db', db);
+  app.decorate('operatorEmails', env.OPERATOR_EMAILS);
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
+  registerOperatorRoutes(app);
   registerControlRoutes(app);
   registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
   registerSettingsRoutes(app);

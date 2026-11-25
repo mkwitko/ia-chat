@@ -17,7 +17,12 @@ export const ControlReason = {
 } as const;
 export type ControlReason = (typeof ControlReason)[keyof typeof ControlReason];
 
-export const ActorType = { user: 'user', system: 'system', assistant: 'assistant' } as const;
+export const ActorType = {
+  user: 'user',
+  system: 'system',
+  assistant: 'assistant',
+  operator: 'operator',
+} as const;
 export type ActorType = (typeof ActorType)[keyof typeof ActorType];
 
 const AUDIT_ACTION = 'conversation.control_changed';

@@ -341,11 +341,12 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 - [ ] Teste de carga: rajada de webhooks de 100 clientes
 
 ### E-27 Painel do operador
-- [ ] Lista de clientes com plano, estado das integrações e uso
-- [ ] Custo real por cliente e por conversa, comparado à planilha
-- [ ] Conversas com falha, descarte ou reprovação na validação
-- [ ] Acesso a um tenant com motivo, prazo e auditoria (RN-35)
+- [x] Lista de clientes com plano, estado das integrações e uso
+- [x] Custo real por cliente e por conversa, comparado à planilha
+- [x] Conversas com falha, descarte ou reprovação na validação
+- [x] Acesso a um tenant com motivo, prazo e auditoria (RN-35)
 - [ ] Painel do pg-boss (`@pg-boss/dashboard`) só para o operador (movido de E-05: o papel de operador nasce aqui)
+  - Não feito: `@pg-boss/dashboard` (v1.14) existe e traz `handler` para montar em outro servidor, mas é um app React Router/Hono com servidor próprio; montá-lo atrás do guarda do Fastify não é barato. Por ora: rodar `pg-boss-dashboard` em processo separado, ligado só em localhost e acessado por túnel SSH.
 
 ### E-28 Piloto
 - [ ] Configurar a conta do piloto junto com ele e medir o tempo gasto

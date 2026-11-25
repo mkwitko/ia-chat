@@ -16,6 +16,7 @@ export const Route = {
   simulator: '/mais/assistente/simulador',
   services: '/mais/servicos',
   usage: '/mais/plano-e-uso',
+  operator: '/operador',
 } as const;
 
 export const conversationPath = (id: string) => `${Route.conversations}/${id}`;

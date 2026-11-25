@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { MoreCopy } from '@/copy';
 import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
+import { OperatorLink } from '../operator/operator-notices';
 import { Screen } from './screen';
 
 /** "Mais": settings out of the daily path (RN-52). Items become links as their screens land. */
@@ -37,6 +38,7 @@ export function MoreScreen() {
           );
         })}
       </ul>
+      <OperatorLink />
       <div className="px-4 py-6 md:px-0">
         <Button variant="outline" onClick={() => void signOut()}>
           {MoreCopy.signOut}
