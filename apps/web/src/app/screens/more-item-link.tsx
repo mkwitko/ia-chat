@@ -3,7 +3,7 @@ import { NavLink } from 'react-router';
 import { HELP_URL } from '@/lib/config';
 import { cn } from '@/lib/utils';
 
-export const MoreRowCopy = { soon: 'Em breve' } as const;
+export const MoreRowCopy = { soon: 'Em breve', waiting: 'Aguardando você:' } as const;
 
 const ROW =
   'flex min-h-16 items-center gap-3 px-4 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring lg:min-h-12 lg:rounded-md lg:px-3';
@@ -15,6 +15,8 @@ export interface MoreRow {
   to?: string | undefined;
   /** The help center item: opens the site's help center when HELP_URL is configured. */
   helpLink?: boolean;
+  /** Count of things waiting on the owner, shown as a pill. */
+  badge?: number | undefined;
 }
 
 function RowText({ row, compact }: Readonly<{ row: MoreRow; compact: boolean }>) {
@@ -54,6 +56,12 @@ export function MoreItemLink({ row, compact }: Readonly<{ row: MoreRow; compact:
       className={({ isActive }) => cn(ROW, isActive && 'lg:bg-muted lg:font-semibold')}
     >
       <RowText row={row} compact={compact} />
+      {row.badge ? (
+        <span className="rounded-full bg-attention-soft px-2 text-xs font-semibold text-foreground">
+          <span className="sr-only">{MoreRowCopy.waiting} </span>
+          {row.badge}
+        </span>
+      ) : null}
       <ChevronRight className={ICON} aria-hidden="true" />
     </NavLink>
   );

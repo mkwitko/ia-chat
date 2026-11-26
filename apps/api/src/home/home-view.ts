@@ -3,6 +3,7 @@ import { AppointmentStatus, localDayRange, PipelineStage, type Tx } from '@app/d
 import { InboxState, listConversations } from '../conversations/view.ts';
 import { listCustomers } from '../customers/customers-view.ts';
 import { monthRange, type Range } from '../period.ts';
+import { pendingCount } from '../setup/unanswered-routes.ts';
 
 // Spec 10, "Início": the month in four real counts, then what needs the owner, each with a place
 // to act. Everything is counted from rows; nothing is estimated.
@@ -96,7 +97,7 @@ export async function readHome(tx: Tx, { tenantId, now }: { tenantId: string; no
     listConversations(tx),
     monthCounts(tx, monthRange(now, timezone)),
     appointmentLists(tx, { now, day: localDayRange(now, timezone) }),
-    tx.knowledgeItem.count({ where: { active: true, answer: null } }),
+    pendingCount(tx),
     notBookedSummary(tx, now),
   ]);
   const waiting = conversations.filter((item) => NEEDS_YOU.includes(item.state));

@@ -547,3 +547,8 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] API de clientes, Início e Resultados do mês, com testes
 - [x] Telas Início, Clientes e Resultados; navegação de cinco itens
 - [ ] Passada no navegador em 360 px e 1280 px (quatro estados por tela)
+
+### SMB-02 FAQ a partir das perguntas sem resposta
+- [x] **(teste primeiro)** Agrupamento por similaridade e regras de aprovação/descarte (`apps/api/src/setup/unanswered-*.test.ts`)
+- [x] Tela da base: grupos, aprovar, descartar, "IA sugere resposta" sob clique, com validação de valor e horário
+- [x] Contador em Início (lista) e em Mais; corrige a lista, que lia itens ativos enquanto o assistente grava inativos
