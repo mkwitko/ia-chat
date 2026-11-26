@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyToDays, commonWindow, validWindows } from './rules-model';
+import { applyQuick, applyToDays, commonWindow, validWindows } from './rules-model';
 
 describe('commonWindow', () => {
   it('finds the window most days share', () => {
@@ -49,5 +49,23 @@ describe('weekly windows', () => {
     expect(
       validWindows([monday('09:00', '12:00'), { weekday: 2, start: '09:00', end: '12:00' }]),
     ).toBe(true);
+  });
+});
+
+describe('applyQuick', () => {
+  const window = { start: '08:00', end: '18:00' };
+  it('closes a day just unticked and keeps the untouched ones', () => {
+    const rules = [
+      { weekday: 1, start: '08:00', end: '18:00' },
+      { weekday: 2, start: '08:00', end: '18:00' },
+      { weekday: 6, start: '09:00', end: '12:00' },
+    ];
+    const next = applyQuick(rules, { before: [1, 2], after: [1] }, window);
+    expect(next.map((rule) => rule.weekday).toSorted((a, b) => a - b)).toEqual([1, 6]);
+  });
+
+  it('gives a new day the window', () => {
+    const next = applyQuick([], { before: [], after: [3] }, window);
+    expect(next).toEqual([{ weekday: 3, ...window }]);
   });
 });

@@ -1,28 +1,21 @@
-import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
-import { EditorScreen, MoreOptions } from '../screens/editor-screen';
+import { EditorScreen, SubPages } from '../screens/editor-screen';
+import type { MoreRow } from '../screens/more-item-link';
 import { ClinicCopy, EditorCopy } from '../clinic/clinic-copy';
-import { feedback } from '../setup/feedback';
-import { Button } from '@/components/ui/button';
-import { TextField } from '../setup/fields';
 import { CommonCopy } from '../setup/setup-copy';
-import { AvailabilityCopy as Copy } from './agenda-copy';
-import { minuteToTime, timeToMinute } from './agenda-dates';
-import { useAvailability, useSaveSummaryTime } from './agenda-api';
+import { useAvailability } from './agenda-api';
 import { RulesEditor } from './rules-editor';
-import { TimeOffSection } from './time-off-section';
 import { useProfessionals } from '../profile/profile-api';
 import { PROFESSIONAL_PARAM } from './professional-api';
 import { ProfessionalFilter } from './professional-controls';
 import { ProfessionalCopy } from './professional-copy';
-import { ProfessionalServices } from './professional-services';
 
 const BACK = { to: Route.clinic, label: ClinicCopy.back };
 
 /** The professional in `?profissional=` (default: the first) and the team to switch between. */
-function useChosenProfessional() {
+export function useChosenProfessional() {
   const [params, setParams] = useSearchParams();
   const team = useProfessionals().data?.professionals ?? [];
   const asked = params.get(PROFESSIONAL_PARAM);
@@ -36,79 +29,71 @@ function useChosenProfessional() {
   };
 }
 
+/** The sub page keeps the professional chosen here. */
+function withChosen(path: string, { team, chosen }: ReturnType<typeof useChosenProfessional>) {
+  if (team.length <= 1 || !chosen) return path;
+  return `${path}?${new URLSearchParams({ [PROFESSIONAL_PARAM]: chosen.id }).toString()}`;
+}
+
+/** Folgas e férias; with a team, also who does each service. */
+function subPagesOf(chooser: ReturnType<typeof useChosenProfessional>): MoreRow[] {
+  const timeOff = {
+    label: EditorCopy.timeOff,
+    hint: EditorCopy.timeOffRow,
+    to: withChosen(Route.clinicTimeOff, chooser),
+  };
+  if (chooser.team.length <= 1) return [timeOff];
+  const services = {
+    label: EditorCopy.proServices,
+    hint: EditorCopy.proServicesRow,
+    to: withChosen(Route.clinicProServices, chooser),
+  };
+  return [timeOff, services];
+}
+
+/** Clínica: whose hours or days off this page edits. */
+export function TeamSwitch({
+  chooser,
+}: Readonly<{ chooser: ReturnType<typeof useChosenProfessional> }>) {
+  const { team, chosen, choose } = chooser;
+  if (team.length <= 1 || !chosen) return null;
+  return (
+    <div className="-mx-4 md:mx-0">
+      <ProfessionalFilter professionals={team} value={chosen.id} onChange={choose} />
+    </div>
+  );
+}
+
 /**
- * Meu consultório › Horários (owner, 26/11/2026; was Agenda › Disponibilidade): the week, days
- * off and, folded, the time of the nightly summary. With more than one professional (Clínica),
- * each has their own hours, services and days off (spec 05).
+ * Meu consultório › Horários: the week and one "Salvar" (round 3: one task per editor). Days off
+ * open on their own page; the nightly summary time moved to Conta › Avisos. With more than one
+ * professional (Clínica), each has their own hours and services (spec 05).
  */
 export function HoursEditor() {
-  const { team, chosen, choose } = useChosenProfessional();
+  const chooser = useChosenProfessional();
+  const { chosen } = chooser;
   const availability = useAvailability(chosen?.id);
-  const several = team.length > 1;
+  const several = chooser.team.length > 1;
   return (
     <EditorScreen title={ClinicCopy.hours} intro={EditorCopy.hoursIntro} back={BACK}>
-      {several && chosen && (
-        <div className="-mx-4 md:mx-0">
-          <ProfessionalFilter professionals={team} value={chosen.id} onChange={choose} />
-        </div>
-      )}
+      <TeamSwitch chooser={chooser} />
       {availability.isPending && <ListSkeleton />}
       {availability.isError && (
         <LoadError message={CommonCopy.loadFailed} onRetry={() => void availability.refetch()} />
       )}
       {availability.data && (
-        <div className="grid gap-10">
-          <section className="grid gap-3">
-            {several && chosen && (
-              <h2 className="text-lg">{ProfessionalCopy.hoursFor(chosen.name)}</h2>
-            )}
-            <RulesEditor
-              key={chosen?.id}
-              initial={availability.data.rules}
-              professionalId={chosen?.id}
-            />
-          </section>
-          {several && chosen && <ProfessionalServices key={chosen.id} professionalId={chosen.id} />}
-          <TimeOffSection timezone={availability.data.timezone} professionalId={chosen?.id} />
-          <MoreOptions>
-            <SummarySection minute={availability.data.nightlySummaryMinute} />
-          </MoreOptions>
-        </div>
+        <section className="grid gap-3">
+          {several && chosen && (
+            <h2 className="text-lg">{ProfessionalCopy.hoursFor(chosen.name)}</h2>
+          )}
+          <RulesEditor
+            key={chosen?.id}
+            initial={availability.data.rules}
+            professionalId={chosen?.id}
+          />
+        </section>
       )}
+      <SubPages rows={subPagesOf(chooser)} />
     </EditorScreen>
-  );
-}
-
-/** RF-15: the time of the nightly "Sua agenda de amanhã" notification. */
-function SummarySection({ minute }: Readonly<{ minute: number }>) {
-  const [time, setTime] = useState(minuteToTime(minute));
-  const save = useSaveSummaryTime();
-  return (
-    <form
-      className="grid gap-3"
-      onSubmit={(event) => {
-        event.preventDefault();
-        save.mutate(timeToMinute(time), feedback);
-      }}
-    >
-      <h2 className="font-medium">{Copy.summaryHeading}</h2>
-      <p className="text-sm text-muted-foreground">{Copy.summaryIntro}</p>
-      <TextField
-        id="summary-time"
-        label={Copy.summaryTime}
-        type="time"
-        required
-        value={time}
-        onChange={setTime}
-      />
-      <Button
-        type="submit"
-        variant="outline"
-        className="justify-self-start"
-        disabled={save.isPending || !time}
-      >
-        {save.isPending ? CommonCopy.saving : CommonCopy.save}
-      </Button>
-    </form>
   );
 }

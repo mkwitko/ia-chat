@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { AvailabilityCopy as Copy } from './agenda-copy';
 import type { RuleWindow } from './agenda-api';
-import { applyToDays, commonWindow, WEEK_ORDER, WORKWEEK } from './rules-model';
+import { applyQuick, commonWindow, WEEK_ORDER, WORKWEEK } from './rules-model';
 
 const DEFAULT_WINDOW = { start: '08:00', end: '18:00' } as const;
 interface Window {
@@ -18,8 +17,8 @@ interface QuickHoursProps {
 }
 
 /**
- * "The same hours on several days" in one go (Nielsen 7): tap the days, set from and to, apply.
- * The day-by-day list below stays for exceptions (lunch break, Saturday morning).
+ * "The same hours on several days" in one go (Nielsen 7): tap the days, set from and to. Each
+ * change shows at once in the summary above "Salvar" (round 3: no separate "apply" step).
  */
 export function QuickHours({ rules, onChange }: Readonly<QuickHoursProps>) {
   // Start from what is saved: the most common window and the days that have it.
@@ -27,24 +26,29 @@ export function QuickHours({ rules, onChange }: Readonly<QuickHoursProps>) {
   const [days, setDays] = useState<readonly number[]>(seed?.days ?? WORKWEEK);
   const [window, setWindow] = useState<Window>(seed?.window ?? DEFAULT_WINDOW);
   const valid = days.length > 0 && window.start < window.end;
+  const update = (nextDays: readonly number[], nextWindow: Window) => {
+    setDays(nextDays);
+    setWindow(nextWindow);
+    if (nextWindow.start < nextWindow.end)
+      onChange(applyQuick(rules, { before: days, after: nextDays }, nextWindow));
+  };
   return (
     <fieldset className="grid gap-3 rounded-xl border bg-card p-4">
       <legend className="sr-only">{Copy.quickTitle}</legend>
       <p className="font-semibold">{Copy.quickTitle}</p>
-      <DayChips days={days} onChange={setDays} />
-      <TimeRange value={window} onChange={setWindow} />
-      <Button
-        type="button"
-        variant="outline"
-        className="justify-self-start"
-        disabled={!valid}
-        onClick={() => {
-          onChange(applyToDays(rules, days, window));
+      <DayChips
+        days={days}
+        onChange={(next) => {
+          update(next, window);
         }}
-      >
-        {Copy.quickApply(days.length)}
-      </Button>
-      <p className="text-sm text-muted-foreground">{valid ? Copy.quickHint : Copy.quickInvalid}</p>
+      />
+      <TimeRange
+        value={window}
+        onChange={(next) => {
+          update(days, next);
+        }}
+      />
+      {!valid && <p className="text-sm text-danger">{Copy.quickInvalid}</p>}
     </fieldset>
   );
 }

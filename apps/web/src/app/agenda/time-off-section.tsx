@@ -19,17 +19,23 @@ import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 
 interface SectionProps {
   timezone: string;
+  /** The heading and intro; off where the page title already says it. */
+  titled?: boolean;
   /** Whose blocks and vacations; absent: the first professional's. */
   professionalId?: string | undefined;
 }
 
 /** RF-41 and RF-14: upcoming blocks and vacations, with the form to add one. */
-export function TimeOffSection({ timezone, professionalId }: Readonly<SectionProps>) {
+export function TimeOffSection({
+  timezone,
+  professionalId,
+  titled = true,
+}: Readonly<SectionProps>) {
   const offs = useTimeOffs(professionalId);
   return (
     <section className="grid gap-3">
-      <h2 className="text-lg">{Copy.offHeading}</h2>
-      <p className="text-sm text-muted-foreground">{Copy.offIntro}</p>
+      {titled && <h2 className="text-lg">{Copy.offHeading}</h2>}
+      {titled && <p className="text-sm text-muted-foreground">{Copy.offIntro}</p>}
       {offs.isPending && <ListSkeleton />}
       {offs.isError && (
         <LoadError message={CommonCopy.loadFailed} onRetry={() => void offs.refetch()} />

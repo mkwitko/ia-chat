@@ -74,6 +74,13 @@ export const EditorCopy = defineMessages({
     packagesHeading: 'Pacotes',
     packagesIntro: 'Várias sessões vendidas juntas, com um valor só. Opcional.',
     hoursIntro: 'Os dias e horas em que você atende. O assistente só marca dentro deles.',
+    timeOff: 'Folgas e férias',
+    timeOffIntro:
+      'Feriados, compromissos e viagens. O assistente não oferece horários nesses dias.',
+    timeOffRow: 'Feriados, compromissos e viagens',
+    noPackages: 'Nenhum ainda. Opcional.',
+    proServices: 'Quem faz cada serviço',
+    proServicesRow: 'Os serviços de cada profissional',
     addressIntro: 'O assistente manda o endereço a quem marcar. O primeiro é o principal.',
     teamIntro: 'Quem atende os pacientes. Cada um tem os próprios horários.',
     paymentsIntro: 'O assistente conta isto a quem perguntar.',

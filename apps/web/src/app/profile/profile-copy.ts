@@ -31,13 +31,11 @@ export const ProfileCopy = defineMessages({
     invalidUrl: 'Confira os links: site e avaliação começam com https://.',
     packagesHeading: 'Pacotes',
     packagesIntro: 'Várias sessões vendidas juntas, por um valor só. Opcional.',
-    packageName: 'Pacote',
-    packageNamePlaceholder: '4 sessões',
+    packageName: 'Nome do pacote',
     packageSessions: 'Sessões',
     packageSessionsCount: (count: number) =>
       count === 1 ? '1 sessão' : `${String(count)} sessões`,
     packagePrice: 'Valor (R$)',
-    packagePricePlaceholder: '800',
     addPackage: 'Adicionar pacote',
     removePackage: (name: string) => `Remover o pacote ${name}`,
     removePackageConfirm: (name: string) =>

@@ -36,7 +36,6 @@ export function ServiceForm(props: Readonly<ServiceFormProps>) {
         onChange={form.setName}
         required
         maxLength={80}
-        placeholder={Copy.namePlaceholder}
       />
       <ServiceNumbers form={form} />
       {form.invalidPrice && (
@@ -121,7 +120,6 @@ function ServiceNumbers({ form }: Readonly<{ form: ReturnType<typeof useServiceF
         onChange={form.setPrice}
         inputMode="decimal"
         required
-        placeholder={Copy.pricePlaceholder}
         aria-invalid={form.invalidPrice}
       />
     </div>
