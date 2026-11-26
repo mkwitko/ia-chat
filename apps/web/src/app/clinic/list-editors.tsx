@@ -4,7 +4,8 @@ import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { PackagesSection } from '../profile/packages-section';
 import { PlacesSection } from '../profile/places-section';
 import { TeamSection } from '../profile/team-section';
-import { EditorScreen, MoreOptions } from '../screens/editor-screen';
+import { EditorScreen, MoreOptions, SubPages } from '../screens/editor-screen';
+import { useProfile } from '../profile/profile-api';
 import { ServiceList } from '../setup/service-list';
 import { useServices } from '../setup/setup-api';
 import { CommonCopy } from '../setup/setup-copy';
@@ -17,9 +18,10 @@ import { ClinicCopy, EditorCopy } from './clinic-copy';
 
 const BACK = { to: Route.clinic, label: ClinicCopy.back };
 
-/** Meu consultório › Serviços e preços: the services, then the packages. */
+/** Meu consultório › Serviços e preços: the services; the packages open on their own page. */
 export function ServicesEditor() {
   const services = useServices();
+  const packages = useProfile().data?.profile.packages.length ?? 0;
   return (
     <EditorScreen title={ClinicCopy.services} intro={EditorCopy.servicesIntro} back={BACK}>
       {services.isPending && <ListSkeleton />}
@@ -32,9 +34,28 @@ export function ServicesEditor() {
           pricesForbidden={services.data.pricesForbidden}
         />
       )}
-      <div className="border-t pt-6">
-        <PackagesSection />
-      </div>
+      <SubPages
+        rows={[
+          {
+            label: EditorCopy.packagesHeading,
+            hint: packages ? ClinicCopy.packageCount(packages) : EditorCopy.noPackages,
+            to: Route.clinicPackages,
+          },
+        ]}
+      />
+    </EditorScreen>
+  );
+}
+
+/** Serviços e preços › Pacotes: its own page, so each editor holds one task. */
+export function PackagesEditor() {
+  return (
+    <EditorScreen
+      title={EditorCopy.packagesHeading}
+      intro={EditorCopy.packagesIntro}
+      back={{ to: Route.clinicServices, label: ClinicCopy.services }}
+    >
+      <PackagesSection titled={false} />
     </EditorScreen>
   );
 }

@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { CommonCopy } from '../setup/setup-copy';
 import { EditorCopy } from '../clinic/clinic-copy';
+import { MoreItemLink, type MoreRow } from './more-item-link';
 
 interface EditorScreenProps {
   title: string;
@@ -58,6 +59,19 @@ export function MoreOptions({
         {children}
       </div>
     </details>
+  );
+}
+
+/** The neighbour topics of an editor, each on its own page (round 3: one task per editor). */
+export function SubPages({ rows }: Readonly<{ rows: MoreRow[] }>) {
+  return (
+    <ul className="divide-y overflow-hidden rounded-xl border bg-card">
+      {rows.map((row) => (
+        <li key={row.label}>
+          <MoreItemLink row={row} />
+        </li>
+      ))}
+    </ul>
   );
 }
 

@@ -100,12 +100,6 @@ export const AvailabilityCopy = defineMessages({
     afterSave: (summary: string) => `Depois de salvar: ${summary}. Ainda não foi salvo.`,
     dayByDay: 'Ajustar dia a dia (almoço, sábado e outros)',
     quickDays: 'Dias que recebem este horário',
-    quickApply: (days: number) =>
-      days === 1
-        ? 'Usar este horário no dia marcado'
-        : `Usar este horário nos ${String(days)} dias marcados`,
-    quickHint:
-      'Depois, se precisar, mude um dia só em "Ajustar dia a dia" (por exemplo, o intervalo do almoço). Nada é salvo até você tocar em Salvar.',
     quickInvalid: 'Marque pelo menos um dia e confira se o fim vem depois do início.',
     addWindow: 'Adicionar horário',
     removeWindow: 'Remover horário',

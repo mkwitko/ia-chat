@@ -1,5 +1,6 @@
 import { Bell, CreditCard, Gauge, Gift } from 'lucide-react';
 import { Route } from '@/routes';
+import { NightlySummary } from '../agenda/summary-time';
 import { useBilling, type Billing } from '../billing/billing-api';
 import { summaryOf, TopicStatus, type TopicSummary } from '../clinic/clinic-model';
 import { EditorScreen } from '../screens/editor-screen';
@@ -64,6 +65,7 @@ export function NotificationsScreen() {
       back={{ to: Route.account, label: Copy.title }}
     >
       <WeeklyReportToggle />
+      <NightlySummary />
       <ThemeToggle />
     </EditorScreen>
   );

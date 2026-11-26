@@ -6,6 +6,7 @@ import { SignUpPage } from './app/account/signup-page';
 import { StartPage } from './app/account/start-page';
 import { AgendaScreen } from './app/agenda/agenda-screen';
 import { HoursEditor } from './app/agenda/hours-editor';
+import { ProServicesEditor, TimeOffEditor } from './app/agenda/hours-pages';
 import { AccountScreen, NotificationsScreen } from './app/account-settings/account-screen';
 import { BusinessEditor } from './app/clinic/business-editor';
 import { ClinicScreen } from './app/clinic/clinic-screen';
@@ -13,6 +14,7 @@ import { legacyRoutes } from './app/clinic/legacy-redirect';
 import {
   AddressEditor,
   CalendarEditor,
+  PackagesEditor,
   ServicesEditor,
   TeamEditor,
   WhatsappEditor,
@@ -84,6 +86,9 @@ export const router = createBrowserRouter([
           { path: Route.clinicBusiness, element: <BusinessEditor /> },
           { path: Route.clinicServices, element: <ServicesEditor /> },
           { path: Route.clinicHours, element: <HoursEditor /> },
+          { path: Route.clinicTimeOff, element: <TimeOffEditor /> },
+          { path: Route.clinicProServices, element: <ProServicesEditor /> },
+          { path: Route.clinicPackages, element: <PackagesEditor /> },
           { path: Route.clinicAddress, element: <AddressEditor /> },
           { path: Route.clinicTeam, element: <TeamEditor /> },
           { path: Route.clinicPayments, element: <PaymentsEditor /> },

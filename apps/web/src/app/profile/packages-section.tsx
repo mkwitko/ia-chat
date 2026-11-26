@@ -3,17 +3,17 @@ import { CommonCopy } from '../setup/setup-copy';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { formatCents, parseReais } from '@/lib/money';
+import { AddButton } from '../setup/add-button';
 import { feedback } from '../setup/feedback';
 import { TextField } from '../setup/fields';
 import { useProfilePatch, type BusinessPackage } from './profile-api';
 import { ProfileCopy as Copy } from './profile-copy';
 
 const EMPTY = '';
-const ADD_CLASS = 'col-span-2 justify-self-start';
 const MAX_SESSIONS = 100;
 
 /** M-04: packages with an exact price the assistant quotes ("4 sessões", R$ 800,00). */
-export function PackagesSection() {
+export function PackagesSection({ titled = true }: Readonly<{ titled?: boolean }>) {
   const { profile, patch, pending } = useProfilePatch();
   if (!profile.data) return null;
   const packages = profile.data.profile.packages;
@@ -21,11 +21,15 @@ export function PackagesSection() {
     patch({ packages: next }, feedback);
   };
   return (
-    <section className="grid gap-3" aria-labelledby="packages-heading">
-      <h2 id="packages-heading" className="text-lg">
-        {Copy.packagesHeading}
-      </h2>
-      <p className="text-sm text-muted-foreground">{Copy.packagesIntro}</p>
+    <section className="grid gap-3" aria-labelledby={titled ? 'packages-heading' : undefined}>
+      {titled && (
+        <>
+          <h2 id="packages-heading" className="text-lg">
+            {Copy.packagesHeading}
+          </h2>
+          <p className="text-sm text-muted-foreground">{Copy.packagesIntro}</p>
+        </>
+      )}
       {packages.length === 0 && <p className="text-sm">{Copy.noPackages}</p>}
       <PackageList
         packages={packages}
@@ -34,7 +38,7 @@ export function PackagesSection() {
           save(packages.filter((_, at) => at !== index));
         }}
       />
-      <PackageForm
+      <AddPackage
         pending={pending}
         onAdd={(item) => {
           save([...packages, item]);
@@ -57,15 +61,16 @@ function PackageList({ packages, pending, onRemove }: Readonly<ListProps>) {
       {packages.map((item, index) => (
         <li
           key={`${item.name}-${String(index)}`}
-          className="flex items-center gap-3 py-1 pr-1 pl-4"
+          className="flex items-center gap-3 py-2 pr-1 pl-4"
         >
-          <span className="flex-1 font-medium">{item.name}</span>
-          {item.sessions !== undefined && (
+          <span className="grid min-w-0 flex-1">
+            <span className="font-medium">{item.name}</span>
             <span className="text-sm text-muted-foreground tabular-nums">
-              {Copy.packageSessionsCount(item.sessions)}
+              {item.sessions === undefined
+                ? formatCents(item.priceCents)
+                : `${Copy.packageSessionsCount(item.sessions)} · ${formatCents(item.priceCents)}`}
             </span>
-          )}
-          <span className="tabular-nums">{formatCents(item.priceCents)}</span>
+          </span>
           <Button
             variant="ghost"
             className="text-danger"
@@ -110,15 +115,44 @@ function usePackageForm(onAdd: (item: BusinessPackage) => void) {
   };
 }
 
-function PackageForm({
-  pending,
-  onAdd,
-}: Readonly<{ pending: boolean; onAdd: (item: BusinessPackage) => void }>) {
+interface AddProps {
+  pending: boolean;
+  onAdd: (item: BusinessPackage) => void;
+}
+
+/** The form opens only when asked (round 3: no empty fields waiting on the page). */
+function AddPackage({ pending, onAdd }: Readonly<AddProps>) {
+  const [open, setOpen] = useState(false);
+  if (!open)
+    return (
+      <AddButton
+        label={Copy.addPackage}
+        onClick={() => {
+          setOpen(true);
+        }}
+      />
+    );
+  const close = () => {
+    setOpen(false);
+  };
+  return (
+    <PackageForm
+      pending={pending}
+      onAdd={(item) => {
+        onAdd(item);
+        close();
+      }}
+      onCancel={close}
+    />
+  );
+}
+
+function PackageForm({ pending, onAdd, onCancel }: Readonly<AddProps & { onCancel: () => void }>) {
   const form = usePackageForm(onAdd);
   const { name, setName, price, setPrice, invalid, ready, submit } = form;
   return (
     <form
-      className="grid grid-cols-2 items-end gap-3"
+      className="grid grid-cols-2 items-end gap-3 rounded-xl border bg-card p-4"
       onSubmit={(event) => {
         event.preventDefault();
         submit();
@@ -128,7 +162,6 @@ function PackageForm({
         <TextField
           id="package-name"
           label={Copy.packageName}
-          placeholder={Copy.packageNamePlaceholder}
           value={name}
           onChange={setName}
           maxLength={80}
@@ -139,14 +172,18 @@ function PackageForm({
         id="package-price"
         label={Copy.packagePrice}
         inputMode="decimal"
-        placeholder={Copy.packagePricePlaceholder}
         value={price}
         onChange={setPrice}
         aria-invalid={invalid}
       />
-      <Button type="submit" variant="outline" className={ADD_CLASS} disabled={pending || !ready}>
-        {Copy.addPackage}
-      </Button>
+      <div className="col-span-2 flex gap-2">
+        <Button type="submit" disabled={pending || !ready}>
+          {Copy.addPackage}
+        </Button>
+        <Button type="button" variant="ghost" onClick={onCancel}>
+          {CommonCopy.cancel}
+        </Button>
+      </div>
     </form>
   );
 }

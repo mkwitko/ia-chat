@@ -35,6 +35,20 @@ export function applyToDays(
   return [...kept, ...days.map((weekday) => ({ weekday, ...window }))];
 }
 
+/**
+ * "Same hours on several days", applied as the owner taps (round 3: no separate "apply" button):
+ * the chosen days get the window, a day just unticked closes, the other days stay as they were.
+ */
+export function applyQuick(
+  rules: readonly RuleWindow[],
+  change: { before: readonly number[]; after: readonly number[] },
+  window: { start: string; end: string },
+): RuleWindow[] {
+  const unticked = new Set(change.before.filter((day) => !change.after.includes(day)));
+  const open = rules.filter((rule) => !unticked.has(rule.weekday));
+  return applyToDays(open, change.after, window);
+}
+
 /** Mirrors the API: each window ends after it starts and those of one day do not overlap. */
 export function validWindows(rules: readonly RuleWindow[]): boolean {
   const sorted = rules.toSorted(
