@@ -552,3 +552,8 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] **(teste primeiro)** Agrupamento por similaridade e regras de aprovação/descarte (`apps/api/src/setup/unanswered-*.test.ts`)
 - [x] Tela da base: grupos, aprovar, descartar, "IA sugere resposta" sob clique, com validação de valor e horário
 - [x] Contador em Início (lista) e em Mais; corrige a lista, que lia itens ativos enquanto o assistente grava inativos
+
+### SMB-03 Equipe: convite da recepção
+- [x] **(teste primeiro)** Permissões: a recepção não convida, cancela, muda função nem remove, e não vê cobrança; dono convida, reenvia, cancela, muda função e remove (`apps/api/src/team/team.test.ts`)
+- [x] Tela Mais > Equipe e página `/convite-equipe/:id` (cadastro ou login, aceite); `?next=` no login
+- [x] Item "Convidar a secretária" da lista de Início deixa de ser "em breve"

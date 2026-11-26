@@ -7,13 +7,15 @@ import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
 import { AccountCopy } from '../account/account-copy';
 import { AuthFrame } from '../account/auth-frame';
+import { nextPath } from './next-path';
 import { LoginField, useEmailLogin } from './use-email-login';
 
 const GOOGLE = 'google';
 
 export function LoginPage() {
   const session = authClient.useSession();
-  if (session.data) return <Navigate to={Route.conversations} replace />;
+  if (session.data)
+    return <Navigate to={nextPath(window.location.search) ?? Route.conversations} replace />;
   return (
     <AuthFrame title={LoginCopy.title} subtitle={LoginCopy.subtitle}>
       <EmailForm />
@@ -28,7 +30,7 @@ export function LoginPage() {
         onClick={() =>
           void authClient.signIn.social({
             provider: GOOGLE,
-            callbackURL: Route.conversations,
+            callbackURL: nextPath(window.location.search) ?? Route.conversations,
             // A Google account without an invite is refused (H-37): explain it there.
             errorCallbackURL: Route.signUp,
           })

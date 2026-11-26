@@ -25,6 +25,7 @@ import { createInboxHub } from './realtime/inbox-hub.ts';
 import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
 import { registerInviteRoutes } from './invites/invite-routes.ts';
+import { registerTeamInviteRoutes } from './team/team-invite-routes.ts';
 import { registerOnboardingRoutes } from './onboarding/onboarding-routes.ts';
 import { registerPrefillRoutes } from './onboarding/prefill/prefill-routes.ts';
 import { fetchPage, type PageFetcher } from './onboarding/prefill/safe-fetch.ts';
@@ -99,6 +100,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
   registerInviteRoutes(app, env);
+  registerTeamInviteRoutes(app);
   registerOperatorRoutes(app);
   registerControlRoutes(app);
   registerModelRoutes(app, deps);
