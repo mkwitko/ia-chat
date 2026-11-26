@@ -28,6 +28,7 @@ import { startWeeklyReport } from './report/wiring.ts';
 import { startNightlySummary } from './agenda/wiring.ts';
 import { turnScheduler } from './conversation/turn-scheduler.ts';
 import { mediaScheduler, startMediaWorker } from './media/wiring.ts';
+import { channelDownNotifier, startSessionHealth } from './channel/wiring.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
 import { workerEmailSender } from './trial/log-sender.ts';
@@ -85,6 +86,8 @@ const appLog = {
   info: log.info.bind(log),
 };
 const notifier = startNotifier({ db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
+const notifySetup = { db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog };
+const deliver = startDelivery(notifySetup);
 const remind = (tenantId: string, reason: NotifyReason) => (conversationId: string) => {
   notifier({ tenantId, conversationId, reason }).catch((error: unknown) => {
     log.error({ tenantId, error: String(error) }, REMINDER_FAILED);
@@ -103,6 +106,7 @@ await workTenantQueue({
       notifyUsage: (tenantId, { reason, conversationId }) => {
         remind(tenantId, reason)(conversationId);
       },
+      channelDown: channelDownNotifier(alert, deliver),
     }),
 });
 
@@ -130,7 +134,6 @@ await boss.work(RECONCILE_QUEUE.name, async () => {
 });
 
 // RF-15: the professional's agenda for tomorrow, at the time each tenant chose (default 20:00).
-const notifySetup = { db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog };
 await startNightlySummary({ boss, setup: notifySetup });
 
 // S-05 (RF-84, RF-88): abandonment reminders and the end of the trial, once each, every hour.
@@ -155,7 +158,7 @@ await startWeeklyReport({
   boss,
   db,
   email: trialEmail,
-  deliver: startDelivery(notifySetup),
+  deliver,
   panelUrl: webOrigin,
 });
 
@@ -176,6 +179,8 @@ await startReminderSweep({
   tokenKey: process.env.META_TOKEN_KEY,
   log: appLog.info,
 });
+// E-09b (RF-29): QR code sessions checked every 5 minutes.
+await startSessionHealth({ boss, db, alert, deliver, source: process.env, log: appLog.info });
 await startMediaWorker({ boss, db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
 const turns = await startTurnWorker({
   boss,

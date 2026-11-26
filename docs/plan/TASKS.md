@@ -167,13 +167,15 @@ Spec: `03-whatsapp-e-conversa.md` (abstração de canal, RF-20 a RF-26).
 
 ### E-09b Adaptador por QR code
 Spec: `03-whatsapp-e-conversa.md` (duas formas de conexão, motor).
-- [ ] Contêiner WAHA com motor GOWS na rede privada, imagem fixada por digest
-- [ ] Primeiro dia: provar que chegam o eco do dono e o identificador do contato. Se não chegarem, parar e reavaliar o motor
-- [ ] Adaptador HTTP e rota de webhook do gateway, com autenticação entre os dois
-- [ ] Fluxo de QR code no painel, com o termo de ciência (RF-27) gravado em auditoria
-- [ ] **(teste primeiro)** Limites de envio e bloqueio de mensagem ativa em massa (RF-28)
-- [ ] Alerta de sessão caída e pedido de novo QR code (RF-29)
-- [ ] A mesma suíte de contrato do E-09 passa neste adaptador
+- [x] Contêiner WAHA com motor GOWS na rede privada, imagem fixada por digest (ARM64 em produção, `gows-arm-2026.10.1`; perfil `qr` no Compose de desenvolvimento)
+- [x] Primeiro dia: provar que chegam o eco do dono e o identificador do contato (`message.any` com `fromMe`/`source: app`; `@c.us` ou `@lid`), com payloads da documentação nos testes. Contêiner real: sessão criada, QR code lido da API, webhooks `session.status` assinados chegaram e foram gravados
+- [ ] Primeiro dia com número real: ler o QR, confirmar eco do dono e `SenderAlt` do LID com payload capturado (precisa de celular)
+- [x] Adaptador HTTP e rota de webhook do gateway, com autenticação entre os dois (`X-Api-Key` e HMAC-SHA512)
+- [x] Fluxo de QR code no painel, com o termo de ciência (RF-27) gravado em auditoria
+- [x] **(teste primeiro)** Limites de envio e bloqueio de mensagem ativa em massa (RF-28)
+- [x] Alerta de sessão caída e pedido de novo QR code (RF-29): webhook e checagem a cada 5 minutos, alerta ao operador e push ao dono
+- [x] A mesma suíte de contrato do E-09 passa neste adaptador
+- [ ] Sessão cifrada em repouso (RF-29) e aviso de falha em massa na página de status (RF-29b)
 
 ### E-10 Mídia e áudio
 - [x] Job imediato de download para o R2, com caminho por tenant e URL assinada
@@ -534,7 +536,7 @@ Spec: 11 ("Modelo de indicação"), H-27. Bloqueio: código; recompensa é decis
 
 ### M-12 Avaliações e relatório simples (P1)
 Spec: 11 (métricas 13 e 14). Bloqueio: código; depende de M-08 e E-22.
-- [x] Pedido de avaliação depois do atendimento realizado, com consentimento; link do perfil público que o dono informa Feito (H-47): Configurações > Retorno e avaliações; padrão desligado, 3 h, uma vez por atendimento e por cliente a cada 90 dias; exige o link no perfil
+- [x] Pedido de avaliação depois do atendimento realizado, com consentimento; link do perfil público que o dono informa Feito (H-48): Configurações > Retorno e avaliações; padrão desligado, 3 h, uma vez por atendimento e por cliente a cada 90 dias; exige o link no perfil
 - [x] Relatório semanal de uma tela, por e-mail ou push, com as métricas de Resultados Feito (H-41): segunda 08:00 no fuso do consultório, cinco linhas (conversas respondidas, agendamentos do assistente, comparecimentos, recuperado, perguntas sem resposta), e-mail ao dono e push; desliga em Mais > Notificações
 - Pronto quando: o relatório do piloto sai sem número calculado à mão.
 

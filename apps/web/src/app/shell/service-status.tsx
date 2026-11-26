@@ -2,6 +2,7 @@ import { Bot, MessageCircle, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Autonomy, useAssistantSettings } from '../assistant/settings-api';
 import { useOnboarding } from '../onboarding/onboarding-api';
+import { useQrStatus } from '../whatsapp/qr-api';
 import { ChannelStatus, useWhatsappStatus } from '../whatsapp/whatsapp-api';
 
 const StatusCopy = {
@@ -34,8 +35,9 @@ function useAssistantLine(): { text: string; tone: Tone } | null {
 
 function useWhatsappLine(): { text: string; tone: Tone } | null {
   const status = useWhatsappStatus().data;
+  const qr = useQrStatus().data;
   if (!status) return null;
-  const on = status.channel?.status === ChannelStatus.connected;
+  const on = [status.channel, qr?.channel].some((one) => one?.status === ChannelStatus.connected);
   return on
     ? { text: StatusCopy.whatsappOn, tone: Tone.ok }
     : { text: StatusCopy.whatsappOff, tone: Tone.idle };
