@@ -4,10 +4,11 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
+import { HelpArticle, HelpLink } from '../screens/screen-help';
 import { ProgressBar } from '../screens/progress-bar';
 import { Step, useOnboarding, type OnboardingView } from './onboarding-api';
 import { PAGE_INFO, WizardCopy as Copy } from './wizard-copy';
-import { isReady, useAdvance, WizardFooter } from './wizard-footer';
+import { isReady, missingOf, useAdvance, WizardFooter } from './wizard-footer';
 import { PageBody } from './wizard-pages';
 import { PAGES, pageOfStep, resumePage, type Page } from './wizard-model';
 
@@ -82,10 +83,7 @@ function WizardPage(props: Readonly<PageProps>) {
   const label = Copy.progress(position, PAGES.length);
   return (
     <>
-      <div className="grid gap-2">
-        <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        <ProgressBar value={position} total={PAGES.length} label={label} />
-      </div>
+      <WizardHeader position={position} label={label} />
       <div className="grid gap-2">
         <h1 className="text-xl">{PAGE_INFO[page].title}</h1>
         <p className="text-base text-muted-foreground">{PAGE_INFO[page].text}</p>
@@ -95,6 +93,7 @@ function WizardPage(props: Readonly<PageProps>) {
         page={page}
         view={view}
         ready={isReady(page, view, document.value)}
+        missing={missingOf(page, view, document.value)}
         pending={pending}
         onBack={onBack}
         onSkip={skip}
@@ -104,6 +103,25 @@ function WizardPage(props: Readonly<PageProps>) {
         }}
       />
     </>
+  );
+}
+
+/** "Passo X de 8", the bar, help, and the way out to continue later. */
+function WizardHeader({ position, label }: Readonly<{ position: number; label: string }>) {
+  return (
+    <div className="grid gap-2">
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-muted-foreground">{label}</span>
+        <HelpLink article={HelpArticle.setup} />
+        <Link
+          to={Route.home}
+          className="ml-auto flex min-h-11 items-center text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          {Copy.leave}
+        </Link>
+      </div>
+      <ProgressBar value={position} total={PAGES.length} label={label} />
+    </div>
   );
 }
 

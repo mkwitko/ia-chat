@@ -13,6 +13,7 @@ import { useAvailability } from '../agenda/agenda-api';
 import { useCalendarStatus } from '../calendar/calendar-api';
 import { usePlaces, useProfessionals, useProfile } from '../profile/profile-api';
 import type { SummaryItem } from '../screens/summary-list';
+import { HelpArticle } from '../screens/screen-help';
 import { SummaryScreen } from '../screens/summary-screen';
 import { useServices } from '../setup/setup-api';
 import { useWhatsappStatus } from '../whatsapp/whatsapp-api';
@@ -108,5 +109,7 @@ function useRunningItems(): SummaryItem[] {
 /** Meu consultório (owner, 26/11/2026): a summary, one row per topic, each opening its editor. */
 export function ClinicScreen() {
   const items = [...useAboutItems(), ...useRunningItems()];
-  return <SummaryScreen title={Copy.title} intro={Copy.intro} items={items} />;
+  return (
+    <SummaryScreen title={Copy.title} intro={Copy.intro} items={items} help={HelpArticle.clinic} />
+  );
 }

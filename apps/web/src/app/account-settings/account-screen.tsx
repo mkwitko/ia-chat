@@ -4,6 +4,7 @@ import { useBilling, type Billing } from '../billing/billing-api';
 import { summaryOf, TopicStatus, type TopicSummary } from '../clinic/clinic-model';
 import { EditorScreen } from '../screens/editor-screen';
 import type { SummaryItem } from '../screens/summary-list';
+import { HelpArticle } from '../screens/screen-help';
 import { SummaryScreen } from '../screens/summary-screen';
 import { WeeklyReportToggle } from '../screens/weekly-report-toggle';
 import { ThemeToggle } from '../shell/theme-toggle';
@@ -49,7 +50,9 @@ export function AccountScreen() {
     },
     ...STATIC,
   ];
-  return <SummaryScreen title={Copy.title} intro={Copy.intro} items={items} />;
+  return (
+    <SummaryScreen title={Copy.title} intro={Copy.intro} items={items} help={HelpArticle.account} />
+  );
 }
 
 /** Conta › Avisos e tema: the weekly report switch and the theme. */

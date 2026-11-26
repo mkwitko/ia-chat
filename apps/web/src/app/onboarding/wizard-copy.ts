@@ -46,6 +46,10 @@ export const PAGE_INFO: Record<Page, PageInfo> = {
 };
 
 export const WizardCopy = {
+  leave: 'Sair e continuar depois',
+  needArea: 'Escolha a sua área acima para continuar.',
+  needDocument: 'Escreva o seu CPF ou CNPJ para continuar.',
+  needWhatsapp: 'Conecte o WhatsApp para continuar, ou toque em "Pular por agora".',
   progress: (index: number, total: number) => `Passo ${String(index)} de ${String(total)}`,
   skip: 'Pular por agora',
   back: 'Voltar',

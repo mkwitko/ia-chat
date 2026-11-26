@@ -5,6 +5,7 @@ import { Screen } from '../screens/screen';
 import { SimulatorLink } from '../simulator/simulator-link';
 import { AttentionSection, EndingSection, hasAttention, ToMarkSection } from './attention-section';
 import { MonthSummary, QuickActions, TodaySection } from './day-sections';
+import { FirstBookingMoment } from './first-booking';
 import { useHome, type HomeView } from './home-api';
 import { HomeCopy as Copy } from './home-copy';
 import { StatusCard } from './status-card';
@@ -26,6 +27,7 @@ export function HomeScreen() {
           onRetry={() => void home.refetch()}
         />
       )}
+      {home.data && <FirstBookingMoment home={home.data} />}
       {home.data &&
         (isEmptyAccount(home.data) ? (
           <EmptyState {...Copy.empty} action={<SimulatorLink />} />

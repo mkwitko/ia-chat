@@ -6,6 +6,8 @@ import { feedback } from '../setup/feedback';
 import { FormActions } from '../setup/fields';
 import { AvailabilityCopy as Copy } from './agenda-copy';
 import { useSaveRules, type RuleWindow } from './agenda-api';
+import { hoursSummary } from '../clinic/clinic-model';
+import { MoreOptions } from '../screens/editor-screen';
 import { QuickHours } from './quick-hours';
 import { NEW_WINDOW, WEEK_ORDER, validWindows } from './rules-model';
 
@@ -39,11 +41,8 @@ export function RulesEditor(props: Readonly<EditorProps>) {
       }}
     >
       <QuickHours rules={rules} onChange={setRules} />
-      <ul className="divide-y rounded-xl border bg-card">
-        {WEEK_ORDER.map((weekday) => (
-          <WeekdayRow key={weekday} weekday={weekday} rules={rules} onChange={setRules} />
-        ))}
-      </ul>
+      <p className="font-medium">{Copy.nowLabel(hoursSummary(rules).value)}</p>
+      <WeekList rules={rules} onChange={setRules} />
       {!valid && (
         <p role="alert" className="text-sm text-danger">
           {Copy.invalidWindows}
@@ -55,6 +54,19 @@ export function RulesEditor(props: Readonly<EditorProps>) {
         {...(saveLabel ? { saveLabel } : {})}
       />
     </form>
+  );
+}
+
+/** Exceptions (lunch break, Saturday morning) one tap away; the week stays short. */
+function WeekList({ rules, onChange }: Readonly<Omit<RowProps, 'weekday'>>) {
+  return (
+    <MoreOptions label={Copy.dayByDay}>
+      <ul className="divide-y border-y md:rounded-xl md:border">
+        {WEEK_ORDER.map((weekday) => (
+          <WeekdayRow key={weekday} weekday={weekday} rules={rules} onChange={onChange} />
+        ))}
+      </ul>
+    </MoreOptions>
   );
 }
 

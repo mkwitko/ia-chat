@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
@@ -31,10 +32,16 @@ const hasText = (value: string) => value.trim().length > 0;
 
 /** "Continuar" stays off until the screen has what it needs (H-22: activation needs the WhatsApp). */
 export function isReady(page: Page, view: OnboardingView, document: string): boolean {
-  if (page === Page.area) return !!view.specialty;
-  if (page === Page.document) return view.documentSet || hasText(document);
-  if (page === Page.whatsapp || page === Page.activation) return view.whatsappConnected;
-  return true;
+  return missingOf(page, view, document) === null;
+}
+
+/** What still has to be done on this screen, in words, or null. */
+export function missingOf(page: Page, view: OnboardingView, document: string): string | null {
+  if (page === Page.area && !view.specialty) return Copy.needArea;
+  if (page === Page.document && !(view.documentSet || hasText(document))) return Copy.needDocument;
+  if ((page === Page.whatsapp || page === Page.activation) && !view.whatsappConnected)
+    return Copy.needWhatsapp;
+  return null;
 }
 
 interface AdvanceInput {
@@ -86,6 +93,8 @@ interface FooterProps {
   page: Page;
   view: OnboardingView;
   ready: boolean;
+  /** Shown when "Continuar" is tapped before the screen is complete. */
+  missing: string | null;
   pending: boolean;
   onBack: (() => void) | null;
   onSkip: () => void;
@@ -97,6 +106,7 @@ interface FooterProps {
 /** The filled button: "Continuar", "Ligar o assistente", or "Conectar o WhatsApp" when it is missing. */
 function PrimaryAction(props: Readonly<FooterProps>) {
   const { page, view, ready, pending, onNext, onConnect } = props;
+  const [asked, setAsked] = useState(false);
   // Hours (until saved once) and "where clients find you" confirm with their own button.
   if (page === Page.find || (page === Page.hours && !view.hoursSet)) return null;
   if (page === Page.activation && !view.whatsappConnected)
@@ -106,9 +116,25 @@ function PrimaryAction(props: Readonly<FooterProps>) {
       </Button>
     );
   return (
-    <Button size="lg" className="sm:min-w-48" disabled={pending || !ready} onClick={onNext}>
-      {page === Page.activation ? Copy.activate : Copy.next}
-    </Button>
+    <div className="grid gap-2 sm:justify-items-end">
+      <Button
+        size="lg"
+        className="sm:min-w-48"
+        disabled={pending}
+        aria-disabled={!ready}
+        onClick={() => {
+          if (ready) onNext();
+          else setAsked(true);
+        }}
+      >
+        {page === Page.activation ? Copy.activate : Copy.next}
+      </Button>
+      {asked && !ready && props.missing && (
+        <p role="alert" className="text-sm font-medium text-attention">
+          {props.missing}
+        </p>
+      )}
+    </div>
   );
 }
 

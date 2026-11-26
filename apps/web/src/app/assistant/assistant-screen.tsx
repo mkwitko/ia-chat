@@ -4,6 +4,7 @@ import { summaryOf } from '../clinic/clinic-model';
 import { useLeadFollowUp, useReviewRequest } from '../growth/growth-api';
 import { useOnboarding } from '../onboarding/onboarding-api';
 import type { SummaryItem } from '../screens/summary-list';
+import { HelpArticle } from '../screens/screen-help';
 import { SummaryScreen } from '../screens/summary-screen';
 import { useKnowledge } from '../setup/setup-api';
 import {
@@ -78,5 +79,12 @@ function useWhatItems(): SummaryItem[] {
 /** Assistente (owner, 26/11/2026): a summary, one row per topic, each opening its editor. */
 export function AssistantScreen() {
   const items = [...useHowItems(), ...useWhatItems()];
-  return <SummaryScreen title={Copy.title} intro={Copy.intro} items={items} />;
+  return (
+    <SummaryScreen
+      title={Copy.title}
+      intro={Copy.intro}
+      items={items}
+      help={HelpArticle.assistant}
+    />
+  );
 }
