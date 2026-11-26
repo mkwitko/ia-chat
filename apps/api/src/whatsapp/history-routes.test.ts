@@ -12,7 +12,6 @@ import { HISTORY_WINDOW_MS } from './history-import.ts';
 
 // E-24b: authorization of the coexistence history import. The Graph API is a fake `fetch`.
 
-const STRING = 'string';
 const PATH = '/api/whatsapp';
 const IMPORT = `${PATH}/history-import`;
 const ENV = {
@@ -28,7 +27,9 @@ let failSync: string | null = null;
 let phoneNumberId = digits();
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
-const bodyText = (init?: RequestInit) => (typeof init?.body === STRING ? init.body : '{}');
+// The fake receives JSON text as the body.
+// eslint-disable-next-line @typescript-eslint/no-base-to-string
+const bodyText = (init?: RequestInit) => String(init?.body);
 const fakeGraph: typeof fetch = (url, init) => {
   const target = url instanceof Request ? url.url : url.toString();
   if (target.includes('/oauth/access_token')) return Promise.resolve(json({ access_token: 't' }));
