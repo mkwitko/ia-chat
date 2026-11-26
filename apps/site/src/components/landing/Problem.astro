@@ -1,0 +1,141 @@
+---
+// Section 2: the day as it is today. No statistics; notifications with fictitious patients.
+const notifications = [
+  {
+    time: '10:20',
+    who: 'Marcos',
+    text: 'Áudio · 0:38',
+    note: 'Você está com um paciente. É alguém perguntando o preço.',
+  },
+  {
+    time: '14:05',
+    who: 'Carla',
+    text: 'Tem horário amanhã?',
+    note: 'Você só vê às 18h, entre um atendimento e outro.',
+  },
+  {
+    time: '21:03',
+    who: 'Bruno',
+    text: 'Boa noite, vocês atendem sábado?',
+    note: 'Depois do expediente. A resposta fica para amanhã.',
+  },
+] as const;
+---
+
+<section class="problem wrap" aria-labelledby="problema">
+  <h2 id="problema">
+    A mensagem chega enquanto você está com um paciente. Quando você vê, ele já marcou com outro.
+  </h2>
+  <ol class="day">
+    {
+      notifications.map((item) => (
+        <li>
+          <time>{item.time}</time>
+          <div class="notif">
+            <p class="who">
+              <strong>{item.who}</strong>
+              <span>sem resposta</span>
+            </p>
+            <p class="msg">{item.text}</p>
+          </div>
+          <p class="note">{item.note}</p>
+        </li>
+      ))
+    }
+  </ol>
+  <p class="foot-note">Nomes fictícios.</p>
+</section>
+
+<style>
+  .problem {
+    padding-top: 88px;
+  }
+  h2 {
+    font-size: clamp(28px, 4.4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    max-width: 22ch;
+    margin: 0 0 40px;
+  }
+  .day {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 28px;
+  }
+  .day li {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 6px 16px;
+  }
+  time {
+    font-size: 15px;
+    font-weight: 600;
+    padding-top: 12px;
+  }
+  .notif {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 10px 14px 12px;
+    box-shadow: var(--elevation);
+  }
+  .notif p {
+    margin: 0;
+  }
+  .who {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+  }
+  .who span {
+    color: var(--attention);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .msg {
+    color: var(--ink-2);
+  }
+  .note {
+    grid-column: 2;
+    margin: 0;
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-2);
+  }
+  .foot-note {
+    margin: 20px 0 0 72px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 960px) {
+    .problem {
+      padding-top: 128px;
+    }
+    .day {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .day li {
+      grid-template-columns: 1fr;
+      align-content: start;
+      border-top: 1px solid var(--line-strong);
+      padding-top: 16px;
+    }
+    time {
+      padding-top: 0;
+      font-size: 28px;
+      line-height: 34px;
+      letter-spacing: -0.02em;
+    }
+    .note {
+      grid-column: 1;
+    }
+    .foot-note {
+      margin-left: 0;
+    }
+  }
+</style>

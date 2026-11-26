@@ -1,14 +1,19 @@
 ---
+import '@fontsource-variable/geist/wght.css';
 import '../styles/global.css';
+import BrandMark from '../components/BrandMark.astro';
 import { FOOTER_LEGAL_PAGES } from '../lib/legal-pages.ts';
 
 interface Props {
   title: string;
   description: string;
   path: string;
+  /** Sections manage their own width (the landing's full-bleed bands). */
+  bleed?: boolean;
 }
-const { title, description, path } = Astro.props;
+const { title, description, path, bleed = false } = Astro.props;
 const canonical = new URL(path, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
 const fullTitle = path === '/' ? title : `${title} | Consultório Aberto`;
 ---
 
@@ -20,34 +25,49 @@ const fullTitle = path === '/' ? title : `${title} | Consultório Aberto`;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_BR" />
-    <meta name="theme-color" content="#0B6E7A" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090B" media="(prefers-color-scheme: dark)" />
   </head>
   <body>
     <a class="skip" href="#conteudo">Ir para o conteúdo</a>
     <header class="top">
       <div class="wrap">
-        <a class="brand" href="/">Consultório Aberto</a>
+        <a class="brand" href="/"><BrandMark />Consultório Aberto</a>
         <nav aria-label="Principal">
-          <a href="/precos">Preços</a>
-          <a href="/calculadora">Calculadora</a>
-          <a href="/ajuda">Ajuda</a>
-          <a href="/status">Status</a>
-          <a class="btn" href="/#lista">Lista de espera</a>
+          <a class="nav-narrow-hide" href="/precos">Preços</a>
+          <a class="nav-wide" href="/calculadora">Calculadora</a>
+          <a class="nav-wide" href="/ajuda">Ajuda</a>
+          <a class="btn" href="/#convite">Pedir convite</a>
         </nav>
       </div>
     </header>
-    <main id="conteudo" class="wrap">
+    <main id="conteudo" class:list={[{ wrap: !bleed }]}>
       <slot />
     </main>
     <footer class="foot">
-      <div class="wrap">
-        <p>
-          Consultório Aberto. Não prometemos resultado clínico nem aumento de faturamento.
-        </p>
+      <div class="wrap foot-grid">
+        <div>
+          <a class="brand" href="/"><BrandMark size={24} />Consultório Aberto</a>
+          <p>Não prometemos resultado clínico nem aumento de faturamento.</p>
+          <nav class="foot-links" aria-label="Site">
+            <a href="/precos">Preços</a>
+            <a href="/calculadora">Calculadora</a>
+            <a href="/ajuda">Ajuda</a>
+            <a href="/status">Status</a>
+          </nav>
+        </div>
         <nav class="foot-links" aria-label="Documentos legais">
           {FOOTER_LEGAL_PAGES.map((page) => <a href={`/${page.slug}`}>{page.title}</a>)}
         </nav>

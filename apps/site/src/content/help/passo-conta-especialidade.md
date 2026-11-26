@@ -9,7 +9,7 @@ summary: 'Como criar a conta pelo convite, por que pedimos o CPF ou CNPJ e o que
 
 O cadastro é **só por convite**. Você recebe um link de convite, que vale uma vez e por 7 dias. Ao abrir o link, crie a conta com o Google ou com e-mail e senha; o consultório já vem com o nome do convite e a configuração guiada abre em seguida.
 
-Sem convite? Entre na [lista de espera](/#lista). Se o link venceu, peça um novo a quem te convidou.
+Sem convite? Peça um convite na [página inicial](/#convite). Se o link venceu, peça um novo a quem te convidou.
 
 ## CPF ou CNPJ e especialidade
 

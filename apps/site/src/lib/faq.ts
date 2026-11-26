@@ -7,55 +7,45 @@ export interface Faq {
 }
 
 const first = PlanId.essencial;
-const last = PlanId.clinica;
+const featured = PlanId.agenda;
 
-/** The purchase questions (spec 09). Values come from PLANS, never typed here. */
+/**
+ * The remaining objections (founder/landing-brief.md, section 9). Answers match the terms of use;
+ * values come from PLANS, never typed here.
+ */
 export const FAQS: readonly Faq[] = [
   {
-    question: 'Quanto custa?',
-    answer: `A mensalidade vai de ${formatBrl(PLANS[first].monthlyCents)} a ${formatBrl(PLANS[last].monthlyCents)}, conforme o plano. Não há taxa de implantação: configuramos com você. A tabela completa está na página de preços.`,
-  },
-  {
-    question: 'O que é uma conversa?',
+    question: 'O paciente fala com um robô ou com gente?',
     answer:
-      'É a troca de mensagens com um paciente sem pausa maior que 24 horas. Não importa quantas mensagens ela tenha.',
+      'Com o assistente do seu consultório, que se apresenta como assistente virtual. Se o paciente perguntar, ele diz a verdade. E você assume a conversa a qualquer momento, com um toque.',
   },
   {
-    question: 'E se eu passar da franquia do mês?',
-    answer: `Você recebe um aviso com ${String(WARNING_PERCENT)}% de uso. Passou de 100%, o atendimento continua e cada conversa a mais entra na fatura seguinte. Você define um teto para esse valor; ao atingi-lo, o assistente avisa o paciente que você responde em breve.`,
+    question: 'Preciso trocar de número?',
+    answer:
+      'Não. O assistente atende no mesmo número, e você continua usando o WhatsApp Business no celular. Se você responde por lá, o assistente para naquela conversa.',
+  },
+  {
+    question: 'E se eu quiser parar?',
+    answer:
+      'Você cancela pelo painel, sem multa. O serviço continua até o fim do período já pago, e não há fidelidade.',
+  },
+  {
+    question: 'Funciona com áudio?',
+    answer:
+      'Sim. O assistente entende os áudios que o paciente manda e responde por escrito, como numa conversa normal.',
   },
   {
     question: 'Quem paga a Meta?',
     answer:
-      'Você, direto à Meta, com o seu cartão. As respostas que você mesmo envia pelo celular não são cobradas. A página de preços traz uma estimativa por volume de uso.',
+      'Você, direto à Meta, no seu cartão. As respostas que você mesmo envia pelo celular não são cobradas; mensagens que o assistente envia por iniciativa própria, como lembretes, têm custo. A página de preços traz uma estimativa por volume.',
   },
   {
-    question: 'O assistente inventa preço ou horário?',
+    question: 'O que acontece numa urgência?',
     answer:
-      'Não. Preço, endereço e horário vêm do que você cadastrou e da sua agenda, e toda resposta é conferida antes de sair.',
+      'O assistente não dá orientação de saúde. Se o paciente descreve uma urgência, ele orienta ligar para o SAMU 192 e avisa você na hora, no celular.',
   },
   {
-    question: 'Ele dá orientação clínica?',
-    answer:
-      'Não. Ele pode perguntar o que está incomodando, para você chegar preparado, mas não avalia nem orienta. Em caso de urgência, orienta ligar para o SAMU 192 e avisa você na hora.',
-  },
-  {
-    question: 'Posso assumir uma conversa?',
-    answer:
-      'A qualquer momento, pelo painel no celular. Se você responde pelo seu WhatsApp, o assistente para.',
-  },
-  {
-    question: 'Preciso aprovar cada resposta?',
-    answer:
-      'No começo, sim: todo cliente inicia em "aprovar antes de enviar". Quando ganhar confiança, você libera o modo automático.',
-  },
-  {
-    question: 'Os dados dos meus pacientes treinam modelos de IA?',
-    answer: 'Não. Os dados são protegidos conforme a LGPD e não são usados para treinar modelos.',
-  },
-  {
-    question: 'Posso testar antes de assinar?',
-    answer:
-      'Sim. O acesso é por convite: entre na lista de espera e mandamos o seu link. O teste grátis de 14 dias, sem cartão, começa quando o seu WhatsApp conecta.',
+    question: 'Quanto custa, no total?',
+    answer: `O plano Essencial sai por ${formatBrl(PLANS[first].monthlyCents)} e o Agenda por ${formatBrl(PLANS[featured].monthlyCents)} por mês, sem taxa de implantação. Com ${String(WARNING_PERCENT)}% da franquia usada, você recebe um aviso; acima dela, cada conversa a mais tem preço fixo e você define um teto.`,
   },
 ];

@@ -1,0 +1,190 @@
+---
+import { PLANS, PlanId } from '@app/core';
+import { exampleBill } from '../../lib/example-bill.ts';
+import { formatBrlShort, formatCount } from '../../lib/money.ts';
+
+// Section 8: open price, Agenda featured, and the example month with Meta added.
+const bill = exampleBill(PlanId.agenda);
+const agenda = PLANS[PlanId.agenda];
+const essencial = PLANS[PlanId.essencial];
+---
+
+<section class="pricing wrap" aria-labelledby="preco">
+  <h2 id="preco">Preço aberto. Sem taxa de implantação.</h2>
+  <div class="layout">
+    <div class="plans">
+      <article class="plan main">
+        <h3>Agenda</h3>
+        <p class="amount"><span>{formatBrlShort(agenda.monthlyCents)}</span>/mês</p>
+        <p>
+          Responde, marca no Google Agenda e lembra. {formatCount(agenda.franchise)} conversas por mês.
+        </p>
+      </article>
+      <article class="plan">
+        <h3>Essencial</h3>
+        <p class="amount"><span>{formatBrlShort(essencial.monthlyCents)}</span>/mês</p>
+        <p>Responde e passa para você. {formatCount(essencial.franchise)} conversas por mês.</p>
+      </article>
+      <a class="all" href="/precos">Ver todos os planos</a>
+    </div>
+    <div class="bill">
+      <h3>Um mês de {bill.conversations} conversas</h3>
+      <dl>
+        <div><dt>Plano Agenda</dt><dd>{bill.planPrice}</dd></div>
+        <div>
+          <dt>Meta, pago direto no seu cartão</dt><dd>cerca de {bill.metaAbout}</dd>
+        </div>
+        <div class="total"><dt>Total do mês</dt><dd>cerca de {bill.totalAbout}</dd></div>
+      </dl>
+      <p class="fine">
+        As primeiras {bill.freeReplies} respostas do mês são grátis na Meta. Estimativa: depende da
+        tabela da Meta e do seu volume.
+      </p>
+      <ul class="seals">
+        <li>14 dias grátis</li>
+        <li>Sem implantação</li>
+        <li>Sem fidelidade</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing {
+    padding-top: 96px;
+  }
+  h2 {
+    font-size: clamp(28px, 4.4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0 0 32px;
+    max-width: 20ch;
+  }
+  .layout,
+  .plans {
+    display: grid;
+    gap: 16px;
+  }
+  .plan {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    background: var(--surface);
+  }
+  .plan.main {
+    border: 2px solid var(--ink);
+    box-shadow: var(--elevation);
+  }
+  .plan h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+  .plan p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .plan .amount {
+    margin: 8px 0;
+  }
+  .amount span {
+    font-size: 40px;
+    line-height: 44px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .main .amount span {
+    font-size: clamp(48px, 13vw, 64px);
+    line-height: 1;
+  }
+  .layout > *,
+  .plans > * {
+    min-width: 0;
+  }
+  .all {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 500;
+  }
+  .bill {
+    border-radius: var(--radius-lg);
+    background: var(--surface-2);
+    padding: 20px;
+  }
+  .bill h3 {
+    margin: 0 0 12px;
+    font-size: 18px;
+  }
+  dl {
+    margin: 0;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line-strong);
+  }
+  dd {
+    margin: 0;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  dt {
+    color: var(--ink-2);
+  }
+  .total {
+    border-bottom: 0;
+    font-size: 19px;
+  }
+  .total dt {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .total dd {
+    font-weight: 600;
+  }
+  .fine {
+    margin: 4px 0 0;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-2);
+  }
+  .seals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+  }
+  .seals li {
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  @media (min-width: 960px) {
+    .pricing {
+      padding-top: 144px;
+    }
+    .layout {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .plans {
+      grid-template-columns: 3fr 2fr;
+      align-items: stretch;
+    }
+    .all {
+      grid-column: 1 / -1;
+    }
+    .bill {
+      padding: 28px;
+    }
+  }
+</style>

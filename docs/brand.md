@@ -62,7 +62,8 @@ O jade não é o verde do WhatsApp (`#25D366`): é mais azulado e mais escuro, e
 ## Tipografia
 
 - **Painel:** Geist (SIL Open Font License, auto-hospedada), com algarismos tabulares, conforme `DESIGN.md`. Sem licença a comprar.
-- **Logo e site:** Figtree (o site ainda migra para o mundo grafite e jade numa etapa própria) (Google Fonts, licença SIL Open Font License, uso comercial livre), em peso 700 para o nome e 400 para o texto. Grotesca arredondada, amigável sem parecer infantil.
+- **Site:** Geist, como o painel (migrado em 25/11/2026).
+- **Logo:** Figtree era a proposta (Google Fonts, licença SIL Open Font License), em peso 700 para o nome; revisar com o designer do logo.
 
 ## Brief do logo
 

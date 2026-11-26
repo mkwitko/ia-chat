@@ -1,0 +1,30 @@
+---
+// Placeholder mark until the logo is designed (docs/brand.md): a door left ajar, in ink.
+// Same drawing as apps/web/src/app/brand-mark.tsx and public/favicon.svg.
+interface Props {
+  size?: number;
+}
+const { size = 28 } = Astro.props;
+---
+
+<svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" class="mark">
+  <rect width="32" height="32" rx="8" class="mark-bg"></rect>
+  <path d="M10 25V8h12v17" fill="none" class="mark-door" stroke-width="2.5" stroke-linejoin="round"
+  ></path>
+  <path d="M10 8l7 3v16l-7-2z" class="mark-leaf"></path>
+</svg>
+
+<style>
+  .mark {
+    flex: none;
+  }
+  .mark-bg {
+    fill: var(--action);
+  }
+  .mark-door {
+    stroke: var(--action-ink);
+  }
+  .mark-leaf {
+    fill: var(--action-ink);
+  }
+</style>

@@ -93,4 +93,4 @@ Direto, segunda pessoa, frases curtas, sem jargão de software (RN-56). Mensagem
 
 ## Pendências
 
-- O site público (`apps/site`) ainda usa o azul-petróleo: migrar para este mundo numa etapa própria.
+- Nenhuma de cor. O site público (`apps/site`) migrou para este mundo em 25/11/2026, no modo de venda: mesmos tokens claro e escuro (segue o sistema, sem seletor), Geist auto-hospedada, títulos grandes (até 76 px, −0,035em), uma faixa grafite invertida ("Não inventa") e o jade só nas bolhas e no horário marcado pelo assistente. Favicon e imagem de compartilhamento com o símbolo provisório.
