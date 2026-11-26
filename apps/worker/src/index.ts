@@ -14,8 +14,6 @@ import {
   RECONCILE_QUEUE,
   HANDOFF_REMINDER_QUEUE,
   DRAFT_REMINDER_QUEUE,
-  SUMMARY_QUEUE,
-  SUMMARY_SYNC_QUEUE,
   TRIAL_SWEEP_QUEUE,
   createDb,
   recordOpsEvent,
@@ -25,9 +23,9 @@ import {
 import { PgBoss } from 'pg-boss';
 import { startTurnWorker } from './agent/wiring.ts';
 import { remindDraft, remindHandoff, tenantOf } from './conversation/reminder-job.ts';
-import { NotifyReason, startNotifier, startSummaryNotifier } from './notify/index.ts';
-import { sendNightlySummary } from './agenda/nightly-summary.ts';
-import { syncSummarySchedules } from './agenda/summary-schedule.ts';
+import { NotifyReason, startDelivery, startNotifier } from './notify/index.ts';
+import { startWeeklyReport } from './report/wiring.ts';
+import { startNightlySummary } from './agenda/wiring.ts';
 import { turnScheduler } from './conversation/turn-scheduler.ts';
 import { mediaScheduler, startMediaWorker } from './media/wiring.ts';
 import { processInboundEvent } from './inbound/job.ts';
@@ -46,7 +44,6 @@ const REMINDER_FAILED = 'reminder push failed';
 // RF-26: every morning, in the clinics' time zone.
 const RECONCILE_CRON = '0 7 * * *';
 const RECONCILE_TZ = 'America/Sao_Paulo';
-const SUMMARY_SYNC_CRON = '*/15 * * * *';
 const TRIAL_SWEEP_CRON = '0 * * * *';
 const DEFAULT_WEB_ORIGIN = 'http://localhost:5173';
 const RESUME_PATH = '/configuracao';
@@ -133,26 +130,8 @@ await boss.work(RECONCILE_QUEUE.name, async () => {
 });
 
 // RF-15: the professional's agenda for tomorrow, at the time each tenant chose (default 20:00).
-const summaryNotifier = startSummaryNotifier({
-  db,
-  nodeEnv: env.NODE_ENV,
-  source: process.env,
-  log: appLog,
-});
-await workTenantQueue({
-  boss,
-  db,
-  queue: SUMMARY_QUEUE.name,
-  handler: (tx, _data, job) =>
-    sendNightlySummary(tx, { tenantId: tenantOf(job), now: new Date() }, (summary) =>
-      summaryNotifier({ tenantId: tenantOf(job), ...summary }),
-    ),
-});
-await syncSummarySchedules(db, boss);
-await boss.schedule(SUMMARY_SYNC_QUEUE.name, SUMMARY_SYNC_CRON);
-await boss.work(SUMMARY_SYNC_QUEUE.name, async () => {
-  await syncSummarySchedules(db, boss);
-});
+const notifySetup = { db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog };
+await startNightlySummary({ boss, setup: notifySetup });
 
 // S-05 (RF-84, RF-88): abandonment reminders and the end of the trial, once each, every hour.
 const webOrigin = process.env.WEB_ORIGIN ?? DEFAULT_WEB_ORIGIN;
@@ -169,6 +148,15 @@ await boss.work(TRIAL_SWEEP_QUEUE.name, async () => {
     alert,
   });
   log.info(result, TRIAL_SWEPT);
+});
+
+// Research 09 #2: the owner's Monday report (e-mail and push), scheduled with the summaries.
+await startWeeklyReport({
+  boss,
+  db,
+  email: trialEmail,
+  deliver: startDelivery(notifySetup),
+  panelUrl: webOrigin,
 });
 
 // E-25: reconciliation with Asaas, overdue ladder and overage, once a day.

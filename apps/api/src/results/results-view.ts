@@ -1,4 +1,4 @@
-import { AppointmentStatus, ContactOrigin, type Tx } from '@app/db';
+import { AppointmentStatus, ContactOrigin, MIN_SAMPLE, recoveredMoney, type Tx } from '@app/db';
 import { periodRange, type Period, type Range } from '../period.ts';
 import {
   activeConversations,
@@ -7,9 +7,6 @@ import {
   recoveredContacts,
   repeatBookings,
 } from './results-sql.ts';
-
-/** Below this many cases a rate or a median is not shown (the screen says "sem dados suficientes"). */
-export const MIN_SAMPLE = 5;
 
 export interface ResultsInput {
   tenantId: string;
@@ -64,11 +61,12 @@ export async function readResults(tx: Tx, { tenantId, period, now }: ResultsInpu
     recoveredContacts(tx, range),
     repeatBookings(tx, range),
   ]);
-  const [newContacts, origins, appointments, first] = await Promise.all([
+  const [newContacts, origins, appointments, first, money] = await Promise.all([
     tx.contact.count({ where: { createdAt: created } }),
     tx.contact.groupBy({ by: ['origin'], where: { createdAt: created }, _count: true }),
     appointmentCounts(tx, { range, now }),
     tx.contact.findFirst({ orderBy: { createdAt: 'asc' }, select: { createdAt: true } }),
+    recoveredMoney(tx, { range, timezone }),
   ]);
   return {
     period,
@@ -87,5 +85,6 @@ export async function readResults(tx: Tx, { tenantId, period, now }: ResultsInpu
     attendance: appointments.attendance,
     recovered,
     repeatBookings: repeat,
+    recoveredMoney: money,
   };
 }

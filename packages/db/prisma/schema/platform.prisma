@@ -13,6 +13,8 @@ model Tenant {
   cancelNoticeMinutes Int        @default(1440) @map("cancel_notice_minutes")
   /// RF-15: local time of day (minutes after midnight) of the nightly agenda push; default 20:00.
   nightlySummaryMinute Int       @default(1200) @map("nightly_summary_minute")
+  /// Weekly report to the owner (Monday 08:00 local, e-mail and push); counts only. Opt-out in Mais.
+  weeklyReport        Boolean      @default(true) @map("weekly_report")
   /// RF-47: minutes before the appointment of each reminder; default 24 h and 2 h.
   reminderOffsetsMinutes Int[]   @default([1440, 120]) @map("reminder_offsets_minutes")
   /// M-09: after a "faltou", ask the client when to reschedule (owner's switch, off by default).

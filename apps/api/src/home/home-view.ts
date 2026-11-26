@@ -1,5 +1,12 @@
 import { MS_PER_DAY } from '@app/core';
-import { AppointmentStatus, localDayRange, PipelineStage, type Tx } from '@app/db';
+import {
+  AppointmentStatus,
+  localDayRange,
+  MIN_SAMPLE,
+  PipelineStage,
+  recoveredMoney,
+  type Tx,
+} from '@app/db';
 import { InboxState, listConversations } from '../conversations/view.ts';
 import { listCustomers } from '../customers/customers-view.ts';
 import { monthRange, type Range } from '../period.ts';
@@ -92,17 +99,25 @@ export async function readHome(tx: Tx, { tenantId, now }: { tenantId: string; no
     where: { id: tenantId },
     select: { timezone: true },
   });
-  const [conversations, counts, lists, unanswered, notBooked] = await Promise.all([
+  const month = monthRange(now, timezone);
+  const [conversations, counts, lists, unanswered, notBooked, recovered] = await Promise.all([
     listConversations(tx),
-    monthCounts(tx, monthRange(now, timezone)),
+    monthCounts(tx, month),
     appointmentLists(tx, { now, day: localDayRange(now, timezone) }),
     tx.knowledgeItem.count({ where: { active: true, answer: null } }),
     notBookedSummary(tx, now),
+    recoveredMoney(tx, { range: month, timezone }),
   ]);
   const waiting = conversations.filter((item) => NEEDS_YOU.includes(item.state));
   return {
     timezone,
     month: { ...counts, awaiting: waiting.length },
+    recovered: {
+      count: recovered.count,
+      valueCents: recovered.valueCents,
+      afterHours: recovered.afterHours,
+      minSample: MIN_SAMPLE,
+    },
     attention: {
       conversations: waiting.slice(0, SHOWN),
       drafts: waiting.filter((item) => item.state === InboxState.awaitingApproval).length,

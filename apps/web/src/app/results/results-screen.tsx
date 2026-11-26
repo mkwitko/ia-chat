@@ -7,6 +7,8 @@ import { BackLink } from '../screens/back-link';
 import { Screen } from '../screens/screen';
 import { CardList, Note, Section } from '../screens/section';
 import { CountMetric, DurationMetric, MetricGrid, RateMetric } from './metric';
+import { RecoveredCard, RecoveredWeeks } from './recovered';
+import { RecoveredCopy } from './recovered-copy';
 import { Period, useResults, type ResultsView } from './results-api';
 import { ResultsCopy as Copy } from './results-copy';
 import { durationOf, rateOf } from './results-model';
@@ -73,6 +75,7 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
   return (
     <div className="pb-10">
       <Note>{since ? Copy.baseline(since) : Copy.baselineNoDate}</Note>
+      <RecoveredSection results={results} />
       <Section title={Copy.conversations.title}>
         <MetricGrid>
           <CountMetric {...Copy.conversations} count={results.conversations} />
@@ -89,6 +92,17 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
         </div>
       </Section>
       <OriginSection results={results} />
+    </div>
+  );
+}
+
+function RecoveredSection({ results }: Readonly<{ results: ResultsView }>) {
+  const { weeks, ...totals } = results.recoveredMoney;
+  const figure = { ...totals, minSample: results.minSample };
+  return (
+    <div className="pt-4">
+      <RecoveredCard title={RecoveredCopy.resultsTitle} figure={figure} />
+      <RecoveredWeeks weeks={weeks} withMoney={totals.count >= results.minSample} />
     </div>
   );
 }
