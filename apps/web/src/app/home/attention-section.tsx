@@ -75,7 +75,7 @@ export function AttentionSection({ home }: Readonly<{ home: HomeView }>) {
       <CardList>
         {attention.conversations.map((item) => (
           <li key={item.id}>
-            <ConversationRow item={item} />
+            <ConversationRow item={item} inNeedsYouList />
           </li>
         ))}
         {counts.map((item) => (

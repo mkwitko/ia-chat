@@ -13,10 +13,14 @@ const Copy = defineMessages({
 });
 
 export const UNDO_WINDOW_MS = 6000;
-const PAGE_HIDE = 'pagehide';
+const VISIBILITY = 'visibilitychange';
+const HIDDEN = 'hidden';
 
+// ponytail: flushed when the tab goes to the background (fires before unload, so the request
+// usually completes); a sendBeacon/keepalive path is the upgrade if changes still get lost.
 const pending = new Map<string, () => void>();
-globalThis.addEventListener(PAGE_HIDE, () => {
+document.addEventListener(VISIBILITY, () => {
+  if (document.visibilityState !== HIDDEN) return;
   for (const commit of pending.values()) commit();
   pending.clear();
 });
@@ -53,14 +57,19 @@ export function runWithUndo({ message, commit, restore = () => undefined }: Undo
   });
 }
 
-/** Mutation options that put the row back and report the error when the change fails. */
-export function restoreOnError(restore: () => void, report: (error: Error) => void) {
-  return {
-    onError: (error: Error) => {
-      restore();
-      report(error);
-    },
-  };
+/**
+ * Send the change and, if it fails, put the row back and report it. Uses the mutation's own
+ * promise, so the error still shows when the row's screen was left during the undo window.
+ */
+export function commitOrRestore(
+  send: () => Promise<unknown>,
+  restore: () => void,
+  report: (error: Error) => void,
+) {
+  send().catch((error: unknown) => {
+    restore();
+    report(error instanceof Error ? error : new Error(String(error)));
+  });
 }
 
 /** One row that leaves the screen at once and comes back on "Desfazer" or if the change fails. */

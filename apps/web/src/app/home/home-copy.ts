@@ -28,7 +28,6 @@ export const HomeCopy = defineMessages({
     quick: {
       label: 'Atalhos',
       newBooking: 'Novo agendamento',
-      conversations: 'Ver conversas',
       tryAssistant: 'Testar o assistente',
     },
     attentionHeading: 'Precisa de você',
@@ -55,6 +54,7 @@ export const HomeCopy = defineMessages({
       remaining === 0 ? `${name}: sessões acabaram` : `${name}: resta 1 sessão`,
     todayHeading: 'Hoje',
     todayEmpty: 'Ninguém marcado para hoje.',
+    todayDone: 'Mais ninguém para hoje.',
     seeAgenda: 'Ver a agenda',
     noPatient: 'Paciente sem nome',
     monthHeading: 'Este mês',

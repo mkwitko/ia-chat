@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { restoreOnError, useLeaving } from '@/components/ui/undo';
+import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 import { feedback } from '../setup/feedback';
 import { AgendaCopy } from './agenda-copy';
 import { lastDayOf, shortDay } from './agenda-dates';
@@ -64,7 +64,7 @@ function WaitlistRow({ item, timezone }: Readonly<{ item: WaitlistItem; timezone
           leave({
             message: Copy.removed,
             commit: (restore) => {
-              remove.mutate(item.id, restoreOnError(restore, feedback.onError));
+              commitOrRestore(() => remove.mutateAsync(item.id), restore, feedback.onError);
             },
           });
         }}

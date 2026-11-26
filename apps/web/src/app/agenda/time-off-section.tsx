@@ -15,7 +15,7 @@ import {
 } from './agenda-api';
 import { TimeOffForm } from './time-off-form';
 import { Button } from '@/components/ui/button';
-import { restoreOnError, useLeaving } from '@/components/ui/undo';
+import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 
 interface SectionProps {
   timezone: string;
@@ -116,7 +116,7 @@ function TimeOffRow({ off, timezone }: Readonly<{ off: TimeOffItem; timezone: st
           leave({
             message: Copy.removed,
             commit: (restore) => {
-              remove.mutate(off.id, restoreOnError(restore, feedback.onError));
+              commitOrRestore(() => remove.mutateAsync(off.id), restore, feedback.onError);
             },
           });
         }}

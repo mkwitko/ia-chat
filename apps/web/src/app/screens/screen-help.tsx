@@ -32,14 +32,12 @@ const Copy = defineMessages({
 const ARTICLE_PATH = '/ajuda/';
 const HINT_KEY = 'ca-hint-seen:';
 
-/** "?" that opens this screen's help article in a new tab. Hidden when help is not configured. */
+/** "?" that opens this screen's help article (same tab: Back returns to the panel). Hidden when help is not configured. */
 export function HelpLink({ article }: Readonly<{ article: HelpArticle }>) {
   if (!HELP_URL) return null;
   return (
     <a
       href={new URL(`${ARTICLE_PATH}${article}`, HELP_URL).toString()}
-      target="_blank"
-      rel="noreferrer"
       aria-label={Copy.help}
       title={Copy.help}
       className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
@@ -83,7 +81,7 @@ export function FirstVisitHint({ id, text }: Readonly<{ id: string; text: string
       <button
         type="button"
         onClick={close}
-        className="-my-2 -mr-2 inline-flex min-h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
+        className="-my-2 -mr-2 inline-flex min-h-11 shrink-0 items-center rounded-md px-3 font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
       >
         {Copy.dismiss}
       </button>

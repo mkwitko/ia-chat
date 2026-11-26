@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { restoreOnError, useLeaving } from '@/components/ui/undo';
+import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 import { feedback } from '../setup/feedback';
 import { AgendaCopy as Copy } from './agenda-copy';
 import { dayOf, timeLabel } from './agenda-dates';
@@ -76,7 +76,7 @@ function RowActions({
           onCancel({
             message: Copy.cancelled,
             commit: (restore) => {
-              cancel.mutate(item.id, restoreOnError(restore, feedback.onError));
+              commitOrRestore(() => cancel.mutateAsync(item.id), restore, feedback.onError);
             },
           });
         }}

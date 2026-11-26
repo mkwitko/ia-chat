@@ -1,6 +1,7 @@
-import { CalendarPlus, MessageCircle, Sparkles } from 'lucide-react';
+import { CalendarPlus, Sparkles } from 'lucide-react';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { formatCents } from '@/lib/money';
 import { Route } from '@/routes';
 import { timeLabel } from '../agenda/agenda-dates';
@@ -15,12 +16,15 @@ export const NEW_BOOKING_PATH = `${Route.agenda}?novo=1`;
 
 /** Today's appointments, in the tenant's timezone. */
 export function TodaySection({ home }: Readonly<{ home: HomeView }>) {
+  const asked = new Set(home.attention.toMark.map((item) => item.id));
+  const upcoming = home.today.filter((item) => !asked.has(item.id));
+  const empty = home.today.length === 0 ? Copy.todayEmpty : Copy.todayDone;
   return (
     <Section title={Copy.todayHeading}>
-      {home.today.length === 0 && <Note>{Copy.todayEmpty}</Note>}
-      {home.today.length > 0 && (
+      {upcoming.length === 0 && <Note>{empty}</Note>}
+      {upcoming.length > 0 && (
         <CardList>
-          {home.today.map((item) => (
+          {upcoming.map((item) => (
             <li key={item.id}>
               <Link to={Route.agenda} className={ROW_LINK}>
                 <span className="w-14 shrink-0 font-semibold tabular-nums">
@@ -45,16 +49,15 @@ export function TodaySection({ home }: Readonly<{ home: HomeView }>) {
 
 const QUICK = [
   { to: NEW_BOOKING_PATH, label: Copy.quick.newBooking, icon: CalendarPlus },
-  { to: Route.conversations, label: Copy.quick.conversations, icon: MessageCircle },
   { to: Route.simulator, label: Copy.quick.tryAssistant, icon: Sparkles },
 ] as const;
 
 /** Three shortcuts to what is done most often from Início. */
-export function QuickActions() {
+export function QuickActions({ className }: Readonly<{ className?: string }>) {
   return (
     <nav
       aria-label={Copy.quick.label}
-      className="grid gap-2 px-4 pt-6 sm:grid-cols-3 md:px-0 xl:grid-cols-1"
+      className={cn('grid gap-2 px-4 sm:grid-cols-2 md:px-0 xl:grid-cols-1', className)}
     >
       {QUICK.map(({ to, label, icon: Icon }) => (
         <Button key={to} asChild variant="outline" className="justify-start">

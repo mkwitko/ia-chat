@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
-import { restoreOnError, useLeaving } from '@/components/ui/undo';
+import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 import { AreaField, FormActions } from './fields';
 import { feedback } from './feedback';
 import {
@@ -50,7 +50,7 @@ function useDismiss(ids: string[]) {
     leave({
       message: Copy.dismissed,
       commit: (restore) => {
-        mutation.mutate(ids, restoreOnError(restore, feedback.onError));
+        commitOrRestore(() => mutation.mutateAsync(ids), restore, feedback.onError);
       },
     });
   };
