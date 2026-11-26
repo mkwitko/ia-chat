@@ -1,4 +1,4 @@
-import { PLANS, PlanId } from '@app/core';
+import { EXTRA_PROFESSIONAL, PLANS, PlanId } from '@app/core';
 import { formatBrl, formatCount } from './money.ts';
 
 // Presentation of PLANS (the single source of prices and franchises, RF-72). Only labels live here.
@@ -15,11 +15,8 @@ export const PLAN_NAMES = {
 /** Plan highlighted in the table and used in the calculator comparison. */
 export const FEATURED_PLAN = PlanId.agenda;
 
-/** One-time setup fee in cents: owner hypothesis of 24/11/2026 (spec 07, "Taxa de implantação"). */
-export const SETUP_FEE_CENTS = 49_700;
-
-/** Clínica adds a package per extra professional, still unpriced (spec 01). */
-const CLINICA_FRANCHISE_NOTE = ' + pacote por profissional';
+/** Clínica adds franchise per professional beyond the included ones (spec 01). */
+const CLINICA_FRANCHISE_NOTE = ` + ${formatCount(EXTRA_PROFESSIONAL.franchise)} por profissional extra`;
 
 export interface FeatureRow {
   label: string;

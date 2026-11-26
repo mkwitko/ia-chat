@@ -1,0 +1,13 @@
+{
+  "id": "P017",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Meus clientes me contam coisas pessoais no WhatsApp e eu tenho medo de colocar isso numa IA sem entender direito onde fica guardado. Sem uma resposta clara sobre LGPD eu não ligo isso no meu número.",
+  "objection": "Não sei onde as conversas ficam, quem consegue ler, nem como apago os dados de um cliente se ele pedir.",
+  "would_change_my_mind": "Uma resposta por escrito sobre onde ficam as conversas, quem acessa e como apago os dados do cliente, mais um teste que eu possa encerrar sem pagar a implantação.",
+  "price_too_cheap": 79,
+  "price_cheap": 149,
+  "price_expensive": 297,
+  "price_too_expensive": 397
+}

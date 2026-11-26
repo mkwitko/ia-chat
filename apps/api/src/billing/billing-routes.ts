@@ -1,4 +1,4 @@
-import { PLANS, PlanId, trialView, type BillingProvider } from '@app/core';
+import { PLANS, SELLABLE_PLANS, trialView, type BillingProvider } from '@app/core';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Permission } from '../auth/access.ts';
 import { requireTenant } from '../auth/tenant-guard.ts';
@@ -60,7 +60,7 @@ function readBilling(request: FastifyRequest, enabled: boolean) {
       invoiceUrl: row.billingInvoiceUrl,
       endsAt: row.billingEndsAt,
       trial: trialView({ ...row, now: new Date() }),
-      plans: Object.values(PlanId).map((id) => ({ id, ...PLANS[id] })),
+      plans: SELLABLE_PLANS.map((id) => ({ id, ...PLANS[id] })),
     };
   });
 }

@@ -38,6 +38,7 @@ export const ErrorCode = {
   whatsappOff: 'whatsapp_off',
   whatsappTaken: 'whatsapp_taken',
   whatsappFailed: 'whatsapp_failed',
+  inUse: 'in_use',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

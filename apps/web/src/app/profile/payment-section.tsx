@@ -1,0 +1,119 @@
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { AreaField } from '../setup/fields';
+import { PaymentMethod, type ProfileView } from './profile-api';
+import { NOTICE_OPTIONS, PAYMENT_LABEL, ProfileCopy as Copy } from './profile-copy';
+
+const EMPTY = '';
+const CHIP =
+  'flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors hover:border-line-strong has-focus-visible:outline-2 has-focus-visible:outline-ring';
+
+interface PaymentProps {
+  view: ProfileView;
+  onChange: (view: ProfileView) => void;
+}
+
+/** Payment methods as pills, the minutes rule and the rule in the owner's words. */
+export function PaymentSection({ view, onChange }: Readonly<PaymentProps>) {
+  const profile = view.profile;
+  return (
+    <section className="grid gap-4" aria-labelledby="profile-payment">
+      <h2 id="profile-payment" className="text-lg">
+        {Copy.paymentHeading}
+      </h2>
+      <PaymentPills
+        chosen={profile.paymentMethods}
+        onChange={(paymentMethods) => {
+          onChange({ ...view, profile: { ...profile, paymentMethods } });
+        }}
+      />
+      <NoticeSelect
+        value={view.cancelNoticeMinutes}
+        onChange={(cancelNoticeMinutes) => {
+          onChange({ ...view, cancelNoticeMinutes });
+        }}
+      />
+      <AreaField
+        id="profile-policy"
+        label={Copy.policy}
+        hint={Copy.policyHint}
+        placeholder={Copy.policyPlaceholder}
+        value={profile.cancellationPolicy ?? EMPTY}
+        onChange={(cancellationPolicy) => {
+          onChange({ ...view, profile: { ...profile, cancellationPolicy } });
+        }}
+        maxLength={600}
+      />
+    </section>
+  );
+}
+
+interface PillsProps {
+  chosen: PaymentMethod[];
+  onChange: (methods: PaymentMethod[]) => void;
+}
+
+function PaymentPills({ chosen, onChange }: Readonly<PillsProps>) {
+  const toggle = (method: PaymentMethod) => {
+    onChange(
+      chosen.includes(method) ? chosen.filter((item) => item !== method) : [...chosen, method],
+    );
+  };
+  return (
+    <fieldset className="grid gap-3">
+      <legend className="mb-2 text-sm font-medium">{Copy.paymentLegend}</legend>
+      <div className="flex flex-wrap gap-2">
+        {Object.values(PaymentMethod).map((method) => (
+          <label
+            key={method}
+            className={cn(
+              CHIP,
+              chosen.includes(method) && 'border-primary bg-primary text-primary-foreground',
+            )}
+          >
+            <input
+              type="checkbox"
+              className="sr-only"
+              checked={chosen.includes(method)}
+              onChange={() => {
+                toggle(method);
+              }}
+            />
+            {PAYMENT_LABEL[method]}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+export function NoticeSelect({
+  value,
+  onChange,
+}: Readonly<{ value: number; onChange: (minutes: number) => void }>) {
+  const known = NOTICE_OPTIONS.some((option) => option.minutes === value);
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor="profile-notice">{Copy.notice}</Label>
+      <select
+        id="profile-notice"
+        aria-describedby="profile-notice-hint"
+        className="h-11 rounded-lg border border-line-strong bg-card px-3 text-base"
+        value={value}
+        onChange={(event) => {
+          onChange(Number(event.target.value));
+        }}
+      >
+        {!known && <option value={value}>{Copy.minutes(value)}</option>}
+        {NOTICE_OPTIONS.map((option) => (
+          <option key={option.minutes} value={option.minutes}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <p id="profile-notice-hint" className="text-sm text-muted-foreground">
+        {Copy.noticeHint}
+      </p>
+    </div>
+  );
+}

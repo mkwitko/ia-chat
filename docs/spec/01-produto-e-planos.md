@@ -62,7 +62,7 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 | Essencial | Atendimento, serviços e preços, endereço, tom de voz, base de conhecimento curta, inbox, transferência para humano, áudio do paciente, relatório básico | 300 conversas |
 | Agenda | Essencial + Google Calendar, agendar, remarcar, cancelar, confirmação, lembrete, regras de horário | 500 conversas |
 | Pro | Agenda + sinal Pix, follow-up, recuperação de interessados, reativação, pedido de avaliação, lista de espera, CRM administrativo, relatório de qualidade | 1.000 conversas |
-| Clínica | Pro + vários profissionais e agendas, equipe e permissões, salas e equipamentos, relatórios por profissional | 1.000 conversas + pacote por profissional adicional |
+| Clínica | Pro + vários profissionais e agendas, equipe e permissões, salas e equipamentos, relatórios por profissional | 1.000 conversas com 2 profissionais; cada profissional a mais soma 250 conversas |
 
 "Conversa" para franquia: sequência de mensagens com o mesmo paciente sem intervalo maior que 24 horas.
 
@@ -73,7 +73,7 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 | Resposta em áudio (voz padrão) | Pacote de minutos | Custo por minuto de fala |
 | Documentos (base de conhecimento grande, PDFs) | Valor fixo por faixa de páginas | Custo de indexação e de contexto maior |
 | Mensagens ativas (reativação, campanhas) | Repasse do custo Meta, pago pelo cliente direto à Meta | Marketing custa R$ 0,32 por mensagem |
-| Profissional adicional | Valor fixo por profissional | Só no plano Clínica |
+| Profissional adicional | R$ 147 por mês, +250 conversas de franquia (`EXTRA_PROFESSIONAL` em `plans.ts`) | Só no plano Clínica, a partir do 3º profissional; os demais planos têm 1 profissional e sem adicional (decisão de 25/11/2026, `founder/pricing.md`) |
 | Telefonia | Não ofertado | Incompatível com coexistência; exige segundo número |
 | Voz clonada do próprio profissional | Valor fixo + pacote de minutos (Fase 5) | Exige termo de consentimento; ver [06](06-seguranca-e-lgpd.md) |
 
@@ -86,6 +86,8 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 - **Custo da Meta:** cada cliente paga a Meta diretamente, com cartão próprio. O onboarding mostra a estimativa mensal conforme o volume informado.
 
 ### Preços
+
+À venda agora só Essencial e Agenda; Pro e Clínica aparecem em /precos com preço e "em breve", sem assinatura, até as funções existirem (decisão de 25/11/2026, condição do conselho em `founder/board.md`). Não há taxa de implantação: a configuração assistida vem incluída em todo plano.
 
 O master prompt pede preço fundamentado, não inventado. A proposta com margens está em [07-custos.md](07-custos.md). Os valores são hipótese até a validação com 5 a 10 profissionais.
 

@@ -1,0 +1,13 @@
+{
+  "id": "P014",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "habit",
+  "reason": "Eu compro por indicação. Ninguém da minha área recomendou isso, então não tenho por que trocar a rotina. Minha primeira reação é que não quero aprender mais um sistema.",
+  "objection": "Mais um sistema para configurar e aprender, em cima de um WhatsApp que já me consome o dia inteiro. E não sei se a IA vai tratar a clínica do jeito que eu trato.",
+  "would_change_my_mind": "Um colega de profissão que já usa e recomenda, com a experiência dele mostrando que dá menos trabalho do que responder sozinho.",
+  "price_too_cheap": 49,
+  "price_cheap": 97,
+  "price_expensive": 297,
+  "price_too_expensive": 497
+}

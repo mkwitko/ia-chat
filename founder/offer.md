@@ -1,45 +1,71 @@
-# Oferta (proposta, 25/11/2026)
+# Oferta (25/11/2026)
 
-Base: `docs/spec/01`, `07`, `11` e o painel SIMULADO (`panel/results.md`). Não rodei o CFO nem repeti o painel; os custos vêm de `docs/spec/07` (estimativas). Tudo é hipótese a testar com donos reais.
+Base: painel SIMULADO (`panel/results.md`, 0 de 18 compram; confiança 11, hábito 4, preço 3), queixas do mercado (`competitors.md`), números do CFO (`cfo.md`) e decisões de preço (`pricing.md`). Método: a lente de Ofertas em `founder-board/lenses.md` (resumo de um framework publicado, não palavras do autor).
 
-## Lista de problemas do comprador (nas palavras dele)
+## Lista de problemas do comprador (palavras do painel e do mercado)
 
-Antes de comprar: "E se ela responder errado?", "vou ter que trocar meu número?", "é mais um sistema para aprender", "R$ 197 + R$ 497 é muito para começar", "já uso WhatsApp Business". Durante: "demora para ficar pronto", "e se o cliente não gostar de falar com robô". Depois: "e se não trouxer cliente?", "quero parar de pagar".
+Antes de comprar:
+1. "Não confio que uma IA fale com meus pacientes sem eu ver o que ela escreveu."
+2. "E se ela inventar preço ou marcar errado?"
+3. "Não sei o total do mês com a Meta somada ao plano."
+4. "R$ 497 de implantação mais a mensalidade pesa."
+5. "Ninguém da minha área recomendou."
+6. "Já uso WhatsApp Business e dou conta."
+7. "Meus clientes preferem falar com gente."
+8. "Vou ter que trocar de número?"
+9. "Meus pacientes contam coisas pessoais; é seguro?"
+Durante a implantação:
+10. "Não quero aprender mais um sistema."
+11. "Implantação demora e não entregam" (queixa n.º 1 da Cloudia).
+12. "Vou ter que digitar tudo."
+13. "E se o suporte sumir?" (queixa n.º 2 do mercado)
+Depois:
+14. "Vou ter que vigiar o robô o tempo todo."
+15. "Como sei que valeu a pena?"
+16. "E se eu quiser parar?"
+17. "E se o paciente perceber que é robô e não gostar?"
 
-## O que resolve cada um
+## Soluções, pontuadas
 
-| Problema | Solução | Valor (1-5) | Custo para nós (1-5) |
-|---|---|---|---|
-| Medo de erro | Começa em "aprovar antes de enviar"; preço e horário só do cadastro | 5 | 1 |
-| Trocar número | WhatsApp oficial em Coexistência | 5 | 2 |
-| Aprender sistema | Implantação feita junto, simulador antes de ligar | 4 | 4 (horas nossas) |
-| Esquecem de voltar | Lista de clientes e recuperação de interessados (P1, depende da M-10) | 4 | 2 |
-| Não sabe se vale | Tela Resultados com linha de base (sem promessa de ganho) | 4 | 2 |
-| Cliente não gosta de robô | Assumir a conversa com um toque; avisa ser assistente virtual | 3 | 1 |
-| Medo de ficar preso | Sem fidelidade (a confirmar), cancelamento simples | 4 | 1 |
+| # | Solução | Valor (1-5) | Custo (1-5) | Fica? |
+|---|---|---:|---:|---|
+| 1, 2, 14 | Começa em "aprovar antes de enviar"; preço e horário só do cadastro; passa a automático quando o dono quiser | 5 | 1 | sim, núcleo |
+| 1, 2 | Simulador com os dados do dono antes de ligar, com 3 perguntas sugeridas ("quanto custa?", "tem horário amanhã?", "onde fica?") | 5 | 1 | sim, bônus |
+| 3 | Conta mensal de exemplo com a Meta somada, na página de preços e no onboarding | 4 | 1 | sim |
+| 4, 10, 11, 12 | Configuração feita com você por áudio, sem taxa; pronto em um dia útil depois do áudio (meta a medir no piloto) | 5 | 3 (horas do fundador) | sim, bônus |
+| 5 | Piloto real documentado (só com autorização escrita) | 4 | 2 | depois do piloto |
+| 6 | Mesmo número (coexistência); o dono continua no app | 5 | 1 | sim, núcleo |
+| 7, 17 | Assumir com um toque; identidade configurável; diz a verdade se perguntado | 3 | 1 | sim |
+| 9 | Queixa fica só na mensagem; nada de saúde em cadastro ou relatório; LGPD por escrito | 4 | 1 | sim |
+| 13 | Suporte pelo WhatsApp com o fundador nos primeiros 30 dias | 4 | 3 | sim, bônus, limitado pelo convite |
+| 15 | Tela Resultados: respostas fora do horário, agendamentos feitos, tempo de resposta (sem promessa de ganho) | 4 | 2 | sim |
+| 16 | Sem fidelidade; usa até o fim do mês pago | 4 | 1 | sim |
+| — | Garantia de devolução de 30 dias | 3 | 2 | **não**: o teste de 14 dias cobre o mesmo medo sem custo e sem dúvida jurídica |
 
-## A oferta (nome: "Recepção pronta em 7 dias", a confirmar o prazo no piloto)
+## A oferta: "Recepção no seu WhatsApp, configurada com você"
 
-- **Núcleo:** recepcionista virtual no seu WhatsApp, que responde, marca no Google Agenda e lembra o cliente, com você aprovando no começo. Plano Agenda (R$ 297/mês).
-- **Bônus 1:** implantação feita com você (hoje R$ 497; proposta: sem custo para os primeiros fundadores e indicados do piloto, só enquanto durar o teste).
-- **Bônus 2:** teste no simulador antes de ligar para seus clientes.
-- **Bônus 3:** revisão de resultados após 30 dias, com os números reais do seu negócio.
-- **Garantia (proposta):** se em 30 dias você não quiser continuar, devolvemos a mensalidade. Custo para nós: o custo variável do mês (R$ 50,98 com franquia cheia no plano Agenda, estimativa de `docs/spec/07`) mais a taxa de cobrança (R$ 1,99, não verificada), por cliente que pedir. Cabe no teste; dono e advogado confirmam antes de publicar (Código de Defesa do Consumidor, ver abaixo).
-- **Urgência verdadeira:** vagas de fundador limitadas a quantos o dono consegue implantar com atenção (número a definir pelo dono). Sem contador falso.
+- **Núcleo:** recepcionista com IA no seu número de WhatsApp que responde na hora, marca no Google Agenda e lembra o paciente. Começa com você aprovando cada resposta. Plano Agenda, R$ 297/mês.
+- **Bônus 1, configuração feita com você:** você manda um áudio; nós preenchemos serviços, preços, horários e perguntas frequentes; você só aprova. Sem taxa (antes era R$ 497, que nunca foi cobrado: não usar como âncora).
+- **Bônus 2, veja antes de ligar:** respostas de exemplo com os seus dados no simulador, antes de qualquer paciente falar com o assistente.
+- **Bônus 3, 30 dias de suporte direto** com quem construiu o produto, pelo WhatsApp.
+- **Risco:** teste grátis de 14 dias a partir da conexão (até 100 conversas). Sem fidelidade.
+- **Urgência verdadeira:** entrada só por convite; vagas limitadas a quantas configurações assistidas o fundador consegue fazer por semana (número a fixar pelo dono; suposição: 3 por semana). Sem contador falso.
 
-## Pontuação na equação de valor (1 a 10, estimativa minha, não pesquisa)
+Custo dos bônus: horas do fundador (estimativa: 1 a 2 h por cliente na configuração e 1 h/mês de suporte no primeiro mês). Não entra como custo em dinheiro no CFO; é o que limita o ritmo de entrada (`ops.md`).
 
-| Elemento | Antes (preço e implantação como estão) | Depois (oferta acima) | O que move |
-|---|---|---|---|
+## Equação de valor (1 a 10, estimativa minha)
+
+| Elemento | Antes (pitch v1) | Depois | O que move |
+|---|---:|---:|---|
 | Resultado desejado | 6 | 6 | igual |
-| Probabilidade percebida | 4 | 7 | aprovar antes, simulador, garantia |
-| Tempo até o resultado | 4 | 6 | pronto em dias, não em semanas |
-| Esforço e sacrifício | 4 | 7 | implantação feita junto, mesmo número |
+| Probabilidade percebida | 3 | 6 | aprovar antes, simulador com os dados do dono, teste sem pagar nada |
+| Tempo até o resultado | 4 | 6 | configuração por áudio, pronto em um dia útil (meta) |
+| Esforço e sacrifício | 4 | 7 | sem implantação paga, sem digitar, mesmo número |
 
 ## Re-teste
 
-Não rodei o painel de novo (nem tinha rodado uma primeira vez com dados). O re-teste correto é com donos reais: apresentar a oferta nas 10 conversas de campo e registrar o que travou.
+**Não rodei o painel de novo** com `pitch.md` v2 (o v1 está em `pitch-v1.md`). Motivo: o painel v1 mostrou que o bloqueio é confiança, e confiança não se resolve com texto de oferta para compradores simulados (que tendem a concordar). O re-teste certo é com donos reais: apresentar a oferta v2 nas 10 conversas de campo (`launch.md`) e anotar o que travou. Suposição registrada.
 
 ## Conformidade
 
-Sem promessa de aumento de faturamento ou de clientes. Garantia e direito de arrependimento: validar com advogado. Não é parecer jurídico.
+Sem promessa de mais clientes, faturamento ou resultado clínico. Sem depoimento, número ou logotipo de cliente que não exista. Não é parecer jurídico.

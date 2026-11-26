@@ -1,0 +1,222 @@
+[
+ {
+  "id": "P001",
+  "name": "Tariq",
+  "age": 33,
+  "segment": "Clínica ou espaço com 2 a 4 profissionais e secretária (faturamento mensal em R$)",
+  "income": 64000,
+  "behaviour": "Responde tudo pelo celular",
+  "behaviour_how": "Usa WhatsApp Business no celular, responde entre atendimentos e à noite, e acha que dá conta.",
+  "objection": "Vou ter que pagar a Meta à parte com meu cartão? Quanto?",
+  "habit": "você atende das 8h às 19h e só olha o WhatsApp no intervalo"
+ },
+ {
+  "id": "P002",
+  "name": "Lena",
+  "age": 27,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 13000,
+  "behaviour": "Responde tudo pelo celular",
+  "behaviour_how": "Usa WhatsApp Business no celular, responde entre atendimentos e à noite, e acha que dá conta.",
+  "objection": "Ninguém usa ainda; quem garante que funciona?",
+  "habit": "você já paga um sistema de agenda ou gestão"
+ },
+ {
+  "id": "P003",
+  "name": "Hana",
+  "age": 27,
+  "segment": "Clínica ou espaço com 2 a 4 profissionais e secretária (faturamento mensal em R$)",
+  "income": 49000,
+  "behaviour": "Compra por indicação",
+  "behaviour_how": "Só experimenta o que um colega de profissão já usa e recomenda.",
+  "objection": "Já uso WhatsApp Business com mensagem automática e resolve",
+  "habit": "você perdeu cliente essa semana porque respondeu no dia seguinte"
+ },
+ {
+  "id": "P004",
+  "name": "Idris",
+  "age": 53,
+  "segment": "Clínica ou espaço com 2 a 4 profissionais e secretária (faturamento mensal em R$)",
+  "income": 56000,
+  "behaviour": "Ama ferramenta nova",
+  "behaviour_how": "Já testou Botconversa ou um agendador online e gosta de automatizar.",
+  "objection": "Meus clientes preferem falar com gente",
+  "habit": "você já paga um sistema de agenda ou gestão"
+ },
+ {
+  "id": "P005",
+  "name": "Adrian",
+  "age": 37,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 12000,
+  "behaviour": "Desconfiado de robô",
+  "behaviour_how": "Já recebeu atendimento ruim de chatbot e acha que cliente quer falar com gente.",
+  "objection": "Ninguém usa ainda; quem garante que funciona?",
+  "habit": "você atende das 8h às 19h e só olha o WhatsApp no intervalo"
+ },
+ {
+  "id": "P006",
+  "name": "Jade",
+  "age": 34,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 22000,
+  "behaviour": "Responde tudo pelo celular",
+  "behaviour_how": "Usa WhatsApp Business no celular, responde entre atendimentos e à noite, e acha que dá conta.",
+  "objection": "Não quero aprender mais um sistema",
+  "habit": "você ganha cliente mais por indicação e Instagram"
+ },
+ {
+  "id": "P007",
+  "name": "Anya",
+  "age": 41,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 10000,
+  "behaviour": "Responde tudo pelo celular",
+  "behaviour_how": "Usa WhatsApp Business no celular, responde entre atendimentos e à noite, e acha que dá conta.",
+  "objection": "Ninguém usa ainda; quem garante que funciona?",
+  "habit": "você perdeu cliente essa semana porque respondeu no dia seguinte"
+ },
+ {
+  "id": "P008",
+  "name": "Celine",
+  "age": 43,
+  "segment": "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+  "income": 40000,
+  "behaviour": "Caçador de preço",
+  "behaviour_how": "Compara com o plano mais barato que achou e corta assinatura ao primeiro aperto.",
+  "objection": "Meus clientes preferem falar com gente",
+  "habit": "você ganha cliente mais por indicação e Instagram"
+ },
+ {
+  "id": "P009",
+  "name": "Hamza",
+  "age": 50,
+  "segment": "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+  "income": 11000,
+  "behaviour": "Desconfiado de robô",
+  "behaviour_how": "Já recebeu atendimento ruim de chatbot e acha que cliente quer falar com gente.",
+  "objection": "E se a IA responder errado ou inventar preço para o meu cliente?",
+  "habit": "você atende das 8h às 19h e só olha o WhatsApp no intervalo"
+ },
+ {
+  "id": "P010",
+  "name": "Aria",
+  "age": 55,
+  "segment": "Clínica ou espaço com 2 a 4 profissionais e secretária (faturamento mensal em R$)",
+  "income": 37000,
+  "behaviour": "Desconfiado de robô",
+  "behaviour_how": "Já recebeu atendimento ruim de chatbot e acha que cliente quer falar com gente.",
+  "objection": "R$ 297 por mês mais R$ 497 de implantação é muito para mim",
+  "habit": "você marca tudo no Google Agenda do celular"
+ },
+ {
+  "id": "P011",
+  "name": "Mateo",
+  "age": 48,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 15000,
+  "behaviour": "Tem secretária ou ajudante",
+  "behaviour_how": "Paga alguém que responde o WhatsApp em parte do dia.",
+  "objection": "Meus clientes preferem falar com gente",
+  "habit": "você perdeu cliente essa semana porque respondeu no dia seguinte"
+ },
+ {
+  "id": "P012",
+  "name": "Seth",
+  "age": 46,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 19000,
+  "behaviour": "Responde tudo pelo celular",
+  "behaviour_how": "Usa WhatsApp Business no celular, responde entre atendimentos e à noite, e acha que dá conta.",
+  "objection": "Meus clientes preferem falar com gente",
+  "habit": "você perdeu cliente essa semana porque respondeu no dia seguinte"
+ },
+ {
+  "id": "P013",
+  "name": "Min",
+  "age": 33,
+  "segment": "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+  "income": 41000,
+  "behaviour": "Compra por indicação",
+  "behaviour_how": "Só experimenta o que um colega de profissão já usa e recomenda.",
+  "objection": "R$ 297 por mês mais R$ 497 de implantação é muito para mim",
+  "habit": "você atende das 8h às 19h e só olha o WhatsApp no intervalo"
+ },
+ {
+  "id": "P014",
+  "name": "Finn",
+  "age": 26,
+  "segment": "Clínica ou espaço com 2 a 4 profissionais e secretária (faturamento mensal em R$)",
+  "income": 97000,
+  "behaviour": "Compra por indicação",
+  "behaviour_how": "Só experimenta o que um colega de profissão já usa e recomenda.",
+  "objection": "Não quero aprender mais um sistema",
+  "habit": "você recebe muitos áudios de clientes perguntando preço"
+ },
+ {
+  "id": "P015",
+  "name": "Emil",
+  "age": 55,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 21000,
+  "behaviour": "Ama ferramenta nova",
+  "behaviour_how": "Já testou Botconversa ou um agendador online e gosta de automatizar.",
+  "objection": "R$ 297 por mês mais R$ 497 de implantação é muito para mim",
+  "habit": "você recebe muitos áudios de clientes perguntando preço"
+ },
+ {
+  "id": "P016",
+  "name": "Maeve",
+  "age": 31,
+  "segment": "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+  "income": 38000,
+  "behaviour": "Caçador de preço",
+  "behaviour_how": "Compara com o plano mais barato que achou e corta assinatura ao primeiro aperto.",
+  "objection": "Já uso WhatsApp Business com mensagem automática e resolve",
+  "habit": "você marca tudo no Google Agenda do celular"
+ },
+ {
+  "id": "P017",
+  "name": "Marcus",
+  "age": 32,
+  "segment": "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+  "income": 16000,
+  "behaviour": "Tem secretária ou ajudante",
+  "behaviour_how": "Paga alguém que responde o WhatsApp em parte do dia.",
+  "objection": "Meus clientes contam coisas pessoais; isso é seguro (LGPD)?",
+  "habit": "você recebe muitos áudios de clientes perguntando preço"
+ },
+ {
+  "id": "P018",
+  "name": "Ivy",
+  "age": 26,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 18000,
+  "behaviour": "Tem secretária ou ajudante",
+  "behaviour_how": "Paga alguém que responde o WhatsApp em parte do dia.",
+  "objection": "Não quero aprender mais um sistema",
+  "habit": "você ganha cliente mais por indicação e Instagram"
+ },
+ {
+  "id": "P019",
+  "name": "Priya",
+  "age": 35,
+  "segment": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+  "income": 21000,
+  "behaviour": "Desconfiado de robô",
+  "behaviour_how": "Já recebeu atendimento ruim de chatbot e acha que cliente quer falar com gente.",
+  "objection": "Ninguém usa ainda; quem garante que funciona?",
+  "habit": "você já paga um sistema de agenda ou gestão"
+ },
+ {
+  "id": "P020",
+  "name": "Alma",
+  "age": 31,
+  "segment": "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+  "income": 15000,
+  "behaviour": "Caçador de preço",
+  "behaviour_how": "Compara com o plano mais barato que achou e corta assinatura ao primeiro aperto.",
+  "objection": "Vou ter que pagar a Meta à parte com meu cartão? Quanto?",
+  "habit": "você atende das 8h às 19h e só olha o WhatsApp no intervalo"
+ }
+]

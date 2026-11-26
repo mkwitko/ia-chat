@@ -7,6 +7,7 @@ export type SimRole = (typeof SimRole)[keyof typeof SimRole];
 
 export const SourceKind = {
   service: 'service',
+  package: 'package',
   address: 'address',
   arrival: 'arrival',
   knowledge: 'knowledge',

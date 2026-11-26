@@ -115,6 +115,10 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
   - Ferramentas: consulta de horários roda de verdade, mas sem registrar ofertas; agendar, remarcar e cancelar não existem no simulador (a tela avisa); transferir e registrar dúvida só marcam o que aconteceria. A checagem de urgência por Jev (julgamento extra antes do modelo) não roda aqui; a lista de palavras sim.
   - Custo: usa o gateway de IA como a produção (em desenvolvimento, Groq grátis). O uso entra em `ai_usage` com `task` iniciada por `simulator:` e sem `turn_id`/`conversation_id`. Limite de 30 mensagens por hora por consultório (resposta 429); o limite fica em memória do processo da API (hipótese: uma instância).
 
+### Perfil do negócio
+
+M-04 (`/mais/perfil`, H-38): nome, o que faz, telefone, site, rede social, link de avaliação do Google; formas de pagamento em pílulas; prazo para desmarcar e a regra em palavras; pacotes (nome e valor exato); endereços (o primeiro é o principal, com nome e como chegar); quem atende (o primeiro é a agenda do assistente); mensagem de boas-vindas colada. Texto com "cliente" e "negócio".
+
 ### Serviços e local
 
 - Serviços com duração e valor; aviso quando a especialidade restringe divulgar preço.

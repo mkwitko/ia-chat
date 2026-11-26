@@ -18,7 +18,7 @@ Cada linha aponta o que existe hoje (inventário completo na auditoria) e a etap
 
 | Capacidade | Hoje | Etapa |
 |---|---|---|
-| Configuração do perfil do negócio | PARCIAL | M-04 |
+| Configuração do perfil do negócio | FEITO (H-38) | M-04 |
 | Serviços e horários | IMPLEMENTADO | E-17, E-19 |
 | Assistente no WhatsApp | PARCIAL: oficial sem conta Meta; QR code ausente | E-09, E-09b |
 | FAQ a partir de informação aprovada | PARCIAL | M-03, M-04 |

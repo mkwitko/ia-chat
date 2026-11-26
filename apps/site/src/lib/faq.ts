@@ -13,7 +13,7 @@ const last = PlanId.clinica;
 export const FAQS: readonly Faq[] = [
   {
     question: 'Quanto custa?',
-    answer: `A mensalidade vai de ${formatBrl(PLANS[first].monthlyCents)} a ${formatBrl(PLANS[last].monthlyCents)}, conforme o plano. Há ainda uma implantação paga uma vez. A tabela completa está na página de preços.`,
+    answer: `A mensalidade vai de ${formatBrl(PLANS[first].monthlyCents)} a ${formatBrl(PLANS[last].monthlyCents)}, conforme o plano. Não há taxa de implantação: configuramos com você. A tabela completa está na página de preços.`,
   },
   {
     question: 'O que é uma conversa?',

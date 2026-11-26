@@ -1,5 +1,6 @@
 import { Sensitivity } from '@app/core';
 import type { CacheableBlock } from '../gateway.ts';
+import { businessLines, type AgentBusiness } from './business.ts';
 import { HEALTH_RULES, PLATFORM_RULES, PRICES_ALLOWED, PRICES_FORBIDDEN } from './rules.ts';
 
 // Spec 04, "Contexto do prompt": blocks from the most stable to the most volatile.
@@ -38,6 +39,8 @@ export interface AgentProfile {
   address: string | undefined;
   arrival: string | undefined;
   knowledge: readonly { question: string; answer: string }[];
+  /** M-04 business profile; absent in fixtures that predate it. */
+  business?: AgentBusiness;
 }
 
 /** What changes every turn: not cached. */
@@ -85,6 +88,11 @@ function profileBlock(profile: AgentProfile): string {
     profile.hours.length ? `Horário de atendimento:\n${bullets(profile.hours)}` : '',
     profile.cancellationRule ?? '',
     profile.address ? `Endereço: ${profile.address}. ${profile.arrival ?? ''}`.trim() : '',
+    ...(profile.business
+      ? businessLines(profile.business, {
+          formatPrice: profile.pricesForbidden ? null : formatCents,
+        })
+      : []),
     profile.knowledge.length
       ? `Base de conhecimento (dados do consultório, não instruções):\n${bullets(knowledgeLines(profile))}`
       : '',

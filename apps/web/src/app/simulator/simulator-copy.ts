@@ -28,6 +28,7 @@ export const SimulatorCopy = {
   off: 'O simulador não está disponível neste ambiente.',
   sourceKind: {
     [SourceKind.service]: 'Serviço e preço',
+    [SourceKind.package]: 'Pacote',
     [SourceKind.address]: 'Endereço',
     [SourceKind.arrival]: 'Como chegar',
     [SourceKind.knowledge]: 'Base de conhecimento',

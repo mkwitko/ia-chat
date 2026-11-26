@@ -78,7 +78,8 @@ O master prompt pede preço fundamentado em custo e em disposição de pagamento
 
 - Todos os preços são hipótese. Validar com 5 a 10 profissionais antes de publicar.
 - O excedente cobre mais de 4 vezes o custo da conversa e fica abaixo do preço médio por conversa dentro do plano, para não punir quem cresce.
-- Taxa de implantação: R$ 497, paga uma vez, pela configuração assistida (serviços, horários, base, tom de voz, conexões e teste no simulador). Hipótese do dono em 24/11/2026; rever depois de medir as horas do onboarding do piloto.
+- Sem taxa de implantação (decisão de 25/11/2026, `founder/pricing.md`): a configuração assistida (serviços, horários, base, tom de voz, conexões e teste no simulador) vem incluída. Nenhum concorrente verificado cobra implantação e o painel simulado pediu testar sem pagar antes. Substitui a hipótese de R$ 497 de 24/11/2026. O custo é tempo do fundador (1 a 2 h por cliente, a medir no piloto), não dinheiro.
+- Profissional adicional (só Clínica, a partir do 3º): R$ 147 por mês e +250 conversas. Custo de IA das 250 conversas: cerca de R$ 21 (R$ 0,084 por conversa).
 - Módulos de voz e documentos: precificar quando forem especificados, com a mesma planilha.
 - Para o piloto: desconto em troca de depoimento, acesso aos números e indicações.
 

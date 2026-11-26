@@ -58,3 +58,4 @@ export {
   type MediaStore,
   type R2Config,
 } from './media/store.ts';
+export * from './profile/business-profile.ts';

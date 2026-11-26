@@ -1,0 +1,13 @@
+{
+  "id": "P006",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "habit",
+  "reason": "Eu atendo sozinha e já dou conta do WhatsApp entre um atendimento e outro, mesmo que seja corrido. Não quero mexer na forma como eu trabalho agora nem aprender mais um sistema, e uma recepcionista de IA no meu número parece coisa que eu ia ter que ficar vigiando.",
+  "objection": "Medo de a IA falar besteira com paciente, marcar horário errado ou sumir com uma conversa que eu precisava ter respondido pessoalmente. E são R$ 497 de implantação mais R$ 197 por mês para uma coisa que eu ainda não sei se precisa.",
+  "would_change_my_mind": "Se eu visse que a agenda dela me tira de verdade horas de WhatsApp por semana, com o meu número, sem eu precisar mexer em nada e com um período de teste sem risco.",
+  "price_too_cheap": 40,
+  "price_cheap": 80,
+  "price_expensive": 150,
+  "price_too_expensive": 200
+}

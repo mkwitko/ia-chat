@@ -9,6 +9,7 @@ import { AgendaToolName, ToolName } from '../shared-tools.ts';
 
 export const SourceKind = {
   service: 'service',
+  package: 'package',
   address: 'address',
   arrival: 'arrival',
   knowledge: 'knowledge',
@@ -73,13 +74,10 @@ function detailOf(toolName: string, input: unknown): string | undefined {
 
 function profileSources(text: string, profile: AgentProfile): Source[] {
   const said = plain(text);
-  const sources: Source[] = [];
-  for (const service of profile.services) {
-    const price = formatCents(service.priceCents);
-    const prices = [price, price.replace(WHOLE_REAIS, '')];
-    if (has(said, service.name) || prices.some((candidate) => has(said, candidate)))
-      sources.push({ kind: SourceKind.service, label: service.name, detail: price });
-  }
+  const sources: Source[] = [
+    ...pricedSources(said, { kind: SourceKind.service, items: profile.services }),
+    ...pricedSources(said, { kind: SourceKind.package, items: profile.business?.packages ?? [] }),
+  ];
   const street = profile.address?.split(ADDRESS_SEPARATOR)[0] ?? '';
   if (street && has(said, street))
     sources.push({ kind: SourceKind.address, label: 'Endereço', detail: profile.address ?? '' });
@@ -89,6 +87,24 @@ function profileSources(text: string, profile: AgentProfile): Source[] {
     if (overlaps(item.answer, said))
       sources.push({ kind: SourceKind.knowledge, label: item.question });
   return sources;
+}
+
+interface Priced {
+  kind: SourceKind;
+  items: readonly { name: string; priceCents: number }[];
+}
+
+function pricedSources(said: string, { kind, items }: Priced): Source[] {
+  return items
+    .filter((item) => priced(said, item))
+    .map((item) => ({ kind, label: item.name, detail: formatCents(item.priceCents) }));
+}
+
+/** The reply names the item or quotes its price ("R$ 800,00" or "R$ 800"). */
+function priced(said: string, item: { name: string; priceCents: number }): boolean {
+  const price = formatCents(item.priceCents);
+  const prices = [price, price.replace(WHOLE_REAIS, '')];
+  return has(said, item.name) || prices.some((candidate) => has(said, candidate));
 }
 
 /** Whole-word containment, so "R$ 18" does not match "R$ 180". */

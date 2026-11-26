@@ -1,0 +1,90 @@
+{
+ "n": 20,
+ "seed": 594702,
+ "customer": {
+  "business": "Consultório Aberto: recepcionista com IA no WhatsApp para pequenos negócios de hora marcada no Brasil",
+  "target": "Profissional autônomo ou dono de negócio pequeno de serviço com hora marcada (quiropraxia, acupuntura, fisioterapia, psicologia, estética, salão, personal), que atende sozinho ou com 1 a 3 pessoas e responde o WhatsApp entre um atendimento e outro",
+  "where": "Brasil, capitais e cidades médias (piloto em Florianópolis)",
+  "age": [
+   26,
+   55
+  ],
+  "segments": [
+   {
+    "name": "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+    "share": 0.45,
+    "income": [
+     6000,
+     25000
+    ]
+   },
+   {
+    "name": "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+    "share": 0.3,
+    "income": [
+     10000,
+     45000
+    ]
+   },
+   {
+    "name": "Clínica ou espaço com 2 a 4 profissionais e secretária (faturamento mensal em R$)",
+    "share": 0.25,
+    "income": [
+     30000,
+     120000
+    ]
+   }
+  ],
+  "behaviours": [
+   {
+    "name": "Responde tudo pelo celular",
+    "share": 0.25,
+    "how": "Usa WhatsApp Business no celular, responde entre atendimentos e à noite, e acha que dá conta."
+   },
+   {
+    "name": "Desconfiado de robô",
+    "share": 0.18,
+    "how": "Já recebeu atendimento ruim de chatbot e acha que cliente quer falar com gente."
+   },
+   {
+    "name": "Caçador de preço",
+    "share": 0.15,
+    "how": "Compara com o plano mais barato que achou e corta assinatura ao primeiro aperto."
+   },
+   {
+    "name": "Ama ferramenta nova",
+    "share": 0.12,
+    "how": "Já testou Botconversa ou um agendador online e gosta de automatizar."
+   },
+   {
+    "name": "Tem secretária ou ajudante",
+    "share": 0.15,
+    "how": "Paga alguém que responde o WhatsApp em parte do dia."
+   },
+   {
+    "name": "Compra por indicação",
+    "share": 0.15,
+    "how": "Só experimenta o que um colega de profissão já usa e recomenda."
+   }
+  ],
+  "objections": [
+   "E se a IA responder errado ou inventar preço para o meu cliente?",
+   "Meus clientes preferem falar com gente",
+   "Já uso WhatsApp Business com mensagem automática e resolve",
+   "R$ 297 por mês mais R$ 497 de implantação é muito para mim",
+   "Vou ter que pagar a Meta à parte com meu cartão? Quanto?",
+   "Não quero aprender mais um sistema",
+   "Meus clientes contam coisas pessoais; isso é seguro (LGPD)?",
+   "Ninguém usa ainda; quem garante que funciona?"
+  ],
+  "habits": [
+   "você atende das 8h às 19h e só olha o WhatsApp no intervalo",
+   "você perdeu cliente essa semana porque respondeu no dia seguinte",
+   "você marca tudo no Google Agenda do celular",
+   "você recebe muitos áudios de clientes perguntando preço",
+   "você já paga um sistema de agenda ou gestão",
+   "você ganha cliente mais por indicação e Instagram"
+  ]
+ },
+ "pitch": "Consultório Aberto: uma recepcionista com IA no seu WhatsApp, no mesmo número. Responde na hora, a qualquer hora, marca no seu Google Agenda, manda lembrete e entende áudio. Preço e horário vêm do seu cadastro, nunca da cabeça da IA.\nNo começo nada sai sem você aprovar com um toque; você assume qualquer conversa quando quiser.\nPlanos por mês: Essencial R$ 197 (responde, sem agenda, 300 conversas), Agenda R$ 297 (marca e lembra, 500 conversas), Pro R$ 497 (1.000 conversas), Clínica R$ 697 (vários profissionais). Conversa a mais: R$ 0,35 a R$ 0,40.\nImplantação feita com você: R$ 497, uma vez. Cadastro guiado em cerca de 10 minutos pelo celular.\nTeste grátis de 14 dias, contados de quando o WhatsApp conecta. Sem fidelidade: cancela e usa até o fim do mês pago.\nA Meta cobra à parte no seu cartão: as primeiras 1.000 respostas por mês são grátis; acima disso, centavos por mensagem."
+}
