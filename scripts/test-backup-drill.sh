@@ -46,7 +46,8 @@ for _ in $(seq 1 30); do
 done
 
 cp "$ROOT/docker-compose.prod.yml" "$WORK/"
-printf '%s\n' 'PANEL_DOMAIN=x.test' 'API_DOMAIN=y.test' 'SITE_DOMAIN=z.test' 'ACME_EMAIL=a@b.test' >"$WORK/.env"
+printf '%s\n' 'PANEL_DOMAIN=x.test' 'SITE_DOMAIN=z.test' >"$WORK/.env"
+touch "$WORK/.env.tunnel"
 touch "$WORK/.env.app"
 # Compose requires the app env file to exist even though only postgres and backup start.
 sed -i 's|env_file: .env$|env_file: .env.app|' "$WORK/docker-compose.prod.yml"

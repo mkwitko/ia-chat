@@ -47,6 +47,9 @@ import type { TurnstileVerifier } from './waitlist/turnstile.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
 import { registerWhatsappSignupRoutes } from './whatsapp/routes.ts';
 
+/** One proxy in front: the edge. */
+const TRUSTED_PROXY_HOPS = 1;
+
 declare module 'fastify' {
   interface FastifyInstance {
     auth: Auth;
@@ -83,7 +86,11 @@ export interface AppDeps extends HealthDeps {
 
 export function buildApp(deps: AppDeps): FastifyInstance {
   const { env, db, email, enqueueInbound } = deps;
-  const app = Fastify(fastifyObservability(env));
+  // Behind the edge (Caddy), which sets X-Forwarded-For to Cloudflare's CF-Connecting-IP.
+  const app = Fastify({
+    ...fastifyObservability(env),
+    trustProxy: (_address: string, hop: number) => hop < TRUSTED_PROXY_HOPS,
+  });
   app.decorate('db', db);
   setupObservability(app, deps);
   setupCalendar(app, deps);

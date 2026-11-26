@@ -1,11 +1,11 @@
 name: Deploy
 
-# After CI passes on main: build the images, push them to GHCR and deploy over SSH.
-# Off until the repository secrets DEPLOY_HOST, DEPLOY_USER and DEPLOY_KEY exist: without them the
-# `gate` job reports "disabled" and every other job is skipped (docs/ops/producao.md).
+# After CI passes on main: build the linux/arm64 images (the server is ARM), push them to GHCR and
+# deploy over SSH. The images are always built; the SSH deploy stays off until the repository secrets
+# DEPLOY_HOST, DEPLOY_USER and DEPLOY_KEY exist (the `gate` job reports "disabled", docs/ops/producao.md).
 # Optional: secret DEPLOY_KNOWN_HOSTS (output of `ssh-keyscan <host>` checked by you once);
 # repository variables VITE_HELP_URL, VITE_SENTRY_DSN, PUBLIC_TURNSTILE_SITE_KEY, PUBLIC_API_URL
-# (public values baked into the panel and site bundles), DEPLOY_PATH (default /opt/consultorio).
+# (public values baked into the panel and site bundles), DEPLOY_PATH (default /opt/consultorio-aberto).
 on:
   workflow_run:
     workflows: [CI]
@@ -23,7 +23,6 @@ concurrency:
 jobs:
   gate:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     outputs:
       enabled: ${{ steps.check.outputs.enabled }}
     steps:
@@ -41,9 +40,9 @@ jobs:
           fi
 
   images:
-    needs: gate
-    if: needs.gate.outputs.enabled == 'true'
-    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # Native ARM runner (free for public repositories): no QEMU emulation.
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
@@ -72,6 +71,7 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
+          platforms: linux/arm64
           push: true
           tags: |
             ${{ steps.prefix.outputs.value }}/${{ matrix.name }}:${{ github.event.workflow_run.head_sha || github.sha }}
@@ -117,7 +117,7 @@ jobs:
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/consultorio' }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/consultorio-aberto' }}
           SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GHCR_USER: ${{ github.actor }}
@@ -126,14 +126,18 @@ jobs:
           target="$DEPLOY_USER@$HOST"
           ssh_opts=(-i ~/.ssh/deploy_key -o BatchMode=yes)
           scp "${ssh_opts[@]}" docker-compose.prod.yml "$target:$DEPLOY_PATH/docker-compose.prod.yml"
+          # The host is shared: our registry login lives in its own DOCKER_CONFIG, never the user's.
           printf '%s' "$GHCR_TOKEN" | ssh "${ssh_opts[@]}" "$target" \
-            "docker login ghcr.io -u '$GHCR_USER' --password-stdin"
+            "DOCKER_CONFIG='$DEPLOY_PATH/.docker' docker login ghcr.io -u '$GHCR_USER' --password-stdin"
           ssh "${ssh_opts[@]}" "$target" bash -s <<EOF
           set -euo pipefail
           cd '$DEPLOY_PATH'
+          export DOCKER_CONFIG='$DEPLOY_PATH/.docker'
           sed -i '/^IMAGE_PREFIX=/d;/^IMAGE_TAG=/d' .env
           printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\n' '$prefix' '$SHA' >> .env
           docker compose -f docker-compose.prod.yml pull
           docker compose -f docker-compose.prod.yml up -d --remove-orphans
-          docker image prune -f
+          # Only our old images: other projects share this Docker host.
+          docker image ls --filter 'reference=$prefix/*' --format '{{.Repository}}:{{.Tag}}' \
+            | grep -v ':$SHA\$' | xargs -r docker rmi || true
           EOF
