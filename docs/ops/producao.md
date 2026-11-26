@@ -74,7 +74,7 @@ Crie o convite do primeiro cliente (cadastro é só por convite): `pnpm invite` 
 | `META_APP_SECRET`, `META_VERIFY_TOKEN`, `META_ACCESS_TOKEN` | do aplicativo Meta; token aleatório longo; token do usuário de sistema |
 | `META_APP_ID`, `META_ES_CONFIG_ID`, `META_TOKEN_KEY` | Embedded Signup; `openssl rand -base64 32` |
 | `PUSH_VAPID_PUBLIC_KEY`, `PUSH_VAPID_PRIVATE_KEY`, `PUSH_SUBJECT` | obrigatórias em produção (gerar uma vez) |
-| `VERCEL_API_KEY`, `TYPESAFE_API_KEY` | IA (`AI_DEV_PROVIDER` e `GROQ_API_KEY` vazios) |
+| `VERCEL_API_KEY`, `TYPESAFE_API_KEY` | IA (`AI_DEV_PROVIDER` e `GROQ_API_KEY` **ausentes**: a linha vazia falha na validação) |
 | `LANGFUSE_*`, `SENTRY_DSN`, `VITE_SENTRY_DSN`, `AXIOM_TOKEN`, `AXIOM_DATASET` | opcionais; cada um liga sozinho |
 | `ASAAS_API_KEY`, `ASAAS_BASE_URL`, `ASAAS_WEBHOOK_TOKEN` | chave de produção; `https://api.asaas.com/v3`; `openssl rand -hex 24` |
 | `OPERATOR_EMAILS` | e-mails dos operadores |
