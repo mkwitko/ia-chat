@@ -9,6 +9,7 @@ import { NAV_ITEMS, type NavItem } from './nav-items';
 import { ServiceStatus } from './service-status';
 import { SettingsGroup } from './settings-group';
 import { SetupProgressCard } from './setup-progress';
+import { ShortcutsSheet } from './shortcuts-sheet';
 import { ThemeToggle } from './theme-toggle';
 import { useSignOut } from './use-sign-out';
 
@@ -40,6 +41,7 @@ export function Navigation({ pending }: Readonly<{ pending: number }>) {
       <div className="mt-auto hidden gap-4 border-t px-1 pt-4 md:grid">
         {!onHome && <ServiceStatus />}
         <ThemeToggle />
+        <ShortcutsSheet />
         <SignOutButton />
       </div>
     </nav>

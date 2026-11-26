@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarPlus } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { Button } from '@/components/ui/button';
@@ -39,11 +39,22 @@ function useAgendaParams() {
 
 /** The open booking form; `?novo=1` (Início's shortcut) opens it straight away. */
 function useBooking(day: string, professionalId: string) {
-  return useState<BookingTarget | null>(() =>
-    new URLSearchParams(location.search).has(NEW_PARAM)
-      ? { kind: BookingKind.new, day, professionalId }
-      : null,
-  );
+  const [params, setParams] = useSearchParams();
+  const asked = params.has(NEW_PARAM);
+  const state = useState<BookingTarget | null>(null);
+  const [, setBooking] = state;
+  useEffect(() => {
+    if (!asked) return;
+    setBooking({ kind: BookingKind.new, day, professionalId });
+    setParams(
+      (current) => {
+        current.delete(NEW_PARAM);
+        return current;
+      },
+      { replace: true },
+    );
+  }, [asked, day, professionalId, setBooking, setParams]);
+  return state;
 }
 
 /** Spec 10, "Agenda": the day on the phone, the week as seven day columns on the computer. */

@@ -1,6 +1,7 @@
 import { notifyError } from '@/lib/notify';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Shortcut, useShortcut } from '@/lib/shortcuts';
 import { UndoCopy } from '@/components/ui/undo';
 import { Control, useSetControl } from './inbox-api';
 import { ConversationCopy as Copy } from './inbox-copy';
@@ -37,6 +38,13 @@ export function ControlBar({
 }: Readonly<{ conversationId: string; control: Control }>) {
   const { change, pending } = useChangeControl(conversationId);
   const mine = control === Control.human;
+  useShortcut(
+    Shortcut.takeOver,
+    () => {
+      change(Control.human);
+    },
+    !mine && !pending,
+  );
   return (
     <div
       role="group"

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { useLocation } from 'react-router';
+import { SEARCH_FIELD, SHORTCUT_ATTR } from '@/lib/shortcuts';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { EmptyState, GhostRows } from '../screens/empty-state';
 import { CardList } from '../screens/section';
+import { ChoicePills } from '../screens/choice-pills';
 import { Screen } from '../screens/screen';
+import { HelpArticle } from '../screens/screen-help';
 import { CustomerRow } from './customer-row';
 import { useCustomers } from './customers-api';
 import { CustomersCopy as Copy } from './customers-copy';
@@ -27,10 +30,16 @@ export function CustomersScreen() {
   const [text, setText] = useState('');
   const [stage, setStage] = useState<Stage | null>(ALL);
   const query = useDebounced(text.trim(), SEARCH_DELAY_MS);
+  // "/" from another screen lands here with the search ready to type in.
+  const focusSearch = Boolean(
+    (useLocation().state as { focusSearch?: boolean } | null)?.focusSearch,
+  );
   return (
-    <Screen title={Copy.title}>
+    <Screen title={Copy.title} help={HelpArticle.customers} hint={Copy.hint}>
       <div className="grid gap-1 px-4 pb-1 md:px-0">
         <Input
+          {...{ [SHORTCUT_ATTR]: SEARCH_FIELD }}
+          autoFocus={focusSearch}
           type="search"
           aria-label={Copy.searchLabel}
           placeholder={Copy.searchLabel}
@@ -74,30 +83,12 @@ function FilterBar({
   onChange,
 }: Readonly<{ value: Stage | null; onChange: (stage: Stage | null) => void }>) {
   return (
-    <fieldset className="relative flex min-w-0 gap-2 overflow-x-auto [scrollbar-width:none] px-4 py-2 md:px-0">
-      <legend className="sr-only">{Copy.filterLabel}</legend>
-      {FILTERS.map((option) => (
-        <label
-          key={option.label}
-          className={cn(
-            'flex min-h-11 shrink-0 cursor-pointer items-center rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring',
-            value === option.value
-              ? 'border-primary bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground',
-          )}
-        >
-          <input
-            type="radio"
-            name="customer-stage"
-            className="sr-only"
-            checked={value === option.value}
-            onChange={() => {
-              onChange(option.value);
-            }}
-          />
-          {option.label}
-        </label>
-      ))}
-    </fieldset>
+    <ChoicePills
+      name="customer-stage"
+      legend={Copy.filterLabel}
+      options={FILTERS}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
