@@ -22,7 +22,8 @@ export const PrefillCopy = defineMessages({
     description: 'O que você faz',
     notFound: 'Não encontrado',
     servicesHeading: 'Serviços encontrados',
-    servicesNone: 'Nenhum serviço com nome claro na página. Você cadastra no passo 3.',
+    servicesNone:
+      'Nenhum serviço com nome claro na página. Você cadastra daqui a pouco, no passo dos serviços.',
     priceMissing: 'Sem valor na página: preencha para salvar.',
     serviceLabel: (name: string) => `Salvar ${name}`,
     minutes: 'Minutos',
@@ -30,7 +31,7 @@ export const PrefillCopy = defineMessages({
     packagesHeading: 'Pacotes encontrados',
     hoursHeading: 'Horário encontrado',
     hoursKeep: 'Usar este horário',
-    hoursNone: 'Não achamos o horário. Você confirma no passo 4.',
+    hoursNone: 'Não achamos o horário. Você confirma daqui a pouco, no passo dos horários.',
     save: 'Salvar o que conferi',
     saving: 'Salvando…',
     saved: 'Dados salvos. Você pode mudar tudo depois em Mais > Perfil do negócio.',

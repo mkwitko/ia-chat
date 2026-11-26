@@ -13,6 +13,8 @@ export const Page = {
   hours: 'hours',
   simulator: 'simulator',
   activation: 'activation',
+  /** Round 3 (owner, 26/11/2026): "mande um alô" and see it arrive. Client only, after activation. */
+  liveTest: 'liveTest',
 } as const;
 export type Page = (typeof Page)[keyof typeof Page];
 
@@ -30,6 +32,7 @@ const STEP_OF: Record<Page, Step> = {
   [Page.hours]: Step.hours,
   [Page.simulator]: Step.simulator,
   [Page.activation]: Step.activation,
+  [Page.liveTest]: Step.activation,
 };
 
 export const stepOf = (page: Page): Step => STEP_OF[page];
@@ -50,7 +53,8 @@ export function resumePage(
 export const SKIPPABLE: ReadonlySet<Page> = new Set([Page.find, Page.whatsapp]);
 
 /** The screen whose "Continuar" settles the server step (the others just move on). */
-export const settlesStep = (page: Page) => !ACCOUNT_PAGES.includes(page) || page === Page.document;
+export const settlesStep = (page: Page) =>
+  page !== Page.liveTest && (!ACCOUNT_PAGES.includes(page) || page === Page.document);
 
 /** The screen that opens a server step ("Ajustar" in the test chat). */
 export const pageOfStep = firstPageOf;
