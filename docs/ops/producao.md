@@ -73,6 +73,8 @@ Crie o convite do primeiro cliente (cadastro é só por convite): `pnpm invite` 
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_TOKEN_KEY` | cliente OAuth do Google; `openssl rand -base64 32` |
 | `META_APP_SECRET`, `META_VERIFY_TOKEN`, `META_ACCESS_TOKEN` | do aplicativo Meta; token aleatório longo; token do usuário de sistema |
 | `META_APP_ID`, `META_ES_CONFIG_ID`, `META_TOKEN_KEY` | Embedded Signup; `openssl rand -base64 32` |
+| `WAHA_URL` | `http://waha:3000` (rede privada; sem ela e sem a chave, a conexão por QR code fica desligada) |
+| `WAHA_API_KEY`, `WAHA_WEBHOOK_SECRET` | `openssl rand -hex 32` cada; o Compose passa as duas ao contêiner `waha` (chave da API e HMAC dos webhooks) |
 | `PUSH_VAPID_PUBLIC_KEY`, `PUSH_VAPID_PRIVATE_KEY`, `PUSH_SUBJECT` | obrigatórias em produção (gerar uma vez) |
 | `VERCEL_API_KEY`, `TYPESAFE_API_KEY` | IA (`AI_DEV_PROVIDER` e `GROQ_API_KEY` **ausentes**: a linha vazia falha na validação) |
 | `LANGFUSE_*`, `SENTRY_DSN`, `VITE_SENTRY_DSN`, `AXIOM_TOKEN`, `AXIOM_DATASET` | opcionais; cada um liga sozinho |
@@ -98,6 +100,7 @@ Os valores de `VITE_*` e `PUBLIC_*` são lidos no **build** da imagem `edge` (va
 | Google, URIs de redirecionamento autorizados | `https://PAINEL/api/auth/callback/google` e `https://PAINEL/api/calendar/google/callback` |
 | Google, origem JavaScript autorizada | `https://PAINEL` |
 | Turnstile | domínio `SITE` |
+| WAHA (conexão por QR code) | nada a configurar fora: o contêiner chama `http://api:3000/webhooks/waha` na rede privada |
 
 O WhatsApp aceita o webhook só depois que `https://PAINEL` responde: a zona da Cloudflare precisa estar ativa e o túnel conectado.
 
@@ -164,3 +167,11 @@ Regra geral: troque no `.env` (ou `.env.db`) do servidor e `docker compose -f do
 - Painel do pg-boss: `pg-boss-dashboard` em processo separado, só em localhost, por túnel SSH (E-27).
 - Eliminação de contas encerradas (30 dias): rotina diária do worker, descrita na spec 06; o log `tenant deletion done` traz a contagem.
 - Limitações conhecidas: um único servidor é ponto único de falha (aceito no piloto, RN-16 cobre a recuperação); o TLS entre `api` e `postgres` não está ativado (rede privada do Compose no mesmo host); entre a Cloudflare e o `edge` o tráfego vai cifrado pelo túnel e só o último salto (`cloudflared` → `edge`, na rede interna) é HTTP; o gateway de WhatsApp (WAHA) ainda não está no compose.
+
+## 9. Conexão por QR code (WAHA)
+
+- Serviço `waha` no `docker-compose.prod.yml`: imagem `devlikeapro/waha:gows-arm-2026.10.1` fixada por digest (o servidor é aarch64; a imagem `gows` sem `-arm` é só amd64), 384 MB, sem porta publicada, sessões no volume `wahasessions`. Core gratuito, sem chave de licença.
+- Atualizar a imagem só depois de testar (RF-29b): trocar tag e digest juntos (`docker buildx imagetools inspect devlikeapro/waha:gows-arm-VERSAO`), subir em desenvolvimento com a `gows-VERSAO` amd64, rodar `pnpm vitest run packages/channels` e ler um QR de teste.
+- Testar sem celular: `docker compose exec api node -e "fetch('http://waha:3000/api/sessions',{headers:{'x-api-key':process.env.WAHA_API_KEY}}).then(r=>r.text()).then(console.log)"` lista as sessões.
+- O volume guarda as credenciais de cada número conectado: não apague. Perder o volume desconecta todos os números por QR (a checagem de 5 minutos avisa cada dono).
+

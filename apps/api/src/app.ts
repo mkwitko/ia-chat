@@ -1,5 +1,5 @@
 import type { AiGateway } from '@app/ai';
-import { createChannelSender, type ChannelSend } from '@app/channels';
+import { createChannelSender, wahaConfig, type ChannelSend, type WahaConfig } from '@app/channels';
 import { NodeEnv, channelTokenReader, whatsappSignupConfig, type BillingProvider } from '@app/core';
 import type { Db } from '@app/db';
 import type { Alert } from '@app/observability';
@@ -49,7 +49,9 @@ import type { ApiEnv } from './env.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
 import { registerWaitlistIfConfigured } from './waitlist/waitlist-routes.ts';
 import type { TurnstileVerifier } from './waitlist/turnstile.ts';
+import { registerWahaWebhook } from './webhooks/waha.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
+import { registerQrRoutes } from './whatsapp/qr-routes.ts';
 import { registerWhatsappSignupRoutes } from './whatsapp/routes.ts';
 
 /** One proxy in front: the edge. */
@@ -85,12 +87,14 @@ export interface AppDeps extends HealthDeps {
   calendarFetch?: typeof fetch;
   /** Test seam: the `fetch` used for the Graph API in Embedded Signup (E-24). */
   metaFetch?: typeof fetch;
+  /** Test seam: the WAHA gateway (E-09b), with a fake fetch. */
+  waha?: WahaConfig;
   /** Test seam: reads the owner's page for the onboarding prefill (spec 09). */
   prefillFetch?: PageFetcher;
 }
 
 export function buildApp(deps: AppDeps): FastifyInstance {
-  const { env, db, email, enqueueInbound } = deps;
+  const { env, db, email } = deps;
   // Behind the edge (Caddy), which sets X-Forwarded-For to Cloudflare's CF-Connecting-IP.
   const app = Fastify({
     ...fastifyObservability(env),
@@ -115,10 +119,8 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   const hub = createInboxHub(env.DATABASE_URL, app.log);
   registerEventsRoute(app, hub);
   app.addHook('onClose', () => hub.close());
-  const { META_APP_SECRET: appSecret, META_VERIFY_TOKEN: verifyToken } = env;
-  if (appSecret && verifyToken && enqueueInbound) {
-    registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
-  }
+  registerWhatsappWebhooks(app, deps);
+  registerQrRoutes(app, { waha: deps.waha ?? wahaConfig(env) });
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
   registerSupportRoutes(app, { whatsapp: env.SUPPORT_WHATSAPP, email: env.SUPPORT_EMAIL });
@@ -130,6 +132,16 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   return app;
 }
 
+/** Inbound WhatsApp: the Cloud API (E-09) and the WAHA gateway (E-09b), each when configured. */
+function registerWhatsappWebhooks(app: FastifyInstance, { env, enqueueInbound }: AppDeps): void {
+  if (!enqueueInbound) return;
+  const { META_APP_SECRET: appSecret, META_VERIFY_TOKEN: verifyToken } = env;
+  if (appSecret && verifyToken)
+    registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
+  if (env.WAHA_WEBHOOK_SECRET)
+    registerWahaWebhook(app, { secret: env.WAHA_WEBHOOK_SECRET, enqueue: enqueueInbound });
+}
+
 /** The inbox: thread, drafts, sending as the professional, and the patient's media (E-10). */
 function registerInbox(app: FastifyInstance, { env, send }: Pick<AppDeps, 'env' | 'send'>): void {
   registerInboxRoutes(app, {
@@ -138,6 +150,7 @@ function registerInbox(app: FastifyInstance, { env, send }: Pick<AppDeps, 'env' 
       createChannelSender({
         accessToken: env.META_ACCESS_TOKEN,
         readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
+        waha: wahaConfig(env),
         devFallback: env.NODE_ENV !== NodeEnv.production,
         log: (fields, message) => {
           app.log.info(fields, message);

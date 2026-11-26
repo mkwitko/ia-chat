@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./fixtures": "./src/fixtures/cloud-webhooks.ts",
+    "./waha-fixtures": "./src/fixtures/waha-webhooks.ts",
     "./fixtures/coexistence": "./src/fixtures/coexistence-sync.ts"
   },
   "dependencies": {

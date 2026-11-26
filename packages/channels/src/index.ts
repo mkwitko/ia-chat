@@ -28,3 +28,22 @@ export {
   type BusinessClient,
   type SignupTemplate,
 } from './cloud-api/signup.ts';
+export { createCloudAdapter, createWahaAdapter } from './adapters.ts';
+export { InboundProvider, parseStoredEvents } from './stored.ts';
+export { createWahaClient, type WahaClient } from './waha/client.ts';
+export { wahaConfig, wahaEnvSchema } from './waha/env.ts';
+export { WahaError, type WahaConfig } from './waha/http.ts';
+export { QrSendRefusal, QrSendRefused } from './waha/limits.ts';
+export { LID_PREFIX, parseWahaWebhook, wahaSessionState } from './waha/parse.ts';
+export { WahaSessionStatus } from './waha/schemas.ts';
+export {
+  createWahaSessions,
+  isWorking,
+  needsQr,
+  QR_SESSION_PREFIX,
+  sessionName,
+  type QrImage,
+  type SessionInfo,
+  type WahaSessions,
+} from './waha/sessions.ts';
+export { verifyWahaSignature, WAHA_HMAC_HEADER } from './waha/signature.ts';

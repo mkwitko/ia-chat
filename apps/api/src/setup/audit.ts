@@ -5,6 +5,8 @@ export const AuditAction = {
   create: 'create',
   update: 'update',
   archive: 'archive',
+  /** A term the user accepted (RF-27). */
+  accept: 'accept',
 } as const;
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
 

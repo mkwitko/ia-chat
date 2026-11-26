@@ -1,5 +1,5 @@
 import { aiConfigured, aiEnvSchema, createEnvGateway } from '@app/ai';
-import { createMediaDownloadFor } from '@app/channels';
+import { createMediaDownloadFor, wahaConfig, wahaEnvSchema } from '@app/channels';
 import { channelTokenReader, createMediaStore, r2Config, r2EnvSchema } from '@app/core';
 import { MEDIA_QUEUE, sendTenantJob, type Db } from '@app/db';
 import { withLogContext } from '@app/observability';
@@ -12,10 +12,13 @@ const NO_R2 = 'R2 variables missing: inbound media is not downloaded';
 const NO_AI_KEY = 'VERCEL_API_KEY missing: audio is stored but not transcribed';
 
 const mediaJob = z.object({ tenantId: z.uuid(), data: z.object({ messageId: z.uuid() }) });
-const mediaEnvSchema = aiEnvSchema.extend(r2EnvSchema.shape).extend({
-  META_ACCESS_TOKEN: z.string().min(1).optional(),
-  META_TOKEN_KEY: z.string().min(1).optional(),
-});
+const mediaEnvSchema = aiEnvSchema
+  .extend(r2EnvSchema.shape)
+  .extend(wahaEnvSchema.shape)
+  .extend({
+    META_ACCESS_TOKEN: z.string().min(1).optional(),
+    META_TOKEN_KEY: z.string().min(1).optional(),
+  });
 
 interface MediaWiring {
   boss: PgBoss;
@@ -55,6 +58,7 @@ export async function startMediaWorker({ boss, db, nodeEnv, source, log }: Media
     downloadFor: createMediaDownloadFor({
       accessToken: env.META_ACCESS_TOKEN,
       readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
+      waha: wahaConfig(env),
     }),
     store: createMediaStore(r2),
     transcribe: gateway

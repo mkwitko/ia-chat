@@ -13,6 +13,7 @@ const EVENT_LABELS: Record<string, string> = {
   turn_aborted: 'Resposta demorou mais de 45 s',
   queue_error: 'Erro na fila',
   job_failed: 'Rotina falhou',
+  channel_disconnected: 'WhatsApp por QR code desconectado',
 };
 const shortId = (id: string) => id.slice(0, SHORT_ID);
 

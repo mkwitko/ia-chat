@@ -63,6 +63,9 @@ export const TENANT_DELETION_QUEUE: QueueDefinition = { name: 'retention.tenant_
 /** Research 09 #2: the owner's Monday report of one tenant; one pg-boss schedule per tenant. */
 export const WEEKLY_REPORT_QUEUE: QueueDefinition = { name: 'report.weekly' };
 
+/** E-09b (RF-29): every 5 minutes, checks each QR code session against the WAHA gateway. */
+export const SESSION_HEALTH_QUEUE: QueueDefinition = { name: 'channel.session_health' };
+
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
   INBOUND_QUEUE,
@@ -78,4 +81,5 @@ export const QUEUES: readonly QueueDefinition[] = [
   MEDIA_QUEUE,
   TENANT_DELETION_QUEUE,
   WEEKLY_REPORT_QUEUE,
+  SESSION_HEALTH_QUEUE,
 ];
