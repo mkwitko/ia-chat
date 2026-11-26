@@ -1,35 +1,45 @@
 import { NavLink, useLocation } from 'react-router';
-import { NavCopy, PRODUCT_NAME } from '@/copy';
+import { LogOut } from 'lucide-react';
+import { MoreCopy, NavCopy, PRODUCT_NAME } from '@/copy';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import { Route } from '@/routes';
 import { BrandMark } from '../brand-mark';
 import { NAV_ITEMS, type NavItem } from './nav-items';
 import { ServiceStatus } from './service-status';
+import { SettingsGroup } from './settings-group';
 import { SetupProgressCard } from './setup-progress';
 import { ThemeToggle } from './theme-toggle';
+import { useSignOut } from './use-sign-out';
 
 /** Bottom bar on the phone, sidebar from md up (spec 10, "Navegação"). */
 export function Navigation({ pending }: Readonly<{ pending: number }>) {
   return (
     <nav
       aria-label={NavCopy.label}
-      className="fixed inset-x-0 bottom-0 z-10 border-t bg-card pb-[env(safe-area-inset-bottom)] md:static md:inset-auto md:flex md:w-64 md:shrink-0 md:flex-col md:gap-5 md:border-t-0 md:border-r md:px-3 md:py-4"
+      className="fixed inset-x-0 bottom-0 z-10 border-t bg-card pb-[env(safe-area-inset-bottom)] md:static md:inset-auto md:flex md:w-64 md:shrink-0 md:flex-col md:overflow-y-auto md:gap-5 md:border-t-0 md:border-r md:px-3 md:py-4"
     >
       <TenantHeader />
       <div className="hidden md:block">
         <SetupProgressCard />
       </div>
-      <ul className="grid grid-cols-5 md:flex md:flex-col md:gap-0.5">
-        {NAV_ITEMS.map((item) => (
-          <li key={item.to}>
-            <Item item={item} badge={item.to === Route.conversations ? pending : 0} />
-          </li>
-        ))}
-      </ul>
+      <div className="md:grid md:gap-0.5">
+        <ul className="grid grid-cols-5 md:flex md:flex-col md:gap-0.5">
+          {NAV_ITEMS.map((item) => (
+            // From md "Mais" gives way to the "Configurações" group below.
+            <li key={item.to} className={cn(item.to === Route.more && 'md:hidden')}>
+              <Item item={item} badge={item.to === Route.conversations ? pending : 0} />
+            </li>
+          ))}
+        </ul>
+        <div className="hidden md:block">
+          <SettingsGroup />
+        </div>
+      </div>
       <div className="mt-auto hidden gap-4 border-t px-1 pt-4 md:grid">
         <ServiceStatus />
         <ThemeToggle />
+        <SignOutButton />
       </div>
     </nav>
   );
@@ -75,5 +85,20 @@ function Item({ item, badge }: Readonly<{ item: NavItem; badge: number }>) {
         </span>
       )}
     </NavLink>
+  );
+}
+
+/** Sair, at the foot of the sidebar: quiet until hovered, then the danger tone. */
+function SignOutButton() {
+  const signOut = useSignOut();
+  return (
+    <button
+      type="button"
+      onClick={signOut}
+      className="flex min-h-10 items-center gap-3 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-danger-soft hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    >
+      <LogOut className="size-[18px]" strokeWidth={1.75} aria-hidden="true" />
+      {MoreCopy.signOut}
+    </button>
   );
 }

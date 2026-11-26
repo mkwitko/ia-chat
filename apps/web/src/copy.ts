@@ -25,6 +25,7 @@ export const NavCopy = {
   conversations: 'Conversas',
   agenda: 'Agenda',
   more: 'Mais',
+  settings: 'Configurações',
   label: 'Navegação principal',
 } as const;
 
@@ -37,6 +38,8 @@ export const EmptyCopy = {
 
 export const MoreCopy = {
   title: 'Mais',
+  /** `/mais` on the computer, where the list lives in the sidebar. */
+  notifications: 'Notificações e aparência',
   items: [
     { label: 'Assistente', hint: 'Autonomia, apresentação e tom de voz', to: Route.assistant },
     {

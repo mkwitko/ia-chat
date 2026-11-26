@@ -3,6 +3,8 @@ import { useSyncExternalStore } from 'react';
 const CHANGE = 'change';
 /** Tailwind's lg breakpoint: from here the panel uses the width (DESIGN.md, "Layout"). */
 export const WIDE_QUERY = '(min-width: 1024px)';
+/** Tailwind's md breakpoint: from here the sidebar replaces the bottom bar. */
+export const SIDEBAR_QUERY = '(min-width: 768px)';
 
 /** Whether a media query matches, following changes (window resize, rotation). */
 export function useMedia(query: string): boolean {

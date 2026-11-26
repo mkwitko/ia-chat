@@ -23,7 +23,7 @@ function LocationForm({ initial }: Readonly<{ initial: Location | null }>) {
   };
   return (
     <form
-      className="grid gap-4 px-4 md:px-0"
+      className="grid gap-4 px-4 md:px-0 md:[&>button]:justify-self-start"
       onSubmit={(event) => {
         event.preventDefault();
         submit();
