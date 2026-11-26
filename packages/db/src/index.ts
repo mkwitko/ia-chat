@@ -176,3 +176,4 @@ export {
   type Adjustment,
   type ManualReason,
 } from './packages/adjust.ts';
+export { featureEnabled, featureEnabledIn, readFeatures } from './features.ts';

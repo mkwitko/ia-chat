@@ -9,6 +9,7 @@ import { HoursEditor } from './app/agenda/hours-editor';
 import { ProServicesEditor, TimeOffEditor } from './app/agenda/hours-pages';
 import { AccountScreen, NotificationsScreen } from './app/account-settings/account-screen';
 import { BusinessEditor } from './app/clinic/business-editor';
+import { FeaturesScreen } from './app/features/features-screen';
 import { ClinicScreen } from './app/clinic/clinic-screen';
 import { legacyRoutes } from './app/clinic/legacy-redirect';
 import {
@@ -96,6 +97,7 @@ export const router = createBrowserRouter([
           { path: Route.clinicWhatsapp, element: <WhatsappEditor /> },
           { path: Route.account, element: <AccountScreen /> },
           { path: Route.accountNotifications, element: <NotificationsScreen /> },
+          { path: Route.accountFeatures, element: <FeaturesScreen /> },
           { path: Route.importReview, element: <ReviewScreen /> },
           { path: Route.usage, element: <UsageScreen /> },
           { path: Route.billing, element: <BillingScreen /> },

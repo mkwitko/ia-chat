@@ -20,6 +20,7 @@ import {
 } from './index.ts';
 import { FIXTURE, SEED_TENANT_NAME } from './seed-data.ts';
 import { seedImportStaging } from './seed-import.ts';
+import { seedFeatures } from './seed-features.ts';
 
 interface Ids {
   tenantId: string;
@@ -45,6 +46,7 @@ export async function seedTenant(db: Db, name: string = SEED_TENANT_NAME): Promi
     await seedConversation(tx, ids);
     await seedSchedule(tx, ids);
     await seedImportStaging(tx, ids);
+    await seedFeatures(tx, tenant.id);
   });
   return tenant.id;
 }

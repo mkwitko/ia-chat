@@ -108,6 +108,7 @@ model Tenant {
   packageEntries       PackageEntry[]
   pushSubscriptions    PushSubscription[]
   calendarIntegration  CalendarIntegration?
+  featureSettings      FeatureSetting[]
 
   @@map("tenants")
 }

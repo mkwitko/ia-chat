@@ -29,6 +29,7 @@ export {
   type SpecialtyPolicy,
 } from './policy.ts';
 export * from './plans.ts';
+export * from './features.ts';
 export * from './onboarding/steps.ts';
 export * from './onboarding/templates.ts';
 export {

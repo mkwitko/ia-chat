@@ -1,5 +1,6 @@
 import type { MediaDownloadFor } from '@app/channels';
 import {
+  Feature,
   MAX_AUDIO_SECONDS,
   MAX_MEDIA_ATTEMPTS,
   MediaState,
@@ -8,7 +9,7 @@ import {
   type MediaInfo,
   type MediaStore,
 } from '@app/core';
-import { MessageAuthor, MessageType, type Db, type Prisma } from '@app/db';
+import { MessageAuthor, MessageType, featureEnabled, type Db, type Prisma } from '@app/db';
 import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts';
 import { cutAudio, trimTranscript } from './audio-cut.ts';
 
@@ -106,6 +107,8 @@ async function transcribe(
   { tenantId, loaded, bytes }: { tenantId: string; loaded: Loaded; bytes: Buffer },
 ): Promise<{ text: string | null; truncated: boolean } | undefined> {
   if (!deps.transcribe) return undefined;
+  // Recursos (H-51): the owner can turn transcription off; the audio is still stored.
+  if (!(await featureEnabled(deps.db, tenantId, Feature.audioTranscription))) return undefined;
   const cut = cutAudio(bytes, MAX_AUDIO_SECONDS);
   const { text, seconds } = await deps.transcribe({
     tenantId,

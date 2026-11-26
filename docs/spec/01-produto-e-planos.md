@@ -77,6 +77,22 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 | Telefonia | Não ofertado | Incompatível com coexistência; exige segundo número |
 | Voz clonada do próprio profissional | Valor fixo + pacote de minutos (Fase 5) | Exige termo de consentimento; ver [06](06-seguranca-e-lgpd.md) |
 
+### Recursos (liga e desliga)
+
+Decisão do dono, 26/11/2026 (H-51). Cada recurso que o dono pode ligar ou desligar tem uma chave e o plano mais baixo que o inclui; os planos acima também o incluem. O catálogo fica em `packages/core/src/features.ts` e é a única fonte para API, painel e worker.
+
+| Chave | Recurso | Plano |
+|---|---|---|
+| `audio_transcription` | Entender áudios do cliente (RF-08) | Essencial |
+| `pix_deposit` | Sinal por Pix com chave manual ([05](05-agenda-e-pagamentos.md)) | Pro |
+| `ocr_pix_receipt` | Ler comprovante de Pix e sugerir a confirmação do sinal | Pro |
+| `ocr_id_card` | Ler documento ou carteirinha e sugerir nome, CPF e nascimento | Pro |
+| `ocr_medical_request` | Resumo factual de pedido médico ou exame, só para o profissional ([06](06-seguranca-e-lgpd.md)) | Pro |
+
+- Dentro do plano, o recurso nasce ligado; o dono desliga em Conta > Recursos. Fora do plano, nunca liga, e a tela mostra em que plano ele está, sem propaganda.
+- Onde o recurso roda (ferramenta do agente, job do worker), o código confere `featureEnabled` antes. Rebaixar o plano desliga na hora, mesmo com escolha salva.
+- Guardado em `feature_settings` (uma linha por escolha do dono, com RLS); sem linha vale o padrão do plano.
+
 ### Controle de custo imprevisível
 
 - **Franquia por conversa, não por mensagem ou token.** É a unidade que o profissional entende.

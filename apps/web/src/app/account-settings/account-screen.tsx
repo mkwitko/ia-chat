@@ -1,4 +1,5 @@
-import { Bell, CreditCard, Gauge, Gift } from 'lucide-react';
+import { Bell, CreditCard, Gauge, Gift, ToggleRight } from 'lucide-react';
+import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
 import { NightlySummary } from '../agenda/summary-time';
 import { useBilling, type Billing } from '../billing/billing-api';
@@ -9,6 +10,8 @@ import { HelpArticle } from '../screens/screen-help';
 import { SummaryScreen } from '../screens/summary-screen';
 import { WeeklyReportToggle } from '../screens/weekly-report-toggle';
 import { ThemeToggle } from '../shell/theme-toggle';
+import { TeamRole } from '../team/team-copy';
+import { FeaturesCopy } from '../features/features-copy';
 import { useUsage } from '../usage/usage-api';
 import { AccountCopy as Copy } from './account-copy';
 
@@ -24,6 +27,14 @@ const STATIC: readonly SummaryItem[] = [
   { label: Copy.referral, to: Route.referral, icon: Gift, summary: { value: Copy.referralHint } },
 ];
 
+/** Recursos (H-51) is the owner's, like the plan; the others do not see the line. */
+const FEATURES_ITEM: SummaryItem = {
+  label: FeaturesCopy.title,
+  to: Route.accountFeatures,
+  icon: ToggleRight,
+  summary: { value: FeaturesCopy.hint },
+};
+
 /** A late payment is the one thing here that needs the owner. */
 export function billingSummary(status: Billing['status']): TopicSummary {
   const value = Copy.billingStatus[status];
@@ -34,6 +45,7 @@ export function billingSummary(status: Billing['status']): TopicSummary {
 export function AccountScreen() {
   const usage = useUsage();
   const billing = useBilling();
+  const owner = authClient.useActiveMember().data?.role === TeamRole.owner;
   const items: SummaryItem[] = [
     {
       label: Copy.usage,
@@ -49,6 +61,7 @@ export function AccountScreen() {
       icon: CreditCard,
       summary: summaryOf(billing, (data) => billingSummary(data.status)),
     },
+    ...(owner ? [FEATURES_ITEM] : []),
     ...STATIC,
   ];
   return (

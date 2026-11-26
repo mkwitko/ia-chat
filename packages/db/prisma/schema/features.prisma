@@ -1,0 +1,24 @@
+// Recursos (H-51, spec 01): the owner's on/off per feature. The catalog and the plan of each
+// feature live in packages/core (features.ts); a feature without a row follows the plan.
+
+/// One owner choice. Never turns on a feature outside the plan (the API refuses, the readers ignore).
+model FeatureSetting {
+  tenantId  String   @map("tenant_id") @db.Uuid
+  feature   FeatureKey
+  enabled   Boolean
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@id([tenantId, feature])
+  @@map("feature_settings")
+}
+
+/// Mirrors Feature in packages/core/src/features.ts.
+enum FeatureKey {
+  audio_transcription
+  pix_deposit
+  ocr_pix_receipt
+  ocr_id_card
+  ocr_medical_request
+}
