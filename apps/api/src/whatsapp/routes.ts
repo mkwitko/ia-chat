@@ -14,6 +14,7 @@ import { requireTenant } from '../auth/tenant-guard.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { parsed, tenantOf } from '../setup/guarded.ts';
 import { errorCodeOf, isReady, runSetup } from './steps.ts';
+import { registerHistoryReviewRoutes } from './history-review-routes.ts';
 import { registerHistoryRoutes } from './history-routes.ts';
 import { channelView, saveChannel, signupChannel } from './store.ts';
 
@@ -60,6 +61,7 @@ export function registerWhatsappSignupRoutes(app: FastifyInstance, deps: Whatsap
     config ? retry(request, reply, { ...deps, config }) : off(reply),
   );
   registerHistoryRoutes(app, deps);
+  registerHistoryReviewRoutes(app);
 }
 
 function failed(reply: FastifyReply, code: string) {

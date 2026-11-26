@@ -19,6 +19,19 @@ export {
   type MediaDownloadFor,
 } from './media-client.ts';
 export { phoneKey, toE164, typedPhone } from './phone.ts';
+export { resolveContact, upsertContact } from './contacts.ts';
+export {
+  commitImport,
+  discardImport,
+  type CommitResult,
+  type ImportSelection,
+} from './history-import/commit.ts';
+export {
+  stageContact,
+  stageMessage,
+  type ImportScope,
+  type StagedMessage,
+} from './history-import/staging.ts';
 export * from './types.ts';
 export {
   AppDataSync,

@@ -2,17 +2,11 @@ import { randomUUID } from 'node:crypto';
 import { ContentType, InboundKind, parseCloudWebhook } from '@app/channels';
 import { asBody, textMessage } from '@app/channels/fixtures';
 import { contactsSync, historyChunk, historyDeclined } from '@app/channels/fixtures/coexistence';
-import {
-  ConversationControl,
-  createDb,
-  HistoryImportState,
-  MessageAuthor,
-  MessageStatus,
-} from '@app/db';
+import { createDb, HistoryImportState } from '@app/db';
 import { afterAll, describe, expect, it } from 'vitest';
 import { applyInboundEvents } from './apply.ts';
 
-// E-24b: the coexistence history becomes read-only context, and only after the owner authorized it.
+// E-24b: the coexistence history waits in staging, and only after the owner authorized it.
 
 const db = createDb(process.env.DATABASE_URL ?? '');
 afterAll(() => db.client.$disconnect());
@@ -38,48 +32,35 @@ const apply = (scope: Scope, payload: object) =>
     applyInboundEvents(tx, { ...scope, events: eventsOf(payload) }),
   );
 
-describe('history import', () => {
-  it('stores the thread as imported context: no turn, no unread, no usage, no control change', async () => {
+describe('history import staging', () => {
+  it('stages the thread and touches nothing else: no client, conversation or message', async () => {
     const scope = await newChannel(HistoryImportState.requested);
     const result = await apply(scope, historyChunk);
     expect(result.turns).toEqual([]);
     expect(result.usage).toEqual([]);
     await db.withTenant(scope.tenantId, async (tx) => {
-      const messages = await tx.message.findMany({ orderBy: { providerTimestamp: 'asc' } });
-      expect(messages).toHaveLength(4);
-      expect(messages.every((message) => message.imported)).toBe(true);
-      expect(messages.map((message) => message.author)).toEqual([
-        MessageAuthor.patient,
-        MessageAuthor.human,
-        MessageAuthor.human,
-        MessageAuthor.human,
-      ]);
-      expect(messages[0]).toMatchObject({ status: MessageStatus.received, sentFromPhone: false });
-      expect(messages[1]).toMatchObject({ status: MessageStatus.sent, sentFromPhone: true });
-      expect(messages[0]?.createdAt).toEqual(messages[0]?.providerTimestamp);
-      const conversations = await tx.conversation.findMany();
-      expect(conversations).toHaveLength(2);
-      expect(
-        conversations.every(
-          (one) => one.unreadCount === 0 && one.control === ConversationControl.ai,
-        ),
-      ).toBe(true);
-      expect(conversations.every((one) => one.pendingSince === null && one.turnVersion === 0)).toBe(
-        true,
-      );
+      expect(await tx.contact.count()).toBe(0);
+      expect(await tx.conversation.count()).toBe(0);
+      expect(await tx.message.count()).toBe(0);
+      expect(await tx.consentEvent.count()).toBe(0);
+      const staged = await tx.importContact.findMany({ orderBy: { lastMessageAt: 'asc' } });
+      expect(staged.map((one) => one.messageCount).toSorted((a, b) => a - b)).toEqual([1, 3]);
+      const [thread] = staged.filter((one) => one.messageCount === 3);
+      expect(thread?.firstMessageAt?.getTime()).toBe(1_798_981_100_000);
+      expect(thread?.lastMessageAt?.getTime()).toBe(1_798_981_300_000);
+      expect(await tx.importMessage.count()).toBe(4);
     });
   });
 
-  it('stores the media placeholder without a download and records no consent', async () => {
+  it('stages the media placeholder without a download', async () => {
     const scope = await newChannel(HistoryImportState.requested);
     const result = await apply(scope, historyChunk);
     expect(result.media).toEqual([]);
     await db.withTenant(scope.tenantId, async (tx) => {
-      const placeholder = await tx.message.findFirstOrThrow({
+      const placeholder = await tx.importMessage.findFirstOrThrow({
         where: { providerMessageId: 'wamid.HIST3' },
       });
-      expect(placeholder).toMatchObject({ type: 'unsupported', text: null });
-      expect(await tx.consentEvent.count()).toBe(0);
+      expect(placeholder).toMatchObject({ type: 'unsupported', text: null, fromOwner: true });
     });
   });
 
@@ -88,7 +69,9 @@ describe('history import', () => {
     await apply(scope, historyChunk);
     await apply(scope, historyChunk);
     await db.withTenant(scope.tenantId, async (tx) => {
-      expect(await tx.message.count()).toBe(4);
+      expect(await tx.importMessage.count()).toBe(4);
+      const counts = (await tx.importContact.findMany()).map((one) => one.messageCount);
+      expect(counts.toSorted((a, b) => a - b)).toEqual([1, 3]);
     });
   });
 
@@ -98,8 +81,8 @@ describe('history import', () => {
       await apply(scope, historyChunk);
       await apply(scope, contactsSync);
       await db.withTenant(scope.tenantId, async (tx) => {
-        expect(await tx.message.count()).toBe(0);
-        expect(await tx.contact.count()).toBe(0);
+        expect(await tx.importMessage.count()).toBe(0);
+        expect(await tx.importContact.count()).toBe(0);
       });
     }
   });
@@ -113,18 +96,37 @@ describe('history import', () => {
       applyInboundEvents(tx, { ...scope, events: [old] }),
     );
     await db.withTenant(scope.tenantId, async (tx) => {
-      expect(await tx.message.count()).toBe(0);
+      expect(await tx.importMessage.count()).toBe(0);
     });
   });
 
-  it('imports the phone book as clients without consent; removal keeps the client', async () => {
+  it('stages nothing once the owner closed the review', async () => {
+    const scope = await newChannel(HistoryImportState.done);
+    await db.withTenant(scope.tenantId, (tx) =>
+      tx.channel.update({
+        where: { id: scope.channelId },
+        data: { historyReviewedAt: new Date() },
+      }),
+    );
+    await apply(scope, historyChunk);
+    await apply(scope, contactsSync);
+    await db.withTenant(scope.tenantId, async (tx) => {
+      expect(await tx.importContact.count()).toBe(0);
+    });
+  });
+
+  it('stages the phone book without creating clients; removal changes nothing', async () => {
     const scope = await newChannel(HistoryImportState.requested);
     await apply(scope, contactsSync);
     await db.withTenant(scope.tenantId, async (tx) => {
-      const contacts = await tx.contact.findMany();
-      expect(contacts).toHaveLength(1);
-      expect(contacts[0]).toMatchObject({ name: 'Joana Exemplo', phoneE164: '+5541999990001' });
-      expect(await tx.consentEvent.count()).toBe(0);
+      expect(await tx.contact.count()).toBe(0);
+      const staged = await tx.importContact.findMany();
+      expect(staged).toHaveLength(1);
+      expect(staged[0]).toMatchObject({
+        name: 'Joana Exemplo',
+        phoneE164: '+5541999990001',
+        messageCount: 0,
+      });
     });
   });
 

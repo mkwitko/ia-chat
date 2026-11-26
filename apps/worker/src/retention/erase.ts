@@ -11,6 +11,8 @@ type Eraser = (tx: Tx, tenantId: string) => Promise<{ count: number }>;
  */
 const ERASERS: readonly Eraser[] = [
   (tx, tenantId) => tx.aiUsage.deleteMany({ where: { tenantId } }),
+  (tx, tenantId) => tx.importMessage.deleteMany({ where: { tenantId } }),
+  (tx, tenantId) => tx.importContact.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.message.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.turn.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.scheduledMessage.deleteMany({ where: { tenantId } }),

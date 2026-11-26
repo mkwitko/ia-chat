@@ -1,7 +1,11 @@
+import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
+import { Route } from '@/routes';
 import { HistoryCopy as Copy } from './history-copy';
+import { useReviewContacts } from './review-api';
+import { ReviewCopy } from './review-copy';
 import {
   HistoryState,
   useDecideHistory,
@@ -28,6 +32,7 @@ export function HistoryImport({ history }: Readonly<{ history: History }>) {
     case HistoryState.done:
       return (
         <>
+          <ReviewLink />
           <Note text={Copy.done} />
           <Suggest />
         </>
@@ -129,6 +134,20 @@ function Suggest() {
         }}
       >
         {suggest.isPending ? Copy.suggesting : Copy.suggest}
+      </Button>
+    </div>
+  );
+}
+
+/** The staged history waits for the owner's choice: nothing is in Clientes until then. */
+function ReviewLink() {
+  const count = useReviewContacts().data?.length ?? 0;
+  if (count === 0) return null;
+  return (
+    <div className="grid justify-items-start gap-2 rounded-lg border bg-card p-4">
+      <p className="text-sm text-muted-foreground">{ReviewCopy.openHint}</p>
+      <Button asChild>
+        <Link to={Route.importReview}>{ReviewCopy.open(count)}</Link>
       </Button>
     </div>
   );

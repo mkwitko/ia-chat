@@ -101,6 +101,8 @@ model Tenant {
   contactStageEvents   ContactStageEvent[]
   consentEvents        ConsentEvent[]
   clientPackages       ClientPackage[]
+  importContacts       ImportContact[]
+  importMessages       ImportMessage[]
   packageEntries       PackageEntry[]
   pushSubscriptions    PushSubscription[]
   calendarIntegration  CalendarIntegration?
