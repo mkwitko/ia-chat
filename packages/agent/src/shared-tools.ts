@@ -28,6 +28,8 @@ export const MAX_QUESTION_LENGTH = 300;
 
 export interface ToolEffects {
   handoff: boolean;
+  /** H-52: the Pix "copia e cola" the turn sends in its own message after the answer. */
+  pixCode?: string;
 }
 
 export function handoffTool(effects: ToolEffects) {

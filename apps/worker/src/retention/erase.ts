@@ -41,6 +41,7 @@ const ERASERS: readonly Eraser[] = [
   (tx, tenantId) => tx.pushSubscription.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.calendarIntegration.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.featureSetting.deleteMany({ where: { tenantId } }),
+  (tx, tenantId) => tx.depositSettings.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.invitation.deleteMany({ where: { tenantId } }),
 ];
 

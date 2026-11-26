@@ -593,3 +593,13 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] Onde roda: transcrição de áudio confere o recurso; sinal e leituras de imagem conferem nas etapas seguintes
 - [x] Tela Conta > Recursos com um interruptor por recurso e o plano que tem os de fora
 - Pronto quando: os testes do catálogo, da API e do job de mídia passam.
+
+### REC-02 Sinal por Pix com chave manual (decisão do dono, 26/11/2026, H-52)
+- [x] **(teste primeiro)** BR Code e CRC-16 contra o exemplo do Banco Central e o valor de verificação padrão; tipos de chave (`packages/core/src/deposit/brcode.test.ts`)
+- [x] **(teste primeiro)** Reserva: pagamento pendente sem mensagens, confirmação dispara confirmação e lembretes, prazo vencido uma vez só, remarcar leva, cancelar encerra (`packages/db/src/deposit/deposits.test.ts`)
+- [x] `agendar` com sinal devolve valor e prazo e deixa o código para uma mensagem própria; recurso desligado não pede sinal (`apps/worker/src/agent/deposit-tool.test.ts`)
+- [x] Validação recusa "recebemos o Pix" sem sinal pago (`packages/ai/src/agent/validate.test.ts`)
+- [x] Varredura: aviso único ao profissional, liberação no prazo e aviso ao paciente na janela (`apps/worker/src/deposit/deposit-sweep.test.ts`)
+- [x] API de configuração (só o dono), lista e "Recebi o Pix" (`apps/api/src/deposits/deposits.test.ts`); telas `/mais/conta/recursos/sinal` e `/sinais`
+- Pronto quando: os testes acima passam.
+

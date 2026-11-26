@@ -181,17 +181,16 @@ async function sendReply(
   tx: Tx,
   { job, reply, deps }: { job: TurnJob; reply: TurnReply; deps: TurnDeps },
 ): Promise<void> {
-  const { providerMessageId } = await deps.send(tx, {
-    conversationId: job.conversationId,
-    text: reply.text,
-  });
-  await recordOutbound(tx, {
-    tenantId: job.tenantId,
-    conversationId: job.conversationId,
-    author: MessageAuthor.ai,
-    text: reply.text,
-    providerMessageId,
-  });
+  for (const text of reply.followUp ? [reply.text, reply.followUp] : [reply.text]) {
+    const { providerMessageId } = await deps.send(tx, { conversationId: job.conversationId, text });
+    await recordOutbound(tx, {
+      tenantId: job.tenantId,
+      conversationId: job.conversationId,
+      author: MessageAuthor.ai,
+      text,
+      providerMessageId,
+    });
+  }
 }
 
 interface Finish {

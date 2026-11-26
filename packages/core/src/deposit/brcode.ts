@@ -106,15 +106,29 @@ export type PixKeyKind = (typeof PixKeyKind)[keyof typeof PixKeyKind];
 const CPF_DIGITS = 11;
 const PHONE = /^\+55\d{10,11}$/;
 const PHONE_NOISE = /[\s()-]/g;
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SPACE = /\s/;
+const AT = '@';
+const DOT = '.';
 const RANDOM = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
 const DOCUMENT_CHARS = /^[\d./-]+$/;
+
+/** One "@", something before it and a dot after it, no spaces. */
+function isEmail(text: string): boolean {
+  const at = text.indexOf(AT);
+  return (
+    at > 0 &&
+    at === text.lastIndexOf(AT) &&
+    text.lastIndexOf(DOT) > at + 1 &&
+    !text.endsWith(DOT) &&
+    !SPACE.test(text)
+  );
+}
 
 /** What kind of Pix key this is, or null when it is none. */
 export function pixKeyKind(raw: string): PixKeyKind | null {
   const text = raw.trim();
   if (RANDOM.test(text)) return PixKeyKind.random;
-  if (EMAIL.test(text)) return PixKeyKind.email;
+  if (isEmail(text)) return PixKeyKind.email;
   if (PHONE.test(text.replace(PHONE_NOISE, ''))) return PixKeyKind.phone;
   if (!DOCUMENT_CHARS.test(text) || !isValidDocument(text)) return null;
   return normalizeDocument(text).length === CPF_DIGITS ? PixKeyKind.cpf : PixKeyKind.cnpj;

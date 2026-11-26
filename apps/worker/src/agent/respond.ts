@@ -148,11 +148,13 @@ async function generate(
     // Spec 04: failed the checks twice; the professional answers instead.
     if (!checked.ok) return fixed(AgentCopy.handoffNotice(input.profile), true);
     const { result } = checked;
+    const mode = input.autonomy === Autonomy.approve ? DeliveryMode.draft : DeliveryMode.send;
+    const text = audioNotice(identified(result.text, input), turn);
     return {
-      text: audioNotice(identified(result.text, input), turn),
+      ...withPixCode(text, { mode, code: effects.pixCode }),
       model: modelKey(result.model),
       costMicroUsd: result.costMicroUsd,
-      mode: input.autonomy === Autonomy.approve ? DeliveryMode.draft : DeliveryMode.send,
+      mode,
       handoff: effects.handoff,
     };
   } catch (error) {
@@ -161,6 +163,15 @@ async function generate(
       return fixed(AgentCopy.handoffNotice(input.profile), true);
     throw error;
   }
+}
+
+/** H-52: the Pix code goes alone after the answer; a draft carries it for the professional to see. */
+function withPixCode(
+  text: string,
+  { mode, code }: { mode: DeliveryMode; code: string | undefined },
+) {
+  if (!code) return { text };
+  return mode === DeliveryMode.draft ? { text: `${text}\n\n${code}` } : { text, followUp: code };
 }
 
 /** Spec 03: an audio cut at three minutes is always said, whatever the model wrote. */

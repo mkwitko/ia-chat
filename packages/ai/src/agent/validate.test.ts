@@ -119,3 +119,39 @@ describe('facts from tool results', () => {
     expect(facts).toEqual({ cents: [18_000], times: ['15:00'], actions: ['booked'] });
   });
 });
+
+describe('deposit claims (H-52: only a paid status allows them)', () => {
+  const claims = [
+    'Recebemos o seu Pix, está tudo certo.',
+    'O sinal foi recebido!',
+    'Seu pagamento já foi recebido.',
+    'Confirmei o pagamento do sinal.',
+  ];
+
+  it('blocks a payment-received claim without a paid deposit', () => {
+    for (const text of claims)
+      expect(validateReply(text, rules()), text).toEqual([Violation.unconfirmedPayment]);
+  });
+
+  it('allows it when a tool showed the deposit paid', () => {
+    const facts = factsFromToolOutputs([
+      { tool: 'listar_agendamentos_do_paciente', output: { situacao_sinal: 'pago' } },
+    ]);
+    expect(validateReply(claims[1] ?? '', rules({ facts }))).toEqual([]);
+  });
+
+  it('lets the assistant say the professional will confirm', () => {
+    const text = 'Assim que o pagamento for confirmado pelo profissional, eu te aviso.';
+    expect(validateReply(text, rules())).toEqual([]);
+    expect(validateReply('Recebi o comprovante, o profissional vai conferir.', rules())).toEqual(
+      [],
+    );
+  });
+
+  it('collects the deposit deadline as an allowed time', () => {
+    const facts = factsFromToolOutputs([
+      { tool: 'agendar', output: { sinal: { expira_em: '2027-01-07T10:30:00-03:00' } } },
+    ]);
+    expect(facts.times).toEqual(['10:30']);
+  });
+});

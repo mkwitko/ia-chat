@@ -1,3 +1,4 @@
+import { MINUTES_PER_DAY } from '../agenda/zoned.ts';
 import { pixCopyPaste } from './brcode.ts';
 
 // Spec 05, "Sinal via Pix": every deposit provider sits behind this interface, like the WhatsApp
@@ -45,4 +46,4 @@ export function manualPixProvider(receiver: PixReceiver): DepositProvider {
 /** Spec 05: the slot is held this long by default while the deposit is not confirmed. */
 export const DEFAULT_HOLD_MINUTES = 30;
 export const MIN_HOLD_MINUTES = 10;
-export const MAX_HOLD_MINUTES = 24 * 60;
+export const MAX_HOLD_MINUTES = MINUTES_PER_DAY;

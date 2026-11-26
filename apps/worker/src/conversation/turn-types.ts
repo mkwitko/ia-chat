@@ -44,6 +44,8 @@ export interface TurnReply {
   handoff: boolean;
   /** Emergency answer: the professional is told right away (spec 10, "Notificações"). */
   urgent?: boolean;
+  /** H-52: a second message right after the answer (the Pix code, easy to copy on its own). */
+  followUp?: string;
 }
 
 export interface RespondInput {

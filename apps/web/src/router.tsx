@@ -10,6 +10,8 @@ import { ProServicesEditor, TimeOffEditor } from './app/agenda/hours-pages';
 import { AccountScreen, NotificationsScreen } from './app/account-settings/account-screen';
 import { BusinessEditor } from './app/clinic/business-editor';
 import { FeaturesScreen } from './app/features/features-screen';
+import { DepositSettingsScreen } from './app/deposits/deposit-settings-screen';
+import { DepositsScreen } from './app/deposits/deposits-screen';
 import { ClinicScreen } from './app/clinic/clinic-screen';
 import { legacyRoutes } from './app/clinic/legacy-redirect';
 import {
@@ -73,6 +75,7 @@ export const router = createBrowserRouter([
       { path: Route.customers, element: <CustomersScreen /> },
       { path: Route.customer, element: <CustomerScreen /> },
       { path: Route.results, element: <ResultsScreen /> },
+      { path: Route.deposits, element: <DepositsScreen /> },
       {
         path: Route.more,
         children: [
@@ -98,6 +101,7 @@ export const router = createBrowserRouter([
           { path: Route.account, element: <AccountScreen /> },
           { path: Route.accountNotifications, element: <NotificationsScreen /> },
           { path: Route.accountFeatures, element: <FeaturesScreen /> },
+          { path: Route.depositSettings, element: <DepositSettingsScreen /> },
           { path: Route.importReview, element: <ReviewScreen /> },
           { path: Route.usage, element: <UsageScreen /> },
           { path: Route.billing, element: <BillingScreen /> },

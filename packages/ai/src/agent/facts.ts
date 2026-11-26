@@ -5,6 +5,8 @@ export const ActionKind = {
   booked: 'booked',
   cancelled: 'cancelled',
   rescheduled: 'rescheduled',
+  /** H-52: a tool showed a deposit with status paid; only then "recebemos o Pix" may be said. */
+  paid: 'paid',
 } as const;
 export type ActionKind = (typeof ActionKind)[keyof typeof ActionKind];
 
@@ -16,7 +18,9 @@ const ACTION_BY_TOOL: Readonly<Record<string, ActionKind>> = {
   // "Está confirmado" claims count as the booking standing (validate.ts maps them to `booked`).
   confirmar_presenca: ActionKind.booked,
 };
-const TIME_KEYS = new Set(['inicio', 'fim', 'novo_inicio', 'start']);
+const TIME_KEYS = new Set(['inicio', 'fim', 'novo_inicio', 'start', 'expira_em']);
+const DEPOSIT_KEY = 'situacao_sinal';
+const DEPOSIT_PAID = 'pago';
 const CENTS_KEYS = new Set(['valor_centavos', 'price_cents', 'priceCents']);
 const ERROR_KEY = 'erro';
 const ISO_TIME = /T(\d{2}:\d{2})/;
@@ -59,6 +63,10 @@ function collectEntry(key: string, item: unknown, facts: ToolFacts): void {
   if (TIME_KEYS.has(key)) {
     const time = ISO_TIME.exec(String(item))?.[1];
     if (time) facts.times.push(time);
+    return;
+  }
+  if (key === DEPOSIT_KEY) {
+    if (item === DEPOSIT_PAID) facts.actions.push(ActionKind.paid);
     return;
   }
   if (CENTS_KEYS.has(key) && Number.isInteger(item)) {
