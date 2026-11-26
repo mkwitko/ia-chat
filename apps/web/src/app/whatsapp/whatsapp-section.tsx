@@ -1,3 +1,4 @@
+import { LoadError } from '../inbox/query-states';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { notifyError } from '@/lib/notify';
@@ -39,7 +40,9 @@ export function WhatsappConnect({ withHistory = true }: Readonly<{ withHistory?:
   const { appId, configId, available, channel } = status.data ?? {};
   return (
     <div className="grid gap-3">
-      {status.isError && <p role="alert">{Copy.loadFailed}</p>}
+      {status.isError && (
+        <LoadError message={Copy.loadFailed} onRetry={() => void status.refetch()} />
+      )}
       {status.data && (!available || !appId || !configId) && <Unavailable />}
       {channel && <ChannelState channel={channel} withHistory={withHistory} />}
       {appId && configId && (

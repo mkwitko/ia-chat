@@ -1,3 +1,4 @@
+import { LoadError } from '../inbox/query-states';
 import { Button } from '@/components/ui/button';
 import { BookingCopy as Copy } from './agenda-copy';
 import { timeLabel } from './agenda-dates';
@@ -66,9 +67,7 @@ function SlotNotes({ serviceId, slots, empty }: Readonly<NotesProps>) {
         <p className="text-sm text-muted-foreground">{Copy.loadingSlots}</p>
       )}
       {slots.isError && (
-        <p role="alert" className="text-sm text-danger">
-          {Copy.slotsFailed}
-        </p>
+        <LoadError message={Copy.slotsFailed} onRetry={() => void slots.refetch()} />
       )}
       {slots.data && empty && <p className="text-sm text-muted-foreground">{Copy.noSlots}</p>}
     </>
