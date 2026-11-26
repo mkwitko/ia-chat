@@ -48,10 +48,7 @@ export function ActivationStep({ view }: Readonly<{ view: OnboardingView }>) {
           {OnboardingCopy.activationNeedsWhatsapp}
         </p>
       )}
-      <section className="grid gap-4" aria-labelledby="phone-heading">
-        <h3 id="phone-heading" className="font-semibold">
-          {ActivationCopy.phoneHeading}
-        </h3>
+      <section className="grid gap-4" aria-label={ActivationCopy.phoneHeading}>
         <InstallRow />
         <NotifyRow />
       </section>
@@ -76,7 +73,7 @@ function InstallRow() {
           {ActivationCopy.install}
         </Button>
       )}
-      {!installed && !prompt && <p className="font-medium">{ActivationCopy.install}</p>}
+      {!installed && !prompt && <h3 className="font-semibold">{ActivationCopy.install}</h3>}
       {!installed && <p className="text-sm text-muted-foreground">{ActivationCopy.installHint}</p>}
       {!installed && <IphoneInstall />}
     </div>

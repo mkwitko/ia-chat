@@ -52,7 +52,7 @@ export function MoreOptions({
           aria-hidden="true"
         />
       </summary>
-      <div className="grid gap-5 border-t px-4 pt-4 pb-5">{children}</div>
+      <div className="grid gap-5 border-t pt-4 pb-5 md:px-4">{children}</div>
     </details>
   );
 }

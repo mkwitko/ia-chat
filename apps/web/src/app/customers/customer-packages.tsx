@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import { toast } from 'sonner';
 import { notifyError } from '@/lib/notify';
+import { MoreOptions } from '../screens/editor-screen';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { CardList, Note, Section } from '../screens/section';
@@ -32,7 +33,11 @@ export function PackagesSection({ customerId }: Readonly<{ customerId: string }>
           ))}
         </CardList>
       )}
-      <RegisterPackage customerId={customerId} options={options} />
+      <div className="px-4 pt-3 md:px-0">
+        <MoreOptions label={Copy.registerFold}>
+          <RegisterPackage customerId={customerId} options={options} />
+        </MoreOptions>
+      </div>
     </Section>
   );
 }

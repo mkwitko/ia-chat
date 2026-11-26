@@ -11,7 +11,7 @@ import { Note } from '../screens/section';
 import { AppointmentsSection } from './customer-appointments';
 import { ConsentSection } from './customer-consent';
 import { PackagesSection } from './customer-packages';
-import { customerName } from './customer-format';
+import { customerName, formatPhone } from './customer-format';
 import { OriginSection } from './customer-origin';
 import { StageSection } from './customer-stage';
 import { useCustomer } from './customers-api';
@@ -47,7 +47,7 @@ function Content({ customer }: Readonly<{ customer: CustomerDetail }>) {
     <div className="grid pb-10">
       <div className="grid gap-2 px-4 pb-2 md:px-0">
         <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          {customer.phone && <span className="tabular-nums">{customer.phone}</span>}
+          {customer.phone && <span className="tabular-nums">{formatPhone(customer.phone)}</span>}
           <StageBadge stage={customer.stage} />
         </p>
         {customer.conversationId && (

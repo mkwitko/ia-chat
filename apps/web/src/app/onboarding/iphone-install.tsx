@@ -9,7 +9,6 @@ import { BrandMark } from '../brand-mark';
 
 export const IphoneCopy = defineMessages({
   [Locale.ptBR]: {
-    title: 'No iPhone, em 3 toques',
     other: 'Usa iPhone? Veja como',
     steps: [
       'Abra este painel no Safari e toque no botão Compartilhar, embaixo, no meio da tela.',
@@ -108,13 +107,7 @@ function Steps() {
 
 /** Open on the iPhone; elsewhere tucked under "Usa iPhone? Veja como". */
 export function IphoneInstall() {
-  if (isIphone())
-    return (
-      <section className="grid gap-3">
-        <h4 className="font-semibold">{IphoneCopy.title}</h4>
-        <Steps />
-      </section>
-    );
+  if (isIphone()) return <Steps />;
   return (
     <details className="group grid gap-3">
       <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 font-medium [&::-webkit-details-marker]:hidden">
