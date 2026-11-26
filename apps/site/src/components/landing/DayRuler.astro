@@ -1,0 +1,133 @@
+---
+import { DAY_HOURS, HOUR_LABELS, clock, dayOffset } from '../../lib/sample-day.ts';
+import { MISSED_MESSAGES, SESSIONS } from '../../lib/sample-day-fixtures.ts';
+// The day ruler: treatment hours hatched, unanswered messages pinned where they arrived. The list
+// below it in Problem.astro carries the same facts for screen readers.
+---
+
+<figure class="ruler" aria-hidden="true" style={`--hours:${String(DAY_HOURS)}`}>
+  <div class="track">
+    {SESSIONS.map((hour) => <span class="session" style={`left:${dayOffset(hour)}`} />)}
+    {
+      MISSED_MESSAGES.map((m) => (
+        <span class="ping" style={`left:${dayOffset(m.hour, m.minute)}`}>
+          {clock(m.hour, m.minute)}
+        </span>
+      ))
+    }
+  </div>
+  <div class="hours">
+    {HOUR_LABELS.map((hour) => <span style={`left:${dayOffset(hour)}`}>{hour}h</span>)}
+  </div>
+  <figcaption>
+    <span class="key-busy"></span>em atendimento
+    <span class="key-ping"></span>mensagem sem resposta
+  </figcaption>
+</figure>
+
+<style>
+  .ruler {
+    --track-h: 56px;
+    margin: 0 0 40px;
+    padding-top: 30px;
+  }
+  .track {
+    position: relative;
+    height: var(--track-h);
+    border-block: 1px solid var(--line-strong);
+    background: repeating-linear-gradient(
+      90deg,
+      var(--line) 0 1px,
+      transparent 1px calc(100% / var(--hours))
+    );
+  }
+  .session {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    width: calc(100% / var(--hours) - 2px);
+    margin-left: 1px;
+    border-radius: 4px;
+    border: 1px solid var(--line-strong);
+    background:
+      repeating-linear-gradient(135deg, var(--line-strong) 0 1px, transparent 1px 6px),
+      var(--surface-2);
+  }
+  .ping {
+    position: absolute;
+    top: -30px;
+    transform: translateX(-50%);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    color: var(--attention);
+    white-space: nowrap;
+  }
+  .ping::before,
+  .ping::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+  }
+  .ping::before {
+    top: 18px;
+    width: 1px;
+    height: calc(12px + var(--track-h));
+    background: var(--attention);
+  }
+  .ping::after {
+    top: 22px;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+    background: var(--attention);
+    box-shadow: 0 0 0 3px var(--bg);
+  }
+  .hours {
+    position: relative;
+    height: 24px;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .hours span {
+    position: absolute;
+    top: 6px;
+    transform: translateX(-50%);
+  }
+  .hours span:first-child {
+    transform: none;
+  }
+  .hours span:last-child {
+    transform: translateX(-100%);
+  }
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .key-busy,
+  .key-ping {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+  }
+  .key-ping {
+    margin-left: 8px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--attention);
+  }
+  @media (min-width: 960px) {
+    .ruler {
+      --track-h: 72px;
+      margin-bottom: 48px;
+    }
+  }
+</style>

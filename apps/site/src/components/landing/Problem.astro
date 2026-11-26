@@ -1,61 +1,46 @@
 ---
-// Section 2: the day as it is today. No statistics; notifications with fictitious patients.
-const notifications = [
-  {
-    time: '10:20',
-    who: 'Marcos',
-    text: 'Áudio · 0:38',
-    note: 'Você está com um paciente. É alguém perguntando o preço.',
-  },
-  {
-    time: '14:05',
-    who: 'Carla',
-    text: 'Tem horário amanhã?',
-    note: 'Você só vê às 18h, entre um atendimento e outro.',
-  },
-  {
-    time: '21:03',
-    who: 'Bruno',
-    text: 'Boa noite, vocês atendem sábado?',
-    note: 'Depois do expediente. A resposta fica para amanhã.',
-  },
-] as const;
+import DayRuler from './DayRuler.astro';
+import { clock } from '../../lib/sample-day.ts';
+import { MISSED_MESSAGES } from '../../lib/sample-day-fixtures.ts';
+// Section 2: the day as it is today. No statistics; fictitious patients.
 ---
 
 <section class="problem wrap" aria-labelledby="problema">
   <h2 id="problema">
     A mensagem chega enquanto você está com um paciente. Quando você vê, ele já marcou com outro.
   </h2>
+  <DayRuler />
   <ol class="day">
     {
-      notifications.map((item) => (
+      MISSED_MESSAGES.map((m) => (
         <li>
-          <time>{item.time}</time>
+          <time>{clock(m.hour, m.minute)}</time>
           <div class="notif">
             <p class="who">
-              <strong>{item.who}</strong>
+              <strong>{m.who}</strong>
               <span>sem resposta</span>
             </p>
-            <p class="msg">{item.text}</p>
+            <p class="msg">{m.text}</p>
           </div>
-          <p class="note">{item.note}</p>
+          <p class="note">{m.note}</p>
         </li>
       ))
     }
   </ol>
-  <p class="foot-note">Nomes fictícios.</p>
+  <p class="foot-note">Um dia de exemplo. Nomes e horários fictícios.</p>
 </section>
 
 <style>
   .problem {
-    padding-top: 88px;
+    padding-top: 96px;
   }
   h2 {
     font-size: clamp(28px, 4.4vw, 48px);
     line-height: 1.1;
     letter-spacing: -0.03em;
-    max-width: 22ch;
+    max-width: 24ch;
     margin: 0 0 40px;
+    text-wrap: balance;
   }
   .day {
     list-style: none;
@@ -73,6 +58,7 @@ const notifications = [
     font-size: 15px;
     font-weight: 600;
     padding-top: 12px;
+    color: var(--attention);
   }
   .notif {
     background: var(--surface);
@@ -106,14 +92,13 @@ const notifications = [
     color: var(--ink-2);
   }
   .foot-note {
-    margin: 20px 0 0 72px;
+    margin: 20px 0 0;
     font-size: 13px;
     color: var(--ink-2);
   }
-
   @media (min-width: 960px) {
     .problem {
-      padding-top: 128px;
+      padding-top: 144px;
     }
     .day {
       grid-template-columns: repeat(3, 1fr);
@@ -122,8 +107,6 @@ const notifications = [
     .day li {
       grid-template-columns: 1fr;
       align-content: start;
-      border-top: 1px solid var(--line-strong);
-      padding-top: 16px;
     }
     time {
       padding-top: 0;
@@ -133,9 +116,6 @@ const notifications = [
     }
     .note {
       grid-column: 1;
-    }
-    .foot-note {
-      margin-left: 0;
     }
   }
 </style>

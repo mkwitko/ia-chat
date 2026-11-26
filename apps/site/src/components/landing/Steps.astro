@@ -1,5 +1,5 @@
 ---
-// Section 3: three steps, each with a small drawing of what the visitor will see.
+// Section 3: three steps on one track, each ending in what the visitor will see.
 const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 13, 8];
 ---
 
@@ -7,38 +7,35 @@ const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 
   <h2 id="como">Pronto sem você aprender sistema.</h2>
   <ol>
     <li>
-      <div class="art" aria-hidden="true">
-        <div class="pill">
-          <span class="dot"></span>
-          <span><strong>Seu número de sempre</strong><small>conectado · WhatsApp oficial</small></span>
-        </div>
-      </div>
-      <h3><span class="n">1</span>Conecte seu WhatsApp</h3>
+      <span class="n" aria-hidden="true">1</span>
+      <h3>Conecte seu WhatsApp</h3>
       <p>Mesmo número. Você continua respondendo pelo app no celular quando quiser.</p>
+      <div class="art pill" aria-hidden="true">
+        <span class="dot"></span>
+        <span><strong>Seu número de sempre</strong><small>conectado · WhatsApp oficial</small></span>
+      </div>
     </li>
     <li>
-      <div class="art" aria-hidden="true">
-        <div class="voice">
-          <svg class="play" width="14" height="14" viewBox="0 0 14 14"><path d="M3 1.5v11l9-5.5z"></path></svg>
-          <span class="wave">{bars.map((h) => <i style={`height:${String(h)}px`} />)}</span>
-          <small>1:12</small>
-        </div>
-      </div>
-      <h3><span class="n">2</span>Mande um áudio</h3>
+      <span class="n" aria-hidden="true">2</span>
+      <h3>Mande um áudio</h3>
       <p>
         Conte serviços, preços e horários. A gente configura, e você testa e aprova antes de ligar
         qualquer coisa.
       </p>
+      <div class="art voice" aria-hidden="true">
+        <svg class="play" width="14" height="14" viewBox="0 0 14 14"><path d="M3 1.5v11l9-5.5z"></path></svg>
+        <span class="wave">{bars.map((h) => <i style={`height:${String(h)}px`} />)}</span>
+        <small>1:12</small>
+      </div>
     </li>
     <li>
-      <div class="art" aria-hidden="true">
-        <div class="event">
-          <strong>Avaliação · qui., 15:00</strong>
-          <small>Lembrete enviado 1 dia e 2 horas antes</small>
-        </div>
-      </div>
-      <h3><span class="n">3</span>O assistente atende</h3>
+      <span class="n" aria-hidden="true">3</span>
+      <h3>O assistente atende</h3>
       <p>Responde, marca no seu Google Agenda e lembra o paciente da consulta.</p>
+      <div class="art event" aria-hidden="true">
+        <strong>Avaliação · qui., 15:00</strong>
+        <small>Lembrete enviado 1 dia e 2 horas antes</small>
+      </div>
     </li>
   </ol>
 </section>
@@ -58,24 +55,42 @@ const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 40px;
   }
-  h3 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 20px 0 6px;
-    font-size: 20px;
+  li {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+    padding: 0 0 40px 48px;
+  }
+  li:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 36px;
+    bottom: 4px;
+    width: 1px;
+    background: var(--line-strong);
   }
   .n {
+    position: absolute;
+    left: 0;
+    top: 0;
     display: grid;
     place-items: center;
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 1px solid var(--line-strong);
-    font-size: 13px;
+    background: var(--action);
+    color: var(--action-ink);
+    font-size: 14px;
     font-weight: 600;
+  }
+  h3 {
+    margin: 2px 0 0;
+    font-size: 22px;
+    line-height: 28px;
+    letter-spacing: -0.01em;
   }
   p {
     margin: 0;
@@ -83,19 +98,17 @@ const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 
     max-width: 38ch;
   }
   .art {
-    display: grid;
-    place-items: center;
-    height: 148px;
-    background: var(--surface-2);
-    border-radius: var(--radius-lg);
-    padding: 16px;
-  }
-  .pill,
-  .voice,
-  .event {
+    margin-top: 14px;
     background: var(--surface);
     border: 1px solid var(--line);
     box-shadow: var(--elevation);
+    font-size: 14px;
+    line-height: 18px;
+  }
+  .art small {
+    display: block;
+    color: var(--ink-2);
+    font-size: 12px;
   }
   .pill {
     display: flex;
@@ -103,14 +116,6 @@ const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 
     gap: 12px;
     padding: 12px 16px;
     border-radius: 999px;
-    font-size: 14px;
-    line-height: 18px;
-  }
-  .pill small,
-  .event small {
-    display: block;
-    color: var(--ink-2);
-    font-size: 12px;
   }
   .dot {
     width: 10px;
@@ -142,15 +147,9 @@ const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 
     border-radius: 2px;
     background: var(--ink-2);
   }
-  .voice small {
-    color: var(--ink-2);
-    font-size: 12px;
-  }
   .event {
     padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    line-height: 18px;
+    border-radius: var(--radius);
     background: var(--jade-soft);
     border-color: var(--jade);
   }
@@ -164,10 +163,22 @@ const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 
     }
     ol {
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 32px;
+    }
+    li {
+      grid-template-rows: auto 1fr auto;
+      padding: 56px 0 0;
+    }
+    li:not(:last-child)::before {
+      left: 48px;
+      right: -20px;
+      top: 16px;
+      bottom: auto;
+      width: auto;
+      height: 1px;
     }
     .art {
-      height: 188px;
+      margin-top: 24px;
     }
   }
 </style>

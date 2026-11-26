@@ -5,18 +5,18 @@ primary_target: "apps/site/src/pages/index.astro"
 related_targets: ["apps/site/src/pages/precos.astro"]
 ---
 
-Scope: public landing page of apps/site (`/`), Persuade. Related: `/precos`. Content and section order pinned by `founder/landing-brief.md` (11 sections); visual world pinned by DESIGN.md (graphite + jade, Geist). Zero customers: no testimonials, logos, ratings or numbers.
+Scope: public landing page of apps/site (`/`), Persuade. Related: `/precos`. Content and section order pinned by `founder/landing-brief.md` (11 sections); visual world pinned by DESIGN.md (graphite + jade, Geist). Zero customers: no testimonials, logos, ratings or numbers. Redesign of 26/11/2026 (owner: "still weak").
 
 ## Direction contract
 
-THESIS: The page is a reception desk that stays open: it shows the assistant at work (a patient asks, the reply lands, the slot fills in Google Agenda) instead of describing it. Refuses the category default of centered hero, three icon cards, testimonial wall.
+THESIS: One clock, two lanes. The page shows the hour the professional is in the treatment room (graphite lane) while the assistant works the WhatsApp and the agenda (jade lane) at the same time; every promise is a lane moving. Refuses the split hero with a phone, rows of equal icon cards and the testimonial wall.
 
-OWN-WORLD: Graphite ground (#FAFAFA / #09090B), ink action buttons, Geist set large and tight (-0.035em) for display, tabular numerals for times and prices. Jade (#00A389 / #2BC9A8) appears only where the assistant is: its bubbles, its label, the booked slot. Hairline rules, 14px radii, phone frames in ink.
+OWN-WORLD: Graphite ground (#FAFAFA / #09090B), ink buttons, Geist display at 80-96px, -0.035em, tabular times everywhere as the page's ruler. Hatched graphite bars are "you, busy"; jade only on the assistant's bubbles, label and the booked slot; attention orange only on unanswered messages. Hairline rules, 14px radii, one inverted band.
 
-STORY: The visitor recognises the 21h message they never answered, sees the assistant reply with real-looking (fictitious) data, sees the approval card from the real panel, believes it does not invent prices, sees the total monthly cost, and asks for an invite.
+STORY: The visitor sees an hour of their own day with the phone in the pocket, then the same day today with three unanswered messages on a day ruler, believes the rules (answers come from the register), sees the full monthly cost, and asks for an invite.
 
-FIRST VIEWPORT: Mobile: headline (40px), support line, "Pedir convite" ink button, the three conditions, then the phone conversation begins above the fold. Desktop: headline left in 7 columns at ~76px, phone with animated conversation and agenda slot on the right, label "exemplo com dados fictícios" on the phone.
+FIRST VIEWPORT: Desktop: headline across 8 columns at ~84px, support + "Pedir convite" + three conditions in the right 4 columns aligned to the headline's baseline; below, full width, the two-lane board 15:00-16:00 (Você / WhatsApp / Agenda) animating once. Mobile: headline 40px, support, button, conditions, then the board turned vertical (time runs down, your lane is the left rail).
 
-FORM: Surface inside the established world, shaped directly from the pinned brief (no concept roll: the user's brief fixed structure and world). seed: none (unavailable)
+FORM: Dual-track timeline, candidate 6 of 7 on the ordered list (dealt lead); raises: scale contrast from variable-font-specimen (huge display vs. small tabular labels), numbered-figure honesty from patent-drawing-sheet (every demo labelled as fictitious example). seed: none (unavailable)
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
