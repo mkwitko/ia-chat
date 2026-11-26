@@ -6,6 +6,7 @@ export {
   parseEnvWith,
   type Env,
 } from './env.ts';
+export { MESSAGE_TEXT_RETENTION_DAYS } from './retention.ts';
 export { availableSlots, overlaps } from './agenda/slots.ts';
 export type { AvailabilityRule, Interval, SlotQuery } from './agenda/slots.ts';
 export { MAX_OPTIONS, pickSpread } from './agenda/spread.ts';

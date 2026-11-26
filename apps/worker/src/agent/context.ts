@@ -55,12 +55,16 @@ async function loadHistory(
   conversationId: string,
 ): Promise<{ history: ModelMessage[]; firstMessage: boolean }> {
   const recent = await tx.message.findMany({
-    where: { conversationId },
+    where: { conversationId, imported: false }, // E-24b: imported history is never model context
     orderBy: { createdAt: 'desc' },
     take: HISTORY_LIMIT,
   });
   const answered = await tx.message.count({
-    where: { conversationId, author: { in: [MessageAuthor.ai, MessageAuthor.human] } },
+    where: {
+      conversationId,
+      imported: false,
+      author: { in: [MessageAuthor.ai, MessageAuthor.human] },
+    },
   });
   const history = recent
     .toReversed()

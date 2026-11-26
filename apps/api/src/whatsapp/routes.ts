@@ -1,3 +1,4 @@
+import type { AiGateway } from '@app/ai';
 import { createBusinessClient, exchangeSignupCode } from '@app/channels';
 import {
   Provider,
@@ -13,6 +14,7 @@ import { requireTenant } from '../auth/tenant-guard.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { parsed, tenantOf } from '../setup/guarded.ts';
 import { errorCodeOf, isReady, runSetup } from './steps.ts';
+import { registerHistoryRoutes } from './history-routes.ts';
 import { channelView, saveChannel, signupChannel } from './store.ts';
 
 // E-24, spec 03 "Onboarding do canal": the panel runs Meta's Embedded Signup and posts the result
@@ -36,6 +38,8 @@ export interface WhatsappSignupDeps {
   config: WhatsappSignupConfig | undefined;
   /** Test seam: the `fetch` used for the Graph API. */
   fetch?: typeof fetch | undefined;
+  /** Model gateway for "IA sugere" over the imported history; off without it. */
+  gateway?: AiGateway | undefined;
 }
 type Ready = WhatsappSignupDeps & { config: WhatsappSignupConfig };
 
@@ -55,6 +59,7 @@ export function registerWhatsappSignupRoutes(app: FastifyInstance, deps: Whatsap
   app.post(`${PATH}/retry`, manage, (request, reply) =>
     config ? retry(request, reply, { ...deps, config }) : off(reply),
   );
+  registerHistoryRoutes(app, deps);
 }
 
 function failed(reply: FastifyReply, code: string) {

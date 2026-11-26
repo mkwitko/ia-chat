@@ -21,6 +21,7 @@ export {
 export { phoneKey, toE164, typedPhone } from './phone.ts';
 export * from './types.ts';
 export {
+  AppDataSync,
   createBusinessClient,
   exchangeSignupCode,
   templateKey,

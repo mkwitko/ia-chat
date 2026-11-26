@@ -323,9 +323,10 @@ Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding d
 - [ ] Pessoa de fora da equipe ativa uma conta sem ajuda
 
 ### E-24b Onboarding pelo histórico (opcional)
-- [ ] Autorização explícita do profissional
-- [ ] Descarte de mensagens com informação de saúde antes da extração
+- [x] Autorização explícita do profissional (cartão em Mais > Conexões; pedido à Meta só depois do clique, dentro das 24 h; spec 03, "Histórico da coexistência")
+- [x] Descarte de mensagens com informação de saúde antes da extração (juízo de saúde por mensagem antes do modelo e de novo na saída; falha descarta)
 - [ ] Sugestões de perguntas frequentes e de tom de voz para aprovar
+  - Feito: perguntas frequentes ("Sugerir com IA", atrás de clique, entram como pendentes). Falta: tom de voz; validar tudo com um número real em coexistência (testes usam fixtures da documentação, sem chamada paga)
 
 ### E-25 Assinatura
 Spec: `05-agenda-e-pagamentos.md` (assinatura do SaaS).
