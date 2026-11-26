@@ -29,6 +29,7 @@ const ADJUST_ERRORS: Readonly<Record<string, string>> = {
 
 export const PackagesCopy = {
   heading: 'Pacotes',
+  registerFold: 'Registrar um pacote',
   intro:
     'Cada "Compareceu" usa uma sessão do pacote mais antigo que ainda tem saldo. Se a presença for desfeita, a sessão volta.',
   empty: 'Nenhum pacote registrado.',

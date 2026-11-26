@@ -77,6 +77,14 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
           />
           <MetricGrid>
             <CountMetric {...Copy.newContacts} count={results.newContacts} />
+            <RateMetric
+              {...Copy.escalation}
+              rate={rateOf(
+                results.escalation.handedOff,
+                results.escalation.total,
+                results.minSample,
+              )}
+            />
             <AgendaMetrics results={results} />
           </MetricGrid>
           <Note>{Copy.requestsNote}</Note>
@@ -98,19 +106,13 @@ function RecoveredSection({ results }: Readonly<{ results: ResultsView }>) {
 }
 
 function ResponseMetrics({ results }: Readonly<{ results: ResultsView }>) {
-  const { minSample, firstResponse, escalation } = results;
+  const { minSample, firstResponse } = results;
   return (
-    <>
-      <DurationMetric
-        {...Copy.firstResponse}
-        duration={durationOf(firstResponse.medianSeconds, firstResponse.sample, minSample)}
-        sampleNote={Copy.firstResponse.sample}
-      />
-      <RateMetric
-        {...Copy.escalation}
-        rate={rateOf(escalation.handedOff, escalation.total, minSample)}
-      />
-    </>
+    <DurationMetric
+      {...Copy.firstResponse}
+      duration={durationOf(firstResponse.medianSeconds, firstResponse.sample, minSample)}
+      sampleNote={Copy.firstResponse.sample}
+    />
   );
 }
 
