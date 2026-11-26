@@ -3,8 +3,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
-import { BackLink } from '../screens/back-link';
-import { Screen } from '../screens/screen';
+import { EditorScreen } from '../screens/editor-screen';
 import { AreaField } from '../setup/fields';
 import { CommonCopy } from '../setup/setup-copy';
 import { Chat } from './chat';
@@ -33,12 +32,11 @@ const plainOf = ({ role, text }: ChatLine): SimulatedMessage => ({ role, text })
 export function SimulatorScreen() {
   const chat = useSimulation();
   return (
-    <Screen title={Copy.title}>
-      <BackLink to={Route.assistant} label={CommonCopy.assistant} />
+    <EditorScreen title={Copy.title} back={{ to: Route.assistant, label: CommonCopy.assistant }}>
       <Notes />
       <Chat lines={chat.lines} />
       <Composer chat={chat} />
-    </Screen>
+    </EditorScreen>
   );
 }
 
@@ -70,7 +68,7 @@ function useSimulation() {
 function Composer({ chat }: Readonly<{ chat: ReturnType<typeof useSimulation> }>) {
   return (
     <form
-      className="grid gap-3 px-4 pb-10 md:px-0"
+      className="grid gap-3"
       onSubmit={(event) => {
         event.preventDefault();
         chat.send();

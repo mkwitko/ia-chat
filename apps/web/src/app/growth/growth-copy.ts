@@ -1,5 +1,5 @@
 export const GrowthCopy = {
-  title: 'Retorno e avaliações',
+  title: 'Mensagens automáticas',
   intro:
     'Mensagens que o assistente manda por conta própria, uma só vez, e só se você ligar. Você decide quando e o que ele diz.',
   followUp: {

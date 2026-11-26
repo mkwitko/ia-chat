@@ -19,6 +19,7 @@ import {
 } from './app/clinic/list-editors';
 import { PaymentsEditor } from './app/clinic/payments-editor';
 import { AssistantScreen } from './app/assistant/assistant-screen';
+import { AutonomyEditor, IdentityEditor } from './app/assistant/assistant-editors';
 import { OnboardingScreen } from './app/onboarding/onboarding-screen';
 import { LoginPage } from './app/login/login-page';
 import { ConversationScreen } from './app/inbox/conversation-screen';
@@ -74,6 +75,8 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <MoreScreen /> },
           { path: Route.assistant, element: <AssistantScreen /> },
+          { path: Route.assistantAutonomy, element: <AutonomyEditor /> },
+          { path: Route.assistantIdentity, element: <IdentityEditor /> },
           { path: Route.tone, element: <ToneScreen /> },
           { path: Route.knowledge, element: <KnowledgeScreen /> },
           { path: Route.simulator, element: <SimulatorScreen /> },

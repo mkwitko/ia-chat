@@ -33,14 +33,14 @@ export function WhatsappSection() {
 }
 
 /** The state of the number and the one button that connects it (Meu consultório › WhatsApp). */
-export function WhatsappConnect() {
+export function WhatsappConnect({ withHistory = true }: Readonly<{ withHistory?: boolean }>) {
   const status = useWhatsappStatus();
   const { appId, configId, available, channel } = status.data ?? {};
   return (
     <div className="grid gap-3">
       {status.isError && <p role="alert">{Copy.loadFailed}</p>}
       {status.data && (!available || !appId || !configId) && <Unavailable />}
-      {channel && <ChannelState channel={channel} />}
+      {channel && <ChannelState channel={channel} withHistory={withHistory} />}
       {appId && configId && (
         <ConnectButton ids={{ appId, configId }} label={channel ? Copy.reconnect : Copy.connect} />
       )}
@@ -63,7 +63,10 @@ function Unavailable() {
   );
 }
 
-function ChannelState({ channel }: Readonly<{ channel: WhatsappChannel }>) {
+function ChannelState({
+  channel,
+  withHistory,
+}: Readonly<{ channel: WhatsappChannel; withHistory: boolean }>) {
   if (!channel.ready)
     return (
       <div className="grid gap-2">
@@ -83,7 +86,7 @@ function ChannelState({ channel }: Readonly<{ channel: WhatsappChannel }>) {
         {channel.displayPhone ? Copy.connected(channel.displayPhone) : Copy.connectedNoPhone}
       </p>
       {channel.coexistence && <p className="text-sm">{Copy.coexistence}</p>}
-      {channel.coexistence && <HistoryImport history={channel.history} />}
+      {withHistory && channel.coexistence && <HistoryImport history={channel.history} />}
       {!channel.paymentMethod && (
         <>
           <PaymentPrompt />

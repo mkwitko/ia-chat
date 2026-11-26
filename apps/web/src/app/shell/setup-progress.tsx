@@ -19,10 +19,14 @@ export function useSetupProgress(): SetupProgress | null {
   return data ? progressOf(data, (step) => STEP_INFO[step].title) : null;
 }
 
-/** The card and the strip step aside on "Meu consultório", which shows its own count. */
+/** The card and the strip step aside where the page already shows the setup (wizard, Início, the settings pages). */
 function useShownProgress(): SetupProgress | null {
   const progress = useSetupProgress();
-  return useLocation().pathname.startsWith(Route.clinic) ? null : progress;
+  const { pathname } = useLocation();
+  // Início has its own "Próximo passo" card: one reminder per screen, not three.
+  const ownCount =
+    pathname.startsWith(Route.more) || pathname === Route.onboarding || pathname === Route.home;
+  return ownCount ? null : progress;
 }
 
 const linkState = ({ isActive }: { isActive: boolean }) =>

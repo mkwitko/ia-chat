@@ -1,6 +1,5 @@
 import { useAvailability, type RuleWindow } from '../agenda/agenda-api';
 import { RulesEditor } from '../agenda/rules-editor';
-import { CalendarSection } from '../calendar/calendar-section';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { CommonCopy } from '../setup/setup-copy';
 import { OnboardingCopy as Copy } from './onboarding-copy';
@@ -14,7 +13,7 @@ const DEFAULT_GRID: RuleWindow[] = Array.from(
   (_, index) => ({ weekday: Weekday.mon + index, ...DEFAULT_WINDOW }),
 );
 
-/** Step 4: the weekly grid (from the review, or a default to confirm) and the Google Agenda. */
+/** The weekly grid (from the review, or a default to confirm); Google Agenda waits in Meu consultório. */
 export function HoursStep({ onDone }: Readonly<{ onDone: () => void }>) {
   const availability = useAvailability();
   if (availability.isPending) return <ListSkeleton />;
@@ -34,9 +33,6 @@ export function HoursStep({ onDone }: Readonly<{ onDone: () => void }>) {
           saveLabel={Copy.saveHours}
           onSaved={onDone}
         />
-      </div>
-      <div>
-        <CalendarSection />
       </div>
     </div>
   );

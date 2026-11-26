@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Route } from '@/routes';
 import { ChoiceList } from '../assistant/choice-list';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
-import { BackLink } from '../screens/back-link';
-import { Screen } from '../screens/screen';
+import { EditorScreen } from '../screens/editor-screen';
 import { AreaField, FormActions, TextField } from './fields';
 import { feedback } from './feedback';
 import { useSaveTone, useTone, type Tone } from './setup-api';
@@ -17,14 +16,17 @@ const NEWLINE = '\n';
 export function ToneScreen() {
   const tone = useTone();
   return (
-    <Screen title={Copy.title}>
-      <BackLink to={Route.assistant} label={CommonCopy.assistant} />
+    <EditorScreen
+      title={Copy.title}
+      intro={Copy.intro}
+      back={{ to: Route.assistant, label: CommonCopy.assistant }}
+    >
       {tone.isPending && <ListSkeleton />}
       {tone.isError && (
         <LoadError message={CommonCopy.loadFailed} onRetry={() => void tone.refetch()} />
       )}
       {tone.data && <ToneForm initial={tone.data} />}
-    </Screen>
+    </EditorScreen>
   );
 }
 
@@ -43,7 +45,7 @@ function ToneForm({ initial }: Readonly<{ initial: Tone }>) {
   };
   return (
     <form
-      className="grid gap-8 pt-2 pb-10"
+      className="grid gap-8"
       onSubmit={(event) => {
         event.preventDefault();
         submit();
@@ -63,7 +65,7 @@ function ToneForm({ initial }: Readonly<{ initial: Tone }>) {
         }}
       />
       <ExamplesField value={examples} onChange={setExamples} />
-      <div className="px-4 md:px-0">
+      <div>
         <FormActions pending={save.isPending} />
       </div>
     </form>
@@ -103,7 +105,7 @@ function ToneChoices({ answers, onChange }: Readonly<AnswersProps>) {
 
 function ToneGreetings({ answers, onChange }: Readonly<AnswersProps>) {
   return (
-    <div className="grid gap-4 px-4 md:px-0">
+    <div className="grid gap-4">
       <TextField
         id="tone-greeting"
         label={Copy.greeting}
@@ -133,7 +135,7 @@ function ExamplesField({
   onChange,
 }: Readonly<{ value: string; onChange: (value: string) => void }>) {
   return (
-    <div className="grid gap-2 px-4 md:px-0">
+    <div className="grid gap-2">
       <AreaField
         id="tone-examples"
         label={Copy.examples}
@@ -163,7 +165,7 @@ function NameField({
   onChange,
 }: Readonly<{ value: string; onChange: (value: string) => void }>) {
   return (
-    <div className="px-4 md:px-0">
+    <div>
       <TextField
         id="tone-name"
         label={Copy.name}

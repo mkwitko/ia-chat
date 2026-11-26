@@ -4,9 +4,15 @@ export const AccountCopy = {
   title: 'Conta',
   intro: 'Seu plano, o pagamento da assinatura e os avisos que você recebe.',
   usage: 'Plano e uso',
-  usageHint: 'Quantas conversas você usou neste mês',
+  usageValue: (plan: string, used: number, included: number) =>
+    `Plano ${plan} · ${used.toLocaleString('pt-BR')} de ${included.toLocaleString('pt-BR')} conversas este mês`,
   billing: 'Assinatura',
-  billingHint: 'Forma de pagamento, faturas e cancelamento',
+  billingStatus: {
+    trial: 'Teste grátis',
+    active: 'Em dia',
+    restricted: 'Pagamento pendente',
+    cancelled: 'Cancelada',
+  },
   notifications: 'Avisos e tema',
   notificationsHint: 'Resumo da semana e tela clara ou escura',
   referral: 'Indique e ganhe',

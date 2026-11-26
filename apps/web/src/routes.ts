@@ -16,6 +16,8 @@ export const Route = {
   results: '/resultados',
   more: '/mais',
   assistant: '/mais/assistente',
+  assistantAutonomy: '/mais/assistente/autonomia',
+  assistantIdentity: '/mais/assistente/apresentacao',
   tone: '/mais/assistente/tom',
   knowledge: '/mais/assistente/base',
   simulator: '/mais/assistente/simulador',

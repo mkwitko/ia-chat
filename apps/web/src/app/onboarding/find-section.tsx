@@ -13,7 +13,7 @@ const errorText = (error: Error) =>
   Copy.genericError;
 
 /** Spec 09, "Onde te encontram": one field, then the review screen with what was found. */
-export function FindSection() {
+export function FindSection({ onApplied }: Readonly<{ onApplied?: () => void }>) {
   const [found, setFound] = useState<PrefillSuggestion | null>(null);
   const prefill = usePrefill();
   if (found)
@@ -23,6 +23,7 @@ export function FindSection() {
         onClose={() => {
           setFound(null);
         }}
+        {...(onApplied ? { onSaved: onApplied } : {})}
       />
     );
   return (
@@ -73,12 +74,7 @@ function SourceForm({ pending, error, onSearch }: Readonly<FormProps>) {
           {error}
         </p>
       )}
-      <Button
-        type="submit"
-        variant="outline"
-        className="justify-self-start"
-        disabled={pending || !source.trim()}
-      >
+      <Button type="submit" className="justify-self-start" disabled={pending || !source.trim()}>
         {pending ? Copy.searching : Copy.search}
       </Button>
     </form>

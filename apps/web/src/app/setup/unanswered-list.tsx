@@ -18,7 +18,7 @@ const SINGLE = 1;
 export function UnansweredList({ items }: Readonly<{ items: Unanswered[] }>) {
   if (items.length === 0) return null;
   return (
-    <section className="grid gap-3 px-4 md:px-0">
+    <section className="grid gap-3">
       <h2 className="text-lg">{Copy.unansweredHeading}</h2>
       <p className="text-sm text-muted-foreground">{Copy.unansweredHint}</p>
       {items.map((item) => (

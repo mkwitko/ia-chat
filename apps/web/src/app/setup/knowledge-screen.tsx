@@ -1,7 +1,6 @@
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
-import { BackLink } from '../screens/back-link';
-import { Screen } from '../screens/screen';
+import { EditorScreen } from '../screens/editor-screen';
 import { AddButton } from './add-button';
 import { feedback } from './feedback';
 import { RowActions } from './fields';
@@ -22,15 +21,18 @@ import { NEW_ITEM, useEditing } from './use-editing';
 export function KnowledgeScreen() {
   const knowledge = useKnowledge();
   return (
-    <Screen title={Copy.title}>
-      <BackLink to={Route.assistant} label={CommonCopy.assistant} />
+    <EditorScreen
+      title={Copy.title}
+      intro={Copy.intro}
+      back={{ to: Route.assistant, label: CommonCopy.assistant }}
+    >
       <p className="px-4 pb-2 text-muted-foreground md:px-0">{Copy.intro}</p>
       {knowledge.isPending && <ListSkeleton />}
       {knowledge.isError && (
         <LoadError message={CommonCopy.loadFailed} onRetry={() => void knowledge.refetch()} />
       )}
       {knowledge.data && <KnowledgeContent view={knowledge.data} />}
-    </Screen>
+    </EditorScreen>
   );
 }
 
@@ -40,7 +42,7 @@ function KnowledgeContent({ view }: Readonly<{ view: KnowledgeView }>) {
   return (
     <div className="grid gap-10 pt-4 pb-10">
       <UnansweredList items={view.unanswered} />
-      <section className="grid gap-3 px-4 md:px-0">
+      <section className="grid gap-3">
         <h2 className="text-lg">{Copy.baseHeading}</h2>
         {view.items.length === 0 && edit.editing !== NEW_ITEM && (
           <p className="text-sm text-muted-foreground">{Copy.empty}</p>
