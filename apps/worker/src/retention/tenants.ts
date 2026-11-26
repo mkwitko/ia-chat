@@ -19,16 +19,19 @@ export async function liveTenantIds({ db, onlyTenantIds }: TenantRun): Promise<s
   return rows.map((row) => row.id);
 }
 
-/** Runs `work` in `withTenant` for each live tenant, one at a time (a parallel burst would starve the pool). */
-export async function forEachTenant<T>(
+/**
+ * Runs `work` for each live tenant, one at a time (a parallel burst would starve the pool). One
+ * tenant's failure never stops the others; tomorrow's run retries it.
+ */
+export async function eachTenant<T>(
   run: TenantRun,
-  work: (tx: Tx, tenantId: string) => Promise<T>,
+  work: (tenantId: string) => Promise<T>,
   onError: (tenantId: string) => void,
 ): Promise<T[]> {
   const results: T[] = [];
   for (const tenantId of await liveTenantIds(run)) {
     try {
-      results.push(await run.db.withTenant(tenantId, (tx) => work(tx, tenantId)));
+      results.push(await work(tenantId));
     } catch {
       // No cause on purpose: a database error can quote the row it failed on (RN-38).
       onError(tenantId);
@@ -36,3 +39,11 @@ export async function forEachTenant<T>(
   }
   return results;
 }
+
+/** `eachTenant` with the work in one `withTenant` transaction. */
+export const forEachTenant = <T>(
+  run: TenantRun,
+  work: (tx: Tx, tenantId: string) => Promise<T>,
+  onError: (tenantId: string) => void,
+): Promise<T[]> =>
+  eachTenant(run, (tenantId) => run.db.withTenant(tenantId, (tx) => work(tx, tenantId)), onError);

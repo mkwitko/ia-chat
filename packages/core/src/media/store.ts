@@ -8,9 +8,11 @@ import { encodeRfc3986, presignUrl, type Credentials } from './sigv4.ts';
 const REGION = 'auto';
 const PUT = 'PUT';
 const GET = 'GET';
+const DELETE = 'DELETE';
 const WRITE_EXPIRES_SECONDS = 300;
 export const READ_EXPIRES_SECONDS = 300;
 const FAILED = 'media upload failed';
+const DELETE_FAILED = 'media delete failed';
 
 export const r2EnvSchema = z.object({
   R2_ACCOUNT_ID: optionalText,
@@ -61,6 +63,8 @@ export interface MediaStore {
   put: (key: string, body: { bytes: Uint8Array; mime: string }) => Promise<void>;
   /** A URL the panel can open for a few minutes. */
   signedUrl: (key: string) => string;
+  /** H-34: removes the object; a key that is already gone is not an error (idempotent). */
+  delete: (key: string) => Promise<void>;
 }
 
 export function createMediaStore(
@@ -86,5 +90,11 @@ export function createMediaStore(
       if (!response.ok) throw new Error(`${FAILED} (${String(response.status)})`);
     },
     signedUrl: (key) => sign(GET, key, READ_EXPIRES_SECONDS),
+    async delete(key) {
+      const response = await (deps.fetch ?? fetch)(sign(DELETE, key, WRITE_EXPIRES_SECONDS), {
+        method: DELETE,
+      });
+      if (!response.ok) throw new Error(`${DELETE_FAILED} (${String(response.status)})`);
+    },
   };
 }

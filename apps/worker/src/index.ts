@@ -166,7 +166,7 @@ await startWeeklyReport({
 await startBilling({ boss, db, alert, email: trialEmail, panelUrl: webOrigin, log: appLog.info });
 
 // E-26 (RF-63): accounts closed for 30 days are erased, once a day.
-await startTenantDeletion({ boss, db, alert, log: appLog.info });
+await startTenantDeletion({ boss, db, alert, source: process.env, log: appLog.info });
 
 // E-22 (RF-46, RF-47): confirmations and reminders, every minute.
 await startReminderSweep({

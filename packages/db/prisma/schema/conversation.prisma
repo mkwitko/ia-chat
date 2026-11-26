@@ -99,6 +99,8 @@ model Message {
   imported          Boolean          @default(false)
   /// Written by the owner in the Business app (smb_message_echoes or imported history).
   sentFromPhone     Boolean          @default(false) @map("sent_from_phone")
+  /// H-34: the retention job erased `text` and `media` (and the R2 object) at this time.
+  redactedAt        DateTime?        @map("redacted_at") @db.Timestamptz
   createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz
 
   tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)

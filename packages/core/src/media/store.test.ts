@@ -52,4 +52,18 @@ describe('media store (E-10)', () => {
       '403',
     );
   });
+
+  it('deletes an object with a signed DELETE and fails when R2 refuses', async () => {
+    const fake = vi.fn(() => Promise.resolve(new Response(null, { status: 204 })));
+    const store = createMediaStore(CONFIG, { fetch: fake, now: NOW });
+    await store.delete('tenants/t1/media/m1.ogg');
+    const [url, init] = fake.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toContain('/media/tenants/t1/media/m1.ogg?');
+    expect(init.method).toBe('DELETE');
+    const refusing = createMediaStore(CONFIG, {
+      fetch: () => Promise.resolve(new Response(null, { status: 500 })),
+      now: NOW,
+    });
+    await expect(refusing.delete('k')).rejects.toThrow('500');
+  });
 });
