@@ -47,7 +47,7 @@ export function ControlBar({
         {mine ? Copy.handBackHint : Copy.takeOverHint}
       </p>
       <Button
-        variant={mine ? 'outline' : 'default'}
+        variant="outline"
         disabled={pending}
         onClick={() => {
           change(mine ? Control.ai : Control.human);
