@@ -8,7 +8,6 @@ export const SetupStep = {
   subscribed: 'subscribed',
   registered: 'registered',
   templates: 'templates',
-  paymentMethod: 'payment_method',
 } as const;
 export type SetupStep = (typeof SetupStep)[keyof typeof SetupStep];
 
@@ -41,11 +40,8 @@ const RUN: Record<SetupStep, (ctx: StepContext) => Promise<boolean>> = {
     }
     return true;
   },
-  // H-05: the client pays Meta with their own card; we only check one is there. Advisory: the
-  // field read is not verified against Meta yet, so a "no" or a failed read never blocks the
-  // assistant; the panel keeps asking for the card and every retry checks again.
-  [SetupStep.paymentMethod]: ({ client, wabaId }) =>
-    client.hasPaymentMethod(wabaId).catch(() => false),
+  // H-05: the client pays Meta with their own card. We do not check it: Meta only shows a WABA's
+  // funding to Business Solution Providers, and we are a Tech Provider (verified 26/11/2026).
 };
 
 export interface SetupResult {
@@ -67,10 +63,9 @@ export async function runSetup(ctx: StepContext, already: readonly string[]): Pr
   return { done, error: null };
 }
 
-const REQUIRED = Object.values(SetupStep).filter((step) => step !== SetupStep.paymentMethod);
-
-/** Spec 03 step 3: live once every step but the (advisory) card check is done. */
-export const isReady = (done: readonly string[]) => REQUIRED.every((step) => done.includes(step));
+/** Spec 03 step 3: live once every step is done. */
+export const isReady = (done: readonly string[]) =>
+  Object.values(SetupStep).every((step) => done.includes(step));
 
 export function errorCodeOf(error: unknown): string {
   return error instanceof CloudApiError && error.code ? error.code : UNKNOWN_ERROR;

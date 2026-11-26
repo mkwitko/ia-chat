@@ -48,7 +48,7 @@ export function WhatsappConnect({ withHistory = true }: Readonly<{ withHistory?:
       {appId && configId && (
         <ConnectButton ids={{ appId, configId }} label={channel ? Copy.reconnect : Copy.connect} />
       )}
-      <p className="text-sm text-muted-foreground">{Copy.payment}</p>
+      <PaymentNote />
     </div>
   );
 }
@@ -80,8 +80,7 @@ function ChannelState({
             {channel.error.message} {channel.error.action}
           </p>
         )}
-        {!channel.error && !channel.paymentMethod && <PaymentPrompt />}
-        <RetryButton label={channel.error ? Copy.retry : Copy.paymentDone} />
+        <RetryButton label={Copy.retry} />
       </div>
     );
   return (
@@ -91,12 +90,6 @@ function ChannelState({
       </p>
       {channel.coexistence && <p className="text-sm">{Copy.coexistence}</p>}
       {withHistory && channel.coexistence && <HistoryImport history={channel.history} />}
-      {!channel.paymentMethod && (
-        <>
-          <PaymentPrompt />
-          <RetryButton label={Copy.paymentDone} />
-        </>
-      )}
     </div>
   );
 }
@@ -160,20 +153,20 @@ function ConnectButton({ ids, label }: Readonly<{ ids: SignupIds; label: string 
   );
 }
 
-/** Spec 03 step 3: the card is the professional's, added at Meta; we check it on retry. */
-function PaymentPrompt() {
+/** H-05: the card is the professional's, added at Meta; we cannot read it, so we only explain. */
+function PaymentNote() {
   return (
-    <>
-      <p className="text-sm">{Copy.paymentMissing}</p>
+    <p className="text-sm text-muted-foreground">
+      {Copy.payment}{' '}
       <a
-        className="justify-self-start text-sm font-semibold underline"
+        className="font-semibold underline"
         href={META_PAYMENT_URL}
         target="_blank"
         rel="noreferrer"
       >
         {Copy.paymentLink}
       </a>
-    </>
+    </p>
   );
 }
 

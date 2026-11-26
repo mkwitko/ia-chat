@@ -31,7 +31,6 @@ interface Call {
 }
 const calls: Call[] = [];
 let subscribeStatus = 200;
-let funded = true;
 let phoneNumberId = digits();
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
@@ -50,8 +49,6 @@ const fakeGraph: typeof fetch = (url, init) => {
     return Promise.resolve(
       json(subscribeStatus === 200 ? { success: true } : PAYMENT_ERROR, subscribeStatus),
     );
-  if (target.includes('?fields=primary_funding_id'))
-    return Promise.resolve(json(funded ? { primary_funding_id: '99', id: '1' } : { id: '1' }));
   if (target.includes('/message_templates?')) return Promise.resolve(json({ data: [] }));
   return Promise.resolve(json({ success: true }));
 };
@@ -77,7 +74,6 @@ afterAll(async () => {
 beforeEach(() => {
   calls.length = 0;
   subscribeStatus = 200;
-  funded = true;
 });
 
 const post = (url: string, cookie: string, payload: object = {}) =>
@@ -114,7 +110,7 @@ describe('whatsapp embedded signup', () => {
     const response = await signup(owner, { phoneNumberId });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toMatchObject({
-      channel: { status: 'connected', ready: true, paymentMethod: true, error: null },
+      channel: { status: 'connected', ready: true, error: null },
     });
     expect(calls.some((call) => call.url.includes(`${phoneNumberId}/register`))).toBe(true);
     expect(
@@ -138,18 +134,6 @@ describe('whatsapp embedded signup', () => {
     const other = await signUpVerified(ctx);
     await createTenant(ctx, other);
     expect((await signup(other, { phoneNumberId })).statusCode).toBe(409);
-  });
-
-  it('without a card at Meta the number connects, the card stays pending; the retry checks again', async () => {
-    phoneNumberId = digits();
-    funded = false;
-    const waiting = await signup(owner, { wabaId: '999' });
-    expect(waiting.json()).toMatchObject({
-      channel: { status: 'connected', ready: true, paymentMethod: false, error: null },
-    });
-    funded = true;
-    const retried = await post(`${PATH}/retry`, owner);
-    expect(retried.json()).toMatchObject({ channel: { status: 'connected', paymentMethod: true } });
   });
 
   it('coexistence: no registration; a failure is friendly and the retry resumes', async () => {

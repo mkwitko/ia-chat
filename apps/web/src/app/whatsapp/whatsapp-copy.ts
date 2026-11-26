@@ -9,7 +9,7 @@ export const WhatsappCopy = defineMessages({
     intro:
       'Conecte o número do consultório. Leva uns 5 minutos numa janela da Meta. Você continua usando o app WhatsApp Business no celular, no mesmo número.',
     payment:
-      'A Meta, dona do WhatsApp, cobra à parte, no cartão que você cadastra lá, os lembretes enviados depois de 24 horas sem conversa. Responder a quem escreveu não custa nada.',
+      'Responder a quem escreveu não custa nada. Lembretes e confirmações enviados depois de 24 horas sem conversa a Meta cobra à parte, no cartão que você cadastra na conta do WhatsApp. Sem cartão, eles não saem.',
     offTitle: 'Conexão com o WhatsApp ainda não liberada',
     offWhy:
       'A conexão de números pela Meta ainda não foi ligada pela nossa equipe nesta conta. Não depende de nada da sua parte.',
@@ -34,10 +34,7 @@ export const WhatsappCopy = defineMessages({
     pending: 'A conexão começou, mas falta concluir a configuração na Meta.',
     retry: 'Tentar concluir',
     retrying: 'Tentando…',
-    paymentMissing:
-      'Falta cadastrar um cartão na sua conta do WhatsApp na Meta. Sem ele, o assistente não é ativado.',
     paymentLink: 'Cadastrar cartão na Meta',
-    paymentDone: 'Já cadastrei, verificar de novo',
   },
   [Locale.enUS]: {},
 });

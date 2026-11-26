@@ -2,7 +2,7 @@ import { randomInt } from 'node:crypto';
 import { Provider, encryptToken, translateProviderError } from '@app/core';
 import { ChannelKind, ChannelStatus, HistoryImportState, type Tx } from '@app/db';
 import { historyOffer } from './history-import.ts';
-import { SetupStep, isReady } from './steps.ts';
+import { isReady } from './steps.ts';
 
 const PIN_LIMIT = 1_000_000;
 const PIN_DIGITS = 6;
@@ -82,7 +82,6 @@ export function channelView(row: ChannelRow | null) {
     displayPhone: row.displayPhone,
     coexistence: row.coexistence,
     ready: isReady(row.setupDone),
-    paymentMethod: row.setupDone.includes(SetupStep.paymentMethod),
     history: historyOffer(row),
     error,
   };

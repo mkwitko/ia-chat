@@ -7,7 +7,7 @@ import { SetupStep, isReady, runSetup, type StepContext } from './steps.ts';
 
 const PAYMENT_CODE = '131042';
 
-function fakeClient(failSubscribe = false, funded = true) {
+function fakeClient(failSubscribe = false) {
   const calls: string[] = [];
   const client = {
     phoneNumbers: () => Promise.resolve([]),
@@ -20,7 +20,6 @@ function fakeClient(failSubscribe = false, funded = true) {
       calls.push(`register:${pin}`);
       return Promise.resolve();
     },
-    hasPaymentMethod: () => Promise.resolve(funded),
     requestAppData: () => Promise.resolve(),
     templateKeys: () => Promise.resolve(new Set([`${MessageTemplates.confirmation.name}:pt_BR`])),
     createTemplate: (_waba: string, template: { name: string }) => {
@@ -41,7 +40,7 @@ const context = (client: BusinessClient, extra: Partial<StepContext> = {}): Step
 });
 
 describe('runSetup', () => {
-  it('registers with the PIN, creates only the missing template, checks payment', async () => {
+  it('registers with the PIN and creates only the missing template', async () => {
     const { client, calls } = fakeClient();
     const result = await runSetup(context(client), []);
     expect(calls).toEqual([
@@ -56,12 +55,11 @@ describe('runSetup', () => {
     expect(isReady(result.done)).toBe(true);
   });
 
-  it('never registers a coexistence number; without a card at Meta it is still ready', async () => {
-    const { client, calls } = fakeClient(false, false);
+  it('never registers a coexistence number', async () => {
+    const { client, calls } = fakeClient();
     const result = await runSetup(context(client, { coexistence: true }), []);
     expect(calls.some((call) => call.startsWith('register'))).toBe(false);
     expect(result.error).toBeNull();
-    expect(result.done).not.toContain(SetupStep.paymentMethod);
     expect(isReady(result.done)).toBe(true);
   });
 
