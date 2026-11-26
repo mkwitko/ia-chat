@@ -24,6 +24,9 @@ model Tenant {
   leadFollowUpDays       Int          @default(2) @map("lead_follow_up_days")
   /// The text the owner approved; null until they confirm one, and nothing is sent while null.
   leadFollowUpText       String?      @map("lead_follow_up_text")
+  /// M-12: one review request after "Compareceu" (owner's switch, off by default; needs the review link).
+  reviewRequest          Boolean      @default(false) @map("review_request")
+  reviewRequestDelayHours Int         @default(3) @map("review_request_delay_hours")
   /// How the assistant introduces itself (spec 04, "Identificação").
   assistantName          String       @default("Assistente virtual") @map("assistant_name")
   /// How the assistant presents itself (owner decision, 24/11/2026; spec 01 "Limites").

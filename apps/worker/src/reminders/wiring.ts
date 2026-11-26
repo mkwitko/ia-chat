@@ -5,6 +5,7 @@ import type { Alert } from '@app/observability';
 import type { PgBoss } from 'pg-boss';
 import type { Notifier } from '../notify/index.ts';
 import { sweepLeadFollowUps } from '../leads/lead-follow-up.ts';
+import { sweepReviewRequests } from '../leads/review-request.ts';
 import { sweepNoShows } from '../waitlist/no-show.ts';
 import { sweepWaitlist } from '../waitlist/offer-sweep.ts';
 import { sweepScheduledMessages } from './sweep.ts';
@@ -48,7 +49,8 @@ export async function startReminderSweep(wiring: ReminderWiring): Promise<void> 
     const waitlist = await sweepWaitlist(follow);
     const noShows = await sweepNoShows(follow);
     const leads = await sweepLeadFollowUps(follow);
-    if (waitlist.offered + waitlist.skipped + noShows + leads > 0)
-      log({ ...waitlist, noShows, leads }, FOLLOWED);
+    const reviews = await sweepReviewRequests(follow);
+    if (waitlist.offered + waitlist.skipped + noShows + leads + reviews > 0)
+      log({ ...waitlist, noShows, leads, reviews }, FOLLOWED);
   });
 }

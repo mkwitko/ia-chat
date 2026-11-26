@@ -85,6 +85,8 @@ enum ScheduledMessageKind {
   follow_up
   /// M-10: the single message to a lead that went quiet; the ledger of one per conversation.
   lead_follow_up
+  /// M-12: the single review request after an attended appointment.
+  review_request
 }
 
 enum ScheduledMessageState {
