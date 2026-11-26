@@ -52,6 +52,8 @@ export interface MessageView {
   imported: boolean;
   /** The owner wrote it in the WhatsApp Business app ("Você (celular)"). */
   sentFromPhone: boolean;
+  /** H-34: text and media were erased by the retention job. */
+  redacted: boolean;
 }
 
 export interface ConversationSummary {
@@ -61,7 +63,13 @@ export interface ConversationSummary {
   control: ConversationControl;
   state: InboxState;
   unreadCount: number;
-  lastMessage: { author: Author; type: MessageType; text: string | null; at: Date } | null;
+  lastMessage: {
+    author: Author;
+    type: MessageType;
+    text: string | null;
+    redacted: boolean;
+    at: Date;
+  } | null;
 }
 
 /** Awaiting you: the professional has the conversation and the last word is not theirs. */
@@ -110,6 +118,7 @@ export async function listConversations(tx: Tx): Promise<ConversationSummary[]> 
               author: lastAuthor,
               type: last.type,
               text: last.text?.slice(0, PREVIEW_CHARS) ?? null,
+              redacted: last.redactedAt !== null,
               at: last.createdAt,
             }
           : null,
@@ -169,6 +178,7 @@ export async function readConversation(tx: Tx, conversationId: string) {
       at: m.createdAt,
       imported: m.imported,
       sentFromPhone: m.sentFromPhone,
+      redacted: m.redactedAt !== null,
     })),
     events: audit.map((entry) => controlEvent(entry.createdAt, entry.after)),
   };

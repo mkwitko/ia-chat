@@ -31,7 +31,9 @@ export function shortTime(iso: string, now = new Date()): string {
 
 function previewOf(last: ConversationSummary['lastMessage']): string {
   if (!last) return InboxCopy.noMessages;
-  const body = last.text ?? TypePreview[last.type] ?? '';
+  const body = last.redacted
+    ? InboxCopy.redactedShort
+    : (last.text ?? TypePreview[last.type] ?? '');
   if (last.author === Author.professional) return `${InboxCopy.you}${body}`;
   if (last.author === Author.assistant) return `${InboxCopy.assistantSaid}${body}`;
   return body;

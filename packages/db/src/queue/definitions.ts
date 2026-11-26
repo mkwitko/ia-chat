@@ -61,6 +61,8 @@ export const MEDIA_QUEUE: QueueDefinition = { name: 'media.fetch' };
 export const TENANT_DELETION_QUEUE: QueueDefinition = { name: 'retention.tenant_deletion' };
 /** E-24b (H-49): daily purge of staged history import data the owner did not decide on. */
 export const IMPORT_STAGING_PURGE_QUEUE: QueueDefinition = { name: 'retention.import_staging' };
+/** H-34: daily erasure of message text and media past the retention period. */
+export const MESSAGE_RETENTION_QUEUE: QueueDefinition = { name: 'retention.message_text' };
 
 /** Research 09 #2: the owner's Monday report of one tenant; one pg-boss schedule per tenant. */
 export const WEEKLY_REPORT_QUEUE: QueueDefinition = { name: 'report.weekly' };
@@ -83,6 +85,7 @@ export const QUEUES: readonly QueueDefinition[] = [
   MEDIA_QUEUE,
   TENANT_DELETION_QUEUE,
   IMPORT_STAGING_PURGE_QUEUE,
+  MESSAGE_RETENTION_QUEUE,
   WEEKLY_REPORT_QUEUE,
   SESSION_HEALTH_QUEUE,
 ];

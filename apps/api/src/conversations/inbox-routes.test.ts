@@ -87,7 +87,7 @@ interface Detail {
   state: string;
   unreadCount: number;
   draft: object | null;
-  messages: { author: string; text: string | null }[];
+  messages: { author: string; text: string | null; redacted: boolean }[];
 }
 
 const detail = async (id: string) => (await get(`/api/conversations/${id}`)).json<Detail>();
@@ -117,6 +117,23 @@ describe('list and detail', () => {
     expect(body.messages.map((m) => m.author)).toEqual(['patient', 'professional']);
     await post(`/api/conversations/${id}/read`, {});
     expect((await detail(id)).unreadCount).toBe(0);
+  });
+
+  it('flags a message erased by the retention policy (H-34) without its text', async () => {
+    const id = await newConversation(ctx, tenantId);
+    await patientSays(id, 'texto fictício');
+    await ctx.db.withTenant(tenantId, (tx) =>
+      tx.message.updateMany({
+        where: { conversationId: id },
+        data: { text: null, redactedAt: new Date() },
+      }),
+    );
+    const body = await detail(id);
+    expect(body.messages[0]?.redacted).toBe(true);
+    const list = (await get('/api/conversations')).json<
+      { id: string; lastMessage: { redacted: boolean } | null }[]
+    >();
+    expect(list.find((item) => item.id === id)?.lastMessage?.redacted).toBe(true);
   });
 
   it('does not show another tenant conversation', async () => {

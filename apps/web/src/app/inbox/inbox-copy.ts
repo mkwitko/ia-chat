@@ -46,6 +46,7 @@ export const InboxCopy = {
   you: 'Você: ',
   assistantSaid: 'Assistente: ',
   noMessages: 'Sem mensagens ainda',
+  redactedShort: 'Mensagem apagada',
 } as const;
 
 export const ConversationCopy = {
@@ -56,6 +57,7 @@ export const ConversationCopy = {
   messages: 'Mensagens da conversa',
   fromPhone: 'Você (celular)',
   imported: 'Do histórico do WhatsApp',
+  redacted: 'Mensagem apagada pela política de retenção',
   mediaUnavailable: 'Não foi possível baixar este arquivo. Peça ao paciente para reenviar.',
   mediaPending: 'Baixando o arquivo…',
   audioPlayer: 'Áudio do paciente',

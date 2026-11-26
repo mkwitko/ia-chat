@@ -72,7 +72,8 @@ const SIDE: Record<Author, string> = {
   [Author.system]: 'justify-self-center bg-muted text-muted-foreground',
 };
 
-function bodyOf({ type, text, media }: MessageView): string {
+function bodyOf({ type, text, media, redacted }: MessageView): string {
+  if (redacted) return Copy.redacted;
   if (text) return text;
   if (media)
     return type === AUDIO && media.state === MediaState.stored ? Copy.audioNoTranscript : '';
@@ -97,7 +98,14 @@ function Bubble({ message }: Readonly<{ message: MessageView }>) {
         {message.imported && <span className="font-normal"> · {Copy.imported}</span>}
       </p>
       <MessageMedia message={message} />
-      <p className="text-base break-words whitespace-pre-wrap">{bodyOf(message)}</p>
+      <p
+        className={cn(
+          'text-base break-words whitespace-pre-wrap',
+          message.redacted && 'italic opacity-70',
+        )}
+      >
+        {bodyOf(message)}
+      </p>
       <time
         dateTime={message.at}
         className="mt-0.5 block text-right text-xs opacity-70 tabular-nums"

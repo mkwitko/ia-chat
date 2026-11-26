@@ -43,7 +43,13 @@ export interface ConversationSummary {
   control: Control;
   state: InboxState;
   unreadCount: number;
-  lastMessage: { author: Author; type: MessageType; text: string | null; at: string } | null;
+  lastMessage: {
+    author: Author;
+    type: MessageType;
+    text: string | null;
+    redacted: boolean;
+    at: string;
+  } | null;
 }
 
 export const MediaState = {
@@ -65,6 +71,8 @@ export interface MessageView {
   imported: boolean;
   /** The owner wrote it in the WhatsApp Business app. */
   sentFromPhone: boolean;
+  /** H-34: erased by the retention policy. */
+  redacted: boolean;
 }
 
 export interface ControlEvent {
