@@ -45,10 +45,10 @@ model Channel {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
-  conversations Conversation[] @relation("Conversation_channel")
-  inboundEvents InboundEvent[] @relation("InboundEvent_channel")
+  conversations Conversation[]     @relation("Conversation_channel")
+  inboundEvents InboundEvent[]     @relation("InboundEvent_channel")
   metaUsages    MetaMessageUsage[] @relation("MetaMessageUsage_channel")
-  routes        ChannelRoute[] @relation("ChannelRoute_channel")
+  routes        ChannelRoute[]     @relation("ChannelRoute_channel")
 
   @@unique([tenantId, id])
   @@map("channels")
@@ -93,7 +93,7 @@ model Service {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
-  appointments Appointment[] @relation("Appointment_service")
+  appointments        Appointment[]       @relation("Appointment_service")
   slotWaitlistEntries SlotWaitlistEntry[] @relation("SlotWaitlistEntry_service")
 
   @@unique([tenantId, id])
@@ -121,15 +121,15 @@ model AvailabilityRule {
 }
 
 model TimeOff {
-  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  tenantId       String   @map("tenant_id") @db.Uuid
-  professionalId String   @map("professional_id") @db.Uuid
-  startsAt       DateTime @map("starts_at") @db.Timestamptz
-  endsAt         DateTime @map("ends_at") @db.Timestamptz
+  id             String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String      @map("tenant_id") @db.Uuid
+  professionalId String      @map("professional_id") @db.Uuid
+  startsAt       DateTime    @map("starts_at") @db.Timestamptz
+  endsAt         DateTime    @map("ends_at") @db.Timestamptz
   reason         String?
   /// RF-14: a vacation is a time off the assistant announces with the return date (endsAt).
   kind           TimeOffKind @default(block)
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz
 
   tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   professional Professional @relation("TimeOff_professional", fields: [tenantId, professionalId], references: [tenantId, id], onDelete: Restrict)

@@ -1,17 +1,18 @@
 import { Link } from 'react-router';
-import { Route } from '@/routes';
+import { customerPath, Route } from '@/routes';
 import { AttendanceButtons } from '../customers/attendance-buttons';
 import { dayOf, shortDay, timeLabel } from '../agenda/agenda-dates';
 import { ConversationRow } from '../inbox/conversation-row';
 import { CardList, Section } from '../screens/section';
 import { HomeCopy as Copy } from './home-copy';
-import type { HomeAppointment, HomeView } from './home-api';
+import type { EndingPackage, HomeAppointment, HomeView } from './home-api';
 
 export const hasAttention = ({ attention, toConfirm }: HomeView) =>
   attention.conversations.length > 0 ||
   attention.drafts > 0 ||
   attention.unanswered > 0 ||
   attention.toMark.length > 0 ||
+  attention.endingPackages.length > 0 ||
   toConfirm.length > 0;
 
 const LINK_CLASS =
@@ -54,6 +55,7 @@ export function AttentionSection({ home }: Readonly<{ home: HomeView }>) {
         )}
       </CardList>
       {attention.toMark.length > 0 && <ToMark items={attention.toMark} timezone={home.timezone} />}
+      {attention.endingPackages.length > 0 && <Ending items={attention.endingPackages} />}
     </Section>
   );
 }
@@ -79,6 +81,30 @@ function ToMark({
               </span>
             </Link>
             <AttendanceButtons appointmentId={item.id} />
+          </li>
+        ))}
+      </CardList>
+    </>
+  );
+}
+
+/** Research 09 #7: the client's latest package with one session left or just used up. */
+function Ending({ items }: Readonly<{ items: readonly EndingPackage[] }>) {
+  return (
+    <>
+      <h3 className="px-4 pt-4 pb-2 text-base md:px-0">{Copy.endingHeading}</h3>
+      <CardList>
+        {items.map((item) => (
+          <li key={item.id}>
+            <Link
+              to={customerPath(item.contactId)}
+              className="grid min-h-11 content-center px-4 py-2 hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+            >
+              <span className="font-semibold">{item.contactName ?? Copy.noPatient}</span>
+              <span className="text-sm text-muted-foreground tabular-nums">
+                {Copy.ending(item.name, item.remaining)}
+              </span>
+            </Link>
           </li>
         ))}
       </CardList>

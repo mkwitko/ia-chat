@@ -7,6 +7,7 @@ import { Screen, ScreenWidth } from '../screens/screen';
 import { Note } from '../screens/section';
 import { AppointmentsSection } from './customer-appointments';
 import { ConsentSection } from './customer-consent';
+import { PackagesSection } from './customer-packages';
 import { customerName } from './customer-format';
 import { OriginSection } from './customer-origin';
 import { StageSection } from './customer-stage';
@@ -17,7 +18,7 @@ import { StageBadge } from './stage-badge';
 
 const NOT_FOUND = 404;
 
-/** Spec 10, "Cliente": origin, appointments, consent and status of one person. */
+/** Spec 10, "Cliente": origin, appointments, packages, consent and status of one person. */
 export function CustomerScreen() {
   const { id = '' } = useParams();
   const customer = useCustomer(id);
@@ -58,6 +59,7 @@ function Content({ customer }: Readonly<{ customer: CustomerDetail }>) {
       <Note>{Copy.autoStatus}</Note>
       <OriginSection customer={customer} />
       <AppointmentsSection appointments={customer.appointments} />
+      <PackagesSection customerId={customer.id} />
       <ConsentSection
         customerId={customer.id}
         optedOut={customer.optedOut}

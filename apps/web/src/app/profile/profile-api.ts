@@ -16,6 +16,7 @@ export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 export interface BusinessPackage {
   name: string;
   priceCents: number;
+  sessions?: number | undefined;
 }
 
 export interface BusinessProfile {

@@ -28,6 +28,7 @@ export const PROFILE_LIMITS = {
   welcome: 1_000,
   packages: 20,
   packageName: 80,
+  packageSessions: 100,
 } as const;
 
 const HTTP_URL = /^https?:\/\//i;
@@ -38,6 +39,8 @@ export const packageSchema = z
   .object({
     name: z.string().trim().min(1).max(PROFILE_LIMITS.packageName),
     priceCents: z.int().min(0),
+    /** Sessions in the package; with it, the client's balance can be counted (research 09 #7). */
+    sessions: z.int().min(1).max(PROFILE_LIMITS.packageSessions).optional(),
   })
   .strict();
 export type BusinessPackage = z.infer<typeof packageSchema>;

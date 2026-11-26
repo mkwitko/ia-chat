@@ -1,10 +1,12 @@
 import { AppointmentStatus } from '../../generated/prisma/enums.ts';
 import type { Db } from '../index.ts';
 import { withStageSync } from '../customers/sync.ts';
+import { syncPackageDebit } from '../packages/debit.ts';
 import { AgendaError, AgendaFailure, type AgendaResult } from './types.ts';
 
 // Spec 05 / spec 10: after the time, the owner marks "compareceu" or "faltou". It feeds the
-// customer's stage and the no-show rate; no rate is ever computed without a mark.
+// customer's stage, the no-show rate and the client's session package (research 09 #7); no rate
+// is ever computed without a mark.
 
 export const Attendance = { attended: 'attended', noShow: 'no_show' } as const;
 export type Attendance = (typeof Attendance)[keyof typeof Attendance];
@@ -39,13 +41,20 @@ export async function markAttendance(
       if (!MARKABLE.includes(found.status)) throw new AgendaFailure(AgendaError.notMarkable);
       if (found.startsAt > req.now) throw new AgendaFailure(AgendaError.notStarted);
       const scope = { tenantId: req.tenantId, contactId: found.contactId, now: req.now };
-      return withStageSync(tx, scope, () =>
+      const marked = await withStageSync(tx, scope, () =>
         tx.appointment.update({
           where: { id: found.id },
           data: { status: STATUS_OF[req.outcome] },
           select: { id: true, contactId: true, status: true },
         }),
       );
+      await syncPackageDebit(tx, {
+        tenantId: req.tenantId,
+        contactId: found.contactId,
+        appointmentId: found.id,
+        attended: req.outcome === Attendance.attended,
+      });
+      return marked;
     });
     return { ok: true, value };
   } catch (error) {

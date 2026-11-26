@@ -35,6 +35,13 @@ export const FIXTURE = {
     expiresAt: new Date('2027-01-05T12:30:00Z'),
   },
   payment: { amountCents: 5_000, provider: 'pix_manual' },
+  clientPackage: {
+    name: 'Pacote 4 sessões (exemplo)',
+    sessions: 4,
+    priceCents: 80_000,
+    purchasedOn: new Date('2027-01-02T00:00:00Z'),
+    paid: true,
+  },
   aiUsage: {
     task: 'conversation',
     provider: 'fake',

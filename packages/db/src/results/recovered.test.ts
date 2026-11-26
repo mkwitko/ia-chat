@@ -1,7 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createDb } from '../index.ts';
-import { AppointmentCreator, AppointmentStatus } from '../../generated/prisma/enums.ts';
+import {
+  AppointmentCreator,
+  AppointmentStatus,
+  PackageEntryReason,
+} from '../../generated/prisma/enums.ts';
 import { recoveredMoney } from './recovered.ts';
 
 // Research 09 #1: "dinheiro recuperado" counts only appointments the assistant booked that the
@@ -103,6 +107,36 @@ describe('recoveredMoney', () => {
         { week: '2027-01-11', count: 1, valueCents: PRICE },
       ],
     });
+  });
+
+  it('values a visit that used a package session at the package price per session', async () => {
+    const tenantId = await tenantWith([IN_HOURS], { open: true });
+    await db.withTenant(tenantId, async (tx) => {
+      const appointment = await tx.appointment.findFirstOrThrow();
+      const pkg = await tx.clientPackage.create({
+        data: {
+          tenantId,
+          contactId: appointment.contactId,
+          name: 'Pacote 4 sessões',
+          sessions: 4,
+          priceCents: 80_000,
+          purchasedOn: new Date('2027-01-02T00:00:00Z'),
+        },
+      });
+      await tx.packageEntry.create({
+        data: {
+          tenantId,
+          packageId: pkg.id,
+          appointmentId: appointment.id,
+          delta: 1,
+          reason: PackageEntryReason.attended,
+        },
+      });
+    });
+    const result = await db.withTenant(tenantId, (tx) =>
+      recoveredMoney(tx, { range: JANUARY, timezone: TZ }),
+    );
+    expect(result.valueCents).toBe(20_000);
   });
 
   it('says nothing about after hours when no opening hours are set', async () => {

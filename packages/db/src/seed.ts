@@ -12,6 +12,7 @@ import {
   ConsentCategory,
   ConsentKind,
   ConsentSource,
+  PackageEntryReason,
   PipelineStage,
   StageSource,
   type Db,
@@ -159,6 +160,18 @@ async function seedSchedule(tx: Tx, ids: Ids): Promise<void> {
     data: { tenantId, contactId, serviceId: ids.serviceId, ...FIXTURE.waitlist },
   });
   await tx.slotOffer.create({ data: { tenantId, entryId: entry.id, ...FIXTURE.slotOffer } });
+  const pkg = await tx.clientPackage.create({
+    data: { tenantId, contactId, ...FIXTURE.clientPackage },
+  });
+  await tx.packageEntry.create({
+    data: {
+      tenantId,
+      packageId: pkg.id,
+      appointmentId,
+      delta: 1,
+      reason: PackageEntryReason.attended,
+    },
+  });
   await tx.contactStageEvent.create({
     data: { tenantId, contactId, toStage: PipelineStage.new_contact, source: StageSource.derived },
   });

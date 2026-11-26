@@ -1,6 +1,7 @@
 import { MS_PER_DAY } from '@app/core';
 import {
   AppointmentStatus,
+  endingPackages,
   localDayRange,
   MIN_SAMPLE,
   PipelineStage,
@@ -109,6 +110,7 @@ export async function readHome(tx: Tx, { tenantId, now }: { tenantId: string; no
     notBookedSummary(tx, now),
     recoveredMoney(tx, { range: month, timezone }),
   ]);
+  const ending = await endingPackages(tx, now);
   const waiting = conversations.filter((item) => NEEDS_YOU.includes(item.state));
   return {
     timezone,
@@ -124,6 +126,7 @@ export async function readHome(tx: Tx, { tenantId, now }: { tenantId: string; no
       drafts: waiting.filter((item) => item.state === InboxState.awaitingApproval).length,
       unanswered,
       toMark: lists.toMark,
+      endingPackages: ending,
     },
     today: lists.today,
     toConfirm: lists.toConfirm,
