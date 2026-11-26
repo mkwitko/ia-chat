@@ -520,8 +520,8 @@ Spec: 05, 11. Bloqueio: código; depende de E-22 e M-01.
 
 ### M-10 Recuperação de lead e follow-up (P1)
 Spec: 11, 03. Bloqueio: código; Meta para fora da janela de 24 h (E-00b); depende de M-01 e E-22.
-- [ ] Regra simples: lead `conversando` sem resposta há N dias recebe uma mensagem aprovada pelo dono, uma vez
-- [ ] Respeita controle humano (RF-31), opt-out e limite de envio
+- [x] Regra simples: lead `conversando` sem resposta há N dias recebe uma mensagem aprovada pelo dono, uma vez Feito (H-44): Configurações > Retorno de clientes; padrão desligado, 2 dias, texto confirmado pelo dono; fora da janela de 24 h avisa o profissional
+- [x] Respeita controle humano (RF-31), opt-out e limite de envio Feito: mesma trava das demais mensagens ativas, 5 por consultório por minuto
 - Pronto quando: o envio só acontece com consentimento e o dono aprovou o texto.
 
 ### M-11 Indicação (P1)

@@ -11,6 +11,7 @@ export const NotifyReason = {
   usageFull: 'usage_full',
   waitlistSlot: 'waitlist_slot',
   noShow: 'no_show',
+  leadFollowUp: 'lead_follow_up',
 } as const;
 export type NotifyReason = (typeof NotifyReason)[keyof typeof NotifyReason];
 
@@ -67,6 +68,10 @@ const COPY: Record<NotifyReason, Copy> = {
   waitlist_slot: {
     title: 'Horário livre para a lista de espera',
     body: 'Abriu um horário e um cliente da lista não pôde ser avisado pelo assistente. Toque para falar com ele.',
+  },
+  lead_follow_up: {
+    title: 'Cliente sem resposta',
+    body: 'O assistente não pôde fazer o contato de retorno combinado. Toque para falar com o cliente.',
   },
   no_show: {
     title: 'Cliente faltou',

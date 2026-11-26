@@ -26,6 +26,7 @@ export const Route = {
   usage: '/mais/plano-e-uso',
   billing: '/mais/assinatura',
   team: '/mais/equipe',
+  growth: '/mais/retorno',
   teamInvite: '/convite-equipe/:id',
   operator: '/operador',
 } as const;
