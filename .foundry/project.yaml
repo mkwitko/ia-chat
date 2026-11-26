@@ -60,3 +60,13 @@ modules:
     - conversion-optimization
     - revenue-operations
     - proof-and-advocacy
+  already_satisfied:
+    - positioning-and-offer
+    - pricing-and-unit-economics
+    - product-strategy
+    - product-design
+    - engineering-quality
+    - customer-support-loop
+    - founder-operations
+  not_applicable:
+    - opportunity-intelligence
