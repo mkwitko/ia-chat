@@ -9,7 +9,7 @@ import { LoadingCopy } from '@/copy';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
 import { BackLink } from '../screens/back-link';
-import { Screen, ScreenWidth } from '../screens/screen';
+import { Screen } from '../screens/screen';
 import { AssistantCopy as Copy, DEFAULT_ASSISTANT_NAME, introPreview } from './assistant-copy';
 import { ChoiceList } from './choice-list';
 import {
@@ -28,38 +28,40 @@ const NAME_MAX = 40; // same limit as the API
 export function AssistantScreen() {
   const settings = useAssistantSettings();
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <BackLink to={Route.more} label={Copy.back} />
-      <nav
-        aria-label={Copy.sectionsLabel}
-        className="mx-4 mb-6 divide-y rounded-xl border bg-card md:mx-0"
-      >
-        {Copy.sections.map((section) => (
-          <Link
-            key={section.to}
-            to={section.to}
-            className="flex min-h-14 items-center gap-3 px-4 hover:bg-muted"
-          >
-            <span className="min-w-0 flex-1">
-              <span className="block font-semibold">{section.label}</span>
-              <span className="block truncate text-sm text-muted-foreground">{section.hint}</span>
-            </span>
-            <ChevronRight className="size-5 text-muted-foreground" aria-hidden="true" />
-          </Link>
-        ))}
-      </nav>
-      {settings.isPending && (
-        <p className="px-4 py-6 text-muted-foreground md:px-0">{LoadingCopy}</p>
-      )}
-      {settings.isError && (
-        <div role="alert" className="grid justify-items-start gap-3 px-4 py-6 md:px-0">
-          <p>{Copy.loadFailed}</p>
-          <Button variant="outline" onClick={() => void settings.refetch()}>
-            {Copy.retry}
-          </Button>
-        </div>
-      )}
-      {settings.data && <AssistantForm initial={settings.data} />}
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_24rem] xl:items-start xl:gap-16">
+        <nav
+          aria-label={Copy.sectionsLabel}
+          className="mx-4 mb-6 divide-y rounded-xl border bg-card md:mx-0 xl:sticky xl:top-8 xl:order-last xl:mb-0"
+        >
+          {Copy.sections.map((section) => (
+            <Link
+              key={section.to}
+              to={section.to}
+              className="flex min-h-14 items-center gap-3 px-4 hover:bg-muted"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold">{section.label}</span>
+                <span className="block truncate text-sm text-muted-foreground">{section.hint}</span>
+              </span>
+              <ChevronRight className="size-5 text-muted-foreground" aria-hidden="true" />
+            </Link>
+          ))}
+        </nav>
+        {settings.isPending && (
+          <p className="px-4 py-6 text-muted-foreground md:px-0">{LoadingCopy}</p>
+        )}
+        {settings.isError && (
+          <div role="alert" className="grid justify-items-start gap-3 px-4 py-6 md:px-0">
+            <p>{Copy.loadFailed}</p>
+            <Button variant="outline" onClick={() => void settings.refetch()}>
+              {Copy.retry}
+            </Button>
+          </div>
+        )}
+        {settings.data && <AssistantForm initial={settings.data} />}
+      </div>
     </Screen>
   );
 }

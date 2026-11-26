@@ -48,7 +48,11 @@ function LocationForm({ initial }: Readonly<{ initial: Location | null }>) {
         placeholder={Copy.arrivalPlaceholder}
       />
       <Preview text={[address.trim(), arrival.trim()].filter(Boolean).join(PARAGRAPH)} />
-      <Button type="submit" disabled={save.isPending} className="w-full md:w-auto">
+      <Button
+        type="submit"
+        disabled={save.isPending}
+        className="w-full md:w-auto md:justify-self-start"
+      >
         {save.isPending ? CommonCopy.saving : CommonCopy.save}
       </Button>
     </form>

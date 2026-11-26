@@ -1,7 +1,7 @@
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen, ScreenWidth } from '../screens/screen';
+import { Screen } from '../screens/screen';
 import { AddButton } from './add-button';
 import { feedback } from './feedback';
 import { RowActions } from './fields';
@@ -22,7 +22,7 @@ import { NEW_ITEM, useEditing } from './use-editing';
 export function KnowledgeScreen() {
   const knowledge = useKnowledge();
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <BackLink to={Route.assistant} label={CommonCopy.assistant} />
       <p className="px-4 pb-2 text-muted-foreground md:px-0">{Copy.intro}</p>
       {knowledge.isPending && <ListSkeleton />}

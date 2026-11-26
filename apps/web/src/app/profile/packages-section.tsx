@@ -117,7 +117,7 @@ function PackageForm({
   const { name, setName, price, setPrice, invalid, ready, submit } = form;
   return (
     <form
-      className="grid grid-cols-2 items-end gap-3 md:grid-cols-[minmax(0,1fr)_6rem_9rem_auto]"
+      className="grid grid-cols-2 items-end gap-3 md:grid-cols-[minmax(0,1fr)_6rem_9rem_auto] xl:grid-cols-[minmax(0,1fr)_5rem_7rem] 2xl:grid-cols-[minmax(0,1fr)_6rem_9rem_auto]"
       onSubmit={(event) => {
         event.preventDefault();
         submit();

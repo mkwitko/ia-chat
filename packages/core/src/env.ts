@@ -7,6 +7,7 @@ export const NodeEnv = {
 } as const;
 
 const INVALID_ENV = 'Invalid environment';
+const TRUE_TEXT = 'true';
 const POSTGRES_PROTOCOL = /^postgres(ql)?$/;
 
 /** Optional text: unset or empty (a blank line in .env) both mean "off". */
@@ -40,6 +41,8 @@ export const baseEnvSchema = z.object({
   DATABASE_URL: z.url({ protocol: POSTGRES_PROTOCOL }),
   /** Transactional email (Resend). Required in production; without it development logs the emails. */
   RESEND_API_KEY: optionalText,
+  /** Outside production the emails only go to the log, even with a key, unless this is `true`. */
+  EMAIL_SEND_IN_DEV: optionalText.transform((value) => value === TRUE_TEXT),
   ...observabilityEnvSchema.shape,
 });
 

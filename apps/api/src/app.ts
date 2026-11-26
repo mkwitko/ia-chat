@@ -97,9 +97,10 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   setupObservability(app, deps);
   setupCalendar(app, deps);
   app.decorate('operatorEmails', env.OPERATOR_EMAILS);
-  app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
+  const sender = email ?? devEmailSender(app.log);
+  app.decorate('auth', createAuth({ env, db, email: sender }));
   registerAuthRoutes(app);
-  registerInviteRoutes(app, env);
+  registerInviteRoutes(app, env, sender);
   registerTeamInviteRoutes(app);
   registerOperatorRoutes(app);
   registerControlRoutes(app);

@@ -25,7 +25,7 @@ export function Bubble({ line }: Readonly<{ line: ChatLine }>) {
   return (
     <div
       className={cn(
-        'max-w-[85%] rounded-2xl px-3 py-2',
+        'max-w-[85%] rounded-2xl px-3 py-2 md:max-w-xl',
         patient ? 'justify-self-start border bg-card' : 'justify-self-end bg-jade-soft',
       )}
     >
@@ -40,7 +40,7 @@ export function Bubble({ line }: Readonly<{ line: ChatLine }>) {
 /** What the answer used: tool calls and registered facts, derived by the server. */
 export function Used({ reply }: Readonly<{ reply: SimulationReply }>) {
   return (
-    <div className="max-w-[85%] justify-self-end text-sm text-muted-foreground">
+    <div className="max-w-[85%] justify-self-end text-sm text-muted-foreground md:max-w-xl">
       <p className="font-semibold">{Copy.usedTitle}</p>
       {reply.fixed && <p>{Copy.fixed}</p>}
       {!reply.fixed && reply.sources.length === 0 && <p>{Copy.usedNothing}</p>}

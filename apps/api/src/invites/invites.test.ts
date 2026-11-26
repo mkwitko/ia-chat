@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
+  lastLinkTo,
   authPost,
   signUp,
   signUpVerified,
@@ -22,6 +23,7 @@ const OK = 200;
 interface InviteBody {
   invite: { id: string; state: string; practiceName: string; tenantId: string | null };
   link: string | null;
+  emailed: boolean;
 }
 
 let ctx: TestContext;
@@ -64,6 +66,25 @@ describe('operator invites', () => {
     expect(tokenOf(resent.link)).not.toBe(tokenOf(link));
     expect((await readInvite(tokenOf(link))).statusCode).toBe(404);
     expect((await readInvite(tokenOf(resent.link))).json()).toMatchObject({ state: 'pending' });
+  });
+
+  it('emails the link to the invite address on create and on resend', async () => {
+    const to = uniqueEmail();
+    const created = (await post(BASE, { practiceName: PRACTICE, email: to })).json<InviteBody>();
+    expect(created.emailed).toBe(true);
+    expect(lastLinkTo(ctx.outbox, to)).toBe(created.link);
+    const message = ctx.outbox.sent.findLast((m) => m.to === to);
+    expect(message?.text).toContain(PRACTICE);
+    expect(message?.text).toContain('7 dias');
+    const resent = (await post(`${BASE}/${created.invite.id}/resend`)).json<InviteBody>();
+    expect(resent.emailed).toBe(true);
+    expect(lastLinkTo(ctx.outbox, to)).toBe(resent.link);
+  });
+
+  it('without an address nothing is emailed', async () => {
+    const before = ctx.outbox.sent.length;
+    expect((await newInvite()).emailed).toBe(false);
+    expect(ctx.outbox.sent).toHaveLength(before);
   });
 
   it('cancel closes the invite; a cancelled invite cannot be resent', async () => {

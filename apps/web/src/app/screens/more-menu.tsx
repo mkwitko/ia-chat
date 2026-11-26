@@ -1,66 +1,48 @@
 import { LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router';
 import { MoreCopy } from '@/copy';
-import { authClient } from '@/lib/auth-client';
-import { cn } from '@/lib/utils';
 import { Route } from '@/routes';
-import { useOnboarding } from '../onboarding/onboarding-api';
-import { TeamRole } from '../team/team-copy';
-import { OperatorCopy } from '../operator/operator-copy';
-import { useIsOperator } from '../operator/operator-api';
 import { SetupCopy, useSetupProgress } from '../shell/setup-progress';
+import { useSignOut } from '../shell/use-sign-out';
 import { MoreItemLink, type MoreRow } from './more-item-link';
+import { useSettingsRows } from './settings-rows';
 
 const GROUP = 'divide-y border-y bg-card md:rounded-xl md:border md:shadow-card';
-const COMPACT_GROUP = 'lg:divide-y-0 lg:border-0 lg:bg-transparent lg:shadow-none';
 
+/** "Configuração · X de N" first while setup is unfinished, then the settings pages. */
 function useRows(): MoreRow[] {
   const setup = useSetupProgress();
-  const operator = useIsOperator();
-  const unanswered = useOnboarding().data?.checklist.unanswered;
-  const role = authClient.useActiveMember().data?.role;
-  // Equipe is the owner's: the others do not see the row.
-  const rows: MoreRow[] = (MoreCopy.items as readonly MoreRow[])
-    .filter((row) => row.to !== Route.team || role === TeamRole.owner)
-    .map((row) => (row.to === Route.assistant ? { ...row, badge: unanswered } : row));
-  if (setup) {
-    const label = SetupCopy.label(setup.done, setup.total);
-    rows.unshift({ label, hint: setup.currentTitle, to: Route.onboarding });
-  }
-  if (operator) rows.push({ label: OperatorCopy.title, hint: '', to: Route.operator });
-  return rows;
+  const rows = useSettingsRows();
+  if (!setup) return rows;
+  const label = SetupCopy.label(setup.done, setup.total);
+  return [{ label, hint: setup.currentTitle, to: Route.onboarding }, ...rows];
 }
 
-/** The settings list of "Mais". `compact` is the desktop column: labels only. */
-export function MoreMenu({ compact = false }: Readonly<{ compact?: boolean }>) {
+/** The settings list of "Mais" on the phone (the sidebar carries it from md up). */
+export function MoreMenu() {
   const rows = useRows();
   return (
     <div className="grid gap-6">
-      <ul className={cn(GROUP, compact && COMPACT_GROUP)}>
+      <ul className={GROUP}>
         {rows.map((row) => (
           <li key={row.label}>
-            <MoreItemLink row={row} compact={compact} />
+            <MoreItemLink row={row} />
           </li>
         ))}
       </ul>
-      <SignOutRow compact={compact} />
+      <SignOutRow />
     </div>
   );
 }
 
 /** Sair: a destructive row, the last one of the list. */
-function SignOutRow({ compact }: Readonly<{ compact: boolean }>) {
-  const navigate = useNavigate();
-  async function signOut() {
-    await authClient.signOut();
-    void navigate(Route.login, { replace: true });
-  }
+function SignOutRow() {
+  const signOut = useSignOut();
   return (
-    <div className={cn(GROUP, compact && COMPACT_GROUP)}>
+    <div className={GROUP}>
       <button
         type="button"
-        className="flex min-h-14 w-full items-center gap-3 px-4 text-left font-medium text-danger transition-colors hover:bg-danger-soft focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring lg:min-h-10 lg:rounded-md lg:px-3 lg:text-sm"
-        onClick={() => void signOut()}
+        className="flex min-h-14 w-full items-center gap-3 px-4 text-left font-medium text-danger transition-colors hover:bg-danger-soft focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+        onClick={signOut}
       >
         <LogOut className="size-4" aria-hidden="true" />
         {MoreCopy.signOut}
