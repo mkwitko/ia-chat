@@ -1,7 +1,7 @@
 import { notifyError } from '@/lib/notify';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { UndoCopy } from '@/components/ui/undo';
+import { UNDO_WINDOW_MS, UndoCopy } from '@/components/ui/undo';
 import { Control, useSetControl } from './inbox-api';
 import { ConversationCopy as Copy } from './inbox-copy';
 import { ensureOnline } from './online';
@@ -15,11 +15,15 @@ function useChangeControl(conversationId: string) {
     if (!ensureOnline()) return;
     set.mutate(to, {
       onSuccess: () => {
-        toast.success(to === Control.human ? Copy.nowYours : Copy.nowAssistant, {
+        toast(to === Control.human ? Copy.nowYours : Copy.nowAssistant, {
+          duration: UNDO_WINDOW_MS,
           action: {
             label: UndoCopy.undo,
             onClick: () => {
-              change(other(to));
+              set.mutate(other(to), {
+                onSuccess: () => toast(UndoCopy.undone),
+                onError: () => notifyError(Copy.controlFailed),
+              });
             },
           },
         });

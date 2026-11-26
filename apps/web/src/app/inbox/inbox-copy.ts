@@ -116,7 +116,7 @@ export const DraftCopy = defineMessages({
   [Locale.ptBR]: {
     title: 'Resposta do assistente para você aprovar',
     hint: 'Nada foi enviado ao paciente. Escolha o que fazer.',
-    send: 'Enviar',
+    send: 'Enviar esta resposta',
     edit: 'Editar',
     discard: 'Descartar',
     confirmDiscard: 'Descartar esta resposta? O paciente não recebe nada.',
