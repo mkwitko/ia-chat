@@ -1,6 +1,8 @@
-# Domains come from the environment (docker-compose.prod.yml). Certificates are automatic.
+# Plain HTTP on the private network: TLS ends at Cloudflare and the tunnel (cloudflared) forwards here.
+# Domains come from the environment (docker-compose.prod.yml).
 {
-	email {$ACME_EMAIL}
+	auto_https off
+	admin 127.0.0.1:2019
 }
 
 (common) {
@@ -13,12 +15,18 @@
 	}
 }
 
-# Panel: the SPA, with the API under the same origin (cookies stay first-party).
-{$PANEL_DOMAIN} {
+# Panel and API on one origin (cookies stay first-party). Webhooks (Meta, Asaas) and the site's
+# waitlist form also land here. The api trusts one proxy hop and reads the visitor's IP from
+# X-Forwarded-For, set from Cloudflare's CF-Connecting-IP, and keeps Cloudflare's X-Forwarded-Proto
+# (the edge is reachable only through the tunnel).
+http://{$PANEL_DOMAIN}:80 {
 	import common
-	@api path /api/* /health /ready
+	@api path /api/* /webhooks/* /health /ready
 	handle @api {
-		reverse_proxy api:3000
+		reverse_proxy api:3000 {
+			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+			header_up X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}
+		}
 	}
 	handle {
 		root * /srv/web
@@ -29,13 +37,11 @@
 	}
 }
 
-# API alone: webhooks (Meta, Asaas) and the public waitlist form.
-{$API_DOMAIN} {
-	import common
-	reverse_proxy api:3000
+http://www.{$SITE_DOMAIN}:80 {
+	redir https://{$SITE_DOMAIN}{uri} permanent
 }
 
-{$SITE_DOMAIN} {
+http://{$SITE_DOMAIN}:80 {
 	import common
 	root * /srv/site
 	try_files {path} {path}/index.html

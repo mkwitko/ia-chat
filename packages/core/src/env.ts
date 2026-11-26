@@ -38,6 +38,8 @@ export const observabilityEnvSchema = z.object({
 export const baseEnvSchema = z.object({
   NODE_ENV: z.enum(NodeEnv).default(NodeEnv.development),
   DATABASE_URL: z.url({ protocol: POSTGRES_PROTOCOL }),
+  /** Transactional email (Resend). Required in production; without it development logs the emails. */
+  RESEND_API_KEY: optionalText,
   ...observabilityEnvSchema.shape,
 });
 

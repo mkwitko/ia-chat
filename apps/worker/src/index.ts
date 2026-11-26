@@ -32,7 +32,7 @@ import { turnScheduler } from './conversation/turn-scheduler.ts';
 import { mediaScheduler, startMediaWorker } from './media/wiring.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
-import { logEmailSender } from './trial/log-sender.ts';
+import { workerEmailSender } from './trial/log-sender.ts';
 import { sweepTrials } from './trial/sweep.ts';
 import { startReminderSweep } from './reminders/wiring.ts';
 import { startBilling } from './billing/wiring.ts';
@@ -156,7 +156,7 @@ await boss.work(SUMMARY_SYNC_QUEUE.name, async () => {
 
 // S-05 (RF-84, RF-88): abandonment reminders and the end of the trial, once each, every hour.
 const webOrigin = process.env.WEB_ORIGIN ?? DEFAULT_WEB_ORIGIN;
-const trialEmail = logEmailSender((fields, message) => {
+const trialEmail = workerEmailSender(env, (fields, message) => {
   log.info(fields, message);
 });
 await boss.schedule(TRIAL_SWEEP_QUEUE.name, TRIAL_SWEEP_CRON);
