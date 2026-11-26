@@ -37,7 +37,7 @@ Cada linha aponta o que existe hoje (inventário completo na auditoria) e a etap
 |---|---|---|
 | Lembretes e confirmações | AUSENTE | E-22 |
 | Gestão de cancelamento | PARCIAL | M-09 |
-| Lista de espera de agenda | AUSENTE | M-09 |
+| Lista de espera de agenda | IMPLEMENTADO (spec 05, "Cancelamento, lista de espera e falta") | M-09 |
 | Recuperação de lead | AUSENTE | M-10 |
 | Follow-up | AUSENTE (tipo `follow_up` existe, sem job) | M-10, Fase 4 |
 | Indicações | AUSENTE | M-11 |
@@ -108,7 +108,7 @@ Etapas fixas: `novo` → `conversando` → `agendado` → `atendido`; saídas: `
 
 Vale para todo segmento com `sensitivity = health` e, por segurança, como padrão para qualquer um.
 
-1. **Sem dado clínico em CRM nem em memória.** Ficam fora: queixa, sintoma, diagnóstico, exame, medicamento, histórico clínico, resultado de tratamento. Cliente guarda nome, telefone, etapa, origem, consentimento, agendamentos e serviço contratado. Pacote de sessões (H-42) guarda só nome do pacote, número de sessões, preço, data e pago; o ajuste manual usa motivo de lista fixa, nunca texto livre.
+1. **Sem dado clínico em CRM nem em memória.** Ficam fora: queixa, sintoma, diagnóstico, exame, medicamento, histórico clínico, resultado de tratamento. Cliente guarda nome, telefone, etapa, origem, consentimento, agendamentos e serviço contratado. Pacote de sessões (H-43) guarda só nome do pacote, número de sessões, preço, data e pago; o ajuste manual usa motivo de lista fixa, nunca texto livre.
 2. **O assistente não diagnostica, não indica tratamento, não faz triagem, não promete resultado.** Se o cliente descreve sintoma, acolhe em uma frase e oferece a avaliação com o profissional (regra já no prompt).
 3. **Dado mínimo:** o que não é preciso para agendar e lembrar não é coletado.
 4. **Pergunta clínica vai para uma pessoa:** transferência para humano; o assistente não responde nem registra o conteúdo.
@@ -140,7 +140,7 @@ Princípio: **medir antes de afirmar.** O piloto começa com uma linha de base e
 | 5 | Taxa de transferência | Conversas com `agent_handoff` ÷ conversas com mensagem de entrada | `audit_log` | Nada |
 | 6 | Agendamentos criados | Contagem de `appointments` criados no período, por `created_by` (`ai` ou `human`) | `appointments` | Nada |
 | 7 | Conversão de lead em agendamento | Contatos novos do período com ao menos um agendamento não cancelado ÷ contatos novos do período | `contacts`, `appointments` | Nada |
-| 8 | Cancelamentos | Agendamentos `cancelled` ÷ agendamentos do período; remarcações contadas à parte | `appointments.status` | Remarcação não tem marca própria: hoje altera o horário |
+| 8 | Cancelamentos | Agendamentos `cancelled` ÷ agendamentos do período; remarcações contadas à parte | `appointments.status`, `appointments.rescheduled_from_id` | Nada (M-09) |
 | 9 | Faltas (no-show) | `no_show` ÷ (`completed` + `no_show`) de agendamentos já passados | `appointments.status` | **Nenhuma rota grava `completed`/`no_show`** (M-08) |
 | 10 | Leads por origem | Contatos novos agrupados por origem | `contacts` | Campo de origem (M-06, em andamento) |
 | 11 | Leads por etapa | Contatos por etapa do funil, e tempo na etapa | `contacts` + histórico de etapa | Etapa (M-06, em andamento) |

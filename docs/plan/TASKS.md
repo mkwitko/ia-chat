@@ -346,7 +346,7 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 - [ ] API, worker, Postgres e gateway na rede privada; deploy automatizado
   - Feito no código: `docker/Dockerfile`, `docker/edge/` (Caddy em HTTP na rede interna), `cloudflared` no compose (Cloudflare Tunnel), `docker-compose.prod.yml` (nenhuma porta publicada, limites de memória, serviço `migrate`), `.github/workflows/deploy.yml` (imagens arm64 no runner ARM, GHCR; SSH desligado sem os segredos `DEPLOY_*`); o gateway de WhatsApp (WAHA) entra no compose quando o canal QR for ativado.
 - [x] Arquivamento de WAL no R2, backup completo e diferencial, cifrados (pgBackRest, `docker/postgres/`; semanal completo, diário diferencial, 4 completos retidos)
-- [x] Script de restauração em ponto no tempo num servidor descartável, executado com sucesso (`scripts/restore-pitr.sh`; ensaio completo contra MinIO local em `scripts/test-backup-drill.sh`, passou em 25/11/2026). Falta rodar contra o bucket real do R2 no primeiro deploy
+- [x] Script de restauração em ponto no tempo num servidor descartável, executado com sucesso (`scripts/restore-pitr.sh`; ensaio completo contra MinIO local em `scripts/test-backup-drill.sh`, passou em 25/11/2026). Contra o bucket real do R2 no primeiro deploy (26/11/2026): `OK: restored to 'latest' in 226s, 37 tables`, contagens iguais
 - [ ] Alertas: WAL atrasado, disco, fila parada, canal desconectado, falha de entrega, erro de webhook
   - Feito no código: `alert(evento, contexto)` (log, Sentry e "Erros recentes" em `/operador`) para tarefa esgotada, falha de entrega, erro de webhook, turno abortado, erro de fila e rotina com falha; `GET /health` e `GET /ready` na API, `GET /ready` no worker (`WORKER_HEALTH_PORT`).
   - Falta (precisa de conta ou servidor): regras de alerta no Sentry/Axiom, monitor externo em `/ready`, e os alertas de WAL, disco e canal desconectado.
@@ -513,8 +513,9 @@ Spec: 05, 11 (métrica 9). Bloqueio: código.
 
 ### M-09 Cancelamento com remarcação e lista de espera (P1)
 Spec: 05, 11. Bloqueio: código; depende de E-22 e M-01.
-- [ ] Ao cancelar, oferecer remarcação; marcar remarcação à parte (métrica 8)
-- [ ] Lista de espera de horários: cliente entra, horário liberado avisa o primeiro, com checagem de opt-out; sem disparo em massa
+- [x] Ao cancelar, oferecer remarcação; marcar remarcação à parte (métrica 8) Feito: `cancelar` devolve `proximo_passo`; `appointments.rescheduled_from_id`; Resultados com Remarcações à parte
+- [x] Lista de espera de horários: cliente entra, horário liberado avisa o primeiro, com checagem de opt-out; sem disparo em massa Feito: `entrar_lista_de_espera`, `slot_waitlist_entries`/`slot_offers`, varredura de minuto com oferta de 30 min, trava de envio, opt-out e janela; lista por dia na Agenda
+- [x] Falta: mensagem opcional perguntando quando remarcar (interruptor do dono, padrão desligado), só na primeira falta
 - Pronto quando: um cancelamento libera o horário para o primeiro da lista em teste.
 
 ### M-10 Recuperação de lead e follow-up (P1)
@@ -547,6 +548,16 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] API de clientes, Início e Resultados do mês, com testes
 - [x] Telas Início, Clientes e Resultados; navegação de cinco itens
 - [ ] Passada no navegador em 360 px e 1280 px (quatro estados por tela)
+
+### SMB-05 FAQ a partir das perguntas sem resposta
+- [x] **(teste primeiro)** Agrupamento por similaridade e regras de aprovação/descarte (`apps/api/src/setup/unanswered-*.test.ts`)
+- [x] Tela da base: grupos, aprovar, descartar, "IA sugere resposta" sob clique, com validação de valor e horário
+- [x] Contador em Início (lista) e em Mais; corrige a lista, que lia itens ativos enquanto o assistente grava inativos
+
+### SMB-06 Equipe: convite da recepção
+- [x] **(teste primeiro)** Permissões: a recepção não convida, cancela, muda função nem remove, e não vê cobrança; dono convida, reenvia, cancela, muda função e remove (`apps/api/src/team/team.test.ts`)
+- [x] Tela Mais > Equipe e página `/convite-equipe/:id` (cadastro ou login, aceite); `?next=` no login
+- [x] Item "Convidar a secretária" da lista de Início deixa de ser "em breve"
 
 ### SMB-02 Dinheiro recuperado e relatório semanal (pesquisa 09 #1 e #2)
 - [x] **(teste primeiro)** Cálculo: agendados pelo assistente, "Compareceu", preço do serviço, por semana local, com o consultório fechado (`packages/db/src/results/recovered.test.ts`)

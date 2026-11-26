@@ -24,6 +24,8 @@ import { ToneScreen } from './app/setup/tone-screen';
 import { SimulatorScreen } from './app/simulator/simulator-screen';
 import { OperatorScreen } from './app/operator/operator-screen';
 import { UsageScreen } from './app/usage/usage-screen';
+import { TeamInvitePage } from './app/team/team-invite-page';
+import { TeamScreen } from './app/team/team-screen';
 import { BillingScreen } from './app/billing/billing-screen';
 import { AppShell } from './app/shell/app-shell';
 import { Route } from './routes';
@@ -32,6 +34,7 @@ export const router = createBrowserRouter([
   { path: Route.login, element: <LoginPage /> },
   { path: Route.signUp, element: <SignUpPage /> },
   { path: Route.invite, element: <InvitePage /> },
+  { path: Route.teamInvite, element: <TeamInvitePage /> },
   { path: Route.forgotPassword, element: <ForgotPasswordPage /> },
   { path: Route.resetPassword, element: <ResetPasswordPage /> },
   { path: Route.start, element: <StartPage /> },
@@ -68,6 +71,7 @@ export const router = createBrowserRouter([
           { path: Route.connections, element: <ConnectionsScreen /> },
           { path: Route.usage, element: <UsageScreen /> },
           { path: Route.billing, element: <BillingScreen /> },
+          { path: Route.team, element: <TeamScreen /> },
         ],
       },
       { path: Route.onboarding, element: <OnboardingScreen /> },

@@ -170,6 +170,7 @@ await startReminderSweep({
   boss,
   db,
   alert,
+  notify: notifier,
   nodeEnv: env.NODE_ENV,
   accessToken: process.env.META_ACCESS_TOKEN,
   tokenKey: process.env.META_TOKEN_KEY,

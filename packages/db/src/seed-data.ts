@@ -26,6 +26,14 @@ export const FIXTURE = {
   message: { text: 'Oi, quanto custa a sessão?' },
   appointment: { startsAt: '2027-01-04 12:00Z', endsAt: '2027-01-04 12:50Z' },
   reminder: { sendAt: new Date('2027-01-03T12:00:00Z') },
+  waitlist: {
+    windowStart: new Date('2027-01-03T03:00:00Z'),
+    windowEnd: new Date('2027-01-10T03:00:00Z'),
+  },
+  slotOffer: {
+    startsAt: new Date('2027-01-05T12:00:00Z'),
+    expiresAt: new Date('2027-01-05T12:30:00Z'),
+  },
   payment: { amountCents: 5_000, provider: 'pix_manual' },
   clientPackage: {
     name: 'Pacote 4 sessões (exemplo)',

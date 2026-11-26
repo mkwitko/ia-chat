@@ -26,10 +26,12 @@ export interface KnowledgeItem {
   question: string;
   answer: string;
 }
+/** The same question asked more than once, folded into one card. */
 export interface Unanswered {
-  id: string;
+  ids: string[];
   question: string;
-  createdAt: string;
+  count: number;
+  lastAskedAt: string;
 }
 export interface KnowledgeView {
   items: KnowledgeItem[];
@@ -104,6 +106,22 @@ export const useUpdateKnowledge = () =>
   useWrite(Path.knowledge, ({ id, body }: WithId<KnowledgeInput>) =>
     api(`${Path.knowledge}/${id}`, { method: Method.put, body }),
   );
+export const useApproveUnanswered = () =>
+  useWrite(Path.knowledge, (body: KnowledgeInput & { ids: string[] }) =>
+    api(`${Path.knowledge}/unanswered/approve`, { method: Method.post, body }),
+  );
+export const useDismissUnanswered = () =>
+  useWrite(Path.knowledge, (ids: string[]) =>
+    api(`${Path.knowledge}/unanswered/dismiss`, { method: Method.post, body: { ids } }),
+  );
+export const useSuggestAnswer = () =>
+  useMutation({
+    mutationFn: (question: string) =>
+      api<{ suggestion: string }>(`${Path.knowledge}/unanswered/suggest`, {
+        method: Method.post,
+        body: { question },
+      }),
+  });
 export const useArchiveKnowledge = () =>
   useWrite(Path.knowledge, (id: string) =>
     api(`${Path.knowledge}/${id}`, { method: Method.delete }),

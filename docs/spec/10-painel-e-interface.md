@@ -61,6 +61,7 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsA
 - Compromissos vindos do Google aparecem como ocupado, sem detalhes.
 - Acesso a disponibilidade, bloqueios e modo férias.
 - Implementação (E-23): lista feita à mão, sem Schedule-X (sem dependência nova): dia no celular e semana como sete seções de dia, a partir do dia escolhido (`/agenda?dia=AAAA-MM-DD&visao=semana`). Em vez de tocar num horário livre da grade, o botão "Novo agendamento" abre o formulário com os horários livres do dia (mesmo `availableSlots` do assistente) e o toque no atendimento abre remarcar e cancelar. Com o Google Agenda conectado (E-21) os horários ocupados lá saem da lista de livres; a seção "Google Agenda" da tela Disponibilidade conecta, escolhe a agenda, mostra o estado e desconecta, e uma faixa de alerta pede para reconectar quando o token cai. A tela "Disponibilidade, bloqueios e férias" (`/agenda/disponibilidade`) edita os horários da semana, os bloqueios, as férias e o horário do resumo noturno.
+- Lista de espera (M-09): cada dia mostra, abaixo dos atendimentos, quem pediu para ser avisado se abrir um horário (nome, serviço, até quando), com "Tirar da lista". Na semana a explicação some e ficam só os nomes. Entradas vêm só do assistente.
 
 ### Início
 
@@ -69,7 +70,7 @@ Substitui o antigo "Hoje" (`/inicio`; `/hoje` redireciona).
 - **Recuperado este mês** (H-41): no topo, a soma do preço dos serviços dos atendimentos que o assistente agendou e que você marcou "Compareceu", com a contagem ao lado e "Como calculamos" num toque; abaixo de 5 atendimentos, "Ainda sem dados".
 - **O mês em quatro números**, todos contados do banco e cada um um link para onde agir: contatos no mês (Clientes), agendamentos (Agenda), aguardando retorno (Conversas) e cancelamentos (Agenda). Cancelamento conta no dia em que foi feito.
 - **O que precisa de você**: conversas aguardando, rascunhos para aprovar, perguntas que o assistente não soube, atendimentos que já passaram sem "compareceu/faltou" marcado (com os dois botões ali mesmo) e atendimentos das próximas 48 h ainda sem confirmação. Item vazio some; sem nada, "Tudo em dia".
-- **Pacotes terminando** (H-42), dentro de "O que precisa de você": clientes cujo pacote mais recente tem 1 sessão ou acabou há até 30 dias, com link para a ficha.
+- **Pacotes terminando** (H-43), dentro de "O que precisa de você": clientes cujo pacote mais recente tem 1 sessão ou acabou há até 30 dias, com link para a ficha.
 - **Hoje**: os atendimentos do dia.
 - **Não agendaram**: quantos contatos estão em "Não agendou" e quantos podem ser retomados (não pediram para parar e falaram com você nos últimos 30 dias). Nenhuma mensagem sai sozinha daqui: o link leva à ficha do cliente.
 - **Resultados do mês**: botão "Ver resultados".
@@ -81,7 +82,7 @@ Lista (`/clientes`) e ficha (`/clientes/:id`) de quem já falou com o consultór
 - Lista: nome ou telefone, origem, status, último contato, próximo atendimento, "pediu para parar" e quantos atendimentos teve (recorrência é contagem, não etapa). Busca por nome ou telefone e filtro por status.
 - **Status** (no máximo quatro, derivados de fatos; ver H-31): **Novo contato**, **Agendado** (tem atendimento marcado), **Cliente** (compareceu ao menos uma vez), **Não agendou** (sem mensagem e sem agendamento há mais de 3 dias, ou só teve agendamentos cancelados ou faltas: é a lista de recuperação). Manual, auditado: **Perdido**, com um motivo de lista fixa (preço, distância, escolheu outro profissional, não precisa mais, número errado, outro); vale até chegar mensagem ou agendamento novo, ou até "voltar ao status automático".
 - **Origem**: WhatsApp direto, indicação (com código), site, anúncio, importado, cadastro manual. Só a evidência define sozinha: mensagem que chega é "WhatsApp direto" e cadastro pelo painel é "manual". Indicação, site e anúncio o profissional escolhe na ficha (anúncio automático só quando a Meta mandar o dado de origem, o que ainda não lemos). Nunca se deduz campanha sem prova.
-- Ficha: conversa (link), atendimentos com "compareceu/faltou", pacotes ("Pacote 4 sessões: 2 de 4 usadas", data, pago, histórico, ajuste de uma sessão com motivo de lista fixa e "Registrar pacote" a partir dos pacotes do perfil com sessões; H-42), histórico de consentimento (aceitou/pediu para parar, categoria, origem, data, quem), histórico do status, origem e perdido.
+- Ficha: conversa (link), atendimentos com "compareceu/faltou", pacotes ("Pacote 4 sessões: 2 de 4 usadas", data, pago, histórico, ajuste de uma sessão com motivo de lista fixa e "Registrar pacote" a partir dos pacotes do perfil com sessões; H-43), histórico de consentimento (aceitou/pediu para parar, categoria, origem, data, quem), histórico do status, origem e perdido.
 - **Saúde fora daqui**: não existe campo de queixa nem de anotação em contato, nota ou status; o texto das mensagens não aparece na lista nem na ficha. Se um dia houver campo de observação, terá aviso visível e ficará fora do contexto do assistente.
 
 ### Presença
@@ -98,7 +99,7 @@ No atendimento que já começou, o profissional marca "Compareceu" ou "Faltou" (
 | Contatos novos e por origem | contatos criados no período |
 | Primeira resposta (mediana) | das conversas abertas no período (primeira mensagem do paciente dentro dele) que foram respondidas, o tempo até a primeira resposta do assistente ou do profissional |
 | Passaram para você (taxa de transferência) | conversas do período em que o controle foi para o profissional ÷ conversas do período |
-| Agendamentos feitos / cancelamentos | atendimentos criados / cancelados no período |
+| Agendamentos feitos / remarcações / cancelamentos | atendimentos novos criados / criados no lugar de um cancelado (M-09) / cancelados e não remarcados, no período |
 | Taxa de faltas | faltou ÷ (compareceu + faltou), só atendimentos com presença marcada; a tela diz quantos ficaram sem marca |
 | Recuperados | contatos que estavam em "Não agendou" e agendaram no período |
 | Retornos | atendimentos criados no período para quem já tinha comparecido antes |
@@ -112,7 +113,7 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
 - Nível de autonomia: automático, aprovar antes de enviar, desligado. A descrição de cada nível diz o que acontece na prática.
 - Tom de voz: mensagens de exemplo e as quatro perguntas.
 - Base de conhecimento: perguntas e respostas.
-- **Perguntas que o assistente não soube**: lista com um toque para escrever a resposta e incluí-la na base.
+- **Perguntas que o assistente não soube**: o assistente registra a pergunta (`registrar_duvida_sem_resposta`) como item inativo, sem resposta, de origem `unanswered`. A tela agrupa as parecidas (normalização de caixa, acento, pontuação e palavras de ligação; iguais ou com metade das palavras em comum) e mostra "Perguntada N vezes", as mais repetidas primeiro. O dono escreve ou edita a resposta e aprova: vira um item ativo da base, que o assistente passa a usar, e as cópias do grupo somem. "Descartar" remove o grupo. O botão "IA sugere resposta" (só ao clicar; usa o perfil do negócio, sem preços nem dados de paciente) devolve um rascunho para editar; se o rascunho trouxer valor ou horário, é trocado por um aviso para usar o perfil e a agenda. Só o dono aprova, descarta e pede sugestão. O número de grupos pendentes aparece na lista de Início ("Responder N perguntas") e como contador na linha Assistente de Mais.
 - **Simulador**: conversa de teste que não envia nada ao WhatsApp, com a indicação de qual informação o assistente usou.
   - Roda o mesmo caminho do turno real (pré-filtros, prompt, validação da saída; código em `packages/agent`), sem conversa, contato nem mensagem gravados: a conversa de teste vive só na tela. O que sai de cada resposta ("O que o assistente usou") vem das chamadas de ferramenta e da comparação da resposta com os dados cadastrados (serviço e preço, endereço, como chegar, base de conhecimento), nunca do que o modelo diz ter usado.
   - Ferramentas: consulta de horários roda de verdade, mas sem registrar ofertas; agendar, remarcar e cancelar não existem no simulador (a tela avisa); transferir e registrar dúvida só marcam o que aconteceria. A checagem de urgência por Jev (julgamento extra antes do modelo) não roda aqui; a lista de palavras sim.
@@ -137,6 +138,14 @@ M-04 (`/mais/perfil`, H-38): nome, o que faz, telefone, site, rede social, link 
 
 - Plano atual, conversas usadas na franquia, previsão para o mês e o bloco "WhatsApp (Meta)": respostas grátis da Meta usadas no mês (ex.: "640 de 1.000"), mensagens com custo por categoria e custo estimado, `GET /api/usage/meta`. Texto: "Estimativa da Meta no seu cartão: R$ X". A Meta cobra no cartão do cliente; não entra na nossa fatura.
 - Teto de excedente, troca de plano, faturas, cancelamento.
+
+### Equipe
+
+- Só o dono vê a linha e a tela (Mais > Equipe). A recepção e o profissional não veem.
+- **Convidar**: e-mail e função (Recepção ou Profissional). É o convite de organização do Better Auth (`invite-member`), com as permissões de `apps/api/src/auth/access.ts`: só o dono convida, cancela convite, muda função e remove. O e-mail sai pelo remetente de e-mail do sistema (Resend em produção; em desenvolvimento vai para o log, sem o conteúdo).
+- **Lista**: convites pendentes (aguardando resposta ou vencido) com "Reenviar" (mesmo convite, novo e-mail) e "Cancelar convite"; quem já está na equipe, com a função (troca entre Recepção e Profissional) e "Remover". O dono não se remove nem muda a própria função.
+- **Aceitar** (`/convite-equipe/:id`, o link do e-mail): a página lê o convite (`GET /api/team-invites/:id`: consultório, e-mail, função, estado) e, sem sessão, oferece criar a conta com o e-mail convidado (Google ou e-mail e senha; o convite pendente libera o cadastro, H-37) ou entrar (`/entrar?next=`). Com sessão, "Aceitar convite" entra na equipe e abre o Início. Se a conta logada tem outro e-mail, a página avisa e oferece trocar de conta. Convite aceito, cancelado, recusado ou vencido mostra o motivo.
+- A lista de Início mostra "Convidar a secretária" até haver mais alguém na equipe ou um convite pendente.
 
 ### Onboarding
 

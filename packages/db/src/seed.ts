@@ -156,6 +156,10 @@ async function seedSchedule(tx: Tx, ids: Ids): Promise<void> {
     },
   });
   await tx.payment.create({ data: { tenantId, appointmentId, ...FIXTURE.payment } });
+  const entry = await tx.slotWaitlistEntry.create({
+    data: { tenantId, contactId, serviceId: ids.serviceId, ...FIXTURE.waitlist },
+  });
+  await tx.slotOffer.create({ data: { tenantId, entryId: entry.id, ...FIXTURE.slotOffer } });
   const pkg = await tx.clientPackage.create({
     data: { tenantId, contactId, ...FIXTURE.clientPackage },
   });

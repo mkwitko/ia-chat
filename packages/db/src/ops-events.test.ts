@@ -8,6 +8,8 @@ const url = process.env.DATABASE_URL ?? '';
 if (!url) throw new Error('DATABASE_URL is required for integration tests');
 
 const db = createDb(url);
+const RECENT = 20;
+const ABORTED = { event: 'turn_aborted', code: 'timeout' } as const;
 afterAll(() => db.client.$disconnect());
 
 describe('ops_events', () => {
@@ -20,9 +22,15 @@ describe('ops_events', () => {
       jobId: 'j-1',
     });
     await recordOpsEvent(db, { event: 'turn_aborted', tenantId: 'not-a-uuid', code: 'timeout' });
-    const [newest, older] = await recentOpsEvents(db, 2);
-    expect(newest).toMatchObject({ event: 'turn_aborted', tenantId: null, code: 'timeout' });
-    expect(older).toMatchObject({ event: 'dead_letter', tenantId, queue: 'inbound.process' });
+    // Other test files write to this platform table at the same time: find ours, check the order.
+    const rows = await recentOpsEvents(db, RECENT);
+    const older = rows.findIndex((row) => row.tenantId === tenantId);
+    const newest = rows.findIndex(
+      (row) => row.event === ABORTED.event && row.code === ABORTED.code,
+    );
+    expect(rows[newest]).toMatchObject({ event: 'turn_aborted', tenantId: null, code: 'timeout' });
+    expect(rows[older]).toMatchObject({ event: 'dead_letter', tenantId, queue: 'inbound.process' });
+    expect(newest).toBeLessThan(older);
   });
 
   it('the app role cannot update or truncate it', async () => {

@@ -6,6 +6,7 @@ import { requireTenant } from '../auth/tenant-guard.ts';
 import { HttpStatus } from '../http.ts';
 import { audit, AuditAction } from './audit.ts';
 import { notFound, parsed, tenantOf } from './guarded.ts';
+import { pendingGroups } from './unanswered-routes.ts';
 
 // Spec 10, "Assistente": knowledge base, and the questions the assistant could not answer,
 // turned into an answer in one step (RF in E-17).
@@ -36,19 +37,15 @@ export function registerKnowledgeRoutes(app: FastifyInstance): void {
 
 function listKnowledge(request: FastifyRequest) {
   return tenantOf(request).withTenant(async (tx) => {
-    const active = await tx.knowledgeItem.findMany({
-      where: { active: true },
-      orderBy: { createdAt: 'desc' },
-      select: { ...SELECT, createdAt: true },
-    });
-    return {
-      items: active
-        .filter((item) => item.answer !== null)
-        .map(({ id, question, answer, source }) => ({ id, question, answer, source })),
-      unanswered: active
-        .filter((item) => item.answer === null)
-        .map(({ id, question, createdAt }) => ({ id, question, createdAt })),
-    };
+    const [items, unanswered] = await Promise.all([
+      tx.knowledgeItem.findMany({
+        where: { active: true, answer: { not: null } },
+        orderBy: { createdAt: 'desc' },
+        select: SELECT,
+      }),
+      pendingGroups(tx),
+    ]);
+    return { items, unanswered };
   });
 }
 

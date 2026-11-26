@@ -162,6 +162,10 @@ describe('manual booking (RF-48)', () => {
       startsAt: at('11:00'),
     });
     expect(moved.statusCode).toBe(200);
+    const results = (await call('GET', '/api/results')).json<{
+      appointments: { rescheduled: number; cancelled: number };
+    }>();
+    expect(results.appointments).toMatchObject({ rescheduled: 1, cancelled: 0 }); // M-09, metric 8
     const moveId = moved.json<{ id: string }>().id;
     const cancelled = await call('POST', `/api/agenda/appointments/${moveId}/cancel`, {});
     expect(cancelled.statusCode).toBe(200);

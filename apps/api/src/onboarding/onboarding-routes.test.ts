@@ -81,7 +81,13 @@ describe('progress', () => {
   it('lists what is left for later on Início (checklist), as facts only', async () => {
     const { call } = await newTenant();
     const view = (await call('GET', '/api/onboarding')).json<{ checklist: object }>();
-    expect(view.checklist).toEqual({ tone: false, reviewLink: false, packages: 0, unanswered: 0 });
+    expect(view.checklist).toEqual({
+      tone: false,
+      reviewLink: false,
+      packages: 0,
+      unanswered: 0,
+      team: false,
+    });
   });
 
   it('activates only with the WhatsApp connected, in "aprovar antes de enviar"', async () => {

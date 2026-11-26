@@ -17,6 +17,11 @@ const ERASERS: readonly Eraser[] = [
   (tx, tenantId) => tx.payment.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.packageEntry.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.clientPackage.deleteMany({ where: { tenantId } }),
+  (tx, tenantId) => tx.slotOffer.deleteMany({ where: { tenantId } }),
+  (tx, tenantId) => tx.slotWaitlistEntry.deleteMany({ where: { tenantId } }),
+  // The remarcação link points inside the same table: cut it first (Restrict).
+  (tx, tenantId) =>
+    tx.appointment.updateMany({ where: { tenantId }, data: { rescheduledFromId: null } }),
   (tx, tenantId) => tx.appointment.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.metaMessageUsage.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.inboundEvent.deleteMany({ where: { tenantId } }),

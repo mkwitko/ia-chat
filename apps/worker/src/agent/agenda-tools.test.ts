@@ -86,7 +86,7 @@ const bookInput = (inicio: string, confirmado = true) => ({
 const appointmentCount = () => db.withTenant(tenantId, (tx) => tx.appointment.count());
 
 describe('plan gating', () => {
-  it('Essencial gets no agenda tool; Agenda gets all six', () => {
+  it('Essencial gets no agenda tool; Agenda gets every agenda tool', () => {
     const context = { ...base, now: OFFER_TIME, turnId: 't', effects: { handoff: false } };
     const essential = Object.keys(conversationTools(context, Plan.essencial));
     const agenda = Object.keys(conversationTools(context, Plan.agenda));
@@ -223,6 +223,7 @@ describe('reschedule and cancel', () => {
     expect(factsFromToolOutputs([{ tool: AgendaToolName.cancel, output: done }]).actions).toEqual([
       ActionKind.cancelled,
     ]);
+    expect(done).toHaveProperty('proximo_passo'); // M-09: offer to rebook
     expect(await turn(NEXT_TURN).run(AgendaToolName.list, {})).toEqual({ agendamentos: [] });
   });
 });

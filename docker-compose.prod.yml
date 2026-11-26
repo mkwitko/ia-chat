@@ -23,6 +23,8 @@ x-pgbackrest: &pgbackrest
   PGBACKREST_REPO1_RETENTION_DIFF: '7'
   PGBACKREST_COMPRESS_TYPE: zst
   PGBACKREST_START_FAST: 'y'
+  # Parallel transfers: R2 is latency-bound per file (first full backup of 1,500 files took 14 min serially).
+  PGBACKREST_PROCESS_MAX: '4'
   PGBACKREST_LOG_PATH: /var/log/pgbackrest
   PGBACKREST_LOCK_PATH: /tmp/pgbackrest
 

@@ -32,7 +32,9 @@ describe('operator problems', () => {
     await new Promise((resolve) => setTimeout(resolve, SETTLE_MS));
     const response = await problems(operator);
     const rows = response.json<{ event: string; tenantId: string | null }[]>();
-    expect(rows[0]).toMatchObject({ event: 'dead_letter', tenantId, queue: 'inbound.process' });
+    // Other test files write alerts at the same time: look for this one, not the first row.
+    const mine = rows.find((row) => row.tenantId === tenantId);
+    expect(mine).toMatchObject({ event: 'dead_letter', tenantId, queue: 'inbound.process' });
     expect(response.body).not.toContain(MESSAGE);
   });
 

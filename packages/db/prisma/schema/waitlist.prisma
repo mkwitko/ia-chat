@@ -1,0 +1,59 @@
+// M-09: slot waitlist. A client asks to be told when an earlier time opens; a cancelled
+// appointment frees a slot and the worker offers it to one entry at a time (spec 05).
+
+/// One request of a client: "tell me if a slot of this service opens between these instants".
+model SlotWaitlistEntry {
+  id          String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId    String         @map("tenant_id") @db.Uuid
+  contactId   String         @map("contact_id") @db.Uuid
+  serviceId   String         @map("service_id") @db.Uuid
+  windowStart DateTime       @map("window_start") @db.Timestamptz
+  windowEnd   DateTime       @map("window_end") @db.Timestamptz
+  status      WaitlistStatus @default(waiting)
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant  Tenant      @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  contact Contact     @relation("SlotWaitlistEntry_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
+  service Service     @relation("SlotWaitlistEntry_service", fields: [tenantId, serviceId], references: [tenantId, id], onDelete: Restrict)
+  offers  SlotOffer[] @relation("SlotOffer_entry")
+
+  @@unique([tenantId, id])
+  @@index([tenantId, status, windowStart])
+  @@map("slot_waitlist_entries")
+}
+
+enum WaitlistStatus {
+  waiting
+  booked
+  removed
+  expired
+}
+
+/// One slot offered to one entry. At most one open offer per slot (partial unique index in the
+/// migration); an entry is never offered the same slot twice.
+model SlotOffer {
+  id        String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId  String         @map("tenant_id") @db.Uuid
+  entryId   String         @map("entry_id") @db.Uuid
+  startsAt  DateTime       @map("starts_at") @db.Timestamptz
+  expiresAt DateTime       @map("expires_at") @db.Timestamptz
+  state     SlotOfferState @default(open)
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant Tenant            @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  entry  SlotWaitlistEntry @relation("SlotOffer_entry", fields: [tenantId, entryId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([entryId, startsAt])
+  @@index([tenantId, state, expiresAt])
+  @@map("slot_offers")
+}
+
+enum SlotOfferState {
+  /// Sent; the client may still say yes.
+  open
+  accepted
+  expired
+  /// Not sent: window closed, human control or opt-out. The professional was told instead.
+  skipped
+}

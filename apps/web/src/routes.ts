@@ -25,9 +25,12 @@ export const Route = {
   connections: '/mais/conexoes',
   usage: '/mais/plano-e-uso',
   billing: '/mais/assinatura',
+  team: '/mais/equipe',
+  teamInvite: '/convite-equipe/:id',
   operator: '/operador',
 } as const;
 
 export const invitePath = (token: string) => `/convite/${token}`;
+export const teamInvitePath = (id: string) => `/convite-equipe/${id}`;
 export const conversationPath = (id: string) => `${Route.conversations}/${id}`;
 export const customerPath = (id: string) => `${Route.customers}/${id}`;
