@@ -4,10 +4,19 @@ import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
 import { requireTenant } from '../auth/tenant-guard.ts';
 import { audit, AuditAction } from '../setup/audit.ts';
-import { parsed, tenantOf } from '../setup/guarded.ts';
-import { endMinuteOfColumn, minuteOfColumn, minutesOf, timeOf, timeSchema } from './schemas.ts';
+import { notFound, parsed, tenantOf } from '../setup/guarded.ts';
+import {
+  endMinuteOfColumn,
+  minuteOfColumn,
+  minutesOf,
+  professionalOf,
+  professionalQuery,
+  timeOf,
+  timeSchema,
+} from './schemas.ts';
 
-// RF-40: weekly windows per day, more than one per day. RF-15: the nightly push time.
+// RF-40: weekly windows per day, more than one per day, per professional (spec 05, "Agenda por
+// profissional"; without `professionalId`, the first one). RF-15: the nightly push time.
 
 const PATH = '/api/availability';
 const SUMMARY_PATH = '/api/agenda/summary-time';
@@ -36,7 +45,7 @@ export function validWindows(rules: readonly RuleInput[]): boolean {
 }
 
 const putSchema = z
-  .object({ rules: z.array(ruleSchema).max(MAX_RULES) })
+  .object({ rules: z.array(ruleSchema).max(MAX_RULES), professionalId: z.uuid().optional() })
   .strict()
   .refine((body) => validWindows(body.rules));
 const summarySchema = z
@@ -57,19 +66,29 @@ export function registerAvailabilityRoutes(app: FastifyInstance): void {
 
 const at = (minute: number) => new Date(minute * MS_PER_MINUTE);
 
-function readAvailability(request: FastifyRequest) {
+function readAvailability(request: FastifyRequest, reply: FastifyReply) {
+  const query = professionalQuery.safeParse(request.query);
+  if (!query.success) return notFound(reply);
   const { tenantId } = tenantOf(request);
   return tenantOf(request).withTenant(async (tx) => {
+    const professional = await professionalOf(tx, query.data.professionalId);
+    if (query.data.professionalId && !professional) return notFound(reply);
     const [tenant, rules] = await Promise.all([
       tx.tenant.findUniqueOrThrow({
         where: { id: tenantId },
         select: { timezone: true, nightlySummaryMinute: true },
       }),
-      tx.availabilityRule.findMany({ orderBy: [{ weekday: 'asc' }, { startTime: 'asc' }] }),
+      professional
+        ? tx.availabilityRule.findMany({
+            where: { professionalId: professional.id },
+            orderBy: [{ weekday: 'asc' }, { startTime: 'asc' }],
+          })
+        : [],
     ]);
     return {
       timezone: tenant.timezone,
       nightlySummaryMinute: tenant.nightlySummaryMinute,
+      professionalId: professional?.id ?? null,
       rules: rules.map((rule) => ({
         weekday: rule.weekday,
         start: timeOf(minuteOfColumn(rule.startTime)),
@@ -84,9 +103,11 @@ async function replaceRules(request: FastifyRequest, reply: FastifyReply) {
   if (!input) return reply;
   const { tenant, body } = input;
   return tenant.withTenant(async (tx) => {
-    const professional = await tx.professional.findFirstOrThrow({ orderBy: { createdAt: 'asc' } });
-    const before = await tx.availabilityRule.findMany({ select: { weekday: true } });
-    await tx.availabilityRule.deleteMany({});
+    const professional = await professionalOf(tx, body.professionalId);
+    if (!professional) return notFound(reply);
+    const mine = { professionalId: professional.id };
+    const before = await tx.availabilityRule.findMany({ where: mine, select: { weekday: true } });
+    await tx.availabilityRule.deleteMany({ where: mine });
     await tx.availabilityRule.createMany({
       data: body.rules.map((rule) => ({
         tenantId: tenant.tenantId,

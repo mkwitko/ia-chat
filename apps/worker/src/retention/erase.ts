@@ -30,6 +30,7 @@ const ERASERS: readonly Eraser[] = [
   (tx, tenantId) => tx.channelRoute.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.channel.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.availabilityRule.deleteMany({ where: { tenantId } }),
+  (tx, tenantId) => tx.professionalService.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.timeOff.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.professional.deleteMany({ where: { tenantId } }),
   (tx, tenantId) => tx.service.deleteMany({ where: { tenantId } }),

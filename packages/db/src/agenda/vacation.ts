@@ -8,10 +8,15 @@ import type { Tx } from '../index.ts';
  */
 export async function vacationReturn(
   tx: Tx,
-  window: { from: Date; to: Date },
+  window: { from: Date; to: Date; professionalId: string },
 ): Promise<Date | null> {
   const found = await tx.timeOff.findFirst({
-    where: { kind: TimeOffKind.vacation, startsAt: { lt: window.to }, endsAt: { gt: window.from } },
+    where: {
+      professionalId: window.professionalId,
+      kind: TimeOffKind.vacation,
+      startsAt: { lt: window.to },
+      endsAt: { gt: window.from },
+    },
     orderBy: { startsAt: 'asc' },
   });
   return found?.endsAt ?? null;

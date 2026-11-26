@@ -43,6 +43,7 @@ export const AgendaCopy = {
     limite_de_agendamentos: 'Esse paciente já tem o máximo de agendamentos futuros.',
     servico_nao_encontrado: 'Escolha um serviço da lista.',
     sem_profissional: 'Cadastre o profissional antes de agendar.',
+    profissional_nao_encontrado: 'Esse profissional não faz este serviço. Escolha outro horário.',
     agenda_externa_indisponivel:
       'Não conseguimos consultar o seu Google Agenda agora. Nada foi marcado. Tente de novo ou reconecte em Disponibilidade.',
     agendamento_nao_sincronizado:

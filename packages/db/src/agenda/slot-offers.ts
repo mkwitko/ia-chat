@@ -1,7 +1,8 @@
 import { MS_PER_MINUTE } from '@app/core';
 import { AppointmentStatus, SlotOfferState, WaitlistStatus } from '../../generated/prisma/enums.ts';
 import type { Tx } from '../index.ts';
-import { loadScope, slotsIn, type AgendaScope } from './availability.ts';
+import { loadScope, type AgendaScope } from './availability.ts';
+import { slotsAcross } from './professionals.ts';
 
 // M-09 (spec 05, "Lista de espera"): a cancelled future appointment frees its start time; the
 // worker offers it to the oldest matching entry, one open offer per slot (partial unique index),
@@ -23,27 +24,36 @@ export async function expireWaitlist(tx: Tx, now: Date): Promise<void> {
   });
 }
 
-/** Start times of cancelled future appointments, not booked again and not under an open offer. */
+const slotKey = (row: { startsAt: Date; professionalId: string }) =>
+  `${row.professionalId}@${row.startsAt.toISOString()}`;
+
+/**
+ * Start times of cancelled future appointments whose professional has not booked them again,
+ * and not under an open offer.
+ */
 export async function freedSlots(tx: Tx, now: Date): Promise<Date[]> {
   const cancelled = await tx.appointment.findMany({
     where: { status: AppointmentStatus.cancelled, startsAt: { gt: now } },
-    distinct: ['startsAt'],
+    distinct: ['startsAt', 'professionalId'],
     orderBy: { startsAt: 'asc' },
-    select: { startsAt: true },
+    select: { startsAt: true, professionalId: true },
   });
   const starts = cancelled.map((row) => row.startsAt);
   const [taken, open] = await Promise.all([
     tx.appointment.findMany({
       where: { status: { not: AppointmentStatus.cancelled }, startsAt: { in: starts } },
-      select: { startsAt: true },
+      select: { startsAt: true, professionalId: true },
     }),
     tx.slotOffer.findMany({
       where: { state: SlotOfferState.open, startsAt: { in: starts } },
       select: { startsAt: true },
     }),
   ]);
-  const busy = new Set([...taken, ...open].map((row) => row.startsAt.getTime()));
-  return starts.filter((start) => !busy.has(start.getTime()));
+  const rebooked = new Set(taken.map(slotKey));
+  const offered = new Set(open.map((row) => row.startsAt.getTime()));
+  const free = cancelled.filter((row) => !rebooked.has(slotKey(row)));
+  const times = new Set(free.map((row) => row.startsAt.getTime()));
+  return [...times].filter((time) => !offered.has(time)).map((time) => new Date(time));
 }
 
 export interface ClaimedOffer {
@@ -78,13 +88,9 @@ export async function claimSlotOffer(
   if (entries.length === 0) return null;
   const scope = await loadScope(tx);
   for (const entry of entries) {
-    const fits = await slotFree(tx, {
-      scope,
-      startsAt,
-      now,
-      durationMinutes: entry.service.durationMinutes,
-    });
-    if (!fits) continue;
+    const { serviceId, service } = entry;
+    const free = { scope, startsAt, now, serviceId, durationMinutes: service.durationMinutes };
+    if (!(await slotFree(tx, free))) continue;
     const expiresAt = new Date(now.getTime() + OFFER_TTL_MINUTES * MS_PER_MINUTE);
     const offer = await tx.slotOffer.create({
       data: { tenantId: entry.tenantId, entryId: entry.id, startsAt, expiresAt },
@@ -122,13 +128,17 @@ interface FreeCheck {
   scope: AgendaScope;
   startsAt: Date;
   now: Date;
+  serviceId: string;
   durationMinutes: number;
 }
 
-/** ponytail: Google busy time is not read here; bookAppointment checks it before anything is booked. */
-async function slotFree(tx: Tx, { scope, startsAt, now, durationMinutes }: FreeCheck) {
-  const slots = await slotsIn(tx, {
-    professionalId: scope.professionalId,
+/**
+ * Some professional who performs the service is free then.
+ * ponytail: Google busy time is not read here; bookAppointment checks it before anything is booked.
+ */
+async function slotFree(tx: Tx, { scope, startsAt, now, serviceId, durationMinutes }: FreeCheck) {
+  const slots = await slotsAcross(tx, {
+    serviceId,
     timezone: scope.timezone,
     durationMinutes,
     from: startsAt,

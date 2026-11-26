@@ -118,7 +118,8 @@ describe('places and professionals', () => {
     expect(first.statusCode).toBe(201);
   });
 
-  it('adds a second professional and never removes the first', async () => {
+  it('adds a second professional (Clínica) and never removes the first', async () => {
+    await ctx.db.client.tenant.update({ where: { id: tenantId }, data: { plan: 'clinica' } });
     const added = await call('POST', '/api/professionals', {
       payload: { name: 'Dra. Ana Fictícia' },
     });

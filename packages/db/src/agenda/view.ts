@@ -7,12 +7,14 @@ export function toView(row: {
   status: string;
   calendarSync: AppointmentView['calendarSync'];
   service: { name: string };
+  professional?: { name: string };
 }): AppointmentView {
   return {
     id: row.id,
     startsAt: row.startsAt,
     endsAt: row.endsAt,
     serviceName: row.service.name,
+    professionalName: row.professional?.name,
     status: row.status,
     calendarSync: row.calendarSync,
   };

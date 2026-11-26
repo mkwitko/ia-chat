@@ -1,8 +1,15 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
+import { toast } from 'sonner';
+import { ApiError } from '@/lib/api';
+import { Route } from '@/routes';
+import { PROFESSIONAL_PARAM } from '../agenda/professional-api';
+import { feedback } from '../setup/feedback';
 import { AddButton } from '../setup/add-button';
 import { FormActions, RowActions, TextField } from '../setup/fields';
 import { NEW_ITEM, useEditing } from '../setup/use-editing';
 import {
+  PLAN_LIMIT,
   useAddProfessional,
   useProfessionals,
   useRemoveProfessional,
@@ -12,7 +19,15 @@ import {
 import { ProfileCopy as Copy } from './profile-copy';
 import { removeFeedback } from './places-section';
 
-/** M-04: who serves. The first one owns the agenda the assistant books. */
+const addFeedback = (done: { onSuccess: () => void }) => ({
+  onSuccess: done.onSuccess,
+  onError: (error: Error) => {
+    if (error instanceof ApiError && error.code === PLAN_LIMIT) toast.error(Copy.planLimit);
+    else feedback.onError(error);
+  },
+});
+
+/** M-04: who serves; each professional has an agenda (spec 05, "Agenda por profissional"). */
 export function TeamSection() {
   const team = useProfessionals();
   const edit = useEditing();
@@ -32,7 +47,7 @@ export function TeamSection() {
           pending={add.isPending}
           onCancel={edit.close}
           onSubmit={(name) => {
-            add.mutate(name, edit.done);
+            add.mutate(name, addFeedback(edit.done));
           }}
         />
       ) : (
@@ -71,8 +86,16 @@ function MemberRow({ member, first, edit }: Readonly<RowProps>) {
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border bg-card p-4">
       <p className="grid min-w-48 flex-1 font-semibold">
         {member.name}
-        {first && <span className="text-xs font-medium text-jade-ink">{Copy.agendaOwner}</span>}
+        {first && (
+          <span className="text-xs font-medium text-muted-foreground">{Copy.agendaOwner}</span>
+        )}
       </p>
+      <Link
+        to={`${Route.agendaAvailability}?${PROFESSIONAL_PARAM}=${member.id}`}
+        className="flex min-h-11 items-center text-sm font-medium underline underline-offset-4"
+      >
+        {Copy.hours}
+      </Link>
       <RowActions
         onEdit={() => {
           edit.open(member.id);

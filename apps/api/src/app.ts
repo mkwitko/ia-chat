@@ -36,6 +36,7 @@ import { registerUnansweredRoutes } from './setup/unanswered-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerPlacesRoutes } from './setup/places-routes.ts';
 import { registerProfessionalRoutes } from './setup/professionals-routes.ts';
+import { registerProfessionalServiceRoutes } from './setup/professional-services-routes.ts';
 import { registerLeadFollowUpRoutes } from './growth/lead-follow-up-routes.ts';
 import { registerProfileRoutes } from './setup/profile-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
@@ -159,6 +160,7 @@ function registerSettingsRoutes(app: FastifyInstance): void {
   registerLocationRoutes(app);
   registerPlacesRoutes(app);
   registerProfessionalRoutes(app);
+  registerProfessionalServiceRoutes(app);
   registerProfileRoutes(app);
   registerLeadFollowUpRoutes(app);
   registerKnowledgeRoutes(app);

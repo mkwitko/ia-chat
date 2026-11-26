@@ -14,9 +14,10 @@ model Professional {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
-  availabilityRules AvailabilityRule[] @relation("AvailabilityRule_professional")
-  timeOffs          TimeOff[]          @relation("TimeOff_professional")
-  appointments      Appointment[]      @relation("Appointment_professional")
+  availabilityRules AvailabilityRule[]    @relation("AvailabilityRule_professional")
+  timeOffs          TimeOff[]             @relation("TimeOff_professional")
+  appointments      Appointment[]         @relation("Appointment_professional")
+  services          ProfessionalService[] @relation("ProfessionalService_professional")
 
   @@unique([tenantId, id])
   @@map("professionals")
@@ -93,11 +94,30 @@ model Service {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
-  appointments        Appointment[]       @relation("Appointment_service")
-  slotWaitlistEntries SlotWaitlistEntry[] @relation("SlotWaitlistEntry_service")
+  appointments        Appointment[]         @relation("Appointment_service")
+  slotWaitlistEntries SlotWaitlistEntry[]   @relation("SlotWaitlistEntry_service")
+  professionals       ProfessionalService[] @relation("ProfessionalService_service")
 
   @@unique([tenantId, id])
   @@map("services")
+}
+
+/// Services a professional performs (spec 05, "Agenda por profissional"). A professional without
+/// any row performs every service (H-45).
+model ProfessionalService {
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  professionalId String   @map("professional_id") @db.Uuid
+  serviceId      String   @map("service_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  professional Professional @relation("ProfessionalService_professional", fields: [tenantId, professionalId], references: [tenantId, id], onDelete: Cascade)
+  service      Service      @relation("ProfessionalService_service", fields: [tenantId, serviceId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, professionalId, serviceId])
+  @@index([tenantId, serviceId])
+  @@map("professional_services")
 }
 
 /// Weekly wall-clock rule, interpreted in the tenant's timezone.

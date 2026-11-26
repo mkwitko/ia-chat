@@ -1,28 +1,18 @@
-import {
-  AgendaError,
-  AppointmentCreator,
-  bookAppointment,
-  cancelAppointment,
-  confirmAppointment,
-  listUpcoming,
-  rescheduleAppointment,
-  type AgendaResult,
-  type AppointmentView,
-} from '@app/db';
+import { AgendaError, AppointmentCreator, bookAppointment, rescheduleAppointment } from '@app/db';
 import { tool, type ToolSet } from 'ai';
 import * as z from 'zod';
 import {
-  appointmentOutput,
   calendarOf,
-  confirmationError,
+  confirmedSlot,
   failure,
   findService,
-  needsProfessional,
+  professionalArg,
   serviceMissing,
-  ToolError,
+  wantedProfessional,
   AgendaToolName,
   availabilityTool,
 } from '@app/agent';
+import { cancelTool, confirmTool, listTool, outcome } from './appointment-tools.ts';
 import type { ToolContext } from './tools.ts';
 import { waitlistTool } from './waitlist-tool.ts';
 
@@ -32,14 +22,33 @@ import { waitlistTool } from './waitlist-tool.ts';
 export { AgendaToolName };
 
 const MAX_NAME_LENGTH = 80;
-/** M-09: a cancel by the client turns into a rebooking offer in the same conversation. */
-const OFFER_REBOOK =
-  'Pergunte se o cliente quer remarcar. Se quiser, use consultar_horarios e siga o fluxo de agendamento; se nenhum horário servir, ofereça a lista de espera.';
 
 const confirmed = z
   .boolean()
   .describe('true só se o paciente já confirmou de forma explícita este horário');
 const instant = z.iso.datetime({ offset: true });
+
+interface SlotChoice {
+  serviceId: string;
+  startsAt: Date;
+  confirmado: boolean;
+  profissional: string | undefined;
+}
+
+/** Who serves the confirmed slot, or the refusal to hand back (unknown name, not confirmed). */
+async function gateOf(context: ToolContext, choice: SlotChoice) {
+  const wanted = await context.db.withTenant(context.tenantId, (tx) =>
+    wantedProfessional(tx, choice.profissional),
+  );
+  if (!wanted.ok) return { refusal: wanted.refusal };
+  const gate = await confirmedSlot(context, {
+    serviceId: choice.serviceId,
+    startsAt: choice.startsAt,
+    confirmed: choice.confirmado,
+    professionalId: wanted.id,
+  });
+  return gate.ok ? { professionalId: gate.professionalId } : { refusal: failure(gate.error) };
+}
 
 export function agendaTools(context: ToolContext): ToolSet {
   return {
@@ -63,22 +72,21 @@ function bookTool(context: ToolContext) {
       inicio: instant,
       nome_paciente: z.string().min(1).max(MAX_NAME_LENGTH),
       confirmado: confirmed,
+      profissional: professionalArg,
     }),
-    execute: async ({ servico, inicio, nome_paciente, confirmado }) => {
+    execute: async ({ servico, inicio, nome_paciente, confirmado, profissional }) => {
       const service = await db.withTenant(tenantId, (tx) => findService(tx, servico));
       if (!service) return serviceMissing;
       const startsAt = new Date(inicio);
-      const refused = await confirmationError(context, {
-        serviceId: service.id,
-        startsAt,
-        confirmed: confirmado,
-      });
-      if (refused) return failure(refused);
+      const choice = { serviceId: service.id, startsAt, confirmado, profissional };
+      const gate = await gateOf(context, choice);
+      if (gate.refusal) return gate.refusal;
       await rememberName(context, nome_paciente);
       const result = await bookAppointment(db, {
         tenantId,
         contactId,
         serviceId: service.id,
+        professionalId: gate.professionalId,
         startsAt,
         key: `${turnId}:${AgendaToolName.book}:${startsAt.toISOString()}`,
         createdBy: AppointmentCreator.ai,
@@ -105,23 +113,22 @@ function rescheduleTool(context: ToolContext) {
       agendamento: z.uuid(),
       novo_inicio: instant,
       confirmado: confirmed,
+      profissional: professionalArg,
     }),
-    execute: async ({ agendamento, novo_inicio, confirmado }) => {
+    execute: async ({ agendamento, novo_inicio, confirmado, profissional }) => {
       const current = await db.withTenant(tenantId, (tx) =>
         tx.appointment.findFirst({ where: { id: agendamento, contactId } }),
       );
       if (!current) return failure(AgendaError.appointmentNotFound);
       const startsAt = new Date(novo_inicio);
-      const refused = await confirmationError(context, {
-        serviceId: current.serviceId,
-        startsAt,
-        confirmed: confirmado,
-      });
-      if (refused) return failure(refused);
+      const choice = { serviceId: current.serviceId, startsAt, confirmado, profissional };
+      const gate = await gateOf(context, choice);
+      if (gate.refusal) return gate.refusal;
       const result = await rescheduleAppointment(db, {
         tenantId,
         contactId,
         appointmentId: agendamento,
+        professionalId: gate.professionalId,
         startsAt,
         key: `${turnId}:${AgendaToolName.reschedule}:${agendamento}:${startsAt.toISOString()}`,
         createdBy: AppointmentCreator.ai,
@@ -131,63 +138,4 @@ function rescheduleTool(context: ToolContext) {
       return outcome(context, result);
     },
   });
-}
-
-function cancelTool(context: ToolContext) {
-  const { db, tenantId, contactId, now } = context;
-  return tool({
-    description:
-      'Cancela um agendamento do paciente depois que ele confirmou o cancelamento. Dentro da antecedência mínima, o pedido vai para o profissional.',
-    inputSchema: z.object({
-      agendamento: z.uuid(),
-      motivo: z.string().optional(),
-      confirmado: confirmed,
-    }),
-    // The reason stays out of the database: it can carry health information (privacy rule).
-    execute: async ({ agendamento, confirmado }) => {
-      if (!confirmado) return failure(ToolError.notConfirmed);
-      const result = await cancelAppointment(db, {
-        tenantId,
-        contactId,
-        appointmentId: agendamento,
-        now,
-        calendar: await calendarOf(context),
-      });
-      const done = outcome(context, result);
-      return result.ok ? { ...done, proximo_passo: OFFER_REBOOK } : done;
-    },
-  });
-}
-
-function confirmTool(context: ToolContext) {
-  const { db, tenantId, contactId, now } = context;
-  return tool({
-    description:
-      'Marca como confirmado o agendamento do paciente quando ele responde "confirmar" a um lembrete.',
-    inputSchema: z.object({ agendamento: z.uuid() }),
-    execute: async ({ agendamento }) =>
-      outcome(
-        context,
-        await confirmAppointment(db, { tenantId, contactId, appointmentId: agendamento, now }),
-      ),
-  });
-}
-
-function listTool({ db, tenantId, contactId, now, timezone }: ToolContext) {
-  return tool({
-    description: 'Lista os agendamentos futuros do paciente desta conversa.',
-    inputSchema: z.object({}),
-    execute: async () => {
-      const upcoming = await listUpcoming(db, { tenantId, contactId, now });
-      return { agendamentos: upcoming.map((one) => appointmentOutput(one, timezone)) };
-    },
-  });
-}
-
-/** A late cancellation or move, or a calendar that failed, goes to the professional (RF-44, A-13). */
-function outcome(context: ToolContext, result: AgendaResult<AppointmentView>) {
-  if (result.ok) return { agendamento: appointmentOutput(result.value, context.timezone) };
-  if (result.error === AgendaError.tooLateToCancel || needsProfessional(result.error))
-    context.effects.handoff = true;
-  return failure(result.error);
 }
