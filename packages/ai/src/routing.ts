@@ -10,6 +10,8 @@ export const Task = {
   transcribe: 'transcribe',
   /** Onboarding: business facts from a public page the owner pointed to (spec 09). */
   prefill: 'prefill',
+  /** Painel: draft of an answer to a question the assistant could not answer (spec 04, 10). */
+  faqSuggest: 'faq_suggest',
 } as const;
 
 export type Task = (typeof Task)[keyof typeof Task];
@@ -35,6 +37,7 @@ export const DEFAULT_ROUTES: RouteTable = {
   insights: { primary: SOL, fallback: SONNET },
   transcribe: { primary: TRANSCRIBE },
   prefill: { primary: LUNA, fallback: HAIKU },
+  faq_suggest: { primary: LUNA, fallback: HAIKU },
 };
 
 // AI_DEV_PROVIDER=groq: free models to try the whole flow locally. Not for choosing models
@@ -49,6 +52,7 @@ export const GROQ_DEV_ROUTES: RouteTable = {
   insights: { primary: GROQ_LARGE },
   transcribe: { primary: { provider: Provider.groq, model: 'whisper-large-v3-turbo' } },
   prefill: { primary: GROQ_LARGE },
+  faq_suggest: { primary: GROQ_LARGE },
 };
 
 const modelRefSchema = z.object({ provider: z.enum(Provider), model: z.string().min(1) });

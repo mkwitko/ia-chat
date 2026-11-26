@@ -48,7 +48,7 @@ export const MoreCopy = {
     { label: 'Conexões', hint: 'WhatsApp e Google Agenda', to: Route.connections },
     { label: 'Plano e uso', hint: 'Conversas do mês e fatura', to: Route.usage },
     { label: 'Assinatura', hint: 'Plano, pagamento e cancelamento', to: Route.billing },
-    { label: 'Equipe', hint: 'Quem mais acessa o painel' },
+    { label: 'Equipe', hint: 'Quem mais acessa o painel', to: Route.team },
     { label: 'Ajuda', hint: 'Passo a passo e avisos do painel', helpLink: true },
   ],
   signOut: 'Sair',

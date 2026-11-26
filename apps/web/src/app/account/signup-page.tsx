@@ -23,32 +23,41 @@ interface InviteSignUpProps {
   email: string | null;
   /** Where Google sends the person back if the sign-up is refused (the invite page itself). */
   returnTo: string;
+  /** A team invitation: the page itself, instead of the guided setup, after Google or the e-mail link. */
+  team?: { subtitle: string };
+  /** "Já tenho conta": the sign-in page, back to this invitation afterwards. */
+  loginHref?: string;
 }
 
 /**
  * Spec 09, step 1, from an invite: Google or e-mail. The invite page already armed the http-only
  * cookie that lets the API create the account and the consultório; the guided setup follows.
  */
-export function InviteSignUp({ practiceName, email, returnTo }: Readonly<InviteSignUpProps>) {
+export function InviteSignUp(props: Readonly<InviteSignUpProps>) {
+  const { practiceName, email, returnTo, team, loginHref = Route.login } = props;
   const [sentTo, setSentTo] = useState<string | null>(null);
   if (sentTo) return <CheckEmail email={sentTo} />;
   const google = () =>
     void authClient.signIn.social({
       provider: GOOGLE,
-      callbackURL: panelUrl(Route.onboarding),
+      callbackURL: panelUrl(team ? returnTo : Route.onboarding),
       errorCallbackURL: panelUrl(returnTo),
     });
   return (
     <AuthFrame
       title={Copy.title}
-      subtitle={Copy.subtitle(practiceName)}
-      footer={{ to: Route.login, label: Copy.haveAccount }}
+      subtitle={team?.subtitle ?? Copy.subtitle(practiceName)}
+      footer={{ to: loginHref, label: Copy.haveAccount }}
     >
       <Button type="button" variant="outline" onClick={google}>
         {Copy.google}
       </Button>
       <p className="text-center text-xs text-muted-foreground">{Copy.divider}</p>
-      <SignUpForm initialEmail={email ?? ''} onSent={setSentTo} />
+      <SignUpForm
+        initialEmail={email ?? ''}
+        onSent={setSentTo}
+        after={team ? returnTo : Route.start}
+      />
     </AuthFrame>
   );
 }
@@ -56,16 +65,17 @@ export function InviteSignUp({ practiceName, email, returnTo }: Readonly<InviteS
 interface FormProps {
   initialEmail: string;
   onSent: (email: string) => void;
+  after: string;
 }
 
-function SignUpForm({ initialEmail, onSent }: Readonly<FormProps>) {
+function SignUpForm({ initialEmail, onSent, after }: Readonly<FormProps>) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
   const action = useAuthAction();
   const submit = async () => {
     const ok = await action.run(() =>
-      authClient.signUp.email({ name, email, password, callbackURL: panelUrl(Route.start) }),
+      authClient.signUp.email({ name, email, password, callbackURL: panelUrl(after) }),
     );
     if (ok) onSent(email);
   };

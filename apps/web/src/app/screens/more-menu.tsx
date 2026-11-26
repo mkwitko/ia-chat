@@ -4,6 +4,8 @@ import { MoreCopy } from '@/copy';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import { Route } from '@/routes';
+import { useOnboarding } from '../onboarding/onboarding-api';
+import { TeamRole } from '../team/team-copy';
 import { OperatorCopy } from '../operator/operator-copy';
 import { useIsOperator } from '../operator/operator-api';
 import { SetupCopy, useSetupProgress } from '../shell/setup-progress';
@@ -15,7 +17,12 @@ const COMPACT_GROUP = 'lg:divide-y-0 lg:border-0 lg:bg-transparent lg:shadow-non
 function useRows(): MoreRow[] {
   const setup = useSetupProgress();
   const operator = useIsOperator();
-  const rows: MoreRow[] = [...MoreCopy.items];
+  const unanswered = useOnboarding().data?.checklist.unanswered;
+  const role = authClient.useActiveMember().data?.role;
+  // Equipe is the owner's: the others do not see the row.
+  const rows: MoreRow[] = (MoreCopy.items as readonly MoreRow[])
+    .filter((row) => row.to !== Route.team || role === TeamRole.owner)
+    .map((row) => (row.to === Route.assistant ? { ...row, badge: unanswered } : row));
   if (setup) {
     const label = SetupCopy.label(setup.done, setup.total);
     rows.unshift({ label, hint: setup.currentTitle, to: Route.onboarding });

@@ -27,7 +27,13 @@ export interface OnboardingView {
   whatsappConnected: boolean;
   hoursSet: boolean;
   /** What is left for after the activation (Início), as facts. */
-  checklist: { tone: boolean; reviewLink: boolean; packages: number; unanswered: number };
+  checklist: {
+    tone: boolean;
+    reviewLink: boolean;
+    packages: number;
+    unanswered: number;
+    team: boolean;
+  };
 }
 
 /** POST /api/onboarding/prefill: a suggestion for the review screen; nothing is saved. */

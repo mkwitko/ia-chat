@@ -25,11 +25,13 @@ import { createInboxHub } from './realtime/inbox-hub.ts';
 import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
 import { registerInviteRoutes } from './invites/invite-routes.ts';
+import { registerTeamInviteRoutes } from './team/team-invite-routes.ts';
 import { registerOnboardingRoutes } from './onboarding/onboarding-routes.ts';
 import { registerPrefillRoutes } from './onboarding/prefill/prefill-routes.ts';
 import { fetchPage, type PageFetcher } from './onboarding/prefill/safe-fetch.ts';
 import { registerTrialRoutes } from './trial/trial-routes.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
+import { registerUnansweredRoutes } from './setup/unanswered-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerPlacesRoutes } from './setup/places-routes.ts';
 import { registerProfessionalRoutes } from './setup/professionals-routes.ts';
@@ -98,6 +100,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
   registerAuthRoutes(app);
   registerInviteRoutes(app, env);
+  registerTeamInviteRoutes(app);
   registerOperatorRoutes(app);
   registerControlRoutes(app);
   registerModelRoutes(app, deps);
@@ -138,6 +141,7 @@ function registerInbox(app: FastifyInstance, { env, send }: Pick<AppDeps, 'env' 
 /** Panel routes that call the model: the simulator and the onboarding prefill (spec 09, 10). */
 function registerModelRoutes(app: FastifyInstance, deps: AppDeps): void {
   registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
+  registerUnansweredRoutes(app, { gateway: deps.simulatorGateway });
   registerPrefillRoutes(app, {
     gateway: deps.simulatorGateway,
     fetchPage: deps.prefillFetch ?? fetchPage,

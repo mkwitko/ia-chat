@@ -112,7 +112,7 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
 - Nível de autonomia: automático, aprovar antes de enviar, desligado. A descrição de cada nível diz o que acontece na prática.
 - Tom de voz: mensagens de exemplo e as quatro perguntas.
 - Base de conhecimento: perguntas e respostas.
-- **Perguntas que o assistente não soube**: lista com um toque para escrever a resposta e incluí-la na base.
+- **Perguntas que o assistente não soube**: o assistente registra a pergunta (`registrar_duvida_sem_resposta`) como item inativo, sem resposta, de origem `unanswered`. A tela agrupa as parecidas (normalização de caixa, acento, pontuação e palavras de ligação; iguais ou com metade das palavras em comum) e mostra "Perguntada N vezes", as mais repetidas primeiro. O dono escreve ou edita a resposta e aprova: vira um item ativo da base, que o assistente passa a usar, e as cópias do grupo somem. "Descartar" remove o grupo. O botão "IA sugere resposta" (só ao clicar; usa o perfil do negócio, sem preços nem dados de paciente) devolve um rascunho para editar; se o rascunho trouxer valor ou horário, é trocado por um aviso para usar o perfil e a agenda. Só o dono aprova, descarta e pede sugestão. O número de grupos pendentes aparece na lista de Início ("Responder N perguntas") e como contador na linha Assistente de Mais.
 - **Simulador**: conversa de teste que não envia nada ao WhatsApp, com a indicação de qual informação o assistente usou.
   - Roda o mesmo caminho do turno real (pré-filtros, prompt, validação da saída; código em `packages/agent`), sem conversa, contato nem mensagem gravados: a conversa de teste vive só na tela. O que sai de cada resposta ("O que o assistente usou") vem das chamadas de ferramenta e da comparação da resposta com os dados cadastrados (serviço e preço, endereço, como chegar, base de conhecimento), nunca do que o modelo diz ter usado.
   - Ferramentas: consulta de horários roda de verdade, mas sem registrar ofertas; agendar, remarcar e cancelar não existem no simulador (a tela avisa); transferir e registrar dúvida só marcam o que aconteceria. A checagem de urgência por Jev (julgamento extra antes do modelo) não roda aqui; a lista de palavras sim.
@@ -137,6 +137,14 @@ M-04 (`/mais/perfil`, H-38): nome, o que faz, telefone, site, rede social, link 
 
 - Plano atual, conversas usadas na franquia, previsão para o mês e o bloco "WhatsApp (Meta)": respostas grátis da Meta usadas no mês (ex.: "640 de 1.000"), mensagens com custo por categoria e custo estimado, `GET /api/usage/meta`. Texto: "Estimativa da Meta no seu cartão: R$ X". A Meta cobra no cartão do cliente; não entra na nossa fatura.
 - Teto de excedente, troca de plano, faturas, cancelamento.
+
+### Equipe
+
+- Só o dono vê a linha e a tela (Mais > Equipe). A recepção e o profissional não veem.
+- **Convidar**: e-mail e função (Recepção ou Profissional). É o convite de organização do Better Auth (`invite-member`), com as permissões de `apps/api/src/auth/access.ts`: só o dono convida, cancela convite, muda função e remove. O e-mail sai pelo remetente de e-mail do sistema (Resend em produção; em desenvolvimento vai para o log, sem o conteúdo).
+- **Lista**: convites pendentes (aguardando resposta ou vencido) com "Reenviar" (mesmo convite, novo e-mail) e "Cancelar convite"; quem já está na equipe, com a função (troca entre Recepção e Profissional) e "Remover". O dono não se remove nem muda a própria função.
+- **Aceitar** (`/convite-equipe/:id`, o link do e-mail): a página lê o convite (`GET /api/team-invites/:id`: consultório, e-mail, função, estado) e, sem sessão, oferece criar a conta com o e-mail convidado (Google ou e-mail e senha; o convite pendente libera o cadastro, H-37) ou entrar (`/entrar?next=`). Com sessão, "Aceitar convite" entra na equipe e abre o Início. Se a conta logada tem outro e-mail, a página avisa e oferece trocar de conta. Convite aceito, cancelado, recusado ou vencido mostra o motivo.
+- A lista de Início mostra "Convidar a secretária" até haver mais alguém na equipe ou um convite pendente.
 
 ### Onboarding
 
