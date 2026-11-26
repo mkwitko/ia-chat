@@ -44,6 +44,6 @@ http://www.{$SITE_DOMAIN}:80 {
 http://{$SITE_DOMAIN}:80 {
 	import common
 	root * /srv/site
-	try_files {path} {path}/index.html
+	try_files {path} {path}.html {path}/index.html
 	file_server
 }
