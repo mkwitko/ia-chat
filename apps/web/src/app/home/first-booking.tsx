@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Locale } from '@/i18n/locale';
 import { defineMessages } from '@/i18n/messages';
 import { useOnboarding } from '../onboarding/onboarding-api';
-import type { HomeView } from './home-api';
+import { useFirstBookingSeen, type HomeView } from './home-api';
 
 // The one celebrated moment of the panel: the first time a patient the assistant booked on its
-// own actually came. Shown once per browser, in jade because it is the assistant's doing.
+// own actually came. Shown once per account (round 3; was per browser), in jade because it is the assistant's doing.
 
 const Copy = defineMessages({
   [Locale.ptBR]: {
@@ -18,27 +18,15 @@ const Copy = defineMessages({
   [Locale.enUS]: {},
 });
 
-const SEEN_KEY = 'ca-moment-first-booking';
-
-function seen(): boolean {
-  try {
-    return localStorage.getItem(SEEN_KEY) !== null;
-  } catch {
-    return true;
-  }
-}
-
 export function FirstBookingMoment({ home }: Readonly<{ home: HomeView }>) {
-  const [open, setOpen] = useState(() => !seen());
+  // Hidden at once on tap; the server keeps it closed for everyone of the account.
+  const [open, setOpen] = useState(true);
+  const markSeen = useFirstBookingSeen();
   const assistantOn = useOnboarding().data?.current === null;
-  if (!open || !assistantOn || home.recovered.count === 0) return null;
+  if (!open || home.firstBookingSeen || !assistantOn || home.recovered.count === 0) return null;
   const close = () => {
-    try {
-      localStorage.setItem(SEEN_KEY, '1');
-    } catch {
-      // Private mode: it shows again next time, which is harmless.
-    }
     setOpen(false);
+    markSeen.mutate();
   };
   return (
     <section

@@ -97,9 +97,9 @@ async function notBookedSummary(tx: Tx, now: Date) {
 }
 
 export async function readHome(tx: Tx, { tenantId, now }: { tenantId: string; now: Date }) {
-  const { timezone } = await tx.tenant.findUniqueOrThrow({
+  const { timezone, firstBookingSeenAt } = await tx.tenant.findUniqueOrThrow({
     where: { id: tenantId },
-    select: { timezone: true },
+    select: { timezone: true, firstBookingSeenAt: true },
   });
   const month = monthRange(now, timezone);
   const [conversations, counts, lists, unanswered, notBooked, recovered] = await Promise.all([
@@ -131,5 +131,6 @@ export async function readHome(tx: Tx, { tenantId, now }: { tenantId: string; no
     today: lists.today,
     toConfirm: lists.toConfirm,
     notBooked,
+    firstBookingSeen: firstBookingSeenAt !== null,
   };
 }
