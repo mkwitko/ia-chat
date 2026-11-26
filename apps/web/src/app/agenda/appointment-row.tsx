@@ -1,4 +1,6 @@
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { labelOf } from '@/i18n/messages';
 import { commitOrRestore, useLeaving } from '@/components/ui/undo';
@@ -46,6 +48,13 @@ export function AppointmentRow({ item, timezone, onMove, professional }: Readonl
           </span>
           {professional && <ProfessionalTag name={professional} />}
         </span>
+        <ChevronDown
+          className={cn(
+            'size-5 shrink-0 text-muted-foreground transition-transform',
+            open && 'rotate-180',
+          )}
+          aria-hidden="true"
+        />
       </button>
       {open && <RowActions item={item} timezone={timezone} onMove={onMove} onCancel={leave} />}
     </li>

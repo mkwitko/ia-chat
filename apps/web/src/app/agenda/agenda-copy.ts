@@ -16,7 +16,8 @@ export const AgendaCopy = defineMessages({
     day: DAY_LABEL,
     week: 'Semana',
     newBooking: 'Novo agendamento',
-    settings: 'Horários e folgas',
+    settings: 'Mudar horários de atendimento e folgas',
+    hint: 'Aqui ficam os seus atendimentos. Toque em um para remarcar ou cancelar. Para marcar alguém, use "Novo agendamento".',
     emptyDay: {
       title: 'Nenhum atendimento neste dia',
       body: 'Quando o assistente marcar uma consulta, ela aparece aqui. Você também pode marcar um paciente agora.',
