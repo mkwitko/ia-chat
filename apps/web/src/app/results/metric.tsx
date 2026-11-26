@@ -5,14 +5,16 @@ import { Shown, type Duration, type Rate } from './results-model';
 interface MetricProps {
   title: string;
   value: string;
-  formula: string;
+  /** One plain sentence with the counts behind the number. */
   detail?: string | undefined;
+  /** A second sentence, quieter (what is still left to mark). */
+  note?: string | undefined;
   /** Not enough data yet: said in words, never in the big-number style. */
   missing?: boolean;
 }
 
-/** One number, its plain-language formula and, when needed, the counts behind it. */
-export function Metric({ title, value, formula, detail, missing }: Readonly<MetricProps>) {
+/** One number and, when needed, the plain counts behind it; the formula lives in "Como calculamos". */
+export function Metric({ title, value, detail, note, missing }: Readonly<MetricProps>) {
   return (
     <li className="grid content-start gap-1 bg-card px-4 py-4 shadow-[1px_1px_0_0_var(--line)] md:px-5">
       <p className="text-sm text-muted-foreground">{title}</p>
@@ -25,11 +27,8 @@ export function Metric({ title, value, formula, detail, missing }: Readonly<Metr
       >
         {value}
       </p>
-      {detail && <p className="text-sm tabular-nums">{detail}</p>}
-      <p className="text-xs text-muted-foreground">
-        <span className="sr-only">{Copy.formulaLabel}: </span>
-        {formula}
-      </p>
+      {detail && <p className="text-sm">{detail}</p>}
+      {note && <p className="text-sm text-muted-foreground">{note}</p>}
     </li>
   );
 }
@@ -43,49 +42,41 @@ export function MetricGrid({ children }: Readonly<{ children: ReactNode }>) {
   );
 }
 
-export const CountMetric = ({
-  title,
-  formula,
-  count,
-}: Readonly<{ title: string; formula: string; count: number }>) => (
-  <Metric title={title} formula={formula} value={String(count)} />
+export const CountMetric = ({ title, count }: Readonly<{ title: string; count: number }>) => (
+  <Metric title={title} value={String(count)} />
 );
 
-export function RateMetric({
-  title,
-  formula,
-  rate,
-  detail,
-}: Readonly<{ title: string; formula: string; rate: Rate; detail?: string }>) {
-  const counts = Copy.insufficientCounts(rate.part, rate.total);
+interface RateProps {
+  title: string;
+  rate: Rate;
+  detail: string;
+  note?: string | undefined;
+}
+
+export function RateMetric({ title, rate, detail, note }: Readonly<RateProps>) {
   const isOk = rate.kind === Shown.ok;
   return (
     <Metric
       title={title}
-      formula={formula}
       value={isOk ? `${String(rate.percent)}%` : Copy.insufficient}
       missing={!isOk}
-      detail={[counts, detail].filter(Boolean).join(' · ')}
+      detail={detail}
+      note={note}
     />
   );
 }
 
-export function DurationMetric({
-  title,
-  formula,
-  duration,
-  sampleNote,
-}: Readonly<{
+interface DurationProps {
   title: string;
-  formula: string;
   duration: Duration;
   sampleNote: (count: number) => string;
-}>) {
+}
+
+export function DurationMetric({ title, duration, sampleNote }: Readonly<DurationProps>) {
   const isOk = duration.kind === Shown.ok;
   return (
     <Metric
       title={title}
-      formula={formula}
       value={isOk ? duration.label : Copy.insufficient}
       missing={!isOk}
       detail={isOk ? undefined : sampleNote(duration.sample)}

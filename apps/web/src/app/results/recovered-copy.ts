@@ -17,7 +17,9 @@ export const RecoveredCopy = defineMessages({
     basis: (count: number) =>
       `${plural(count, 'atendimento agendado', 'atendimentos agendados')} pelo assistente e marcados como "Compareceu".`,
     missing: (count: number, min: number) =>
-      `O valor aparece a partir de ${String(min)} atendimentos agendados pelo assistente e marcados como "Compareceu". Até agora: ${String(count)}.`,
+      count === 0
+        ? 'Aparece quando pessoas que o assistente marcou vierem ao atendimento.'
+        : `Aparece a partir de ${String(min)} pessoas que o assistente marcou e vieram. Até agora: ${String(count)}.`,
     afterHours: (count: number) =>
       `${plural(count, 'deles foi agendado', 'deles foram agendados')} com o consultório fechado.`,
     howTitle: 'Como calculamos',

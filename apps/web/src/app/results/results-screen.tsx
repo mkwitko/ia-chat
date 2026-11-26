@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Route } from '@/routes';
-import { dateFormat } from '@/i18n/locale';
 import { OriginLabel } from '../customers/customers-labels';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
@@ -15,14 +14,9 @@ import { RecoveredCopy } from './recovered-copy';
 import { Period, useResults, type ResultsView } from './results-api';
 import { ResultsCopy as Copy } from './results-copy';
 import { durationOf, rateOf } from './results-model';
+import { HowWeCount } from './results-how';
 
 const PERIODS = [Period.month, Period.lastMonth, Period.last90Days] as const;
-const DATE = dateFormat({
-  day: '2-digit',
-  month: '2-digit',
-  year: 'numeric',
-});
-
 /** Spec 10, "Resultados": counts first; rates only with enough sample, always with the formula. */
 export function ResultsScreen() {
   const [period, setPeriod] = useState<Period>(Period.month);
@@ -56,10 +50,8 @@ function PeriodPicker({
 }
 
 function Content({ results }: Readonly<{ results: ResultsView }>) {
-  const since = results.dataSince ? DATE.format(new Date(results.dataSince)) : null;
   return (
     <div className="pb-10">
-      <Note>{since ? Copy.baseline(since) : Copy.baselineNoDate}</Note>
       <RecoveredSection results={results} />
       <Section title={Copy.mainTitle}>
         <MetricGrid>
@@ -77,19 +69,14 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
           />
           <MetricGrid>
             <CountMetric {...Copy.newContacts} count={results.newContacts} />
-            <RateMetric
-              {...Copy.escalation}
-              rate={rateOf(
-                results.escalation.handedOff,
-                results.escalation.total,
-                results.minSample,
-              )}
-            />
+            <EscalationMetric results={results} />
             <AgendaMetrics results={results} />
           </MetricGrid>
-          <Note>{Copy.requestsNote}</Note>
           <OriginSection results={results} />
         </MoreOptions>
+      </div>
+      <div className="px-4 pt-4 md:px-0">
+        <HowWeCount dataSince={results.dataSince} />
       </div>
     </div>
   );
@@ -120,9 +107,21 @@ function NoShowMetric({ results }: Readonly<{ results: ResultsView }>) {
   const { attended, noShow, unmarked } = results.attendance;
   return (
     <RateMetric
-      {...Copy.noShow}
+      title={Copy.noShow.title}
       rate={rateOf(noShow, attended + noShow, results.minSample)}
-      detail={Copy.noShow.unmarked(unmarked)}
+      detail={Copy.noShow.counts(noShow, attended + noShow)}
+      note={unmarked > 0 ? Copy.noShow.unmarked(unmarked) : undefined}
+    />
+  );
+}
+
+function EscalationMetric({ results }: Readonly<{ results: ResultsView }>) {
+  const { handedOff, total } = results.escalation;
+  return (
+    <RateMetric
+      title={Copy.escalation.title}
+      rate={rateOf(handedOff, total, results.minSample)}
+      detail={Copy.escalation.counts(handedOff, total)}
     />
   );
 }
@@ -141,7 +140,6 @@ function AgendaMetrics({ results }: Readonly<{ results: ResultsView }>) {
 function OriginSection({ results }: Readonly<{ results: ResultsView }>) {
   return (
     <Section title={Copy.originTitle}>
-      <Note>{Copy.originFormula}</Note>
       {results.byOrigin.length === 0 && <Note>{Copy.originEmpty}</Note>}
       <CardList>
         {results.byOrigin.map(({ origin, count }) => (
