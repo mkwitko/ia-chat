@@ -8,6 +8,8 @@ export const Task = {
   qualityReview: 'quality_review',
   insights: 'insights',
   transcribe: 'transcribe',
+  /** Onboarding: business facts from a public page the owner pointed to (spec 09). */
+  prefill: 'prefill',
 } as const;
 
 export type Task = (typeof Task)[keyof typeof Task];
@@ -32,6 +34,7 @@ export const DEFAULT_ROUTES: RouteTable = {
   quality_review: { primary: SOL, fallback: SONNET },
   insights: { primary: SOL, fallback: SONNET },
   transcribe: { primary: TRANSCRIBE },
+  prefill: { primary: LUNA, fallback: HAIKU },
 };
 
 // AI_DEV_PROVIDER=groq: free models to try the whole flow locally. Not for choosing models
@@ -45,6 +48,7 @@ export const GROQ_DEV_ROUTES: RouteTable = {
   quality_review: { primary: GROQ_LARGE },
   insights: { primary: GROQ_LARGE },
   transcribe: { primary: { provider: Provider.groq, model: 'whisper-large-v3-turbo' } },
+  prefill: { primary: GROQ_LARGE },
 };
 
 const modelRefSchema = z.object({ provider: z.enum(Provider), model: z.string().min(1) });

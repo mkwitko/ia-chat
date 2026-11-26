@@ -9,7 +9,14 @@ import { useSaveRules, type RuleWindow } from './agenda-api';
 import { NEW_WINDOW, WEEK_ORDER, validWindows } from './rules-model';
 
 /** RF-40: weekly windows, more than one per day. Saved all at once; the API replaces the set. */
-export function RulesEditor({ initial }: Readonly<{ initial: RuleWindow[] }>) {
+interface EditorProps {
+  initial: RuleWindow[];
+  /** The guided setup confirms and advances with one tap. */
+  onSaved?: () => void;
+  saveLabel?: string;
+}
+
+export function RulesEditor({ initial, onSaved, saveLabel }: Readonly<EditorProps>) {
   const [rules, setRules] = useState(initial);
   const save = useSaveRules();
   const valid = validWindows(rules);
@@ -18,7 +25,13 @@ export function RulesEditor({ initial }: Readonly<{ initial: RuleWindow[] }>) {
       className="grid gap-3 px-4 md:px-0"
       onSubmit={(event) => {
         event.preventDefault();
-        save.mutate(rules, feedback);
+        save.mutate(rules, {
+          onSuccess: () => {
+            feedback.onSuccess();
+            onSaved?.();
+          },
+          onError: feedback.onError,
+        });
       }}
     >
       <ul className="divide-y rounded-xl border bg-card">
@@ -31,7 +44,11 @@ export function RulesEditor({ initial }: Readonly<{ initial: RuleWindow[] }>) {
           {Copy.invalidWindows}
         </p>
       )}
-      <FormActions pending={save.isPending} disabled={!valid} />
+      <FormActions
+        pending={save.isPending}
+        disabled={!valid || (onSaved !== undefined && rules.length === 0)}
+        {...(saveLabel ? { saveLabel } : {})}
+      />
     </form>
   );
 }

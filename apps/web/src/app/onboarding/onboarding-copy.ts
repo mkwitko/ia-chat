@@ -1,11 +1,10 @@
-import { Route } from '@/routes';
 import { Step } from './onboarding-api';
 
-// Panel copy in pt-BR for the guided setup (spec 09, "Cadastro e ativação sem ajuda").
+// Panel copy in pt-BR for the guided setup (spec 09 and docs/research/09): "cliente", "negócio".
 
 export const OnboardingCopy = {
   title: 'Configuração guiada',
-  intro: 'Um passo de cada vez, nesta ordem. Seu progresso fica salvo e dá para continuar depois.',
+  intro: 'Seis passos, uns 10 minutos. Fica tudo salvo: dá para parar e continuar depois.',
   progress: (index: number, total: number) => `Passo ${String(index)} de ${String(total)}`,
   back: 'Voltar',
   allDone: 'Configuração concluída. Toque num passo para revisar.',
@@ -14,77 +13,57 @@ export const OnboardingCopy = {
     'Para ativar, conecte o WhatsApp no passo 2. Os 14 dias de teste começam quando ele conecta.',
   documentRequired: 'Informe o CPF ou CNPJ antes de seguir.',
   whatsappRequired: 'O WhatsApp ainda não está conectado. Conecte ou toque em "Conectar depois".',
+  hoursRequired: 'Confirme pelo menos uma faixa de horário antes de seguir.',
   loadFailed: 'Não conseguimos carregar. Confira a conexão e tente de novo.',
   statusDone: 'Feito',
   statusSkipped: 'Pulado',
   next: 'Continuar',
-  specialtyLabel: 'Qual é a sua especialidade?',
-  useTemplate: 'Usar modelos de exemplo',
+  specialtyLabel: 'Qual é a sua área?',
+  useTemplate: 'Usar exemplos da sua área',
   templateDone: (services: number, answers: number) =>
-    `Criamos ${String(services)} serviços e ${String(answers)} respostas de exemplo. Edite cada um antes de ativar.`,
-  templateNothingNew: 'Os modelos já estavam aplicados. Nada foi duplicado.',
-  pricesForbidden:
-    'Nesta especialidade o assistente não informa valores. Os modelos vêm sem preço.',
-  examplesNote: 'Os valores e textos dos modelos são exemplos fictícios. Edite antes de ativar.',
-  activationText:
-    'O assistente começa em "aprovar antes de enviar": toda resposta vira um rascunho e nada sai sem o seu toque. Você pode mudar isso depois em Mais > Assistente.',
+    `Criamos ${String(services)} serviços e ${String(answers)} respostas de exemplo. Edite os valores antes de ativar.`,
+  templateNothingNew: 'Os exemplos já estavam aplicados. Nada foi duplicado.',
+  pricesForbidden: 'Na sua área o assistente não informa valores. Os exemplos vêm sem preço.',
+  examplesNote: 'Os valores dos exemplos são fictícios. Troque pelos seus.',
   activate: 'Ativar o assistente',
-  activated: 'Tudo pronto. O assistente está ativo em "aprovar antes de enviar".',
   skipWhatsapp: 'Conectar depois',
-  testNote:
-    'A mensagem de teste usa o simulador enquanto o WhatsApp não está conectado: nada é enviado a ninguém.',
+  phoneHint:
+    'A conexão pede o celular com o app WhatsApp Business por perto. Começou no computador? Dá para terminar este passo no celular.',
+  saveHours: 'Confirmar horários e continuar',
+  defaultHoursNote:
+    'Sugestão inicial: segunda a sexta, das 9h às 18h. Ajuste para o seu horário real antes de confirmar.',
+  seeExample: 'Ver uma conversa de exemplo',
+  hideExample: 'Fechar a conversa de exemplo',
 } as const;
 
 interface StepInfo {
   title: string;
   text: string;
-  /** Existing screen that does the work; the flow links to it instead of copying it. */
-  to?: string;
-  openLabel?: string;
-  /** Needs an external account that is not available yet: shown as "em breve" and skippable. */
-  soon?: boolean;
 }
 
 export const STEP_INFO: Record<Step, StepInfo> = {
   [Step.account]: {
-    title: 'CPF ou CNPJ e especialidade',
-    text: 'Informe o documento e escolha sua especialidade para aplicar as regras da sua área.',
-  },
-  [Step.services]: {
-    title: 'Serviços, valores e horários',
-    text: 'Revise os serviços e defina seus horários de atendimento.',
-    to: Route.services,
-    openLabel: 'Abrir serviços',
-  },
-  [Step.location]: {
-    title: 'Endereço e como chegar',
-    text: 'Informe o endereço e as instruções de chegada. Fica na mesma tela dos serviços.',
-    to: Route.services,
-    openLabel: 'Abrir endereço',
-  },
-  [Step.tone]: {
-    title: 'Tom de voz',
-    text: 'Responda a quatro perguntas ou cole mensagens suas.',
-    to: Route.tone,
-    openLabel: 'Abrir tom de voz',
-  },
-  [Step.simulator]: {
-    title: 'Simulador e mensagem de teste',
-    text: 'Converse com o assistente já configurado. Nada é enviado a pacientes.',
-    to: Route.simulator,
-    openLabel: 'Abrir simulador',
+    title: 'Onde seus clientes acham você',
+    text: 'Cole o link do seu site ou do Google Maps, ou o texto da bio do Instagram. A gente lê e você confere.',
   },
   [Step.whatsapp]: {
     title: 'Conectar o WhatsApp',
-    text: 'Conecte o número do consultório pela janela da Meta e cadastre lá o seu cartão. Dá para pular e conectar depois em Mais > Conexões.',
+    text: 'Use o mesmo número do app WhatsApp Business. Os 14 dias de teste começam quando ele conecta.',
   },
-  [Step.google]: {
-    title: 'Conectar o Google Agenda',
-    text: 'A conexão com o Google Agenda ainda não está disponível e é opcional no plano Essencial. Toque em Continuar para seguir sem ela.',
-    soon: true,
+  [Step.services]: {
+    title: 'Serviços e preços',
+    text: 'O assistente só informa o que estiver aqui, com o valor exato.',
+  },
+  [Step.hours]: {
+    title: 'Horários',
+    text: 'Os dias e horários em que você atende. O assistente só oferece horário livre dentro desta grade.',
+  },
+  [Step.simulator]: {
+    title: 'Teste com seus dados',
+    text: 'Faça uma pergunta como se fosse um cliente. Nada é enviado a ninguém.',
   },
   [Step.activation]: {
-    title: 'Ativação',
-    text: OnboardingCopy.activationText,
+    title: 'Ativar',
+    text: 'O assistente começa em "aprovar antes de enviar": cada resposta vira um rascunho e só sai com o seu toque.',
   },
 };

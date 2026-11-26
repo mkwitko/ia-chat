@@ -44,7 +44,7 @@ export function ServicesScreen() {
   );
 }
 
-function ServiceList({
+export function ServiceList({
   services,
   pricesForbidden,
 }: Readonly<{ services: Service[]; pricesForbidden: boolean }>) {

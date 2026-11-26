@@ -1,20 +1,29 @@
-import { Check } from 'lucide-react';
+import { Check, MessageCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { BillingCopy } from '../billing/billing-copy';
 import { TextField } from '../setup/fields';
-import type { OnboardingView } from './onboarding-api';
+import { FindSection } from './find-section';
+import type { OnboardingView, Step } from './onboarding-api';
 import { OnboardingCopy as Copy } from './onboarding-copy';
 import { SpecialtyPicker } from './specialty-picker';
+import { TryChat } from './try-chat';
 
 interface AccountStepProps {
   view: OnboardingView;
-  document: string;
-  onDocument: (value: string) => void;
+  document: { value: string; onChange: (value: string) => void };
+  onGoTo: (step: Step) => void;
 }
 
-/** H-37: the CPF/CNPJ (one trial per document, RF-81), then the specialty. Saved on "Continuar". */
-export function AccountStep({ view, document, onDocument }: Readonly<AccountStepProps>) {
+/**
+ * Step 1 (docs/research/09): where clients find the business (prefill and review), the area
+ * chips and the CPF/CNPJ (one trial per document, RF-81). The example chat is one tap away.
+ */
+export function AccountStep({ view, document, onGoTo }: Readonly<AccountStepProps>) {
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-8">
+      <FindSection />
+      <SpecialtyPicker view={view} />
       {view.documentSet ? (
         <p className="flex items-center gap-2 text-sm">
           <Check className="size-4 text-ok" aria-hidden="true" />
@@ -24,14 +33,35 @@ export function AccountStep({ view, document, onDocument }: Readonly<AccountStep
         <TextField
           id="onboarding-document"
           label={BillingCopy.documentLabel}
-          value={document}
-          onChange={onDocument}
+          value={document.value}
+          onChange={document.onChange}
           inputMode="numeric"
           autoComplete="off"
           hint={BillingCopy.documentHint}
         />
       )}
-      <SpecialtyPicker view={view} />
+      <ExampleChat onGoTo={onGoTo} />
+    </div>
+  );
+}
+
+/** The "magic" before the WhatsApp: a test chat with what was saved so far, nothing sent. */
+function ExampleChat({ onGoTo }: Readonly<{ onGoTo: (step: Step) => void }>) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="grid gap-4">
+      <Button
+        variant="ghost"
+        className="justify-self-start px-0 text-jade-ink hover:bg-transparent hover:underline"
+        aria-expanded={open}
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
+        <MessageCircle aria-hidden="true" />
+        {open ? Copy.hideExample : Copy.seeExample}
+      </Button>
+      {open && <TryChat onGoTo={onGoTo} />}
     </div>
   );
 }

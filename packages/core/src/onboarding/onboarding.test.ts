@@ -8,18 +8,30 @@ import { TemplateId } from './templates-data.ts';
 describe('progress', () => {
   it('resumes at the first unsettled step', () => {
     expect(currentStep(parseProgress({}))).toBe('account');
-    const progress = parseProgress({ steps: { account: StepStatus.done, google: 'skipped' } });
+    const progress = parseProgress({ steps: { account: StepStatus.done } });
     expect(currentStep(progress)).toBe('whatsapp');
   });
 
-  it('follows the guided order (H-37): document, WhatsApp, Google, services, simulator, activation', () => {
+  it('drops steps of the earlier flow instead of failing (google, location, tone)', () => {
+    const progress = parseProgress({
+      steps: { account: 'done', google: 'skipped', tone: 'done' },
+      at: { google: '2026-11-25T10:00:00.000Z' },
+    });
+    expect(progress.steps).toEqual({ account: 'done' });
+    expect(progress.at).toEqual({});
+  });
+
+  it('treats an activated account as finished, even after the flow gained a step', () => {
+    const progress = parseProgress({ steps: { account: 'done', activation: 'done' } });
+    expect(currentStep(progress)).toBeNull();
+  });
+
+  it('follows the guided order (H-37, H-39): find, WhatsApp, services, hours, test, activation', () => {
     expect(STEP_ORDER).toEqual([
       'account',
       'whatsapp',
-      'google',
       'services',
-      'location',
-      'tone',
+      'hours',
       'simulator',
       'activation',
     ]);

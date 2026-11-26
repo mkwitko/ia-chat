@@ -6,6 +6,7 @@ export const HttpStatus = {
   forbidden: 403,
   notFound: 404,
   conflict: 409,
+  unprocessable: 422,
   tooManyRequests: 429,
   internalError: 500,
   badGateway: 502,
@@ -32,6 +33,7 @@ export const ErrorCode = {
   calendarNeedsReconnect: 'calendar_needs_reconnect',
   billingOff: 'billing_off',
   documentRequired: 'document_required',
+  hoursRequired: 'hours_required',
   noSubscription: 'no_subscription',
   alreadySubscribed: 'already_subscribed',
   billingFailed: 'billing_failed',
@@ -39,6 +41,10 @@ export const ErrorCode = {
   whatsappTaken: 'whatsapp_taken',
   whatsappFailed: 'whatsapp_failed',
   inUse: 'in_use',
+  prefillOff: 'prefill_off',
+  prefillFailed: 'prefill_failed',
+  pasteText: 'paste_text',
+  pageUnreadable: 'page_unreadable',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
