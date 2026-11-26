@@ -1,3 +1,4 @@
+import { locale } from '@/i18n/locale';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { notifyError } from '@/lib/notify';
@@ -17,7 +18,7 @@ import {
 const UNAVAILABLE = 503;
 
 const when = (iso: string) =>
-  new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+  new Date(iso).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' });
 
 /** Spec 03 "Histórico da coexistência": the owner authorizes what comes over, and what does not. */
 export function HistoryImport({ history }: Readonly<{ history: History }>) {

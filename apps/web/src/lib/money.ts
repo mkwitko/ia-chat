@@ -1,7 +1,8 @@
+import { locale } from '@/i18n/locale';
 // Money is whole cents everywhere (CLAUDE.md); the panel only formats and parses reais.
 
 const CENTS_PER_REAL = 100;
-const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const BRL = new Intl.NumberFormat(locale, { style: 'currency', currency: 'BRL' });
 // "180", "180,50", "1.200,00", "R$ 180": digits, optional thousands dots, optional comma cents.
 const REAIS = /^(?:R\$\s?)?(\d{1,3}(?:\.\d{3})*|\d+)(?:,(\d{1,2}))?$/;
 const DOTS = /\./g;

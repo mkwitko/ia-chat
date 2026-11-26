@@ -1,8 +1,13 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { ChevronRight } from 'lucide-react';
 import { NavLink } from 'react-router';
 import { cn } from '@/lib/utils';
 
-export const MoreRowCopy = { soon: 'Em breve', waiting: 'Aguardando você:' } as const;
+export const MoreRowCopy = defineMessages({
+  [Locale.ptBR]: { soon: 'Em breve', waiting: 'Aguardando você:' },
+  [Locale.enUS]: {},
+});
 
 const ROW =
   'flex min-h-16 items-center gap-3 px-4 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring';

@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { Page } from './wizard-model';
 
 // Panel copy in pt-BR for the setup wizard: written for someone who never used software like this.
@@ -45,22 +47,25 @@ export const PAGE_INFO: Record<Page, PageInfo> = {
   },
 };
 
-export const WizardCopy = {
-  leave: 'Sair e continuar depois',
-  needArea: 'Escolha a sua área acima para continuar.',
-  needDocument: 'Escreva o seu CPF ou CNPJ para continuar.',
-  needWhatsapp: 'Conecte o WhatsApp para continuar, ou toque em "Pular por agora".',
-  progress: (index: number, total: number) => `Passo ${String(index)} de ${String(total)}`,
-  skip: 'Pular por agora',
-  back: 'Voltar',
-  next: 'Continuar',
-  activate: ACTIVATE,
-  connectWhatsapp: 'Conectar o WhatsApp primeiro',
-  documentSaved: 'CPF ou CNPJ já informado.',
-  doneTitle: 'Pronto!',
-  doneText:
-    'O assistente já está atendendo. Cada resposta espera a sua aprovação antes de sair, e você recebe um aviso no celular.',
-  doneAction: 'Ver as conversas',
-  doneSecondary: 'Mudar alguma coisa',
-  loadFailed: 'Não conseguimos carregar. Confira a internet e tente de novo.',
-} as const;
+export const WizardCopy = defineMessages({
+  [Locale.ptBR]: {
+    leave: 'Sair e continuar depois',
+    needArea: 'Escolha a sua área acima para continuar.',
+    needDocument: 'Escreva o seu CPF ou CNPJ para continuar.',
+    needWhatsapp: 'Conecte o WhatsApp para continuar, ou toque em "Pular por agora".',
+    progress: (index: number, total: number) => `Passo ${String(index)} de ${String(total)}`,
+    skip: 'Pular por agora',
+    back: 'Voltar',
+    next: 'Continuar',
+    activate: ACTIVATE,
+    connectWhatsapp: 'Conectar o WhatsApp primeiro',
+    documentSaved: 'CPF ou CNPJ já informado.',
+    doneTitle: 'Pronto!',
+    doneText:
+      'O assistente já está atendendo. Cada resposta espera a sua aprovação antes de sair, e você recebe um aviso no celular.',
+    doneAction: 'Ver as conversas',
+    doneSecondary: 'Mudar alguma coisa',
+    loadFailed: 'Não conseguimos carregar. Confira a internet e tente de novo.',
+  },
+  [Locale.enUS]: {},
+});

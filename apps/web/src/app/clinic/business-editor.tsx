@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { useState } from 'react';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
@@ -13,12 +15,15 @@ type TextKey = 'description' | 'phone' | 'website' | 'social' | 'reviewLink' | '
 const EMPTY = '';
 const BACK = { to: Route.clinic, label: ClinicCopy.back };
 
-export const BusinessCopy = {
-  description: 'O que você faz, em uma ou duas frases',
-  descriptionPlaceholder: 'Quiropraxia para dor nas costas e no pescoço.',
-  welcome: 'Mensagem de boas-vindas que você já usa',
-  welcomePlaceholder: 'Olá! Aqui é do consultório… Qual é o seu nome?',
-} as const;
+export const BusinessCopy = defineMessages({
+  [Locale.ptBR]: {
+    description: 'O que você faz, em uma ou duas frases',
+    descriptionPlaceholder: 'Quiropraxia para dor nas costas e no pescoço.',
+    welcome: 'Mensagem de boas-vindas que você já usa',
+    welcomePlaceholder: 'Olá! Aqui é do consultório… Qual é o seu nome?',
+  },
+  [Locale.enUS]: {},
+});
 
 const OPTIONAL: readonly { key: TextKey; label: string; hint?: string; url?: boolean }[] = [
   { key: 'phone', label: ProfileCopy.phone },

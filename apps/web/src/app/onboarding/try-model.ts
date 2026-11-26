@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { Route } from '@/routes';
 import { SourceKind, type SimulationReply } from '../simulator/simulator-api';
 import { Step } from './onboarding-api';
@@ -5,13 +7,16 @@ import { Step } from './onboarding-api';
 // "Ajustar" opens the field the answer came from: services and packages, hours, address,
 // knowledge; an answer that used nothing registered is about tone and the knowledge base.
 
-export const TryCopy = {
-  starters: ['Quanto custa?', 'Tem horário amanhã?', 'Onde fica?'],
-  placeholder: 'Ou escreva como um cliente escreveria',
-  good: 'Boa',
-  markedGood: 'Marcada como boa',
-  adjust: (label: string) => `Ajustar ${label}`,
-} as const;
+export const TryCopy = defineMessages({
+  [Locale.ptBR]: {
+    starters: ['Quanto custa?', 'Tem horário amanhã?', 'Onde fica?'],
+    placeholder: 'Ou escreva como um cliente escreveria',
+    good: 'Boa',
+    markedGood: 'Marcada como boa',
+    adjust: (label: string) => `Ajustar ${label}`,
+  },
+  [Locale.enUS]: {},
+});
 
 export type AdjustTarget = { label: string } & ({ step: Step } | { to: string });
 

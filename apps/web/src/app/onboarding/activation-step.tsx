@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { Bell, Check, Download } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -6,16 +8,19 @@ import type { OnboardingView } from './onboarding-api';
 import { IphoneInstall } from './iphone-install';
 import { OnboardingCopy } from './onboarding-copy';
 
-export const ActivationCopy = {
-  phoneHeading: 'No seu celular',
-  install: 'Pôr um atalho na tela do celular',
-  installHint: 'Abre como um aplicativo, direto da tela do seu celular.',
-  installed: 'Atalho criado neste celular',
-  notify: 'Receber avisos no celular',
-  notifyHint: 'Para saber na hora quando um rascunho espera sua aprovação ou alguém pede você.',
-  notifyOn: 'Avisos ligados neste celular',
-  notifyBlocked: 'Os avisos estão bloqueados neste navegador. Libere nas configurações do site.',
-} as const;
+export const ActivationCopy = defineMessages({
+  [Locale.ptBR]: {
+    phoneHeading: 'No seu celular',
+    install: 'Pôr um atalho na tela do celular',
+    installHint: 'Abre como um aplicativo, direto da tela do seu celular.',
+    installed: 'Atalho criado neste celular',
+    notify: 'Receber avisos no celular',
+    notifyHint: 'Para saber na hora quando um rascunho espera sua aprovação ou alguém pede você.',
+    notifyOn: 'Avisos ligados neste celular',
+    notifyBlocked: 'Os avisos estão bloqueados neste navegador. Libere nas configurações do site.',
+  },
+  [Locale.enUS]: {},
+});
 
 interface InstallPrompt extends Event {
   prompt: () => Promise<void>;

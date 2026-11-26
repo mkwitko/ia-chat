@@ -1,14 +1,19 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { Monitor, Moon, Sun, type LucideIcon } from 'lucide-react';
 import { useId } from 'react';
 import { cn } from '@/lib/utils';
 import { ThemeChoice, useThemeChoice } from '@/lib/theme';
 
-export const ThemeCopy = {
-  label: 'Aparência',
-  [ThemeChoice.system]: 'Sistema',
-  [ThemeChoice.light]: 'Claro',
-  [ThemeChoice.dark]: 'Escuro',
-} as const;
+export const ThemeCopy = defineMessages({
+  [Locale.ptBR]: {
+    label: 'Aparência',
+    [ThemeChoice.system]: 'Sistema',
+    [ThemeChoice.light]: 'Claro',
+    [ThemeChoice.dark]: 'Escuro',
+  },
+  [Locale.enUS]: {},
+});
 
 const OPTIONS: readonly { value: ThemeChoice; icon: LucideIcon }[] = [
   { value: ThemeChoice.system, icon: Monitor },
