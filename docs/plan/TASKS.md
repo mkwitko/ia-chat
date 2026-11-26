@@ -422,7 +422,8 @@ Spec: `09-site-aquisicao-suporte.md`.
 
 ### S-07 Suporte pelo próprio produto
 - [ ] Tenant de suporte com a central de ajuda como base de conhecimento
-- [ ] Botão no painel que abre o suporte com o contexto da conta
+- [x] Botão no painel que abre o suporte com o contexto da conta
+  - Mais > Ajuda e suporte (`/mais/ajuda`): busca no índice público da central (`/ajuda/busca.json` do site, liberado para outras origens no Caddy; precisa de `VITE_HELP_URL`) e "Falar com o suporte" por WhatsApp (`SUPPORT_WHATSAPP`, escondido se vazio) ou e-mail (`SUPPORT_EMAIL`), com mensagem pronta: código curto da conta, plano, situação e tela. Nunca dados de paciente. `GET /api/support`. Falta: último erro e estado das integrações na mensagem (RF-91)
 - [ ] Transferência para nós pelo inbox
 
 ### S-08 Busca

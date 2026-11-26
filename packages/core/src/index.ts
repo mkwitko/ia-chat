@@ -2,6 +2,7 @@ export {
   NodeEnv,
   baseEnvSchema,
   observabilityEnvSchema,
+  optionalText,
   parseEnv,
   parseEnvWith,
   type Env,
