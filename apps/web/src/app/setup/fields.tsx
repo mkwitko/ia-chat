@@ -1,3 +1,4 @@
+import { ChevronRight, Trash2 } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,6 +82,8 @@ interface FormActionsProps {
   saveLabel?: string;
   onCancel?: () => void;
   cancelLabel?: string;
+  /** Inside an item's editor: removing lives here, never next to "Editar" in the list. */
+  onRemove?: (() => void) | undefined;
 }
 
 export function FormActions(props: Readonly<FormActionsProps>) {
@@ -90,9 +93,10 @@ export function FormActions(props: Readonly<FormActionsProps>) {
     saveLabel = CommonCopy.save,
     onCancel,
     cancelLabel = CommonCopy.cancel,
+    onRemove,
   } = props;
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button type="submit" disabled={pending || disabled}>
         {pending ? CommonCopy.saving : saveLabel}
       </Button>
@@ -101,23 +105,22 @@ export function FormActions(props: Readonly<FormActionsProps>) {
           {cancelLabel}
         </Button>
       )}
+      {onRemove && (
+        <Button type="button" variant="ghost" className="ml-auto text-danger" onClick={onRemove}>
+          <Trash2 aria-hidden="true" />
+          {CommonCopy.remove}
+        </Button>
+      )}
     </div>
   );
 }
 
-/** Edit and remove buttons of a list row. */
-export function RowActions({
-  onEdit,
-  onRemove,
-}: Readonly<{ onEdit: () => void; onRemove: () => void }>) {
+/** "Editar ›" of a list row; removing is inside the editor it opens. */
+export function RowActions({ onEdit }: Readonly<{ onEdit: () => void }>) {
   return (
-    <div className="flex gap-2">
-      <Button variant="ghost" onClick={onEdit}>
-        {CommonCopy.edit}
-      </Button>
-      <Button variant="ghost" className="text-danger" onClick={onRemove}>
-        {CommonCopy.remove}
-      </Button>
-    </div>
+    <Button variant="ghost" onClick={onEdit}>
+      {CommonCopy.edit}
+      <ChevronRight aria-hidden="true" />
+    </Button>
   );
 }

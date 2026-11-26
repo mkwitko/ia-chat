@@ -74,6 +74,9 @@ function MemberRow({ member, first, edit }: Readonly<RowProps>) {
         initial={member.name}
         pending={rename.isPending}
         onCancel={edit.close}
+        onRemove={() => {
+          confirmRemove(Copy.removeConfirm(member.name), remove.mutate, member.id, removeFeedback);
+        }}
         onSubmit={(name) => {
           rename.mutate({ id: member.id, name }, edit.done);
         }}
@@ -97,22 +100,26 @@ function MemberRow({ member, first, edit }: Readonly<RowProps>) {
         onEdit={() => {
           edit.open(member.id);
         }}
-        onRemove={() => {
-          confirmRemove(Copy.removeConfirm(member.name), remove.mutate, member.id, removeFeedback);
-        }}
       />
     </div>
   );
 }
 
 interface NameFormProps {
+  onRemove?: (() => void) | undefined;
   initial?: string;
   pending: boolean;
   onSubmit: (name: string) => void;
   onCancel: () => void;
 }
 
-function NameForm({ initial = '', pending, onSubmit, onCancel }: Readonly<NameFormProps>) {
+function NameForm({
+  initial = '',
+  pending,
+  onSubmit,
+  onCancel,
+  onRemove,
+}: Readonly<NameFormProps>) {
   const [name, setName] = useState(initial);
   return (
     <form
@@ -130,7 +137,7 @@ function NameForm({ initial = '', pending, onSubmit, onCancel }: Readonly<NameFo
         required
         maxLength={120}
       />
-      <FormActions pending={pending} onCancel={onCancel} />
+      <FormActions pending={pending} onCancel={onCancel} onRemove={onRemove} />
     </form>
   );
 }

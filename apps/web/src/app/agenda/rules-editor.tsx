@@ -6,6 +6,7 @@ import { feedback } from '../setup/feedback';
 import { FormActions } from '../setup/fields';
 import { AvailabilityCopy as Copy } from './agenda-copy';
 import { useSaveRules, type RuleWindow } from './agenda-api';
+import { QuickHours } from './quick-hours';
 import { NEW_WINDOW, WEEK_ORDER, validWindows } from './rules-model';
 
 /** RF-40: weekly windows, more than one per day. Saved all at once; the API replaces the set. */
@@ -37,6 +38,7 @@ export function RulesEditor(props: Readonly<EditorProps>) {
         });
       }}
     >
+      <QuickHours rules={rules} onChange={setRules} />
       <ul className="divide-y rounded-xl border bg-card">
         {WEEK_ORDER.map((weekday) => (
           <WeekdayRow key={weekday} weekday={weekday} rules={rules} onChange={setRules} />
@@ -151,11 +153,12 @@ function WindowRow({ name, rule, onPatch, onRemove }: Readonly<WindowProps>) {
       <Button
         type="button"
         variant="ghost"
-        size="icon"
+        className="text-danger"
         aria-label={`${name}: ${Copy.removeWindow}`}
         onClick={onRemove}
       >
         <Trash2 aria-hidden="true" />
+        {Copy.removeShort}
       </Button>
     </div>
   );

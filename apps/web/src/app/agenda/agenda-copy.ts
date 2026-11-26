@@ -94,8 +94,19 @@ export const AvailabilityCopy = defineMessages({
       'Os horários em que você atende por semana. O assistente só oferece o que está aqui.',
     weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
     closed: 'Não atende',
+    weekdaysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+    quickTitle: 'Mesmo horário em vários dias',
+    quickDays: 'Dias que recebem este horário',
+    quickApply: (days: number) =>
+      days === 1
+        ? 'Usar este horário no dia marcado'
+        : `Usar este horário nos ${String(days)} dias marcados`,
+    quickHint:
+      'Depois, ajuste um dia ou outro na lista abaixo (por exemplo, o intervalo do almoço). Nada é salvo até você tocar em Salvar.',
+    quickInvalid: 'Marque pelo menos um dia e confira se o fim vem depois do início.',
     addWindow: 'Adicionar horário',
     removeWindow: 'Remover horário',
+    removeShort: 'Remover',
     from: 'Das',
     to: 'Às',
     toShort: 'às',

@@ -84,6 +84,9 @@ function KnowledgeRow({
         initial={item}
         pending={update.isPending}
         onCancel={edit.close}
+        onRemove={() => {
+          confirmRemove(Copy.removeConfirm, archive.mutate, item.id, feedback);
+        }}
         onSubmit={(body) => {
           update.mutate({ id: item.id, body }, edit.done);
         }}
@@ -96,9 +99,6 @@ function KnowledgeRow({
       <RowActions
         onEdit={() => {
           edit.open(item.id);
-        }}
-        onRemove={() => {
-          confirmRemove(Copy.removeConfirm, archive.mutate, item.id, feedback);
         }}
       />
     </div>
