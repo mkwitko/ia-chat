@@ -29,6 +29,11 @@ function merge<T>(base: T, override: unknown): T {
   return out as T;
 }
 
+/** A label looked up by a key that comes from the server; undefined when unknown. */
+export function labelOf(labels: Readonly<Record<string, string>>, key: string): string | undefined {
+  return labels[key];
+}
+
 /** The messages of one screen in the active locale; missing keys fall back to pt-BR. */
 export function defineMessages<const T>(resources: Resources<T>, locale: Locale = activeLocale): T {
   const base = resources[DEFAULT_LOCALE];

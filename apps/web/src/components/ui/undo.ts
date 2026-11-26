@@ -7,7 +7,7 @@ import { defineMessages } from '@/i18n/messages';
 // the list at once, the server only hears about it when the toast closes, and the toast's
 // button puts it back. Pending work is flushed if the page is closed first.
 
-const Copy = defineMessages({
+export const UndoCopy = defineMessages({
   [Locale.ptBR]: { undo: 'Desfazer', undone: 'Pronto, desfeito.' },
   [Locale.enUS]: {},
 });
@@ -45,11 +45,11 @@ export function runWithUndo({ message, commit, restore = () => undefined }: Undo
   toast(message, {
     duration: UNDO_WINDOW_MS,
     action: {
-      label: Copy.undo,
+      label: UndoCopy.undo,
       onClick: () => {
         pending.delete(key);
         restore();
-        toast(Copy.undone);
+        toast(UndoCopy.undone);
       },
     },
     onAutoClose: run,

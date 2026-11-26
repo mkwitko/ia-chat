@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { EmptyState, GhostRows } from '../screens/empty-state';
 import { SimulatorLink } from '../simulator/simulator-link';
 import { Screen } from '../screens/screen';
+import { HelpArticle } from '../screens/screen-help';
 import { ConversationRow } from './conversation-row';
 import { InboxState, useConversations, type ConversationSummary } from './inbox-api';
 import { FilterCopy, InboxCopy } from './inbox-copy';
@@ -34,7 +35,12 @@ export function ConversationsScreen() {
   const conversations = useConversations();
   const [filter, setFilter] = useState<Filter>(Filter.all);
   return (
-    <Screen title={NavCopy.conversations} className="lg:px-4 lg:pt-6 xl:px-4">
+    <Screen
+      title={NavCopy.conversations}
+      help={HelpArticle.conversations}
+      hint={InboxCopy.hint}
+      className="lg:px-4 lg:pt-6 xl:px-4"
+    >
       {conversations.isPending && <ListSkeleton />}
       {conversations.isError && (
         <LoadError message={InboxCopy.loadFailed} onRetry={() => void conversations.refetch()} />
@@ -48,7 +54,7 @@ export function ConversationsScreen() {
       )}
       {conversations.data && conversations.data.length > 0 && (
         <>
-          <FilterBar value={filter} onChange={setFilter} />
+          <FilterBar value={filter} onChange={setFilter} items={conversations.data} />
           <List items={applyFilter(conversations.data, filter)} />
         </>
       )}
@@ -56,12 +62,16 @@ export function ConversationsScreen() {
   );
 }
 
-function FilterBar({
-  value,
-  onChange,
-}: Readonly<{ value: Filter; onChange: (filter: Filter) => void }>) {
+interface FilterBarProps {
+  value: Filter;
+  onChange: (filter: Filter) => void;
+  items: readonly ConversationSummary[];
+}
+
+/** Pills that wrap (no hidden sideways scroll), each with how many conversations it holds. */
+function FilterBar({ value, onChange, items }: Readonly<FilterBarProps>) {
   return (
-    <fieldset className="flex gap-2 overflow-x-auto [scrollbar-width:none] px-4 py-2 md:px-0">
+    <fieldset className="flex flex-wrap gap-2 px-4 py-2 md:px-0">
       <legend className="sr-only">{FilterCopy.label}</legend>
       {FILTERS.map((option) => (
         <label
@@ -82,7 +92,7 @@ function FilterBar({
               onChange(option.value);
             }}
           />
-          {option.label}
+          {FilterCopy.count(option.label, applyFilter(items, option.value).length)}
         </label>
       ))}
     </fieldset>

@@ -1,5 +1,8 @@
 import { useState } from 'react';
+import { CalendarPlus } from 'lucide-react';
 import { useSearchParams } from 'react-router';
+import { Button } from '@/components/ui/button';
+import { HelpArticle } from '../screens/screen-help';
 import { NavCopy } from '@/copy';
 import { useMedia, WIDE_QUERY } from '@/lib/use-media';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
@@ -7,7 +10,7 @@ import { Screen } from '../screens/screen';
 import { AgendaBody } from './agenda-body';
 import { AgendaCopy as Copy } from './agenda-copy';
 import { useAgenda, type AgendaView } from './agenda-api';
-import { AgendaToolbar, DAY_PARAM, VIEW_PARAM, View, WEEK_DAYS } from './agenda-toolbar';
+import { AgendaToolbar, HoursLink, DAY_PARAM, VIEW_PARAM, View, WEEK_DAYS } from './agenda-toolbar';
 import { BookingForm, BookingKind, type BookingTarget } from './booking-form';
 import { PROFESSIONAL_PARAM } from './professional-api';
 import { ProfessionalFilter } from './professional-controls';
@@ -20,9 +23,10 @@ function useAgendaParams() {
   const [params, setParams] = useSearchParams();
   const requested = params.get(DAY_PARAM) ?? '';
   // The computer opens on the week (more than one day in view); the phone on the day.
-  const fallback = useMedia(WIDE_QUERY) ? View.week : View.day;
+  const wide = useMedia(WIDE_QUERY);
   const asked = params.get(VIEW_PARAM);
-  const view = asked === View.week || asked === View.day ? asked : fallback;
+  const valid = asked === View.week || asked === View.day ? asked : View.week;
+  const view = wide ? valid : View.day;
   return {
     view,
     requested,
@@ -34,30 +38,34 @@ function useAgendaParams() {
   };
 }
 
+/** The open booking form; `?novo=1` (Início's shortcut) opens it straight away. */
+function useBooking(day: string, professionalId: string) {
+  return useState<BookingTarget | null>(() =>
+    new URLSearchParams(location.search).has(NEW_PARAM)
+      ? { kind: BookingKind.new, day, professionalId }
+      : null,
+  );
+}
+
 /** Spec 10, "Agenda": the day on the phone, the week as seven day columns on the computer. */
 export function AgendaScreen() {
   const { view, requested, days, change, professionalId } = useAgendaParams();
   const agenda = useAgenda(ISO_DAY.test(requested) ? requested : undefined, days);
   const day = agenda.data?.from ?? requested;
-  // `?novo=1` (Início's shortcut) opens the booking form straight away.
-  const [booking, setBooking] = useState<BookingTarget | null>(() =>
-    new URLSearchParams(location.search).has(NEW_PARAM)
-      ? { kind: BookingKind.new, day, professionalId }
-      : null,
-  );
+  const [booking, setBooking] = useBooking(day, professionalId);
   const team = agenda.data?.professionals ?? [];
   const shown = agenda.data && onlyOf(agenda.data, professionalId);
   const names = team.length > 1 && !professionalId ? namesOf(team) : undefined;
+  const newBooking = (
+    <NewBookingButton
+      onClick={() => {
+        setBooking({ kind: BookingKind.new, day, professionalId });
+      }}
+    />
+  );
   return (
-    <Screen title={NavCopy.agenda}>
-      <AgendaToolbar
-        day={day}
-        view={view}
-        onChange={change}
-        onNew={() => {
-          setBooking({ kind: BookingKind.new, day, professionalId });
-        }}
-      />
+    <Screen title={NavCopy.agenda} help={HelpArticle.agenda} hint={Copy.hint} action={newBooking}>
+      <AgendaToolbar day={day} view={view} onChange={change} />
       {team.length > 1 && <TeamFilter team={team} value={professionalId} onChange={change} />}
       {booking && agenda.data && (
         <BookingForm
@@ -73,7 +81,18 @@ export function AgendaScreen() {
         <LoadError message={Copy.loadFailed} onRetry={() => void agenda.refetch()} />
       )}
       {shown && <AgendaBody agenda={shown} days={days} onNew={setBooking} names={names} />}
+      <HoursLink />
     </Screen>
+  );
+}
+
+/** The screen's one primary action, next to the title. */
+function NewBookingButton({ onClick }: Readonly<{ onClick: () => void }>) {
+  return (
+    <Button onClick={onClick}>
+      <CalendarPlus aria-hidden="true" />
+      {Copy.newBooking}
+    </Button>
   );
 }
 

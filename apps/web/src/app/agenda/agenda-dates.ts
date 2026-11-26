@@ -37,6 +37,16 @@ export function dayTitle(day: string): string {
   });
 }
 
+/** "seg., 4 de jan." for the phone's one-line toolbar. */
+export function compactDayTitle(day: string): string {
+  return new Date(`${day}T00:00:00Z`).toLocaleDateString(LOCALE, {
+    timeZone: 'UTC',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
 /** "04/01" for a range label. */
 export function shortDay(day: string): string {
   return new Date(`${day}T00:00:00Z`).toLocaleDateString(LOCALE, {

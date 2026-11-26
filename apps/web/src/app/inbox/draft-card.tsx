@@ -2,6 +2,8 @@ import { FilePen } from 'lucide-react';
 import { useState } from 'react';
 import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
+import { confirmThen, questionOf } from '@/components/ui/confirm-dialog';
+import { toast } from 'sonner';
 import { ApiError } from '@/lib/api';
 import { DraftAction, useDecideDraft, type PendingDraft } from './inbox-api';
 import { DraftCopy as Copy } from './inbox-copy';
@@ -10,7 +12,7 @@ import { ensureOnline } from './online';
 const CONFLICT = 409;
 const EDIT_FIELD = 'draft-edit';
 const TITLE_ID = 'draft-title';
-const Mode = { view: 'view', edit: 'edit', confirm: 'confirm' } as const;
+const Mode = { view: 'view', edit: 'edit' } as const;
 type Mode = (typeof Mode)[keyof typeof Mode];
 
 type Run = (action: DraftAction, text?: string) => void;
@@ -55,7 +57,6 @@ export function DraftCard({
       <div className="flex flex-wrap gap-2">
         {mode === Mode.view && <ViewButtons {...buttons} />}
         {mode === Mode.edit && <EditButtons {...buttons} text={text.trim()} />}
-        {mode === Mode.confirm && <ConfirmButtons {...buttons} />}
       </div>
     </section>
   );
@@ -97,7 +98,18 @@ function ViewButtons({ busy, run, go }: Readonly<Buttons>) {
       <Button variant="outline" onClick={go(Mode.edit)}>
         {Copy.edit}
       </Button>
-      <Button variant="destructive" onClick={go(Mode.confirm)}>
+      <Button
+        variant="destructive"
+        disabled={busy}
+        onClick={() => {
+          confirmThen(
+            { ...questionOf(Copy.confirmDiscard), confirm: Copy.confirmYes, destructive: true },
+            () => {
+              run(DraftAction.discard);
+            },
+          );
+        }}
+      >
         {Copy.discard}
       </Button>
     </>
@@ -122,26 +134,6 @@ function EditButtons({ busy, run, go, text }: Readonly<Buttons & { text: string 
   );
 }
 
-function ConfirmButtons({ busy, run, go }: Readonly<Buttons>) {
-  return (
-    <>
-      <span className="self-center text-sm font-semibold">{Copy.confirmDiscard}</span>
-      <Button
-        variant="destructive"
-        disabled={busy}
-        onClick={() => {
-          run(DraftAction.discard);
-        }}
-      >
-        {Copy.confirmYes}
-      </Button>
-      <Button variant="outline" onClick={go(Mode.view)}>
-        {Copy.confirmNo}
-      </Button>
-    </>
-  );
-}
-
 const failureText = (error: Error) =>
   error instanceof ApiError && error.status === CONFLICT ? Copy.stale : Copy.failed;
 
@@ -152,7 +144,10 @@ function runner(decide: ReturnType<typeof useDecideDraft>, turnId: string): Run 
     const body = edited === undefined ? {} : { text: edited };
     decide.mutate(
       { action, turnId, ...body },
-      { onError: (error) => notifyError(failureText(error)) },
+      {
+        onSuccess: () => toast.success(action === DraftAction.discard ? Copy.discarded : Copy.sent),
+        onError: (error) => notifyError(failureText(error)),
+      },
     );
   };
 }

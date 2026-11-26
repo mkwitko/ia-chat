@@ -49,6 +49,8 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento (no má
 - Ordem: primeiro as que precisam do profissional.
 - Vazio: "Nenhuma conversa ainda" com o link para testar no simulador.
 
+- Redesenho de 26/11/2026: filtros em pílulas com a contagem ("Precisam de você (2)") que quebram linha em vez de rolar de lado; "?" de ajuda e dica de primeira visita.
+
 ### Conversa
 
 - Mensagens com autoria distinguível sem depender só de cor: paciente, assistente, profissional, sistema.
@@ -58,6 +60,8 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento (no má
 - Campo de texto para responder pelo painel. Enviar por aqui também assume a conversa.
 - Linha do tempo mostra eventos: assumiu, devolveu, agendou, cancelou, transferiu.
 - Atalho para o contato: agendamentos futuros e passados, opt-out, exportar e eliminar dados.
+
+- Assumir e Devolver mostram um aviso do que mudou com "Desfazer" (volta como estava). "Assumir" é botão secundário: o principal da tela é o da resposta para aprovar. Descartar a resposta do assistente pede confirmação na janela do painel; enviar e descartar confirmam com aviso.
 
 ### Agenda
 
@@ -69,6 +73,8 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento (no má
 - Implementação (E-23): lista feita à mão, sem Schedule-X (sem dependência nova): dia no celular e semana como sete seções de dia, a partir do dia escolhido (`/agenda?dia=AAAA-MM-DD&visao=semana`). Em vez de tocar num horário livre da grade, o botão "Novo agendamento" abre o formulário com os horários livres do dia (mesmo `availableSlots` do assistente) e o toque no atendimento abre remarcar e cancelar. Com o Google Agenda conectado (E-21) os horários ocupados lá saem da lista de livres; a seção "Google Agenda" da tela Disponibilidade conecta, escolhe a agenda, mostra o estado e desconecta, e uma faixa de alerta pede para reconectar quando o token cai. A tela "Disponibilidade, bloqueios e férias" (hoje Meu consultório › Horários, `/mais/consultorio/horarios`; o Google Agenda ficou na própria linha de Meu consultório) edita os horários da semana, os bloqueios, as férias e o horário do resumo noturno.
 - Agenda por profissional (H-45): com mais de um profissional, a Agenda ganha o filtro "Todos / cada profissional" (`?profissional=`); em "Todos" cada atendimento mostra as iniciais e "com {nome}". Profissionais se distinguem por iniciais e nome, não por cor. No novo agendamento, os horários livres trazem as iniciais de quem atende; com o filtro num profissional, só os dele; remarcar fica com o mesmo profissional. Em Disponibilidade, a troca de profissional no topo leva aos horários, aos "Serviços que atende" (todos, ou os marcados) e aos bloqueios e férias de cada um; para quem não é o primeiro, a seção do Google Agenda vira uma frase dizendo que o Google vale para o primeiro. Em Perfil > Quem atende, cada profissional tem o link "Horários e serviços"; adicionar além do plano mostra o aviso do plano Clínica.
 - Lista de espera (M-09): cada dia mostra, abaixo dos atendimentos, quem pediu para ser avisado se abrir um horário (nome, serviço, até quando), com "Tirar da lista". Na semana a explicação some e ficam só os nomes. Entradas vêm só do assistente.
+
+- Redesenho de 26/11/2026: "Novo agendamento" é o único botão principal, ao lado do título; a barra tem só anterior / dia por extenso / próximo e "Hoje" (Dia/Semana só no computador); o link para horários e folgas desceu para baixo da lista; cada atendimento mostra a seta que indica que abre; o filtro de profissionais quebra linha. Cancelar sai na hora com "Desfazer" por 6 s.
 
 ### Início
 

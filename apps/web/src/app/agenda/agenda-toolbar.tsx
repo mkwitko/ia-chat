@@ -1,9 +1,9 @@
-import { CalendarPlus, ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Route } from '@/routes';
 import { AgendaCopy as Copy } from './agenda-copy';
-import { addDaysIso, dayTitle, shortDay } from './agenda-dates';
+import { addDaysIso, compactDayTitle, dayTitle, shortDay } from './agenda-dates';
 
 export const DAY_PARAM = 'dia';
 export const VIEW_PARAM = 'visao';
@@ -15,53 +15,54 @@ interface ToolbarProps {
   day: string;
   view: View;
   onChange: (next: Record<string, string>) => void;
-  onNew: () => void;
 }
 
-function rangeLabel(day: string, view: View): string {
+function rangeLabel(day: string, view: View, short: boolean): string {
   if (!day) return '';
-  if (view === View.day) return dayTitle(day);
+  if (view === View.day) return short ? compactDayTitle(day) : dayTitle(day);
   return `${shortDay(day)} a ${shortDay(addDaysIso(day, WEEK_DAYS - 1))}`;
 }
 
-/** Day navigation, day/week switch and the two entry points: new booking and availability. */
-export function AgendaToolbar({ day, view, onChange, onNew }: Readonly<ToolbarProps>) {
+/** One row: previous, the day or week in words, next, "Hoje"; day/week on the computer. */
+export function AgendaToolbar({ day, view, onChange }: Readonly<ToolbarProps>) {
   return (
-    <div className="grid gap-3 border-b bg-card px-4 pb-3 md:mb-6 md:flex md:flex-wrap md:items-center md:border-0 md:bg-transparent md:px-0 md:pb-0">
+    <div className="flex items-center gap-2 border-b bg-card px-2 pb-2 md:mb-6 md:border-0 md:bg-transparent md:px-0 md:pb-0">
       <DayNav day={day} view={view} onChange={onChange} />
-      <div className="flex flex-wrap items-center gap-2 md:contents">
-        <ViewSwitch view={view} onChange={onChange} />
-        <Button
-          variant="outline"
-          onClick={() => {
-            onChange({ [DAY_PARAM]: '' });
-          }}
-        >
-          {Copy.today}
-        </Button>
-        <Button className="ml-auto md:order-last" onClick={onNew}>
-          <CalendarPlus aria-hidden="true" />
-          {Copy.newBooking}
-        </Button>
-      </div>
-      <Link
-        to={Route.clinicHours}
-        className="flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+      <Button
+        variant="outline"
+        onClick={() => {
+          onChange({ [DAY_PARAM]: '' });
+        }}
       >
-        <Settings2 className="size-4" aria-hidden="true" />
-        {Copy.settings}
-      </Link>
+        {Copy.today}
+      </Button>
+      <div className="ml-auto hidden lg:block">
+        <ViewSwitch view={view} onChange={onChange} />
+      </div>
     </div>
   );
 }
 
-function DayNav({ day, view, onChange }: Readonly<Omit<ToolbarProps, 'onNew'>>) {
+/** Where the hours and days off are changed, quietly under the agenda. */
+export function HoursLink() {
+  return (
+    <Link
+      to={Route.clinicHours}
+      className="mx-4 mt-4 flex min-h-11 w-fit items-center gap-2 font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline md:mx-0"
+    >
+      <Settings2 className="size-4" aria-hidden="true" />
+      {Copy.settings}
+    </Link>
+  );
+}
+
+function DayNav({ day, view, onChange }: Readonly<ToolbarProps>) {
   const step = view === View.week ? WEEK_DAYS : 1;
   const move = (days: number) => () => {
     if (day) onChange({ [DAY_PARAM]: addDaysIso(day, days) });
   };
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex min-w-0 flex-1 items-center gap-1 md:flex-none">
       <Button variant="ghost" size="icon" aria-label={Copy.previous} onClick={move(-step)}>
         <ChevronLeft aria-hidden="true" />
       </Button>
@@ -69,7 +70,8 @@ function DayNav({ day, view, onChange }: Readonly<Omit<ToolbarProps, 'onNew'>>) 
         className="min-w-0 flex-1 text-center font-semibold first-letter:uppercase md:w-56 md:flex-none"
         aria-live="polite"
       >
-        {rangeLabel(day, view)}
+        <span className="md:hidden">{rangeLabel(day, view, true)}</span>
+        <span className="hidden md:inline">{rangeLabel(day, view, false)}</span>
       </p>
       <Button variant="ghost" size="icon" aria-label={Copy.next} onClick={move(step)}>
         <ChevronRight aria-hidden="true" />

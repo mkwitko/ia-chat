@@ -23,7 +23,7 @@ export function ProfessionalFilter({
     <div
       role="group"
       aria-label={Copy.filterLabel}
-      className="flex gap-2 overflow-x-auto px-4 pb-1 md:flex-wrap md:px-0"
+      className="flex flex-wrap gap-2 px-4 pb-1 md:px-0"
     >
       {options.map((option) => (
         <Button
