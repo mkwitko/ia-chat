@@ -53,7 +53,7 @@ describe('features API', () => {
     expect(stateOf(data, Feature.pixDeposit)).toMatchObject({
       included: false,
       enabled: false,
-      plan: PlanId.pro,
+      plan: PlanId.agenda,
     });
   });
 
@@ -65,7 +65,7 @@ describe('features API', () => {
   });
 
   it('turns an included feature off and on, with audit', async () => {
-    await setPlan(Plan.pro);
+    await setPlan(Plan.agenda);
     const off = await call('PUT', { features: { [Feature.ocrIdCard]: false } });
     expect(off.statusCode).toBe(200);
     expect(stateOf(off.json<View>(), Feature.ocrIdCard)?.enabled).toBe(false);
@@ -79,7 +79,7 @@ describe('features API', () => {
   });
 
   it('a downgrade turns the feature off even with a saved "on"', async () => {
-    await setPlan(Plan.agenda);
+    await setPlan(Plan.essencial);
     expect(stateOf(await view(), Feature.ocrIdCard)?.enabled).toBe(false);
   });
 
@@ -89,8 +89,8 @@ describe('features API', () => {
   });
 
   it('does not leak one tenant choices into another', async () => {
-    await setPlan(Plan.pro);
-    await call('PUT', { features: { [Feature.ocrMedicalRequest]: false } });
+    await setPlan(Plan.agenda);
+    await call('PUT', { features: { [Feature.ocrMedicalRequest]: true } });
     const rows = await ctx.db.withTenant(tenantId, (tx) => tx.featureSetting.findMany());
     expect(rows.every((row) => row.tenantId === tenantId)).toBe(true);
     expect(stateOf(await view(otherOwner), Feature.audioTranscription)?.enabled).toBe(true);

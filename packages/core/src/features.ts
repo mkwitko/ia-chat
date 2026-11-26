@@ -2,7 +2,7 @@ import { PlanId } from './plans.ts';
 
 // Recursos (owner decision, 26/11/2026; spec 01 "Recursos", H-51): features the owner turns on
 // and off. A feature outside the tenant's plan is never on. Inside it, it is on unless the owner
-// turned it off. The panel, the API and the worker read this catalog; nothing else decides.
+// turned it off (or it is off by default). The panel, the API and the worker read this catalog; nothing else decides.
 
 export const Feature = {
   audioTranscription: 'audio_transcription',
@@ -16,11 +16,17 @@ export type Feature = (typeof Feature)[keyof typeof Feature];
 /** The lowest plan that includes each feature; the plans above include it too. */
 export const FEATURE_PLAN = {
   [Feature.audioTranscription]: PlanId.essencial,
-  [Feature.pixDeposit]: PlanId.pro,
-  [Feature.ocrPixReceipt]: PlanId.pro,
-  [Feature.ocrIdCard]: PlanId.pro,
-  [Feature.ocrMedicalRequest]: PlanId.pro,
+  [Feature.pixDeposit]: PlanId.agenda,
+  [Feature.ocrPixReceipt]: PlanId.agenda,
+  [Feature.ocrIdCard]: PlanId.agenda,
+  [Feature.ocrMedicalRequest]: PlanId.agenda,
 } as const satisfies Record<Feature, PlanId>;
+
+/**
+ * Off until the owner turns it on, even inside the plan: the exam summary is health data (owner
+ * decision, 26/11/2026; spec 06).
+ */
+const OFF_BY_DEFAULT: ReadonlySet<Feature> = new Set([Feature.ocrMedicalRequest]);
 
 export const FEATURES: readonly Feature[] = Object.values(Feature);
 
@@ -52,7 +58,7 @@ export function featureStates(plan: PlanId, choices: FeatureChoices): FeatureSta
       feature,
       plan: FEATURE_PLAN[feature],
       included,
-      enabled: included && (choices[feature] ?? true),
+      enabled: included && (choices[feature] ?? !OFF_BY_DEFAULT.has(feature)),
     };
   });
 }

@@ -8,25 +8,35 @@ const stateOf = (plan: PlanId, feature: Feature, choices = {}) =>
 describe('features (H-51)', () => {
   it('a plan includes its own features and those of the plans below', () => {
     expect(planIncludes(PlanId.essencial, Feature.audioTranscription)).toBe(true);
-    expect(planIncludes(PlanId.agenda, Feature.pixDeposit)).toBe(false);
-    expect(planIncludes(PlanId.pro, Feature.pixDeposit)).toBe(true);
+    expect(planIncludes(PlanId.essencial, Feature.pixDeposit)).toBe(false);
+    expect(planIncludes(PlanId.agenda, Feature.pixDeposit)).toBe(true);
+    expect(planIncludes(PlanId.pro, Feature.ocrIdCard)).toBe(true);
     expect(planIncludes(PlanId.clinica, Feature.ocrMedicalRequest)).toBe(true);
   });
 
   it('is on by default when the plan includes it', () => {
-    expect(stateOf(PlanId.pro, Feature.ocrIdCard)).toMatchObject({ included: true, enabled: true });
+    expect(stateOf(PlanId.agenda, Feature.ocrIdCard)).toMatchObject({
+      included: true,
+      enabled: true,
+    });
+  });
+
+  it('keeps the exam summary off until the owner turns it on (health data)', () => {
+    expect(stateOf(PlanId.agenda, Feature.ocrMedicalRequest)?.enabled).toBe(false);
+    const on = { [Feature.ocrMedicalRequest]: true };
+    expect(stateOf(PlanId.agenda, Feature.ocrMedicalRequest, on)?.enabled).toBe(true);
   });
 
   it('follows the owner when included', () => {
     const off = { [Feature.ocrIdCard]: false };
-    expect(stateOf(PlanId.pro, Feature.ocrIdCard, off)?.enabled).toBe(false);
+    expect(stateOf(PlanId.agenda, Feature.ocrIdCard, off)?.enabled).toBe(false);
   });
 
   it('is never on outside the plan, whatever was saved, and says which plan has it', () => {
     const on = { [Feature.pixDeposit]: true };
-    expect(stateOf(PlanId.agenda, Feature.pixDeposit, on)).toEqual({
+    expect(stateOf(PlanId.essencial, Feature.pixDeposit, on)).toEqual({
       feature: Feature.pixDeposit,
-      plan: PlanId.pro,
+      plan: PlanId.agenda,
       included: false,
       enabled: false,
     });
