@@ -84,12 +84,8 @@ for (const queue of QUEUES) {
 }
 
 const appLog = {
-  warn: (fields: object, message: string) => {
-    log.warn(fields, message);
-  },
-  info: (fields: object, message: string) => {
-    log.info(fields, message);
-  },
+  warn: log.warn.bind(log),
+  info: log.info.bind(log),
 };
 const notifier = startNotifier({ db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
 const remind = (tenantId: string, reason: NotifyReason) => (conversationId: string) => {
