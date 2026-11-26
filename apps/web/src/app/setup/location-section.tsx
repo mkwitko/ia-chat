@@ -23,7 +23,7 @@ function LocationForm({ initial }: Readonly<{ initial: Location | null }>) {
   };
   return (
     <form
-      className="grid gap-4 px-4 md:px-0"
+      className="grid gap-4 px-4 md:px-0 md:[&>button]:justify-self-start"
       onSubmit={(event) => {
         event.preventDefault();
         submit();
@@ -48,11 +48,7 @@ function LocationForm({ initial }: Readonly<{ initial: Location | null }>) {
         placeholder={Copy.arrivalPlaceholder}
       />
       <Preview text={[address.trim(), arrival.trim()].filter(Boolean).join(PARAGRAPH)} />
-      <Button
-        type="submit"
-        disabled={save.isPending}
-        className="w-full md:w-auto md:justify-self-start"
-      >
+      <Button type="submit" disabled={save.isPending} className="w-full md:w-auto">
         {save.isPending ? CommonCopy.saving : CommonCopy.save}
       </Button>
     </form>
