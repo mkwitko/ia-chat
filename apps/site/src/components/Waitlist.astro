@@ -1,13 +1,10 @@
 ---
+// Invite request (access is by invite). The heading comes from the page around it.
 const api = import.meta.env.PUBLIC_API_URL ?? '';
 const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 ---
 
-<form data-waitlist data-api={api} class="card" aria-labelledby="lista-titulo">
-  <h2 id="lista-titulo">Entre na lista de espera</h2>
-  <p class="muted">
-    O acesso é por convite e abre em lotes. Usamos seu e-mail só para mandar o seu convite quando chegar a sua vez.
-  </p>
+<form data-waitlist data-api={api} class="card waitlist" aria-label="Pedir convite">
   <div class="field">
     <label for="wl-email">E-mail</label>
     <input id="wl-email" name="email" type="email" autocomplete="email" required />
@@ -18,10 +15,16 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
   </div>
   <div class="field">
     <label for="wl-specialty">Sua especialidade (opcional)</label>
-    <input id="wl-specialty" name="specialty" type="text" maxlength="120" />
+    <input
+      id="wl-specialty"
+      name="specialty"
+      type="text"
+      maxlength="120"
+      placeholder="Ex.: quiropraxia, fisioterapia"
+    />
   </div>
   <div class="cf-turnstile" data-sitekey={siteKey}></div>
-  <button class="btn" type="submit">Entrar na lista</button>
+  <button class="btn" type="submit">Pedir convite</button>
   <p data-status role="status" aria-live="polite"></p>
 </form>
 
@@ -29,3 +32,19 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 <script>
   import '../scripts/waitlist.ts';
 </script>
+
+<style>
+  .waitlist {
+    padding: 24px;
+  }
+  .waitlist .btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+  .cf-turnstile:empty {
+    display: none;
+  }
+  ::placeholder {
+    color: var(--ink-2);
+  }
+</style>

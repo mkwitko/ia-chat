@@ -1,39 +1,50 @@
 ---
 import Base from '../layouts/Base.astro';
+import PlanCards from '../components/PlanCards.astro';
 import PlansTable from '../components/PlansTable.astro';
-import Waitlist from '../components/Waitlist.astro';
-import {
-  CLINICA_INCLUDED_PROFESSIONALS,
-  EXTRA_PROFESSIONAL,
-  PLANS,
-  WARNING_PERCENT,
-} from '@app/core';
+import { PLANS, WARNING_PERCENT } from '@app/core';
+import { exampleBill } from '../lib/example-bill.ts';
 import { META_ESTIMATE_DATE, META_PROFILES } from '../lib/meta-estimate.ts';
 import { formatBrl, formatCount } from '../lib/money.ts';
 import { FEATURED_PLAN } from '../lib/plans-view.ts';
 
 const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
+const bill = exampleBill(FEATURED_PLAN);
 ---
 
 <Base
   title="Preços"
-  description="Mensalidade com franquia de conversas, valor do excedente e estimativa do custo da Meta para o seu volume."
+  description="Mensalidade com franquia de conversas, sem taxa de implantação. Veja a conta de um mês com o custo da Meta somado."
   path="/precos"
 >
   <section class="hero">
-    <p class="eyebrow">Preços</p>
-    <h1>Mensalidade com franquia de conversas</h1>
+    <h1>Preço aberto, sem taxa de implantação.</h1>
     <p class="lede prose">
-      Uma conversa é a troca de mensagens com um paciente sem pausa maior que 24 horas. Não importa
-      quantas mensagens ela tenha.
+      14 dias grátis, sem fidelidade. A configuração é feita com você e está incluída em todo plano.
+      Uma conversa é a troca de mensagens com um paciente sem pausa maior que 24 horas, não importa
+      quantas mensagens tenha.
     </p>
   </section>
 
   <section class="block" aria-label="Planos">
+    <PlanCards />
+  </section>
+
+  <section class="block prose" aria-labelledby="conta">
+    <h2 id="conta">Um mês de {bill.conversations} conversas no plano Agenda</h2>
+    <p>
+      {bill.planPrice} do plano + cerca de {bill.metaAbout} pagos direto à Meta no seu cartão = cerca
+      de <strong class="num">{bill.totalAbout}</strong> no mês. As primeiras {bill.freeReplies} respostas
+      do mês são grátis na Meta.
+    </p>
+  </section>
+
+  <section class="block" aria-labelledby="comparar">
+    <h2 id="comparar">Compare os planos</h2>
     <PlansTable />
     <p class="muted small">
-      Valores de lançamento, em validação com os primeiros profissionais. Itens marcados "em breve"
-      ainda estão em desenvolvimento.
+      Itens marcados "em breve" ainda estão em desenvolvimento; Pro e Clínica abrem quando estiverem
+      prontos.
     </p>
   </section>
 
@@ -47,19 +58,6 @@ const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
     </p>
   </section>
 
-  <section class="block prose" aria-labelledby="implantacao">
-    <h2 id="implantacao">Configuração feita com você, sem taxa</h2>
-    <p>
-      Deixamos o assistente pronto com você: serviços, valores e horários, endereço, tom de voz,
-      conexão do WhatsApp e da agenda Google, e teste no simulador antes de atender pacientes.
-    </p>
-    <p>
-      O plano Clínica inclui {String(CLINICA_INCLUDED_PROFESSIONALS)} profissionais. Cada profissional
-      a mais custa <strong class="num">{formatBrl(EXTRA_PROFESSIONAL.monthlyCents)}</strong> por mês e
-      soma {formatCount(EXTRA_PROFESSIONAL.franchise)} conversas à franquia.
-    </p>
-  </section>
-
   <section class="block" aria-labelledby="meta">
     <h2 id="meta">Custo da Meta, pago por você</h2>
     <p class="prose">
@@ -69,7 +67,7 @@ const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
     </p>
     <div class="scroll">
       <table>
-        <caption class="skip">Estimativa mensal do custo da Meta por perfil de uso</caption>
+        <caption class="sr-only">Estimativa mensal do custo da Meta por perfil de uso</caption>
         <thead>
           <tr>
             <th scope="col">Perfil</th>
@@ -103,11 +101,14 @@ const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
     <ul>
       <li><strong>Resposta em áudio:</strong> pacote de minutos, sob consulta.</li>
       <li><strong>Documentos:</strong> base de conhecimento grande, por faixa de páginas, sob consulta.</li>
-      <li><strong>Profissional adicional:</strong> no plano Clínica.</li>
     </ul>
   </section>
 
-  <section class="block prose" id="lista" aria-label="Lista de espera">
-    <Waitlist />
+  <section class="block prose" aria-labelledby="pedir">
+    <h2 id="pedir">O acesso é por convite</h2>
+    <p>
+      Configuramos poucos consultórios por semana, com cuidado.{' '}
+      <a href="/#convite">Peça o seu convite na página inicial</a>.
+    </p>
   </section>
 </Base>

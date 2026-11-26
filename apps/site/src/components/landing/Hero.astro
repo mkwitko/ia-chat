@@ -1,0 +1,82 @@
+---
+import PhoneDemo from './PhoneDemo.astro';
+---
+
+<section class="hero-l wrap" aria-labelledby="titulo">
+  <div class="copy">
+    <h1 id="titulo">Seu WhatsApp responde e marca na sua agenda enquanto você atende.</h1>
+    <p class="support">No mesmo número. Nada sai sem você aprovar, até você querer.</p>
+    <div class="cta">
+      <a class="btn" href="#convite">Pedir convite</a>
+      <a class="btn ghost" href="/precos">Ver preços</a>
+    </div>
+    <ul class="terms" aria-label="Condições">
+      <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>14 dias grátis</li>
+      <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>sem taxa de implantação</li>
+      <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>sem fidelidade</li>
+    </ul>
+  </div>
+  <PhoneDemo />
+</section>
+
+<style>
+  .hero-l {
+    display: grid;
+    gap: 40px;
+    padding-top: 40px;
+    padding-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(36px, 9.6vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 0;
+    max-width: 14ch;
+  }
+  .support {
+    margin: 20px 0 0;
+    font-size: clamp(18px, 2vw, 21px);
+    line-height: 1.45;
+    color: var(--ink-2);
+    max-width: 36ch;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .terms {
+    gap: 8px 20px;
+  }
+  .terms li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .terms svg {
+    flex: none;
+    stroke: var(--ink);
+  }
+
+  @media (min-width: 960px) {
+    .hero-l {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+      gap: 48px;
+      padding-top: 72px;
+      padding-bottom: 56px;
+      min-height: calc(100svh - 61px);
+    }
+  }
+</style>

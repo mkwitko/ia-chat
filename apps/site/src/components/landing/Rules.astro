@@ -1,0 +1,82 @@
+---
+// Section 5: the product's rules, said as rules. No accuracy rate.
+const rules = [
+  { when: 'Preço, horário e endereço', then: 'vêm do seu cadastro e da sua agenda. Nunca da cabeça do assistente.' },
+  { when: 'Se não souber', then: 'não chuta: chama você e avisa o paciente que você responde.' },
+  { when: 'Orientação de saúde', then: 'não dá. Em urgência, orienta ligar para o SAMU 192 e avisa você.' },
+  { when: 'Se perguntarem', then: 'diz que é o assistente virtual do consultório.' },
+] as const;
+---
+
+<section class="rules" aria-labelledby="regras">
+  <div class="wrap">
+    <h2 id="regras">Não inventa.</h2>
+    <dl>
+      {
+        rules.map((rule) => (
+          <div>
+            <dt>{rule.when}</dt>
+            <dd>{rule.then}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .rules {
+    margin-top: 112px;
+    padding: 72px 0 80px;
+    background: var(--stage);
+    color: var(--stage-ink);
+  }
+  h2 {
+    font-size: clamp(44px, 10vw, 120px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin: 0 0 40px;
+  }
+  dl {
+    margin: 0;
+    border-top: 1px solid var(--stage-line);
+  }
+  dl div {
+    display: grid;
+    gap: 4px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--stage-line);
+  }
+  dt {
+    font-weight: 600;
+    font-size: 19px;
+  }
+  dd {
+    margin: 0;
+    color: var(--stage-ink-2);
+    font-size: 17px;
+    line-height: 26px;
+    max-width: 52ch;
+  }
+
+  @media (min-width: 960px) {
+    .rules {
+      margin-top: 160px;
+      padding: 120px 0 128px;
+    }
+    .wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 48px;
+      align-items: start;
+    }
+    dl div {
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      padding: 24px 0;
+    }
+    dt {
+      font-size: 20px;
+    }
+  }
+</style>

@@ -1,0 +1,117 @@
+---
+// Section 4: the approval card, from a real panel screenshot with fictitious data.
+---
+
+<section class="control wrap" aria-labelledby="controle">
+  <div class="text">
+    <h2 id="controle">Nos primeiros dias, cada resposta espera o seu toque.</h2>
+    <p class="lead">
+      O assistente escreve o rascunho e nada vai para o paciente até você decidir. Quando quiser,
+      deixa automático.
+    </p>
+    <dl class="verbs">
+      <div><dt>Enviar</dt><dd>A resposta está certa: sai como está.</dd></div>
+      <div><dt>Editar</dt><dd>Ajuste uma palavra e envie com o seu jeito.</dd></div>
+      <div><dt>Descartar</dt><dd>Não sai nada. Você responde do seu jeito.</dd></div>
+      <div><dt>Assumir</dt><dd>Qualquer conversa, com um toque. O assistente para ali.</dd></div>
+    </dl>
+  </div>
+  <figure class="shot">
+    <div class="frame">
+      <picture>
+        <source srcset="/img/painel-aprovacao-escuro.webp" media="(prefers-color-scheme: dark)" />
+        <img
+          src="/img/painel-aprovacao-claro.webp"
+          width="600"
+          height="1200"
+          loading="lazy"
+          decoding="async"
+          alt="Tela do painel no celular: o paciente João Exemplo pergunta quanto custa a avaliação; abaixo, o rascunho do assistente com o preço e os botões Enviar, Editar e Descartar, e no topo o botão Assumir."
+        />
+      </picture>
+    </div>
+    <figcaption>Tela real do painel, com dados fictícios.</figcaption>
+  </figure>
+</section>
+
+<style>
+  .control {
+    display: grid;
+    gap: 40px;
+    padding-top: 96px;
+  }
+  h2 {
+    font-size: clamp(28px, 4.4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0;
+    max-width: 18ch;
+  }
+  .lead {
+    margin: 16px 0 0;
+    font-size: 18px;
+    line-height: 28px;
+    color: var(--ink-2);
+    max-width: 44ch;
+  }
+  .verbs {
+    margin: 32px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .verbs div {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  dt {
+    font-weight: 600;
+  }
+  dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .shot {
+    margin: 0;
+    justify-self: center;
+    width: min(100%, 340px);
+  }
+  .frame {
+    border: 9px solid #111214;
+    border-radius: 40px;
+    overflow: hidden;
+    aspect-ratio: 1 / 2;
+    background: var(--surface);
+    box-shadow:
+      0 2px 4px rgb(17 18 20 / 10%),
+      0 32px 64px -24px rgb(17 18 20 / 35%);
+  }
+  @media (prefers-color-scheme: dark) {
+    .frame {
+      border-color: #2a2a2f;
+    }
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  figcaption {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 960px) {
+    .control {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+      gap: 48px;
+      padding-top: 144px;
+    }
+  }
+</style>

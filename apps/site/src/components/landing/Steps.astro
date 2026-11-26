@@ -1,0 +1,173 @@
+---
+// Section 3: three steps, each with a small drawing of what the visitor will see.
+const bars = [6, 14, 9, 18, 12, 22, 8, 16, 20, 10, 15, 7, 19, 12, 9, 17, 11, 6, 13, 8];
+---
+
+<section class="steps wrap" aria-labelledby="como">
+  <h2 id="como">Pronto sem você aprender sistema.</h2>
+  <ol>
+    <li>
+      <div class="art" aria-hidden="true">
+        <div class="pill">
+          <span class="dot"></span>
+          <span><strong>Seu número de sempre</strong><small>conectado · WhatsApp oficial</small></span>
+        </div>
+      </div>
+      <h3><span class="n">1</span>Conecte seu WhatsApp</h3>
+      <p>Mesmo número. Você continua respondendo pelo app no celular quando quiser.</p>
+    </li>
+    <li>
+      <div class="art" aria-hidden="true">
+        <div class="voice">
+          <svg class="play" width="14" height="14" viewBox="0 0 14 14"><path d="M3 1.5v11l9-5.5z"></path></svg>
+          <span class="wave">{bars.map((h) => <i style={`height:${String(h)}px`} />)}</span>
+          <small>1:12</small>
+        </div>
+      </div>
+      <h3><span class="n">2</span>Mande um áudio</h3>
+      <p>
+        Conte serviços, preços e horários. A gente configura, e você testa e aprova antes de ligar
+        qualquer coisa.
+      </p>
+    </li>
+    <li>
+      <div class="art" aria-hidden="true">
+        <div class="event">
+          <strong>Avaliação · qui., 15:00</strong>
+          <small>Lembrete enviado 1 dia e 2 horas antes</small>
+        </div>
+      </div>
+      <h3><span class="n">3</span>O assistente atende</h3>
+      <p>Responde, marca no seu Google Agenda e lembra o paciente da consulta.</p>
+    </li>
+  </ol>
+</section>
+
+<style>
+  .steps {
+    padding-top: 96px;
+  }
+  h2 {
+    font-size: clamp(28px, 4.4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0 0 36px;
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 40px;
+  }
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0 6px;
+    font-size: 20px;
+  }
+  .n {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  p {
+    margin: 0;
+    color: var(--ink-2);
+    max-width: 38ch;
+  }
+  .art {
+    display: grid;
+    place-items: center;
+    height: 148px;
+    background: var(--surface-2);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+  .pill,
+  .voice,
+  .event {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--elevation);
+  }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    line-height: 18px;
+  }
+  .pill small,
+  .event small {
+    display: block;
+    color: var(--ink-2);
+    font-size: 12px;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--jade);
+    box-shadow: 0 0 0 4px var(--jade-soft);
+  }
+  .voice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-bubble);
+    border-bottom-right-radius: 6px;
+  }
+  .play {
+    flex: none;
+    fill: var(--ink);
+  }
+  .wave {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 24px;
+  }
+  .wave i {
+    width: 3px;
+    border-radius: 2px;
+    background: var(--ink-2);
+  }
+  .voice small {
+    color: var(--ink-2);
+    font-size: 12px;
+  }
+  .event {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 18px;
+    background: var(--jade-soft);
+    border-color: var(--jade);
+  }
+  .event small {
+    color: var(--jade-ink);
+  }
+
+  @media (min-width: 960px) {
+    .steps {
+      padding-top: 144px;
+    }
+    ol {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .art {
+      height: 188px;
+    }
+  }
+</style>

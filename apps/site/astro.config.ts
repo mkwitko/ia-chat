@@ -5,6 +5,7 @@ export default defineConfig({
   output: 'static',
   site: process.env.SITE_ORIGIN ?? 'http://localhost:4321',
   trailingSlash: 'never',
+  devToolbar: { enabled: false },
   build: { format: 'file' },
   vite: { envDir: '../..' },
 });

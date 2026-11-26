@@ -1,0 +1,127 @@
+---
+import Waitlist from '../Waitlist.astro';
+import { FAQS } from '../../lib/faq.ts';
+
+// Sections 9 to 11: questions, who builds it, and the invite.
+---
+
+<section class="faq wrap" aria-labelledby="perguntas">
+  <h2 id="perguntas">Perguntas</h2>
+  <div>
+    {
+      FAQS.map((faq) => (
+        <details>
+          <summary>{faq.question}</summary>
+          <p>{faq.answer}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<section class="founder wrap" aria-labelledby="quem">
+  <h2 id="quem" class="sr-only">Quem faz</h2>
+  <blockquote>
+    <p>
+      “Eu configuro o seu assistente junto com você, a partir do seu áudio, e fico por perto depois
+      que ele começa a atender. Por isso a entrada é por convite: atendemos poucos consultórios por
+      semana, para configurar com cuidado.”
+    </p>
+    <footer>
+      <strong>Mauricio de Oliveira Kwitko</strong>, quem constrói o Consultório Aberto ·{' '}
+      <a href="mailto:mauriciokwt@gmail.com">mauriciokwt@gmail.com</a>
+    </footer>
+  </blockquote>
+</section>
+
+<section class="invite" id="convite" aria-labelledby="lista-titulo">
+  <div class="wrap">
+    <div class="pitch">
+      <h2 id="lista-titulo">Peça um convite.</h2>
+      <p>
+        A gente mostra respostas com os seus dados antes de você ligar qualquer coisa. Seu e-mail
+        serve só para mandar o convite quando chegar a sua vez.
+      </p>
+    </div>
+    <Waitlist />
+  </div>
+</section>
+
+<style>
+  h2 {
+    font-size: clamp(28px, 4.4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0 0 16px;
+  }
+  .faq {
+    padding-top: 96px;
+  }
+  .founder {
+    padding-top: 96px;
+  }
+  blockquote {
+    margin: 0;
+    padding-top: 32px;
+    border-top: 1px solid var(--line-strong);
+  }
+  blockquote p {
+    margin: 0;
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    max-width: 34ch;
+  }
+  blockquote footer {
+    margin-top: 20px;
+    color: var(--ink-2);
+  }
+  blockquote footer strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .invite {
+    margin-top: 112px;
+    padding: 64px 0 72px;
+    background: var(--surface-2);
+    border-top: 1px solid var(--line);
+  }
+  .invite .wrap {
+    display: grid;
+    gap: 32px;
+  }
+  .invite h2 {
+    font-size: clamp(40px, 8vw, 96px);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+  .pitch p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 28px;
+    color: var(--ink-2);
+    max-width: 40ch;
+  }
+
+  @media (min-width: 960px) {
+    .faq {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 48px;
+      padding-top: 144px;
+    }
+    .founder {
+      padding-top: 144px;
+    }
+    .invite {
+      margin-top: 160px;
+      padding: 112px 0 120px;
+    }
+    .invite .wrap {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 48px;
+      align-items: start;
+    }
+  }
+</style>

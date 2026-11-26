@@ -1,0 +1,124 @@
+---
+import { CLINICA_INCLUDED_PROFESSIONALS, EXTRA_PROFESSIONAL, PLANS, PlanId, SELLABLE_PLANS } from '@app/core';
+import { FEATURED_PLAN, PLAN_NAMES, PLAN_ORDER } from '../lib/plans-view.ts';
+import { formatBrl, formatBrlShort, formatCount } from '../lib/money.ts';
+
+// The four plans; only SELLABLE_PLANS take an invite now, the others show "em breve".
+const SUMMARIES = {
+  [PlanId.essencial]: 'Responde na hora, no seu tom, e passa a conversa para você.',
+  [PlanId.agenda]: 'Tudo do Essencial, e marca, remarca e lembra no seu Google Agenda.',
+  [PlanId.pro]: 'Sinal por Pix, lista de espera e retorno de pacientes.',
+  [PlanId.clinica]: 'Vários profissionais, equipe e permissões.',
+} as const satisfies Record<PlanId, string>;
+
+const sellable: readonly PlanId[] = SELLABLE_PLANS;
+const extra = `${String(CLINICA_INCLUDED_PROFESSIONALS)} profissionais incluídos; do 3º em diante, ${formatBrl(EXTRA_PROFESSIONAL.monthlyCents)}/mês cada, com +${formatCount(EXTRA_PROFESSIONAL.franchise)} conversas.`;
+const cards = PLAN_ORDER.map((id) => ({
+  id,
+  name: PLAN_NAMES[id],
+  price: formatBrlShort(PLANS[id].monthlyCents),
+  franchise: formatCount(PLANS[id].franchise),
+  summary: SUMMARIES[id],
+  onSale: sellable.includes(id),
+  featured: id === FEATURED_PLAN,
+  note: id === PlanId.clinica ? extra : '',
+}));
+---
+
+<ul class="cards">
+  {
+    cards.map((card) => (
+      <li class:list={['plan', { featured: card.featured, later: !card.onSale }]}>
+        <h3>
+          {card.name}
+          {!card.onSale && <span class="soon">em breve</span>}
+        </h3>
+        <p class="amount">
+          <span>{card.price}</span>/mês
+        </p>
+        <p class="franchise">{card.franchise} conversas por mês</p>
+        <p>{card.summary}</p>
+        {card.note && <p class="note">{card.note}</p>}
+        {card.onSale ? (
+          <a class:list={['btn', { ghost: !card.featured }]} href="/#convite">
+            Pedir convite
+          </a>
+        ) : (
+          <p class="wait">Ainda não está à venda.</p>
+        )}
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .plan {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .plan p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .featured {
+    border: 2px solid var(--ink);
+    box-shadow: var(--elevation);
+  }
+  .later {
+    background: transparent;
+  }
+  h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+  .plan .amount span {
+    font-size: 40px;
+    line-height: 44px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .plan .franchise {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .plan .note {
+    font-size: 14px;
+    line-height: 20px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  .btn,
+  .wait {
+    margin-top: auto;
+  }
+  .plan .wait {
+    font-size: 14px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  @media (min-width: 720px) {
+    .cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .cards {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>
