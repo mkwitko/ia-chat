@@ -15,9 +15,10 @@ import { CustomerScreen } from './app/customers/customer-screen';
 import { CustomersScreen } from './app/customers/customers-screen';
 import { HomeScreen } from './app/home/home-screen';
 import { ResultsScreen } from './app/results/results-screen';
-import { MoreLayout, MoreScreen } from './app/screens/more-screen';
+import { MoreScreen } from './app/screens/more-screen';
 import { ConnectionsScreen } from './app/whatsapp/connections-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
+import { GrowthScreen } from './app/growth/growth-screen';
 import { ProfileScreen } from './app/profile/profile-screen';
 import { ServicesScreen } from './app/setup/services-screen';
 import { ToneScreen } from './app/setup/tone-screen';
@@ -25,6 +26,7 @@ import { SimulatorScreen } from './app/simulator/simulator-screen';
 import { OperatorScreen } from './app/operator/operator-screen';
 import { UsageScreen } from './app/usage/usage-screen';
 import { TeamInvitePage } from './app/team/team-invite-page';
+import { SupportScreen } from './app/support/support-screen';
 import { TeamScreen } from './app/team/team-screen';
 import { BillingScreen } from './app/billing/billing-screen';
 import { AppShell } from './app/shell/app-shell';
@@ -59,7 +61,6 @@ export const router = createBrowserRouter([
       { path: Route.results, element: <ResultsScreen /> },
       {
         path: Route.more,
-        element: <MoreLayout />,
         children: [
           { index: true, element: <MoreScreen /> },
           { path: Route.assistant, element: <AssistantScreen /> },
@@ -72,6 +73,8 @@ export const router = createBrowserRouter([
           { path: Route.usage, element: <UsageScreen /> },
           { path: Route.billing, element: <BillingScreen /> },
           { path: Route.team, element: <TeamScreen /> },
+          { path: Route.growth, element: <GrowthScreen /> },
+          { path: Route.support, element: <SupportScreen /> },
         ],
       },
       { path: Route.onboarding, element: <OnboardingScreen /> },

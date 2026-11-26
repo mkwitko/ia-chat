@@ -29,12 +29,14 @@ import { registerTeamInviteRoutes } from './team/team-invite-routes.ts';
 import { registerOnboardingRoutes } from './onboarding/onboarding-routes.ts';
 import { registerPrefillRoutes } from './onboarding/prefill/prefill-routes.ts';
 import { fetchPage, type PageFetcher } from './onboarding/prefill/safe-fetch.ts';
+import { registerSupportRoutes } from './support/support-routes.ts';
 import { registerTrialRoutes } from './trial/trial-routes.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
 import { registerUnansweredRoutes } from './setup/unanswered-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerPlacesRoutes } from './setup/places-routes.ts';
 import { registerProfessionalRoutes } from './setup/professionals-routes.ts';
+import { registerLeadFollowUpRoutes } from './growth/lead-follow-up-routes.ts';
 import { registerProfileRoutes } from './setup/profile-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
 import { registerSimulatorRoutes } from './simulator/simulator-routes.ts';
@@ -97,9 +99,10 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   setupObservability(app, deps);
   setupCalendar(app, deps);
   app.decorate('operatorEmails', env.OPERATOR_EMAILS);
-  app.decorate('auth', createAuth({ env, db, email: email ?? devEmailSender(app.log) }));
+  const sender = email ?? devEmailSender(app.log);
+  app.decorate('auth', createAuth({ env, db, email: sender }));
   registerAuthRoutes(app);
-  registerInviteRoutes(app, env);
+  registerInviteRoutes(app, env, sender);
   registerTeamInviteRoutes(app);
   registerOperatorRoutes(app);
   registerControlRoutes(app);
@@ -117,6 +120,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   }
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
+  registerSupportRoutes(app, { whatsapp: env.SUPPORT_WHATSAPP, email: env.SUPPORT_EMAIL });
   registerWhatsappSignupRoutes(app, {
     config: whatsappSignupConfig(env),
     fetch: deps.metaFetch,
@@ -160,6 +164,7 @@ function registerSettingsRoutes(app: FastifyInstance): void {
   registerPlacesRoutes(app);
   registerProfessionalRoutes(app);
   registerProfileRoutes(app);
+  registerLeadFollowUpRoutes(app);
   registerKnowledgeRoutes(app);
   registerOnboardingRoutes(app);
   registerTrialRoutes(app);

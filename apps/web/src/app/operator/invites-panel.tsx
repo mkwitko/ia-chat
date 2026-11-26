@@ -10,6 +10,7 @@ import {
   useCreateInvite,
   useInvites,
   type Invite,
+  type InviteResult,
 } from './invites-api';
 import { InvitesCopy as Copy } from './invites-copy';
 
@@ -34,6 +35,13 @@ export function InvitesPanel() {
 type OnLink = (link: string | null) => void;
 const EMPTY = '';
 
+/** Says where the link went: the invite's address, or nowhere (copy it). */
+function announceEmail({ invite, link, emailed }: InviteResult) {
+  if (!link || !invite.email) return;
+  if (emailed) toast.success(Copy.emailed(invite.email));
+  else toast.error(Copy.emailFailed);
+}
+
 function useNewInvite(onLink: OnLink) {
   const [practiceName, setPracticeName] = useState(EMPTY);
   const [email, setEmail] = useState(EMPTY);
@@ -44,6 +52,7 @@ function useNewInvite(onLink: OnLink) {
       {
         onSuccess: (result) => {
           onLink(result.link);
+          announceEmail(result);
           setPracticeName(EMPTY);
           setEmail(EMPTY);
         },
@@ -156,6 +165,7 @@ function InviteActions({ id, onLink }: Readonly<{ id: string; onLink: OnLink }>)
         onSuccess: (result) => {
           onLink(result.link);
           toast.success(action === InviteAction.resend ? Copy.resent : Copy.cancelled);
+          announceEmail(result);
         },
         onError: () => {
           toast.error(Copy.failed);

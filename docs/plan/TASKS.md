@@ -423,7 +423,8 @@ Spec: `09-site-aquisicao-suporte.md`.
 
 ### S-07 Suporte pelo próprio produto
 - [ ] Tenant de suporte com a central de ajuda como base de conhecimento
-- [ ] Botão no painel que abre o suporte com o contexto da conta
+- [x] Botão no painel que abre o suporte com o contexto da conta
+  - Mais > Ajuda e suporte (`/mais/ajuda`): busca no índice público da central (`/ajuda/busca.json` do site, liberado para outras origens no Caddy; precisa de `VITE_HELP_URL`) e "Falar com o suporte" por WhatsApp (`SUPPORT_WHATSAPP`, escondido se vazio) ou e-mail (`SUPPORT_EMAIL`), com mensagem pronta: código curto da conta, plano, situação e tela. Nunca dados de paciente. `GET /api/support`. Falta: último erro e estado das integrações na mensagem (RF-91)
 - [ ] Transferência para nós pelo inbox
 
 ### S-08 Busca
@@ -521,8 +522,8 @@ Spec: 05, 11. Bloqueio: código; depende de E-22 e M-01.
 
 ### M-10 Recuperação de lead e follow-up (P1)
 Spec: 11, 03. Bloqueio: código; Meta para fora da janela de 24 h (E-00b); depende de M-01 e E-22.
-- [ ] Regra simples: lead `conversando` sem resposta há N dias recebe uma mensagem aprovada pelo dono, uma vez
-- [ ] Respeita controle humano (RF-31), opt-out e limite de envio
+- [x] Regra simples: lead `conversando` sem resposta há N dias recebe uma mensagem aprovada pelo dono, uma vez Feito (H-44): Configurações > Retorno de clientes; padrão desligado, 2 dias, texto confirmado pelo dono; fora da janela de 24 h avisa o profissional
+- [x] Respeita controle humano (RF-31), opt-out e limite de envio Feito: mesma trava das demais mensagens ativas, 5 por consultório por minuto
 - Pronto quando: o envio só acontece com consentimento e o dono aprovou o texto.
 
 ### M-11 Indicação (P1)

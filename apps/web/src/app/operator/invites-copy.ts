@@ -23,7 +23,9 @@ export const InvitesCopy = {
   practiceName: 'Nome do consultório',
   email: 'E-mail do profissional (opcional)',
   emailHint:
-    'Só aparece preenchido no cadastro. O link não é enviado por e-mail: copie e mande você.',
+    'Com e-mail, mandamos o link para ele (também ao gerar um novo). Sem e-mail, copie e mande você.',
+  emailed: (email: string) => `Link enviado para ${email}.`,
+  emailFailed: 'Não foi possível enviar o e-mail. Copie o link e mande você.',
   create: 'Criar convite',
   linkLabel: 'Link do convite (aparece só agora)',
   copy: 'Copiar link',

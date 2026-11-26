@@ -2,6 +2,7 @@ export {
   NodeEnv,
   baseEnvSchema,
   observabilityEnvSchema,
+  optionalText,
   parseEnv,
   parseEnvWith,
   type Env,
@@ -45,6 +46,7 @@ export * from './invite/slug.ts';
 export * from './trial/emails.ts';
 export type { EmailMessage, EmailSender } from './trial/email-types.ts';
 export * from './trial/resend-sender.ts';
+export * from './trial/email-mode.ts';
 export * from './calendar/index.ts';
 export * from './reminders/plan.ts';
 export * from './reminders/templates.ts';
@@ -61,3 +63,4 @@ export {
   type R2Config,
 } from './media/store.ts';
 export * from './profile/business-profile.ts';
+export * from './growth/index.ts';

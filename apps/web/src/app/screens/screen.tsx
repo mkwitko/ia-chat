@@ -12,6 +12,9 @@ interface ScreenProps {
   className?: string;
 }
 
+/** Settings pages from xl: independent blocks side by side, so the page uses the width. */
+export const SETTINGS_COLUMNS = 'grid gap-12 xl:grid-cols-2 xl:items-start xl:gap-x-16';
+
 /** Screen frame: title and content across the whole work area, fluid side padding. */
 export function Screen(props: Readonly<ScreenProps>) {
   const { title, children, width = ScreenWidth.full, className } = props;
