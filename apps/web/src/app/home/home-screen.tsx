@@ -4,6 +4,8 @@ import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { EmptyState } from '../screens/empty-state';
 import { SimulatorLink } from '../simulator/simulator-link';
 import { Screen } from '../screens/screen';
+import { RecoveredCard } from '../results/recovered';
+import { RecoveredCopy } from '../results/recovered-copy';
 import { Note, Section } from '../screens/section';
 import { AttentionSection, hasAttention } from './attention-section';
 import { NotBookedSection, TodaySection } from './day-sections';
@@ -56,6 +58,7 @@ function Content({ home }: Readonly<{ home: HomeView }>) {
   return (
     <div className="grid gap-x-10 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="xl:col-span-2">
+        <RecoveredCard title={RecoveredCopy.homeTitle} figure={home.recovered} />
         <MonthCounts month={home.month} />
       </div>
       <div>

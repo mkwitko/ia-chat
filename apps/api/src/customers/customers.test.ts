@@ -40,7 +40,7 @@ beforeAll(async () => {
 });
 afterAll(() => ctx.app.close());
 
-type Method = 'GET' | 'POST' | 'PATCH';
+type Method = 'GET' | 'POST' | 'PATCH' | 'PUT';
 const call = (method: Method, url: string, ...rest: [payload?: object, cookie?: string]) =>
   ctx.app.inject({
     method,
@@ -204,16 +204,24 @@ describe('attendance and the month on Início', () => {
     const home = (await call('GET', '/api/home')).json<{
       month: { contacts: number; booked: number };
       attention: { toMark: unknown[] };
+      recovered: { count: number; minSample: number };
     }>();
+    expect(home.recovered).toMatchObject({ count: 0, minSample: 5 });
     expect(home.month.contacts).toBeGreaterThanOrEqual(1);
     expect(home.month.booked).toBeGreaterThanOrEqual(2);
     const results = (await call('GET', '/api/results')).json<{
       minSample: number;
       attendance: { attended: number };
+      recoveredMoney: { weeks: unknown[] };
     }>();
     expect(results.minSample).toBe(5);
+    expect(results.recoveredMoney.weeks).toEqual([]);
     expect(results.attendance.attended).toBeGreaterThanOrEqual(1);
     expect((await call('GET', '/api/results?period=nope')).statusCode).toBe(400);
+    const report = '/api/notifications/weekly-report';
+    expect((await call('GET', report)).json()).toEqual({ enabled: true });
+    expect((await call('PUT', report, { enabled: false })).statusCode).toBe(200);
+    expect((await call('GET', report)).json()).toEqual({ enabled: false });
   });
 
   it('measures the first answer and the hand-off from messages and control changes', async () => {
