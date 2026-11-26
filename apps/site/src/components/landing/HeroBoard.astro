@@ -1,14 +1,21 @@
 ---
 import './hero-board.css';
+import { HERO_BOOKING as B, PILOT_SERVICE as S } from '../../lib/sample-day-fixtures.ts';
+import { formatBrl } from '../../lib/money.ts';
 // One hour on two lanes (founder/landing-brief.md, section 1): you are in the treatment room while
-// the assistant answers on WhatsApp and books in Google Agenda. Fictitious data, labelled as such.
+// the assistant answers on WhatsApp and books in Google Agenda. Service and price are the pilot's
+// real ones (owner, 26/11/2026); patient and conversation are illustrative, and labelled as such.
 // CSS-only sequence in hero-board.css; with reduced motion everything is shown at once.
+const price = formatBrl(S.priceCents);
+const slot = `${B.weekdayShort} ${B.start}–${B.end}`;
+const offer = `Oi, ${B.patient}! A ${S.name.toLowerCase()} (${S.detail}) custa ${price} e dura ${String(S.minutes)} minutos. Amanhã tenho ${B.start} ou ${B.alternative}. Qual fica melhor?`;
+const confirmation = `Combinado: amanhã, ${B.weekday}, das ${B.start} às ${B.end}. Te lembro um dia antes.`;
 ---
 
 <figure class="board" aria-labelledby="board-cap">
   <figcaption id="board-cap">
     <span class="hour">Quarta, das 15:00 às 16:00</span>
-    <span class="tag">Exemplo com dados fictícios</span>
+    <span class="tag">Serviço e preço reais do consultório piloto. Conversa ilustrativa.</span>
   </figcaption>
   <div class="lanes">
     <p class="lane l-you" aria-hidden="true">Você</p>
@@ -26,13 +33,14 @@ import './hero-board.css';
 
     <div class="ev in e1" style="--d: 0.5s">
       <time>15:12</time>
-      <p class="bubble"><span class="sr-only">Paciente:</span>Oi! Quanto é a avaliação? Tem horário amanhã?</p>
+      <p class="bubble">
+        <span class="sr-only">Paciente:</span>Oi! Quanto é a primeira consulta? Tem horário amanhã?
+      </p>
     </div>
     <div class="ev out e2" style="--d: 1.6s">
       <time>15:12</time>
       <p class="bubble">
-        <b>Assistente</b>Oi, Joana! A avaliação custa R$ 180,00 e dura 50 minutos. Amanhã tenho 15:00
-        ou 17:30. Qual fica melhor?
+        <b>Assistente</b>{offer}
       </p>
     </div>
     <div class="ev in e3" style="--d: 2.8s">
@@ -42,20 +50,20 @@ import './hero-board.css';
     <div class="ev out e4" style="--d: 3.8s">
       <time>15:14</time>
       <p class="bubble">
-        <b>Assistente</b>Combinado: amanhã, quinta, às 15:00. Te lembro um dia antes.
+        <b>Assistente</b>{confirmation}
       </p>
     </div>
-    <div class="slot e5" aria-hidden="true"><time>qui. 15:00</time>livre</div>
+    <div class="slot e5" aria-hidden="true"><time>{slot}</time>livre</div>
     <p class="booked e5" style="--d: 4.4s">
       <span class="sr-only">Google Agenda:</span>
-      <time>qui. 15:00</time>
-      <strong>Avaliação · Joana Souza</strong>
+      <time>{slot}</time>
+      <strong>{S.name} · {B.patientFull}</strong>
       <small>marcado pelo assistente</small>
     </p>
     <p class="end" style="--d: 5.2s">
       <time>16:00</time>
       <strong>Você sai da sala.</strong>
-      <span>Nenhuma mensagem esperando. A Joana já está na agenda.</span>
+      <span>Nenhuma mensagem esperando. A {B.patient} já está na agenda.</span>
     </p>
   </div>
 </figure>

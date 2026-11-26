@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { exampleBill } from './example-bill.ts';
 
 const NBSP = /\s/g;
+const PERCENT = 100;
 
 describe('exampleBill', () => {
   it('adds the Meta estimate of 400 conversations to the Agenda plan', () => {
@@ -11,5 +12,7 @@ describe('exampleBill', () => {
     expect(bill.metaAbout.replace(NBSP, ' ')).toBe('R$ 55');
     expect(bill.totalAbout.replace(NBSP, ' ')).toBe('R$ 352');
     expect(bill.freeReplies).toBe('1.000');
+    expect(bill.planPercent).toBeGreaterThan(80);
+    expect(bill.planPercent).toBeLessThan(PERCENT);
   });
 });

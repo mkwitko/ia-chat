@@ -1,0 +1,83 @@
+/* The example month (MonthBill.astro): a ruler split between the plan (ink) and Meta. */
+.bill {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--elevation);
+}
+.bill h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  line-height: 24px;
+}
+.bill .ruler {
+  display: flex;
+  gap: 3px;
+  height: 14px;
+}
+.bill .seg {
+  border-radius: 4px;
+}
+.bill .s-plan,
+.bill .k-plan {
+  background: var(--ink);
+}
+.bill .s-plan {
+  width: var(--plan);
+}
+.bill .s-meta,
+.bill .k-meta {
+  background: var(--line-strong);
+}
+.bill .s-meta {
+  flex: 1;
+}
+.bill dl {
+  margin: 8px 0 0;
+}
+.bill dl div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.bill dt {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ink-2);
+}
+.bill .key {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.bill dd {
+  margin: 0;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.bill .total {
+  border-bottom: 0;
+  font-size: 20px;
+}
+.bill .total dt,
+.bill .total dd {
+  color: var(--ink);
+  font-weight: 600;
+}
+.bill .fine {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink-2);
+}
+@media (min-width: 960px) {
+  .bill {
+    padding: 28px;
+  }
+}

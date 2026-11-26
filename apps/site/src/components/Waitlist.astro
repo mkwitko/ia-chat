@@ -1,50 +1,73 @@
 ---
-// Invite request (access is by invite). The heading comes from the page around it.
+import './waitlist.css';
+// Invite request (access is by invite). The heading comes from the page around it. States
+// (sending, field error, send error, done) are driven by scripts/waitlist.ts via data-state.
 const api = import.meta.env.PUBLIC_API_URL ?? '';
 const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
+const CONTACT = 'mauriciokwt@gmail.com';
 ---
 
-<form data-waitlist data-api={api} class="card waitlist" aria-label="Pedir convite">
-  <div class="field">
-    <label for="wl-email">E-mail</label>
-    <input id="wl-email" name="email" type="email" autocomplete="email" required />
-  </div>
-  <div class="field">
-    <label for="wl-name">Nome (opcional)</label>
-    <input id="wl-name" name="name" type="text" autocomplete="name" maxlength="120" />
-  </div>
-  <div class="field">
-    <label for="wl-specialty">Sua especialidade (opcional)</label>
-    <input
-      id="wl-specialty"
-      name="specialty"
-      type="text"
-      maxlength="120"
-      placeholder="Ex.: quiropraxia, fisioterapia"
-    />
-  </div>
-  <div class="cf-turnstile" data-sitekey={siteKey}></div>
-  <button class="btn" type="submit">Pedir convite</button>
-  <p data-status role="status" aria-live="polite"></p>
-</form>
+<div class="card waitlist" data-waitlist-box>
+  <form data-waitlist data-api={api} aria-label="Pedir convite" novalidate>
+    <div class="field">
+      <label for="wl-email">E-mail</label>
+      <input
+        id="wl-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        inputmode="email"
+        required
+        aria-describedby="wl-email-hint wl-email-error"
+      />
+      <p class="hint" id="wl-email-hint">Usamos só para mandar o convite.</p>
+      <p class="field-error" id="wl-email-error" data-error-for="email" hidden>
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5"></circle><path d="M8 4.5v4M8 11v.5"></path></svg>
+        <span></span>
+      </p>
+    </div>
+    <div class="field">
+      <label for="wl-name">Nome <span class="opt">(opcional)</span></label>
+      <input id="wl-name" name="name" type="text" autocomplete="name" maxlength="120" />
+    </div>
+    <div class="field">
+      <label for="wl-specialty">Especialidade <span class="opt">(opcional)</span></label>
+      <input
+        id="wl-specialty"
+        name="specialty"
+        type="text"
+        maxlength="120"
+        aria-describedby="wl-specialty-hint"
+      />
+      <p class="hint" id="wl-specialty-hint">Por exemplo: quiropraxia, fisioterapia, psicologia.</p>
+    </div>
+    {siteKey && <div class="cf-turnstile" data-sitekey={siteKey} />}
+    <button class="btn" type="submit" data-submit>Pedir convite</button>
+    <div class="send-error" data-send-error role="alert" hidden>
+      <p data-send-message></p>
+      <p class="fallback">
+        Se não der certo de novo, escreva para <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+      </p>
+    </div>
+    <p class="sr-only" data-status role="status" aria-live="polite"></p>
+  </form>
 
-<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <div class="done" data-done hidden>
+    <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13"></circle><path d="M8.5 14.5l3.5 3.5 7.5-8.5"></path></svg>
+    <h3 tabindex="-1" data-done-title>Pedido recebido.</h3>
+    <p>
+      Mandamos uma confirmação para <strong data-done-email></strong>. Se não chegar em alguns
+      minutos, confira a caixa de spam.
+    </p>
+    <button class="btn ghost" type="button" data-again>Usar outro e-mail</button>
+  </div>
+</div>
+
+{
+  siteKey && (
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+  )
+}
 <script>
   import '../scripts/waitlist.ts';
 </script>
-
-<style>
-  .waitlist {
-    padding: 24px;
-  }
-  .waitlist .btn {
-    width: 100%;
-    margin-top: 8px;
-  }
-  .cf-turnstile:empty {
-    display: none;
-  }
-  ::placeholder {
-    color: var(--ink-2);
-  }
-</style>

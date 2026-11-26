@@ -1,0 +1,96 @@
+---
+import { Picture } from 'astro:assets';
+import photo from '../../assets/founder.jpeg';
+
+// Section 10: who builds it, with his face. One portrait, served as avif/webp at 1x and 2x.
+const PHOTO_SIZE = 200;
+const CONTACT = 'mauriciokwt@gmail.com';
+---
+
+<section class="founder wrap" aria-labelledby="quem">
+  <h2 id="quem" class="sr-only">Quem faz</h2>
+  <Picture
+    src={photo}
+    formats={['avif', 'webp']}
+    width={PHOTO_SIZE}
+    height={PHOTO_SIZE}
+    densities={[1, 2]}
+    alt="Retrato de Mauricio de Oliveira Kwitko, de terno escuro, olhando para a câmera."
+    class="photo"
+    loading="lazy"
+    decoding="async"
+  />
+  <blockquote>
+    <p>
+      “Eu configuro o seu assistente junto com você, a partir do seu áudio, e fico por perto depois
+      que ele começa a atender. Por isso a entrada é por convite: atendemos poucos consultórios por
+      semana, para configurar com cuidado.”
+    </p>
+    <footer>
+      <strong>Mauricio de Oliveira Kwitko</strong>
+      <span>Quem constrói o Consultório Aberto</span>
+      <a href={`mailto:${CONTACT}`}>{CONTACT}</a>
+    </footer>
+  </blockquote>
+</section>
+
+<style>
+  .founder {
+    display: grid;
+    gap: 24px;
+    padding-top: 96px;
+  }
+  .founder :global(.photo) {
+    display: block;
+    width: 112px;
+    height: 112px;
+    border-radius: var(--radius-lg);
+    background: var(--stage);
+    object-fit: cover;
+  }
+  blockquote {
+    margin: 0;
+  }
+  blockquote p {
+    margin: 0;
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+  footer {
+    display: grid;
+    gap: 2px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-strong);
+    color: var(--ink-2);
+  }
+  footer strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  footer a {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 960px) {
+    .founder {
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+      padding-top: 144px;
+    }
+    .founder :global(.photo) {
+      width: 200px;
+      height: 200px;
+    }
+  }
+</style>

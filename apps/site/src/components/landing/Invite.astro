@@ -1,0 +1,100 @@
+---
+import Waitlist from '../Waitlist.astro';
+
+// Section 11: the invite. What happens after sending sits next to the form, so nobody has to
+// guess. The steps restate promises made elsewhere on the page; nothing new is promised here.
+const STEPS = [
+  {
+    title: 'Você recebe a confirmação',
+    text: 'Na hora, no e-mail que deixar aqui.',
+  },
+  {
+    title: 'Chega o convite',
+    text: 'Quando for a sua vez. Configuramos poucos consultórios por semana.',
+  },
+  {
+    title: 'Configuramos juntos',
+    text: 'A partir do seu áudio. Você vê respostas com os seus dados antes de ligar qualquer coisa.',
+  },
+] as const;
+---
+
+<section class="invite" id="convite" aria-labelledby="lista-titulo">
+  <div class="wrap">
+    <div class="pitch">
+      <h2 id="lista-titulo">Peça um convite.</h2>
+      <ol class="steps">
+        {
+          STEPS.map((step) => (
+            <li>
+              <strong>{step.title}</strong>
+              <span>{step.text}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <Waitlist />
+  </div>
+</section>
+
+<style>
+  .invite {
+    margin-top: 112px;
+    padding: 64px 0 72px;
+    background: var(--surface-2);
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 64px;
+  }
+  .invite .wrap {
+    display: grid;
+    gap: 32px;
+  }
+  h2 {
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    margin: 0 0 32px;
+  }
+  .steps {
+    list-style: none;
+    counter-reset: step;
+    margin: 0;
+    padding: 0;
+    max-width: 44ch;
+  }
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    column-gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line-strong);
+  }
+  .steps li::before {
+    content: counter(step);
+    grid-row: 1 / 3;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-2);
+    line-height: 24px;
+  }
+  .steps strong {
+    font-weight: 600;
+  }
+  .steps span {
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 960px) {
+    .invite {
+      margin-top: 160px;
+      padding: 112px 0 120px;
+    }
+    .invite .wrap {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 48px;
+      align-items: start;
+    }
+  }
+</style>
