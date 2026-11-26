@@ -1,5 +1,5 @@
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { restoreOnError, useLeaving } from '@/components/ui/undo';
 import { feedback } from '../setup/feedback';
 import { AgendaCopy } from './agenda-copy';
 import { lastDayOf, shortDay } from './agenda-dates';
@@ -15,7 +15,6 @@ const Copy = {
   until: (day: string) => `até ${day}`,
   remove: 'Tirar da lista',
   removeLabel: (name: string) => `Tirar ${name} da lista de espera`,
-  removeConfirm: 'Tirar da lista de espera? O assistente não avisa mais essa pessoa.',
   removed: 'Removido da lista de espera.',
 } as const;
 
@@ -45,7 +44,9 @@ export function WaitlistSection({ items, timezone, compact }: Readonly<SectionPr
 
 function WaitlistRow({ item, timezone }: Readonly<{ item: WaitlistItem; timezone: string }>) {
   const remove = useRemoveWaitlist();
+  const { gone, leave } = useLeaving();
   const name = item.patientName ?? item.patientPhone ?? AgendaCopy.noPatient;
+  if (gone) return null;
   return (
     <li className="flex min-h-[56px] items-center gap-3 py-1 pr-1 pl-3">
       <span className="min-w-0 flex-1">
@@ -60,11 +61,12 @@ function WaitlistRow({ item, timezone }: Readonly<{ item: WaitlistItem; timezone
         aria-label={Copy.removeLabel(name)}
         disabled={remove.isPending}
         onClick={() => {
-          if (window.confirm(Copy.removeConfirm))
-            remove.mutate(item.id, {
-              onSuccess: () => toast.success(Copy.removed),
-              onError: feedback.onError,
-            });
+          leave({
+            message: Copy.removed,
+            commit: (restore) => {
+              remove.mutate(item.id, restoreOnError(restore, feedback.onError));
+            },
+          });
         }}
       >
         {Copy.remove}

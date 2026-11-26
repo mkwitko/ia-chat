@@ -32,7 +32,6 @@ export const AgendaCopy = {
   } as Record<string, string>,
   reschedule: 'Remarcar',
   cancel: 'Cancelar consulta',
-  cancelConfirm: 'Cancelar este atendimento? O horário volta a ficar livre.',
   cancelled: 'Atendimento cancelado.',
   rescheduled: 'Atendimento remarcado.',
   booked: 'Atendimento marcado.',
@@ -110,7 +109,7 @@ export const AvailabilityCopy = {
     'Em férias o assistente avisa os pacientes da data em que você volta. A data vem daqui, ele não inventa.',
   reason: 'Motivo (só você vê)',
   reasonPlaceholder: 'Feriado, congresso…',
-  removeConfirm: 'Remover este período? Os horários dele voltam a ser oferecidos.',
+  removed: 'Período removido. Os horários voltam a ser oferecidos.',
   conflicts: (count: number) =>
     count === 1
       ? 'Atenção: 1 atendimento já marcado cai neste período. Ele não foi cancelado.'

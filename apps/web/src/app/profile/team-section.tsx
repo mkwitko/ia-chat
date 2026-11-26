@@ -1,6 +1,7 @@
+import { confirmRemove } from '@/components/ui/confirm-dialog';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
 import { PROFESSIONAL_PARAM } from '../agenda/professional-api';
@@ -22,7 +23,7 @@ import { removeFeedback } from './places-section';
 const addFeedback = (done: { onSuccess: () => void }) => ({
   onSuccess: done.onSuccess,
   onError: (error: Error) => {
-    if (error instanceof ApiError && error.code === PLAN_LIMIT) toast.error(Copy.planLimit);
+    if (error instanceof ApiError && error.code === PLAN_LIMIT) notifyError(Copy.planLimit);
     else feedback.onError(error);
   },
 });
@@ -97,8 +98,7 @@ function MemberRow({ member, first, edit }: Readonly<RowProps>) {
           edit.open(member.id);
         }}
         onRemove={() => {
-          if (window.confirm(Copy.removeConfirm(member.name)))
-            remove.mutate(member.id, removeFeedback);
+          confirmRemove(Copy.removeConfirm(member.name), remove.mutate, member.id, removeFeedback);
         }}
       />
     </div>

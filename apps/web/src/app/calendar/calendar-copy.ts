@@ -24,6 +24,7 @@ export const CalendarCopy = {
   disconnectConfirm:
     'Desconectar o Google Agenda? O assistente volta a usar só os horários cadastrados aqui. Os eventos já criados continuam no Google.',
   disconnected: 'Google Agenda desconectado.',
+  disconnectAction: 'Desconectar',
   needsReconnect:
     'A conexão com o Google Agenda caiu. Enquanto ela não voltar, o assistente não oferece horários e chama você.',
   bannerAction: 'Reconectar',

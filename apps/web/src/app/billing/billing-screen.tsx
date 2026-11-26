@@ -1,6 +1,7 @@
 import { AccountCopy } from '../account-settings/account-copy';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
@@ -16,8 +17,8 @@ const CONFLICT = 409;
 
 function onError(error: Error) {
   const status = error instanceof ApiError ? error.status : 0;
-  if (status === CONFLICT) toast.error(Copy.documentTaken);
-  else toast.error(status === FORBIDDEN ? Copy.forbidden : Copy.failed);
+  if (status === CONFLICT) notifyError(Copy.documentTaken);
+  else notifyError(status === FORBIDDEN ? Copy.forbidden : Copy.failed);
 }
 
 /** Spec 05, "Assinatura do SaaS": the plan, the open invoice, subscribe, change, cancel. */

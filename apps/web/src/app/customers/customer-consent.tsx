@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { confirmThen, questionOf } from '@/components/ui/confirm-dialog';
 import { feedback } from '../setup/feedback';
 import { CardList, Note, Section } from '../screens/section';
 import { dayTimeLabel } from './customer-format';
@@ -16,10 +17,11 @@ export function ConsentSection({
 }: Readonly<{ customerId: string; optedOut: boolean; entries: readonly ConsentEntry[] }>) {
   const record = useRecordConsent(customerId);
   function onClick() {
-    if (!window.confirm(Copy.optOutConfirm)) return;
-    record.mutate(ConsentKind.optOut, {
-      onSuccess: () => toast.success(Copy.consentSaved),
-      onError: feedback.onError,
+    confirmThen({ ...questionOf(Copy.optOutConfirm), confirm: Copy.optOutAction }, () => {
+      record.mutate(ConsentKind.optOut, {
+        onSuccess: () => toast.success(Copy.consentSaved),
+        onError: feedback.onError,
+      });
     });
   }
   return (

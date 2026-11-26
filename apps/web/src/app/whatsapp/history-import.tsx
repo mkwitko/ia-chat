@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
@@ -58,7 +59,7 @@ function Note({ text, live = false }: Readonly<{ text: string; live?: boolean }>
 function Authorization({ expiresAt }: Readonly<{ expiresAt: string | null }>) {
   const decide = useDecideHistory();
   const answer = (authorize: boolean) => {
-    decide.mutate(authorize, { onError: () => toast.error(Copy.failed) });
+    decide.mutate(authorize, { onError: () => notifyError(Copy.failed) });
   };
   return (
     <section aria-labelledby="history-title" className="grid gap-3 rounded-lg border bg-card p-4">
@@ -124,7 +125,7 @@ function Suggest() {
               toast(added === 0 ? Copy.suggestedNone : Copy.suggested(added));
             },
             onError: (error) => {
-              toast.error(
+              notifyError(
                 error instanceof ApiError && error.status === UNAVAILABLE
                   ? Copy.suggestOff
                   : Copy.failed,

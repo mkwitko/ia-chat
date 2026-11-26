@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { ApiError } from '@/lib/api';
 import { centsToInput, parseReais } from '@/lib/money';
 import { FormActions, TextField } from '../setup/fields';
@@ -11,7 +12,7 @@ const NO_CAP = '';
 
 function onSaveError(error: Error) {
   const forbidden = error instanceof ApiError && error.status === FORBIDDEN;
-  toast.error(forbidden ? Copy.capForbidden : Copy.capSaveFailed);
+  notifyError(forbidden ? Copy.capForbidden : Copy.capSaveFailed);
 }
 
 /** Owner's overage cap, typed in reais and stored in cents; blank means no cap. */

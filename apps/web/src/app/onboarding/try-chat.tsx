@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ApiError } from '@/lib/api';
@@ -33,7 +33,7 @@ function useTry() {
         onSuccess: (reply) => {
           setLines([...next, { role: SimRole.assistant, text: reply.text, reply }]);
         },
-        onError: (error) => toast.error(failureText(error)),
+        onError: (error) => notifyError(failureText(error)),
       },
     );
   };

@@ -1,6 +1,6 @@
 import { SendHorizontal } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { useSendMessage } from './inbox-api';
 import { ConversationCopy as Copy } from './inbox-copy';
@@ -21,7 +21,7 @@ export function Composer({ conversationId }: Readonly<{ conversationId: string }
       onSuccess: () => {
         setText('');
       },
-      onError: () => toast.error(Copy.sendFailed),
+      onError: () => notifyError(Copy.sendFailed),
     });
   };
   return (

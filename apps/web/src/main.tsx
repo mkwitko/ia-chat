@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router/dom';
+import { ConfirmHost } from './components/ui/confirm-dialog';
 import { Toaster } from './components/ui/sonner';
 import { queryClient } from './lib/query';
 import { initSentry } from './lib/sentry';
@@ -20,6 +21,7 @@ createRoot(root).render(
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
       <Toaster />
+      <ConfirmHost />
     </QueryClientProvider>
   </StrictMode>,
 );

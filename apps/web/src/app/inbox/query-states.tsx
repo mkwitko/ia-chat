@@ -1,3 +1,4 @@
+import { CircleAlert, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LoadingCopy } from '@/copy';
 import { InboxCopy } from './inbox-copy';
@@ -26,15 +27,24 @@ export function ListSkeleton() {
   );
 }
 
-/** RN-53: an error says what happened and what to do. */
+/** RN-53 and Nielsen 9: what happened, what to do, and the button that does it. */
 export function LoadError({
   message,
+  hint = InboxCopy.retryHint,
   onRetry,
-}: Readonly<{ message: string; onRetry: () => void }>) {
+}: Readonly<{ message: string; hint?: string; onRetry: () => void }>) {
   return (
-    <div role="alert" className="grid justify-items-start gap-3 px-4 py-6 md:px-0">
-      <p>{message}</p>
+    <div
+      role="alert"
+      className="mx-4 mb-6 grid justify-items-start gap-3 rounded-xl border border-danger/40 bg-danger-soft p-5 md:mx-0"
+    >
+      <p className="flex items-start gap-2.5 font-semibold">
+        <CircleAlert className="mt-0.5 size-5 shrink-0 text-danger" aria-hidden="true" />
+        {message}
+      </p>
+      <p className="text-muted-foreground">{hint}</p>
       <Button variant="outline" onClick={onRetry}>
+        <RotateCw className="size-4" aria-hidden="true" />
         {InboxCopy.retry}
       </Button>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { Route } from '@/routes';
 import { useConfirmReview, useDiscardReview, type ReviewSelection } from './review-api';
@@ -20,7 +21,7 @@ function useDecisions(selections: ReviewSelection[]) {
     toast(message);
     void navigate(Route.clinicWhatsapp);
   };
-  const fail = () => toast.error(Copy.failed);
+  const fail = () => notifyError(Copy.failed);
   return {
     busy: confirm.isPending || discard.isPending,
     confirming: confirm.isPending,

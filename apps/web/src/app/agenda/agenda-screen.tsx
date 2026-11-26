@@ -12,6 +12,7 @@ import { BookingForm, BookingKind, type BookingTarget } from './booking-form';
 import { PROFESSIONAL_PARAM } from './professional-api';
 import { ProfessionalFilter } from './professional-controls';
 
+const NEW_PARAM = 'novo';
 const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 /** The day and view in the URL (`?dia=2027-01-04&visao=semana`), so a push link opens the right day. */
@@ -37,8 +38,13 @@ function useAgendaParams() {
 export function AgendaScreen() {
   const { view, requested, days, change, professionalId } = useAgendaParams();
   const agenda = useAgenda(ISO_DAY.test(requested) ? requested : undefined, days);
-  const [booking, setBooking] = useState<BookingTarget | null>(null);
   const day = agenda.data?.from ?? requested;
+  // `?novo=1` (Início's shortcut) opens the booking form straight away.
+  const [booking, setBooking] = useState<BookingTarget | null>(() =>
+    new URLSearchParams(location.search).has(NEW_PARAM)
+      ? { kind: BookingKind.new, day, professionalId }
+      : null,
+  );
   const team = agenda.data?.professionals ?? [];
   const shown = agenda.data && onlyOf(agenda.data, professionalId);
   const names = team.length > 1 && !professionalId ? namesOf(team) : undefined;

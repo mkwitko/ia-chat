@@ -170,3 +170,22 @@
     }
   }
 }
+
+/* The one authored motion: dialogs rise from the bottom like a phone sheet, then settle. */
+@keyframes ca-sheet-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+@keyframes ca-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@utility sheet-in {
+  animation: ca-sheet-in 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@utility fade-in {
+  animation: ca-fade-in 200ms ease-out;
+}

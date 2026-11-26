@@ -88,7 +88,7 @@ export const KnowledgeCopy = {
     'É um rascunho: leia e ajuste antes de aprovar. Valores e horários ficam por conta do perfil e da agenda.',
   suggestFailed: 'Não consegui sugerir agora. Escreva a resposta ou tente de novo.',
   suggestOff: 'A sugestão não está ligada neste ambiente.',
-  dismissConfirm: 'Descartar esta pergunta? Ela some da lista.',
+  dismissed: 'Pergunta descartada.',
   baseHeading: 'Respostas cadastradas',
   empty: 'Nenhuma resposta cadastrada ainda. Comece pelas perguntas que os pacientes mais fazem.',
   add: 'Adicionar pergunta',

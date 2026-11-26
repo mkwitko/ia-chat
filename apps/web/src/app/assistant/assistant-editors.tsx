@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
@@ -28,7 +29,7 @@ const nameOf = (draft: AssistantSettings) => draft.assistantName.trim() || DEFAU
 
 function showSaveError(error: Error) {
   const forbidden = error instanceof ApiError && error.status === FORBIDDEN;
-  toast.error(forbidden ? Copy.forbidden : Copy.saveFailed);
+  notifyError(forbidden ? Copy.forbidden : Copy.saveFailed);
 }
 
 type Fields = (props: {

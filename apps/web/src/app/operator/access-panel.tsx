@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { AreaField, FormActions, TextField } from '../setup/fields';
 import {
   useRequestAccess,
@@ -42,7 +43,7 @@ function AccessForm({
       onGranted();
       toast.success(Copy.access.granted);
     },
-    onError: () => toast.error(Copy.access.failed),
+    onError: () => notifyError(Copy.access.failed),
   };
   return (
     <form

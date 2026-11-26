@@ -1,3 +1,4 @@
+import { confirmRemove } from '@/components/ui/confirm-dialog';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { EditorScreen } from '../screens/editor-screen';
@@ -97,7 +98,7 @@ function KnowledgeRow({
           edit.open(item.id);
         }}
         onRemove={() => {
-          if (window.confirm(Copy.removeConfirm)) archive.mutate(item.id, feedback);
+          confirmRemove(Copy.removeConfirm, archive.mutate, item.id, feedback);
         }}
       />
     </div>

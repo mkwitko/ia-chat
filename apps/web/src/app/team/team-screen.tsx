@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
@@ -59,7 +60,7 @@ function useSendInvite(onSent: () => void) {
         onSent();
         toast.success(Copy.sent);
       },
-      onError: () => toast.error(Copy.failed),
+      onError: () => notifyError(Copy.failed),
     });
   };
   return { send, pending: invite.isPending };

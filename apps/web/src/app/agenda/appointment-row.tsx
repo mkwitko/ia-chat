@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { restoreOnError, useLeaving } from '@/components/ui/undo';
 import { feedback } from '../setup/feedback';
 import { AgendaCopy as Copy } from './agenda-copy';
 import { dayOf, timeLabel } from './agenda-dates';
@@ -19,6 +19,8 @@ interface RowProps {
 /** Patient, service and state; a tap opens remarcar and cancelar (spec 10, "Agenda"). */
 export function AppointmentRow({ item, timezone, onMove, professional }: Readonly<RowProps>) {
   const [open, setOpen] = useState(false);
+  const { gone, leave } = useLeaving();
+  if (gone) return null;
   return (
     <li>
       <button
@@ -44,12 +46,17 @@ export function AppointmentRow({ item, timezone, onMove, professional }: Readonl
           {professional && <ProfessionalTag name={professional} />}
         </span>
       </button>
-      {open && <RowActions item={item} timezone={timezone} onMove={onMove} />}
+      {open && <RowActions item={item} timezone={timezone} onMove={onMove} onCancel={leave} />}
     </li>
   );
 }
 
-function RowActions({ item, timezone, onMove }: Readonly<RowProps>) {
+function RowActions({
+  item,
+  timezone,
+  onMove,
+  onCancel,
+}: Readonly<RowProps & { onCancel: ReturnType<typeof useLeaving>['leave'] }>) {
   const cancel = useCancel();
   return (
     <div className="flex flex-wrap gap-2 px-4 pb-3">
@@ -65,11 +72,13 @@ function RowActions({ item, timezone, onMove }: Readonly<RowProps>) {
         variant="destructive"
         disabled={cancel.isPending}
         onClick={() => {
-          if (window.confirm(Copy.cancelConfirm))
-            cancel.mutate(item.id, {
-              onSuccess: () => toast.success(Copy.cancelled),
-              onError: feedback.onError,
-            });
+          // Desfazer instead of "Tem certeza?": the patient is only told once the toast closes.
+          onCancel({
+            message: Copy.cancelled,
+            commit: (restore) => {
+              cancel.mutate(item.id, restoreOnError(restore, feedback.onError));
+            },
+          });
         }}
       >
         {Copy.cancel}

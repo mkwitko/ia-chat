@@ -39,6 +39,8 @@ export const InboxCopy = {
   noName: 'Paciente sem nome',
   loadFailed: 'Não conseguimos carregar as conversas. Confira a conexão e tente de novo.',
   retry: 'Tentar de novo',
+  retryHint:
+    'Confira a internet e toque em "Tentar de novo". Se continuar, fale com a gente em Ajuda.',
   emptyFilter: 'Nenhuma conversa neste filtro.',
   pickOne: 'Escolha uma conversa à esquerda para ler e responder.',
   unread: (count: number) => (count === 1 ? '1 mensagem nova' : `${String(count)} mensagens novas`),

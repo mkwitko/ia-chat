@@ -1,50 +1,67 @@
-// Panel copy in pt-BR for Início (RN-56): second person, "assistente" never "bot".
+// Início (RN-56): second person, "assistente" never "bot", plain words.
 
-export const HomeCopy = {
-  title: 'Início',
-  loadFailed: 'Não conseguimos carregar o início. Confira a conexão e tente de novo.',
-  empty: {
-    title: 'Seu consultório começa aqui',
-    body: 'Quando os pacientes começarem a mandar mensagem no seu WhatsApp, você vê aqui os contatos do mês, o que precisa de você, os atendimentos de hoje e quem ainda não agendou.',
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
+
+const plural = (count: number, one: string, many: string) =>
+  count === 1 ? one : many.replace('#', String(count));
+
+export const HomeCopy = defineMessages({
+  [Locale.ptBR]: {
+    title: 'Início',
+    hint: 'Aqui fica o resumo do seu dia: o que precisa de você, quem vem hoje e se o atendimento está funcionando.',
+    loadFailed: 'Não conseguimos carregar o início.',
+    loadFailedHint: 'Confira a internet e tente de novo.',
+    empty: {
+      title: 'Seu consultório começa aqui',
+      body: 'Quando os pacientes mandarem mensagem no seu WhatsApp, você vê aqui o que precisa de você e quem vem hoje. Enquanto isso, converse com o assistente como se fosse um paciente.',
+    },
+    status: {
+      label: 'Situação do atendimento',
+      setupTitle: (step: string) => `Próximo passo: ${step}`,
+      setupProgress: (done: number, total: number) =>
+        `${String(done)} de ${String(total)} passos feitos`,
+      setupAction: 'Continuar configuração',
+      tipTitle: 'Sugestão para melhorar o atendimento',
+      okTitle: 'Tudo funcionando',
+    },
+    quick: {
+      label: 'Atalhos',
+      newBooking: 'Novo agendamento',
+      conversations: 'Ver conversas',
+      tryAssistant: 'Testar o assistente',
+    },
+    attentionHeading: 'Precisa de você',
+    allClear: 'Nada esperando por você agora.',
+    drafts: (count: number) =>
+      plural(count, '1 resposta esperando sua aprovação', '# respostas esperando sua aprovação'),
+    unanswered: (count: number) =>
+      plural(
+        count,
+        '1 pergunta que o assistente não soube responder',
+        '# perguntas que o assistente não soube responder',
+      ),
+    toConfirm: (count: number) =>
+      plural(
+        count,
+        '1 atendimento nos próximos 2 dias ainda sem confirmação',
+        '# atendimentos nos próximos 2 dias ainda sem confirmação',
+      ),
+    notBooked: (count: number) =>
+      plural(count, '1 pessoa conversou e não agendou', '# pessoas conversaram e não agendaram'),
+    toMarkHeading: 'Veio ou faltou?',
+    endingHeading: 'Pacotes no fim',
+    ending: (name: string, remaining: number) =>
+      remaining === 0 ? `${name}: sessões acabaram` : `${name}: resta 1 sessão`,
+    todayHeading: 'Hoje',
+    todayEmpty: 'Ninguém marcado para hoje.',
+    seeAgenda: 'Ver a agenda',
+    noPatient: 'Paciente sem nome',
+    monthHeading: 'Este mês',
+    month: (contacts: number, booked: number) =>
+      `${plural(contacts, '1 contato', '# contatos')} e ${plural(booked, '1 agendamento', '# agendamentos')}.`,
+    recovered: (money: string) => `${money} de atendimentos que o assistente marcou.`,
+    seeResults: 'Ver resultados',
   },
-  monthHeading: 'Este mês',
-  counts: {
-    contacts: 'Contatos no mês',
-    booked: 'Agendamentos',
-    awaiting: 'Aguardando retorno',
-    cancelled: 'Cancelamentos',
-  },
-  attentionHeading: 'O que precisa de você',
-  allClear: 'Tudo em dia. Nada esperando por você agora.',
-  drafts: (count: number) =>
-    count === 1 ? '1 rascunho para aprovar' : `${String(count)} rascunhos para aprovar`,
-  unanswered: (count: number) =>
-    count === 1
-      ? '1 pergunta que o assistente não soube responder'
-      : `${String(count)} perguntas que o assistente não soube responder`,
-  toMarkHeading: 'Atendimentos para marcar presença',
-  endingHeading: 'Pacotes terminando',
-  ending: (name: string, remaining: number) =>
-    remaining === 0 ? `${name}: sessões acabaram` : `${name}: resta 1 sessão`,
-  toConfirm: (count: number) =>
-    count === 1
-      ? '1 atendimento nas próximas 48 horas aguarda confirmação'
-      : `${String(count)} atendimentos nas próximas 48 horas aguardam confirmação`,
-  todayHeading: 'Hoje',
-  todayEmpty: 'Nenhum atendimento marcado para hoje.',
-  noPatient: 'Paciente sem nome',
-  notBookedHeading: 'Não agendaram',
-  notBookedCount: (count: number) =>
-    count === 1
-      ? '1 pessoa conversou e não agendou.'
-      : `${String(count)} pessoas conversaram e não agendaram.`,
-  recoverable: (count: number) =>
-    count === 1 ? '1 pode ser retomada.' : `${String(count)} podem ser retomadas.`,
-  recoverableHint:
-    'Podem ser retomados: quem não pediu para parar e falou com você nos últimos 30 dias.',
-  notBookedEmpty: 'Ninguém na fila de quem não agendou.',
-  seeAllCustomers: 'Ver todos os clientes',
-  resultsHeading: 'Resultados do mês',
-  resultsBody: 'Conversas, agendamentos, faltas e tempo de resposta, com a conta de cada número.',
-  seeResults: 'Ver resultados',
-} as const;
+  [Locale.enUS]: {},
+});

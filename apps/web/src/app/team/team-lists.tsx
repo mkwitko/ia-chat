@@ -1,5 +1,7 @@
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
+import { confirmThen, questionOf } from '@/components/ui/confirm-dialog';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 import {
@@ -16,7 +18,7 @@ const SELECT =
   'h-11 w-full rounded-lg border border-input bg-card px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30';
 const ROW = 'flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card p-4';
 const PICKABLE = [TeamRole.receptionist, TeamRole.professional];
-const fail = () => toast.error(Copy.failed);
+const fail = () => notifyError(Copy.failed);
 
 interface RoleSelectProps {
   id: string;
@@ -60,10 +62,20 @@ export function InviteRows({ items }: Readonly<{ items: Invitation[] }>) {
   );
 }
 
+/** Red confirmation for what cannot be undone, then `run`. */
+function askDanger(question: string, confirm: string, run: () => void) {
+  confirmThen({ ...questionOf(question), confirm, destructive: true }, run);
+}
+
 function InviteRow({ item }: Readonly<{ item: Invitation }>) {
   const invite = useInvite();
   const revoke = useRevoke();
   const expired = new Date(item.expiresAt) <= new Date();
+  const onRevoke = () => {
+    askDanger(Copy.revokeConfirm, Copy.revoke, () => {
+      revoke.mutate(item.id, { onSuccess: () => toast.success(Copy.revoked), onError: fail });
+    });
+  };
   return (
     <div className={ROW}>
       <div className="min-w-0">
@@ -85,14 +97,7 @@ function InviteRow({ item }: Readonly<{ item: Invitation }>) {
         >
           {Copy.resend}
         </Button>
-        <Button
-          variant="ghost"
-          className="text-danger"
-          onClick={() => {
-            if (!window.confirm(Copy.revokeConfirm)) return;
-            revoke.mutate(item.id, { onSuccess: () => toast.success(Copy.revoked), onError: fail });
-          }}
-        >
+        <Button variant="ghost" className="text-danger" onClick={onRevoke}>
           {Copy.revoke}
         </Button>
       </div>
@@ -160,8 +165,12 @@ function MemberControls({ member }: Readonly<{ member: Member }>) {
         variant="ghost"
         className="text-danger"
         onClick={() => {
-          if (!window.confirm(Copy.removeConfirm(member.user.name))) return;
-          remove.mutate(member.id, { onSuccess: () => toast.success(Copy.removed), onError: fail });
+          askDanger(Copy.removeConfirm(member.user.name), Copy.removeAction, () => {
+            remove.mutate(member.id, {
+              onSuccess: () => toast.success(Copy.removed),
+              onError: fail,
+            });
+          });
         }}
       >
         {Copy.removeMember}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
@@ -54,7 +54,7 @@ function useSimulation() {
       onSuccess: (reply) => {
         setLines([...next, { role: SimRole.assistant, text: reply.text, reply }]);
       },
-      onError: (error) => toast.error(failureText(error)),
+      onError: (error) => notifyError(failureText(error)),
     });
   };
   const reset = () => {

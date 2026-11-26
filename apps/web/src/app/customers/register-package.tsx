@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { formatCents } from '@/lib/money';
 import { Route } from '@/routes';
@@ -59,7 +60,7 @@ function useRegisterForm({ customerId, options }: Props) {
       { name, sessions, priceCents, purchasedOn, paid },
       {
         onSuccess: () => toast.success(Copy.registered),
-        onError: () => toast.error(Copy.failed),
+        onError: () => notifyError(Copy.failed),
       },
     );
   };

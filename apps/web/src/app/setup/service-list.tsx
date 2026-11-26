@@ -1,3 +1,4 @@
+import { confirmRemove } from '@/components/ui/confirm-dialog';
 import { formatCents } from '@/lib/money';
 import { AddButton } from './add-button';
 import { feedback } from './feedback';
@@ -77,8 +78,7 @@ function ServiceItem({
           edit.open(service.id);
         }}
         onRemove={() => {
-          if (window.confirm(Copy.removeConfirm(service.name)))
-            archive.mutate(service.id, feedback);
+          confirmRemove(Copy.removeConfirm(service.name), archive.mutate, service.id, feedback);
         }}
       />
     </div>

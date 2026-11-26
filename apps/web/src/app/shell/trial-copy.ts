@@ -1,23 +1,22 @@
-// Panel copy in pt-BR for the 14-day trial (spec 09, RF-80 and RF-88).
+// Panel copy for the 14-day trial (spec 09, RF-80 and RF-88).
 
-const DISPLAY_LOCALE = 'pt-BR';
-const ONE_DAY = 1;
+import { Locale, dateFormat } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 
-function daysLeftText(daysLeft: number): string {
-  if (daysLeft === ONE_DAY) return 'falta 1 dia';
-  return `faltam ${String(daysLeft)} dias`;
-}
+const DAY = dateFormat({ day: '2-digit', month: '2-digit', year: 'numeric' });
+const keptUntilText = (keptUntil: string | null) =>
+  keptUntil ? ` até ${DAY.format(new Date(keptUntil))}` : '';
 
-function keptUntilText(keptUntil: string | null): string {
-  if (!keptUntil) return '';
-  return ` até ${new Date(keptUntil).toLocaleDateString(DISPLAY_LOCALE)}`;
-}
-
-export const TrialCopy = {
-  active: (daysLeft: number) =>
-    `Teste grátis: ${daysLeftText(daysLeft)}. Sem cartão e sem compromisso.`,
-  ended: (keptUntil: string | null) =>
-    `Seu teste terminou e o assistente está desligado: ele não responde mais os seus pacientes. Seus dados ficam guardados${keptUntilText(keptUntil)}.`,
-  next: 'A assinatura pelo painel chega em breve. Para continuar antes disso, responda o e-mail que enviamos para você.',
-  action: 'Ver plano',
-} as const;
+export const TrialCopy = defineMessages({
+  [Locale.ptBR]: {
+    ended: (keptUntil: string | null) =>
+      `Seu teste terminou: o assistente parou de responder. Seus dados ficam guardados${keptUntilText(keptUntil)}.`,
+    endingTitle: (days: number) =>
+      days <= 1
+        ? 'Seu teste grátis termina amanhã'
+        : `Seu teste grátis termina em ${String(days)} dias`,
+    endingBody: 'Para o assistente continuar respondendo, veja como assinar.',
+    action: 'Ver plano',
+  },
+  [Locale.enUS]: {},
+});

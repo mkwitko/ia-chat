@@ -38,6 +38,7 @@ export const TeamCopy = {
   removeMember: 'Remover',
   removeConfirm: (name: string) => `Remover ${name} da equipe? A pessoa perde o acesso ao painel.`,
   removed: 'Pessoa removida da equipe.',
+  removeAction: 'Remover da equipe',
   roleChanged: 'Função atualizada.',
   roleOf: (name: string) => `Função de ${name}`,
   failed: 'Não conseguimos concluir. Tente de novo.',

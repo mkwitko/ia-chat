@@ -7,6 +7,14 @@ function Toaster(props: Readonly<ToasterProps>) {
       theme="system"
       position="top-center"
       className="toaster group"
+      // Readable at arm's length: body-size text and a full-size "Desfazer" / "Tentar de novo".
+      toastOptions={{
+        classNames: {
+          toast: '!text-base !gap-3',
+          description: '!text-sm !text-muted-foreground',
+          actionButton: '!h-11 !rounded-lg !px-4 !text-sm !font-semibold',
+        },
+      }}
       style={
         {
           '--normal-bg': 'var(--popover)',
