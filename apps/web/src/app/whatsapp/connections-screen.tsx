@@ -1,13 +1,9 @@
 import { Route } from '@/routes';
 import { CalendarSection } from '../calendar/calendar-section';
 import { BackLink } from '../screens/back-link';
-<<<<<<< HEAD
-import { Screen, ScreenWidth } from '../screens/screen';
-import { QrSection } from './qr-section';
-=======
 import { cn } from '@/lib/utils';
 import { Screen, SETTINGS_COLUMNS } from '../screens/screen';
->>>>>>> origin/main
+import { QrSection } from './qr-section';
 import { WhatsappSection } from './whatsapp-section';
 
 const TITLE = 'Conexões';
