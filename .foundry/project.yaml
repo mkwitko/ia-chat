@@ -1,0 +1,58 @@
+schema_version: "0.1"
+
+project:
+  id: ia-chat
+  name: Consultório Aberto
+  repository: https://github.com/mkwitko/ia-chat
+  mode: adopt
+  stage: pilot-preparation
+
+business:
+  model: Multi-tenant B2B SaaS subscription
+  market: WhatsApp reception, scheduling and customer follow-up for small service businesses
+  geography: [Brazil]
+  icp:
+    - Solo health and wellness professionals
+    - Initial learning segment: chiropractors and adjacent professionals reached through trusted referrals
+  current_bottleneck: "Real-buyer proof and a measurable path from referral/demo to activation and paid conversion"
+
+product:
+  category: AI-assisted WhatsApp reception and scheduling SaaS
+  value_proposition: "Respond to customers and book appointments while the professional is busy, keeping the owner in control."
+  maturity: "Product foundations exist; real-customer validation and the growth loop remain early."
+  first_value_hypothesis: "WhatsApp connected, approved setup, and the first useful assistant-handled interaction; first assistant-created booking is the stronger outcome signal."
+
+technology:
+  languages: [TypeScript]
+  frameworks: [Node.js, Fastify, React, Vite, Astro, Prisma, Vitest]
+  infrastructure: [pnpm, PostgreSQL, pg-boss, Docker, Cloudflare, Vercel AI Gateway]
+  data_sensitivity: health
+  scan_exclusions:
+    - .env*
+    - credentials, secrets and tokens
+    - production databases, exports and logs
+    - patient messages, clinical details and attachments
+    - personal contact data
+
+goals:
+  primary: "Prove a repeatable path to the first 10 paying customers and understand activation, retention and delivery cost."
+  success_signals:
+    - Real buyer interviews and demos recorded
+    - Invitation-to-WhatsApp-connected conversion measured
+    - Time-to-first-value measured
+    - Paid conversion and acquisition source recorded
+    - Actual variable cost and founder time per account tracked
+  review_cadence: Weekly
+
+modules:
+  enabled:
+    - business-validation
+    - analytics-instrumentation
+    - sales-pipeline
+    - launch-and-distribution
+    - activation-and-onboarding
+    - retention-and-customer-success
+  deferred:
+    - seo-and-content
+    - referrals-and-partnerships
+    - competitor-intelligence
