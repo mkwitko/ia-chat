@@ -1,26 +1,47 @@
 ---
-// Section 5: the product's rules, said as rules. No accuracy rate.
+// Section 5: the product's rules, said as rules, each next to the question that tests it.
+// No accuracy rate. The questions are fictitious examples.
 const rules = [
-  { when: 'Preço, horário e endereço', then: 'vêm do seu cadastro e da sua agenda. Nunca da cabeça do assistente.' },
-  { when: 'Se não souber', then: 'não chuta: chama você e avisa o paciente que você responde.' },
-  { when: 'Orientação de saúde', then: 'não dá. Em urgência, orienta ligar para o SAMU 192 e avisa você.' },
-  { when: 'Se perguntarem', then: 'diz que é o assistente virtual do consultório.' },
+  {
+    asks: 'Quanto custa a avaliação?',
+    when: 'Preço, horário e endereço',
+    then: 'vêm do seu cadastro e da sua agenda. Nunca da cabeça do assistente.',
+  },
+  {
+    asks: 'Vocês aceitam o meu convênio?',
+    when: 'Se não souber',
+    then: 'não chuta: chama você e avisa o paciente que você responde.',
+  },
+  {
+    asks: 'Estou com muita dor no peito.',
+    when: 'Orientação de saúde',
+    then: 'não dá. Em urgência, orienta ligar para o SAMU 192 e avisa você.',
+  },
+  {
+    asks: 'Estou falando com uma pessoa?',
+    when: 'Se perguntarem',
+    then: 'diz que é o assistente virtual do consultório.',
+  },
 ] as const;
 ---
 
 <section class="rules" aria-labelledby="regras">
   <div class="wrap">
     <h2 id="regras">Não inventa.</h2>
-    <dl>
+    <ul>
       {
         rules.map((rule) => (
-          <div>
-            <dt>{rule.when}</dt>
-            <dd>{rule.then}</dd>
-          </div>
+          <li class="row">
+            <p class="asks">
+              <span class="sr-only">O paciente pergunta:</span>“{rule.asks}”
+            </p>
+            <h3>{rule.when}</h3>
+            <p class="then">{rule.then}</p>
+          </li>
         ))
       }
-    </dl>
+    </ul>
+    <p class="note">Perguntas de exemplo.</p>
   </div>
 </section>
 
@@ -32,50 +53,69 @@ const rules = [
     color: var(--stage-ink);
   }
   h2 {
-    font-size: clamp(44px, 10vw, 120px);
+    font-size: clamp(56px, 13vw, 96px);
     line-height: 0.95;
     letter-spacing: -0.04em;
     margin: 0 0 40px;
   }
-  dl {
+  ul {
+    list-style: none;
     margin: 0;
+    padding: 0;
     border-top: 1px solid var(--stage-line);
   }
-  dl div {
+  .row {
     display: grid;
     gap: 4px;
     padding: 20px 0;
     border-bottom: 1px solid var(--stage-line);
   }
-  dt {
+  .asks {
+    justify-self: start;
+    margin: 0 0 10px;
+    padding: 6px 12px;
+    border: 1px solid var(--stage-line);
+    border-radius: var(--radius-bubble);
+    border-top-left-radius: 6px;
+    color: var(--stage-ink-2);
+    font-size: 15px;
+    line-height: 21px;
+  }
+  h3 {
+    margin: 0;
     font-weight: 600;
     font-size: 19px;
   }
-  dd {
+  .then {
     margin: 0;
     color: var(--stage-ink-2);
     font-size: 17px;
     line-height: 26px;
     max-width: 52ch;
   }
-
+  .note {
+    margin: 16px 0 0;
+    font-size: 13px;
+    color: var(--stage-ink-2);
+  }
   @media (min-width: 960px) {
     .rules {
       margin-top: 160px;
       padding: 120px 0 128px;
     }
-    .wrap {
-      display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      gap: 48px;
-      align-items: start;
+    h2 {
+      margin-bottom: 56px;
     }
-    dl div {
-      grid-template-columns: 220px 1fr;
-      gap: 24px;
-      padding: 24px 0;
+    .row {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) minmax(0, 5fr);
+      gap: 32px;
+      align-items: baseline;
+      padding: 28px 0;
     }
-    dt {
+    .asks {
+      margin: 0;
+    }
+    h3 {
       font-size: 20px;
     }
   }

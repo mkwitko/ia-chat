@@ -1,63 +1,83 @@
 ---
-import PhoneDemo from './PhoneDemo.astro';
+import HeroBoard from './HeroBoard.astro';
+// Section 1 (founder/landing-brief.md): the promise, the action, the three conditions, and the
+// hour that proves it.
+const terms = ['14 dias grátis', 'sem taxa de implantação', 'sem fidelidade'] as const;
 ---
 
-<section class="hero-l wrap" aria-labelledby="titulo">
-  <div class="copy">
+<section class="hero-l" aria-labelledby="titulo">
+  <div class="wrap head">
     <h1 id="titulo">Seu WhatsApp responde e marca na sua agenda enquanto você atende.</h1>
-    <p class="support">No mesmo número. Nada sai sem você aprovar, até você querer.</p>
-    <div class="cta">
-      <a class="btn" href="#convite">Pedir convite</a>
-      <a class="btn ghost" href="/precos">Ver preços</a>
+    <div class="side">
+      <p class="support">No mesmo número. Nada sai sem você aprovar, até você querer.</p>
+      <div class="cta">
+        <a class="btn" href="#convite">Pedir convite</a>
+        <a class="more" href="/precos">Ver preços</a>
+      </div>
+      <ul class="terms" aria-label="Condições">
+        {
+          terms.map((term) => (
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3.5 8.5l3 3 6-7" />
+              </svg>
+              {term}
+            </li>
+          ))
+        }
+      </ul>
     </div>
-    <ul class="terms" aria-label="Condições">
-      <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>14 dias grátis</li>
-      <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>sem taxa de implantação</li>
-      <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>sem fidelidade</li>
-    </ul>
   </div>
-  <PhoneDemo />
+  <div class="wrap">
+    <HeroBoard />
+  </div>
 </section>
 
 <style>
   .hero-l {
+    padding: 32px 0 8px;
+  }
+  .head {
     display: grid;
-    gap: 40px;
-    padding-top: 40px;
-    padding-bottom: 24px;
+    gap: 20px;
+    margin-bottom: 32px;
   }
   h1 {
-    font-size: clamp(36px, 9.6vw, 76px);
-    line-height: 1.02;
+    font-size: clamp(38px, 10vw, 72px);
+    line-height: 1;
     letter-spacing: -0.035em;
     margin: 0;
-    max-width: 14ch;
+    text-wrap: balance;
   }
   .support {
-    margin: 20px 0 0;
-    font-size: clamp(18px, 2vw, 21px);
+    margin: 0;
+    font-size: clamp(18px, 1.6vw, 20px);
     line-height: 1.45;
     color: var(--ink-2);
-    max-width: 36ch;
+    max-width: 34ch;
   }
   .cta {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 28px;
+    gap: 8px 20px;
+    margin-top: 20px;
+  }
+  .more {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 500;
   }
   .terms {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 0;
+    gap: 6px 16px;
     list-style: none;
     padding: 0;
-    margin: 20px 0 0;
+    margin: 16px 0 0;
     font-size: 15px;
     color: var(--ink-2);
-  }
-  .terms {
-    gap: 8px 20px;
   }
   .terms li {
     display: inline-flex;
@@ -66,17 +86,25 @@ import PhoneDemo from './PhoneDemo.astro';
   }
   .terms svg {
     flex: none;
+    fill: none;
     stroke: var(--ink);
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   @media (min-width: 960px) {
     .hero-l {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-      align-items: center;
+      padding: 40px 0 16px;
+    }
+    .head {
+      grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
+      align-items: end;
       gap: 48px;
-      padding-top: 72px;
-      padding-bottom: 56px;
-      min-height: calc(100svh - 61px);
+      margin-bottom: 32px;
+    }
+    .terms {
+      flex-direction: column;
     }
   }
 </style>

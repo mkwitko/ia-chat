@@ -1,44 +1,67 @@
 ---
-// Sections 6 and 7: what exists today (nothing "em breve" here) and privacy.
-const features = [
-  { title: 'Responde na hora', text: 'A qualquer hora, inclusive às 21h e no fim de semana.' },
-  { title: 'Marca no Google Agenda', text: 'Marca, remarca e cancela olhando os seus horários livres.' },
-  { title: 'Lembra o paciente', text: 'Um dia antes e duas horas antes da consulta.' },
-  { title: 'Entende áudio', text: 'O paciente manda áudio, o assistente entende e responde.' },
-  { title: 'Chama você', text: 'Avisa no seu celular quando a conversa precisa de você.' },
-] as const;
+// Section 6: what exists today (nothing "em breve" here), each shown by what it leaves on the
+// screen. Fictitious data.
+const WAVE = [6, 12, 9, 16, 11, 18, 8, 14, 10, 6, 13, 9];
 ---
 
 <section class="features wrap" aria-labelledby="faz">
   <h2 id="faz">O que o assistente faz hoje.</h2>
   <ul>
-    {
-      features.map((item) => (
-        <li>
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
-        </li>
-      ))
-    }
+    <li>
+      <div class="say">
+        <h3>Responde na hora</h3>
+        <p>A qualquer hora, inclusive às 21h e no fim de semana.</p>
+      </div>
+      <p class="show" aria-hidden="true">
+        <span class="stamp">21:47 <i>recebida</i></span>
+        <span class="stamp jade">21:47 <i>respondida</i></span>
+      </p>
+    </li>
+    <li>
+      <div class="say">
+        <h3>Marca no Google Agenda</h3>
+        <p>Marca, remarca e cancela olhando os seus horários livres.</p>
+      </div>
+      <p class="show" aria-hidden="true">
+        <span class="chip"><b>qui. 15:00</b> Avaliação · Joana</span>
+      </p>
+    </li>
+    <li>
+      <div class="say">
+        <h3>Lembra o paciente</h3>
+        <p>Um dia antes e duas horas antes da consulta.</p>
+      </div>
+      <p class="show" aria-hidden="true">
+        <span class="bubble">Lembrete: amanhã, 15:00. Posso confirmar?</span>
+      </p>
+    </li>
+    <li>
+      <div class="say">
+        <h3>Entende áudio</h3>
+        <p>O paciente manda áudio, o assistente entende e responde.</p>
+      </div>
+      <p class="show" aria-hidden="true">
+        <span class="voice">
+          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 1.5v9l7-4.5z"></path></svg>
+          <span class="wave">{WAVE.map((h) => <i style={`height:${String(h)}px`} />)}</span>
+          0:38
+        </span>
+      </p>
+    </li>
+    <li>
+      <div class="say">
+        <h3>Chama você</h3>
+        <p>Avisa no seu celular quando a conversa precisa de você.</p>
+      </div>
+      <p class="show" aria-hidden="true">
+        <span class="push"><b>Consultório Aberto</b> Carla precisa de você.</span>
+      </p>
+    </li>
   </ul>
   <p class="contrast">
     A mensagem automática do WhatsApp Business só avisa que você vai responder. Ela não marca nem
     lembra.
   </p>
-</section>
-
-<section class="privacy wrap" aria-labelledby="privacidade">
-  <h2 id="privacidade">A queixa do paciente fica só na conversa.</h2>
-  <div>
-    <p>
-      Ela não entra em cadastro nem em relatório. Os dados dos seus pacientes ficam com você, não
-      são usados para treinar modelos de IA, e cada consultório vê só os seus.
-    </p>
-    <p class="links">
-      <a href="/privacidade">Política de Privacidade</a>
-      <a href="/contrato-de-operador">Contrato de Operador (LGPD)</a>
-    </p>
-  </div>
 </section>
 
 <style>
@@ -55,79 +78,111 @@ const features = [
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
     border-top: 1px solid var(--line);
   }
   li {
-    padding: 18px 0;
+    display: grid;
+    gap: 12px;
+    padding: 20px 0;
     border-bottom: 1px solid var(--line);
   }
   h3 {
     margin: 0 0 4px;
-    font-size: 19px;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.01em;
   }
-  li p {
+  .say p {
     margin: 0;
     color: var(--ink-2);
+  }
+  .show {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .show > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .show i {
+    font-style: normal;
+    color: var(--ink-2);
+  }
+  .stamp.jade,
+  .chip,
+  .bubble {
+    background: var(--jade-soft);
+    border-color: transparent;
+  }
+  .stamp.jade i,
+  .bubble {
+    color: var(--ink);
+  }
+  .chip {
+    border-color: var(--jade);
+  }
+  .show .bubble {
+    border-radius: var(--radius-bubble);
+    border-top-right-radius: 6px;
+  }
+  .show .voice {
+    border-radius: var(--radius-bubble);
+    border-top-left-radius: 6px;
+    color: var(--ink-2);
+  }
+  .voice svg {
+    fill: var(--ink);
+  }
+  .wave {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 20px;
+  }
+  .wave i {
+    width: 3px;
+    border-radius: 2px;
+    background: var(--ink-2);
+  }
+  .push {
+    box-shadow: var(--elevation);
   }
   .contrast {
     margin: 24px 0 0;
     color: var(--ink-2);
     max-width: 60ch;
   }
-  .privacy {
-    display: grid;
-    gap: 8px;
-    padding-top: 96px;
-  }
-  .privacy p {
-    margin: 0;
-    font-size: 18px;
-    line-height: 28px;
-    color: var(--ink-2);
-    max-width: 56ch;
-  }
-  .privacy .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 24px;
-    margin-top: 12px;
-    font-size: 16px;
-  }
-  .links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-weight: 500;
-  }
-
-  @media (min-width: 720px) {
-    ul {
-      grid-template-columns: repeat(2, 1fr);
-      column-gap: 32px;
-    }
-  }
   @media (min-width: 960px) {
     .features {
       padding-top: 144px;
     }
-    ul {
-      grid-template-columns: repeat(5, 1fr);
-      border-top: 0;
-    }
     li {
-      border-bottom: 0;
-      border-top: 1px solid var(--line-strong);
-      padding-top: 16px;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+      gap: 32px;
+      padding: 24px 0;
     }
-    .privacy {
-      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
-      gap: 48px;
-      padding-top: 144px;
-      align-items: start;
+    .say {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+      gap: 24px;
+      align-items: baseline;
     }
-    .privacy h2 {
-      margin: 0;
+    h3 {
+      font-size: 24px;
+      line-height: 30px;
+    }
+    .show {
+      justify-content: flex-end;
     }
   }
 </style>
