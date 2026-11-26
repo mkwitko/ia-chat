@@ -25,7 +25,7 @@ export function RulesEditor(props: Readonly<EditorProps>) {
   const valid = validWindows(rules);
   return (
     <form
-      className="grid gap-3 px-4 md:px-0"
+      className="grid gap-3"
       onSubmit={(event) => {
         event.preventDefault();
         save.mutate(rules, {
@@ -127,7 +127,10 @@ interface WindowProps {
 
 function WindowRow({ name, rule, onPatch, onRemove }: Readonly<WindowProps>) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-sm text-muted-foreground" aria-hidden="true">
+        {Copy.from}
+      </span>
       <TimeInput
         label={`${name}: ${Copy.from}`}
         value={rule.start}
@@ -135,6 +138,9 @@ function WindowRow({ name, rule, onPatch, onRemove }: Readonly<WindowProps>) {
           onPatch({ start });
         }}
       />
+      <span className="text-sm text-muted-foreground" aria-hidden="true">
+        {Copy.toShort}
+      </span>
       <TimeInput
         label={`${name}: ${Copy.to}`}
         value={rule.end}

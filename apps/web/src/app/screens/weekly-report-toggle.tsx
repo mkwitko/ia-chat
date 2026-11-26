@@ -14,6 +14,8 @@ export const WeeklyReportCopy = {
   label: 'Resumo da semana',
   hint: 'Toda segunda, às 8h, por e-mail e notificação: conversas respondidas, agendamentos do assistente, comparecimentos, valor recuperado e perguntas esperando você. Sem nome de paciente.',
   failed: 'Não conseguimos salvar. Tente de novo.',
+  on: 'Ligado',
+  off: 'Desligado',
 } as const;
 
 interface Setting {
@@ -32,23 +34,23 @@ export function WeeklyReportToggle() {
   });
   const checked = save.isPending ? save.variables : (setting.data?.enabled ?? true);
   return (
-    <section aria-labelledby={`${id}-heading`} className="grid gap-2">
-      <h2 id={`${id}-heading`} className="text-xs font-medium text-muted-foreground">
-        {WeeklyReportCopy.heading}
-      </h2>
+    <div className="grid gap-2">
       <label
         htmlFor={id}
         className="flex min-h-11 cursor-pointer items-start justify-between gap-4 rounded-lg border bg-card px-4 py-3"
       >
         <span className="grid gap-1">
           <span className="text-sm font-medium">{WeeklyReportCopy.label}</span>
-          <span className="text-xs text-muted-foreground">{WeeklyReportCopy.hint}</span>
+          <span className="text-sm text-muted-foreground">{WeeklyReportCopy.hint}</span>
+          <span className="text-sm font-medium">
+            {checked ? WeeklyReportCopy.on : WeeklyReportCopy.off}
+          </span>
         </span>
         <input
           id={id}
           type="checkbox"
           role="switch"
-          className="mt-0.5 size-5 shrink-0 cursor-pointer accent-primary"
+          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-primary"
           checked={checked}
           disabled={!setting.data || save.isPending}
           onChange={(event) => {
@@ -56,6 +58,6 @@ export function WeeklyReportToggle() {
           }}
         />
       </label>
-    </section>
+    </div>
   );
 }

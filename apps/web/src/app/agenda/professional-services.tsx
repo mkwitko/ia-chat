@@ -16,7 +16,7 @@ export function ProfessionalServices({ professionalId }: Readonly<{ professional
   const services = useServices();
   const linked = useProfessionalServices(professionalId);
   return (
-    <section className="grid gap-3 px-4 md:px-0" aria-labelledby="pro-services-heading">
+    <section className="grid gap-3" aria-labelledby="pro-services-heading">
       <h2 id="pro-services-heading" className="text-lg">
         {Copy.servicesHeading}
       </h2>

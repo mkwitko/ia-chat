@@ -12,7 +12,7 @@ export const AgendaCopy = {
   day: DAY_LABEL,
   week: 'Semana',
   newBooking: 'Novo agendamento',
-  settings: 'Disponibilidade, bloqueios e férias',
+  settings: 'Horários e folgas',
   emptyDay: {
     title: 'Nenhum atendimento neste dia',
     body: 'Quando o assistente marcar uma consulta, ela aparece aqui. Você também pode marcar um paciente agora.',
@@ -78,8 +78,6 @@ export const BookingCopy = {
 } as const;
 
 export const AvailabilityCopy = {
-  title: 'Disponibilidade',
-  back: 'Agenda',
   loadFailed: 'Não conseguimos carregar. Confira a conexão e tente de novo.',
   rulesHeading: 'Horários de atendimento',
   rulesIntro: 'Os horários em que você atende por semana. O assistente só oferece o que está aqui.',
@@ -89,6 +87,7 @@ export const AvailabilityCopy = {
   removeWindow: 'Remover horário',
   from: 'Das',
   to: 'Às',
+  toShort: 'às',
   invalidWindows:
     'Cada horário precisa terminar depois de começar, sem sobrepor outro do mesmo dia.',
   summaryHeading: 'Resumo da agenda de amanhã',

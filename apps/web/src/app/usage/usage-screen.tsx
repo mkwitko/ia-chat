@@ -1,3 +1,4 @@
+import { AccountCopy } from '../account-settings/account-copy';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
@@ -15,7 +16,7 @@ export function UsageScreen() {
   const usage = useUsage();
   return (
     <Screen title={Copy.title}>
-      <BackLink to={Route.more} label={Copy.more} />
+      <BackLink to={Route.account} label={AccountCopy.title} />
       {usage.isPending && <ListSkeleton />}
       {usage.isError && (
         <LoadError message={Copy.loadFailed} onRetry={() => void usage.refetch()} />

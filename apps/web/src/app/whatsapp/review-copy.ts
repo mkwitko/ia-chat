@@ -2,7 +2,7 @@
 
 export const ReviewCopy = {
   title: 'Revisar importação',
-  back: 'Conexões',
+  back: 'WhatsApp',
   intro:
     'Escolha quem vira cliente. As mensagens são opcionais: marque "Trazer as mensagens" só nas conversas que você quer consultar. O que você não escolher é apagado.',
   searchLabel: 'Buscar por nome ou telefone',

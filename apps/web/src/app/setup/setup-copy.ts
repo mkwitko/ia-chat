@@ -82,12 +82,12 @@ export const KnowledgeCopy = {
   ignore: 'Descartar',
   asked: (count: number) =>
     count === 1 ? 'Perguntada 1 vez' : `Perguntada ${String(count)} vezes`,
-  suggest: 'IA sugere resposta',
+  suggest: 'Sugerir uma resposta',
   suggesting: 'Escrevendo...',
   suggestHint:
     'É um rascunho: leia e ajuste antes de aprovar. Valores e horários ficam por conta do perfil e da agenda.',
   suggestFailed: 'Não consegui sugerir agora. Escreva a resposta ou tente de novo.',
-  suggestOff: 'A sugestão por IA não está ligada neste ambiente.',
+  suggestOff: 'A sugestão não está ligada neste ambiente.',
   dismissConfirm: 'Descartar esta pergunta? Ela some da lista.',
   baseHeading: 'Respostas cadastradas',
   empty: 'Nenhuma resposta cadastrada ainda. Comece pelas perguntas que os pacientes mais fazem.',

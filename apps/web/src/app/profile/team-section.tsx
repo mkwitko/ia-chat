@@ -34,11 +34,7 @@ export function TeamSection() {
   const add = useAddProfessional();
   if (!team.data) return null;
   return (
-    <section className="grid gap-3" aria-labelledby="team-heading">
-      <h2 id="team-heading" className="text-lg">
-        {Copy.teamHeading}
-      </h2>
-      <p className="text-sm text-muted-foreground">{Copy.teamIntro}</p>
+    <div className="grid gap-3">
       {team.data.professionals.map((member, index) => (
         <MemberRow key={member.id} member={member} first={index === 0} edit={edit} />
       ))}
@@ -58,7 +54,7 @@ export function TeamSection() {
           }}
         />
       )}
-    </section>
+    </div>
   );
 }
 
@@ -87,11 +83,11 @@ function MemberRow({ member, first, edit }: Readonly<RowProps>) {
       <p className="grid min-w-48 flex-1 font-semibold">
         {member.name}
         {first && (
-          <span className="text-xs font-medium text-muted-foreground">{Copy.agendaOwner}</span>
+          <span className="text-sm font-normal text-muted-foreground">{Copy.agendaOwner}</span>
         )}
       </p>
       <Link
-        to={`${Route.agendaAvailability}?${PROFESSIONAL_PARAM}=${member.id}`}
+        to={`${Route.clinicHours}?${PROFESSIONAL_PARAM}=${member.id}`}
         className="flex min-h-11 items-center text-sm font-medium underline underline-offset-4"
       >
         {Copy.hours}

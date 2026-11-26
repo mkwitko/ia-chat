@@ -17,6 +17,11 @@ export const AssistantCopy = {
       to: Route.knowledge,
     },
     {
+      label: 'Retorno e avaliações',
+      hint: 'Mensagem a quem sumiu e pedido de avaliação',
+      to: Route.growth,
+    },
+    {
       label: 'Simulador',
       hint: 'Converse com o assistente sem enviar nada a pacientes',
       to: Route.simulator,

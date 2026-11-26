@@ -1,3 +1,4 @@
+import { AccountCopy } from '../account-settings/account-copy';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ export function BillingScreen() {
   const billing = useBilling();
   return (
     <Screen title={Copy.title}>
-      <BackLink to={Route.more} label={Copy.more} />
+      <BackLink to={Route.account} label={AccountCopy.title} />
       {billing.isPending && <ListSkeleton />}
       {billing.isError && (
         <LoadError message={Copy.loadFailed} onRetry={() => void billing.refetch()} />

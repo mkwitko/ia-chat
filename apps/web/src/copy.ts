@@ -38,31 +38,17 @@ export const EmptyCopy = {
 
 export const MoreCopy = {
   title: 'Mais',
-  /** `/mais` on the computer, where the list lives in the sidebar. */
-  notifications: 'Notificações e aparência',
+  /** The settings, at most five entries (owner, 26/11/2026). */
   items: [
-    { label: 'Assistente', hint: 'Autonomia, apresentação e tom de voz', to: Route.assistant },
     {
-      label: 'Perfil do negócio',
-      hint: 'Contatos, pagamento, pacotes e endereços',
-      to: Route.profile,
+      label: 'Meu consultório',
+      hint: 'Serviços, horários, endereço e WhatsApp',
+      to: Route.clinic,
     },
-    { label: 'Serviços e local', hint: 'Valores, duração e endereço', to: Route.services },
-    { label: 'Conexões', hint: 'WhatsApp e Google Agenda', to: Route.connections },
-    { label: 'Plano e uso', hint: 'Conversas do mês e fatura', to: Route.usage },
-    { label: 'Assinatura', hint: 'Plano, pagamento e cancelamento', to: Route.billing },
-    {
-      label: 'Retorno e avaliações',
-      hint: 'Mensagem a quem parou de responder e pedido de avaliação',
-      to: Route.growth,
-    },
-    {
-      label: 'Indique e ganhe',
-      hint: 'Seu link para indicar outros profissionais',
-      to: Route.referral,
-    },
-    { label: 'Equipe', hint: 'Quem mais acessa o painel', to: Route.team },
-    { label: 'Ajuda e suporte', hint: 'Artigos e conversa com a gente', to: Route.support },
+    { label: 'Assistente', hint: 'Como ele responde e o que ele sabe', to: Route.assistant },
+    { label: 'Equipe', hint: 'Quem mais usa o painel', to: Route.team },
+    { label: 'Conta', hint: 'Plano, assinatura e avisos', to: Route.account },
+    { label: 'Ajuda', hint: 'Dúvidas e conversa com a gente', to: Route.support },
   ],
   signOut: 'Sair',
 } as const;

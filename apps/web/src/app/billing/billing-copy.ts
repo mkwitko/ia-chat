@@ -11,7 +11,6 @@ export const PLAN_LABEL: Record<string, string> = {
 
 export const BillingCopy = {
   title: 'Assinatura',
-  more: 'Mais',
   off: 'A cobrança ainda não está disponível nesta conta. Fale com o suporte.',
   loadFailed: 'Não conseguimos carregar a assinatura. Confira a conexão e tente de novo.',
   status: {

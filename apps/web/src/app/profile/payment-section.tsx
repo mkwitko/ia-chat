@@ -1,65 +1,18 @@
+import { Check } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { AreaField } from '../setup/fields';
-import { PaymentMethod, type ProfileView } from './profile-api';
+import { PaymentMethod } from './profile-api';
 import { NOTICE_OPTIONS, PAYMENT_LABEL, ProfileCopy as Copy } from './profile-copy';
 
-const EMPTY = '';
 const CHIP =
   'flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors hover:border-line-strong has-focus-visible:outline-2 has-focus-visible:outline-ring';
-
-interface PaymentProps {
-  view: ProfileView;
-  onChange: (view: ProfileView) => void;
-}
-
-/** Payment methods as pills, the minutes rule and the rule in the owner's words. */
-export function PaymentSection({ view, onChange }: Readonly<PaymentProps>) {
-  const profile = view.profile;
-  return (
-    <section className="grid gap-4" aria-labelledby="profile-payment">
-      <h2 id="profile-payment" className="text-lg">
-        {Copy.paymentHeading}
-      </h2>
-      <PaymentPills
-        chosen={profile.paymentMethods}
-        onChange={(paymentMethods) => {
-          onChange({ ...view, profile: { ...profile, paymentMethods } });
-        }}
-      />
-      <NoticeSelect
-        value={view.cancelNoticeMinutes}
-        onChange={(cancelNoticeMinutes) => {
-          onChange({ ...view, cancelNoticeMinutes });
-        }}
-      />
-      <NoShowToggle
-        checked={view.noShowFollowUp}
-        onChange={(noShowFollowUp) => {
-          onChange({ ...view, noShowFollowUp });
-        }}
-      />
-      <AreaField
-        id="profile-policy"
-        label={Copy.policy}
-        hint={Copy.policyHint}
-        placeholder={Copy.policyPlaceholder}
-        value={profile.cancellationPolicy ?? EMPTY}
-        onChange={(cancellationPolicy) => {
-          onChange({ ...view, profile: { ...profile, cancellationPolicy } });
-        }}
-        maxLength={600}
-      />
-    </section>
-  );
-}
 
 interface PillsProps {
   chosen: PaymentMethod[];
   onChange: (methods: PaymentMethod[]) => void;
 }
 
-function PaymentPills({ chosen, onChange }: Readonly<PillsProps>) {
+export function PaymentPills({ chosen, onChange }: Readonly<PillsProps>) {
   const toggle = (method: PaymentMethod) => {
     onChange(
       chosen.includes(method) ? chosen.filter((item) => item !== method) : [...chosen, method],
@@ -74,7 +27,7 @@ function PaymentPills({ chosen, onChange }: Readonly<PillsProps>) {
             key={method}
             className={cn(
               CHIP,
-              chosen.includes(method) && 'border-primary bg-primary text-primary-foreground',
+              chosen.includes(method) && 'border-primary bg-muted ring-1 ring-primary',
             )}
           >
             <input
@@ -85,6 +38,7 @@ function PaymentPills({ chosen, onChange }: Readonly<PillsProps>) {
                 toggle(method);
               }}
             />
+            {chosen.includes(method) && <Check className="size-4" aria-hidden="true" />}
             {PAYMENT_LABEL[method]}
           </label>
         ))}
@@ -124,7 +78,7 @@ export function NoticeSelect({
   );
 }
 
-function NoShowToggle({
+export function NoShowToggle({
   checked,
   onChange,
 }: Readonly<{ checked: boolean; onChange: (value: boolean) => void }>) {

@@ -24,13 +24,15 @@ Barra inferior no celular, lateral no computador. Cinco itens (a versão enxuta 
 2. **Conversas** (com contador de pendências)
 3. **Agenda**
 4. **Clientes**
-5. **Mais**: assistente, serviços, conexões, plano e uso, equipe, ajuda
+5. **Mais**: Meu consultório, Assistente, Equipe, Conta e Ajuda (até cinco entradas; árvore em `docs/design/ia.md`)
 
 Decisão (25/11/2026): não há aba "Resultados". Os números do piloto ficam numa seção "Resultados do mês" (`/resultados`), aberta pelo botão "Ver resultados" no Início, para não passar de cinco itens e não virar painel de métricas. "Mais" continua com o nome e os itens de configuração que já tinha.
 
-Volta à configuração (decisão do dono, 25/11/2026): enquanto a configuração guiada tiver passo pendente, "Configuração · X de N" com barra de progresso fica no topo da lateral (computador), numa faixa fina sob os alertas (celular) e como primeira linha de Mais; o Início mostra "Próximo passo" com o passo atual e um botão. Tudo some quando a configuração termina. `/configuracao` não é aba: o item ativo é Mais.
+Volta à configuração (decisão do dono, 25/11/2026): enquanto a configuração guiada tiver passo pendente, "Primeiros passos · X de N" com barra de progresso fica no topo da lateral (computador), numa faixa fina sob os alertas (celular) e como primeira linha de Mais; o Início mostra "Próximo passo" com o passo atual e um botão. Tudo some quando a configuração termina. O cartão e a faixa saem de Meu consultório, que mostra a sua própria contagem ("Faltam N itens"), para não haver dois números diferentes na mesma tela. `/configuracao` não é aba: o item ativo é Mais.
 
-Lateral no computador (decisão do dono, 26/11/2026): nome do consultório, o cartão de configuração (quando pendente), Início, Conversas, Agenda, Clientes e o grupo recolhível **Configurações** no lugar de Mais, com as páginas de ajuste (Assistente, Perfil do negócio, Serviços e local, Conexões, Plano e uso, Assinatura, Equipe só para o dono, Ajuda e suporte, Notificações e aparência; Operador para quem é operador). O grupo abre sozinho quando uma dessas páginas está ativa, com o item marcado. No rodapé, a situação do atendimento em palavras (assistente ativo ou não, WhatsApp conectado ou não), "Aparência: Sistema / Claro / Escuro" e Sair. Não há mais a segunda coluna de menu ao lado da lateral; os endereços continuam os mesmos (`/mais/...`), e `/mais` no computador é "Notificações e aparência". No celular nada muda: barra inferior com Mais, que abre a lista. Largura total sempre, inclusive nas páginas de ajuste e na configuração guiada (DESIGN.md, "Layout"); Conversas em lista e conversa lado a lado a partir de `lg`.
+Lateral no computador (decisão do dono, 26/11/2026): nome do consultório, o cartão de configuração (quando pendente), Início, Conversas, Agenda, Clientes e o grupo recolhível **Configurações** no lugar de Mais. O grupo abre sozinho quando uma página de ajuste está ativa. No rodapé, a situação do atendimento em palavras, "Aparência" e Sair. No celular, Mais abre a mesma lista.
+
+Ajustes para quem nunca usou um sistema assim (decisão do dono, 26/11/2026, depois de "está difícil de fazer a configuração e encontrar as coisas"): o grupo tem no máximo cinco entradas, **Meu consultório**, **Assistente**, **Equipe** (só o dono), **Conta** e **Ajuda** (e Operador para quem é operador). Cada página de ajuste é um **resumo**: uma linha por assunto, com o valor atual em palavras ("Ter a Qui, 7h–20h") e a situação ("Feito", "Falta configurar" ou "Opcional"); a primeira linha que falta configurar leva o único botão cheio da tela. Tocar numa linha abre um **editor só daquele assunto**, numa rota própria: uma coluna de até 560 px, os 2 a 4 campos essenciais, o resto em "Mais opções", um "Salvar" e um "Voltar"; salvou, volta ao resumo. Listas (serviços, endereços, quem atende) salvam item a item, sem "Salvar" da página. Cada coisa mora num lugar só: o Google Agenda saiu da Disponibilidade e das Conexões e virou uma linha de Meu consultório; a Disponibilidade saiu da Agenda e virou Meu consultório › Horários. Os endereços antigos redirecionam mantendo a consulta (`/agenda/disponibilidade` → `/mais/consultorio/horarios`, `/mais/perfil` → `/mais/consultorio`, `/mais/servicos` → `/mais/consultorio/servicos`, `/mais/conexoes` → `/mais/consultorio/whatsapp`, `/mais/plano-e-uso` e `/mais/assinatura` → `/mais/conta/...`, `/mais/retorno` → `/mais/assistente/retorno`).
 
 Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsApp desconectado, Google expirado, pagamento da Meta ausente, assinatura vencida, franquia estourada. Cada alerta tem um botão que leva à correção.
 
@@ -60,7 +62,7 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsA
 - Toque num horário livre cria agendamento manual; toque num agendamento permite remarcar ou cancelar.
 - Compromissos vindos do Google aparecem como ocupado, sem detalhes.
 - Acesso a disponibilidade, bloqueios e modo férias.
-- Implementação (E-23): lista feita à mão, sem Schedule-X (sem dependência nova): dia no celular e semana como sete seções de dia, a partir do dia escolhido (`/agenda?dia=AAAA-MM-DD&visao=semana`). Em vez de tocar num horário livre da grade, o botão "Novo agendamento" abre o formulário com os horários livres do dia (mesmo `availableSlots` do assistente) e o toque no atendimento abre remarcar e cancelar. Com o Google Agenda conectado (E-21) os horários ocupados lá saem da lista de livres; a seção "Google Agenda" da tela Disponibilidade conecta, escolhe a agenda, mostra o estado e desconecta, e uma faixa de alerta pede para reconectar quando o token cai. A tela "Disponibilidade, bloqueios e férias" (`/agenda/disponibilidade`) edita os horários da semana, os bloqueios, as férias e o horário do resumo noturno.
+- Implementação (E-23): lista feita à mão, sem Schedule-X (sem dependência nova): dia no celular e semana como sete seções de dia, a partir do dia escolhido (`/agenda?dia=AAAA-MM-DD&visao=semana`). Em vez de tocar num horário livre da grade, o botão "Novo agendamento" abre o formulário com os horários livres do dia (mesmo `availableSlots` do assistente) e o toque no atendimento abre remarcar e cancelar. Com o Google Agenda conectado (E-21) os horários ocupados lá saem da lista de livres; a seção "Google Agenda" da tela Disponibilidade conecta, escolhe a agenda, mostra o estado e desconecta, e uma faixa de alerta pede para reconectar quando o token cai. A tela "Disponibilidade, bloqueios e férias" (hoje Meu consultório › Horários, `/mais/consultorio/horarios`; o Google Agenda ficou na própria linha de Meu consultório) edita os horários da semana, os bloqueios, as férias e o horário do resumo noturno.
 - Agenda por profissional (H-45): com mais de um profissional, a Agenda ganha o filtro "Todos / cada profissional" (`?profissional=`); em "Todos" cada atendimento mostra as iniciais e "com {nome}". Profissionais se distinguem por iniciais e nome, não por cor. No novo agendamento, os horários livres trazem as iniciais de quem atende; com o filtro num profissional, só os dele; remarcar fica com o mesmo profissional. Em Disponibilidade, a troca de profissional no topo leva aos horários, aos "Serviços que atende" (todos, ou os marcados) e aos bloqueios e férias de cada um; para quem não é o primeiro, a seção do Google Agenda vira uma frase dizendo que o Google vale para o primeiro. Em Perfil > Quem atende, cada profissional tem o link "Horários e serviços"; adicionar além do plano mostra o aviso do plano Clínica.
 - Lista de espera (M-09): cada dia mostra, abaixo dos atendimentos, quem pediu para ser avisado se abrir um horário (nome, serviço, até quando), com "Tirar da lista". Na semana a explicação some e ficam só os nomes. Entradas vêm só do assistente.
 
@@ -120,20 +122,22 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
   - Ferramentas: consulta de horários roda de verdade, mas sem registrar ofertas; agendar, remarcar e cancelar não existem no simulador (a tela avisa); transferir e registrar dúvida só marcam o que aconteceria. A checagem de urgência por Jev (julgamento extra antes do modelo) não roda aqui; a lista de palavras sim.
   - Custo: usa o gateway de IA como a produção (em desenvolvimento, Groq grátis). O uso entra em `ai_usage` com `task` iniciada por `simulator:` e sem `turn_id`/`conversation_id`. Limite de 30 mensagens por hora por consultório (resposta 429); o limite fica em memória do processo da API (hipótese: uma instância).
 
-### Perfil do negócio
+### Meu consultório
 
-M-04 (`/mais/perfil`, H-38): nome, o que faz, telefone, site, rede social, link de avaliação do Google; formas de pagamento em pílulas; prazo para desmarcar e a regra em palavras; pacotes (nome e valor exato); endereços (o primeiro é o principal, com nome e como chegar); quem atende (o primeiro é a agenda do assistente); mensagem de boas-vindas colada. Texto com "cliente" e "negócio".
+`/mais/consultorio`, resumo com oito linhas, cada uma com o seu editor (M-04, H-38; texto com "cliente" e "negócio"):
 
-### Serviços e local
+- **Nome e apresentação** (`/negocio`): nome e o que faz; em "Mais opções", telefone, rede social, site, link de avaliação do Google e a mensagem de boas-vindas colada. "Feito" quando há nome e apresentação.
+- **Serviços e preços** (`/servicos`): serviços com duração e valor (aviso quando a especialidade restringe divulgar preço) e, abaixo, pacotes (nome, sessões e valor exato). Resumo: "2 serviços, 1 pacote".
+- **Horários** (`/horarios`): a semana, folgas e férias, e em "Mais opções" a hora do resumo da agenda de amanhã; com mais de um profissional, a troca de profissional no topo e "Serviços que atende". Resumo: "Ter a Qui, 7h–20h" (dias seguidos viram intervalo; da primeira hora à última).
+- **Endereço** (`/endereco`): endereços, o primeiro é o principal, com nome e como chegar.
+- **Quem atende** (`/quem-atende`): profissionais; cada um com o link "Horários e serviços".
+- **Pagamento e desmarcação** (`/pagamentos`): formas de pagamento em pílulas e prazo para desmarcar; em "Mais opções", a regra em palavras e a mensagem depois de uma falta. Recebimento de sinal (módulo Pro, ainda por construir): Mercado Pago ou chave Pix, aqui.
+- **WhatsApp** (`/whatsapp`): estado, número e a ação para conectar ou trocar o número; a importação do histórico; em "Mais opções", a conexão por QR code (com o aviso de risco sempre visível).
+- **Google Agenda** (`/google-agenda`, opcional): conectar, escolher a agenda, desconectar. Some quando a conexão não está disponível na conta.
 
-- Serviços com duração e valor; aviso quando a especialidade restringe divulgar preço.
-- Endereço e instruções de chegada, com pré-visualização de como o paciente recebe.
+### Conta
 
-### Conexões
-
-- WhatsApp: tipo de conexão, estado, número, e a ação para reconectar. Na conexão por QR code, o aviso de risco fica sempre visível e há a oferta de migrar para a oficial.
-- Google Calendar: estado, calendário escolhido, última sincronização.
-- Recebimento de sinal (módulo Pro): Mercado Pago ou chave Pix.
+`/mais/conta`, resumo com Plano e uso, Assinatura e Avisos e aparência (resumo da semana e tema).
 
 ### Plano e uso
 
@@ -173,7 +177,7 @@ Fora da navegação do cliente, em endereço e autenticação próprios: convite
 | Agendamento novo, remarcado ou cancelado | Configurável | Sim |
 | Franquia a 80% e a 100% | Sim | Faixa de alerta |
 | Agenda de amanhã | Sim, no horário configurado | Não |
-| Resumo da semana (H-41) | Sim, segunda às 8h, e e-mail ao dono; desliga em Mais > Notificações | Não |
+| Resumo da semana (H-41) | Sim, segunda às 8h, e e-mail ao dono; desliga em Conta › Avisos e aparência | Não |
 
 ## Processo de design
 

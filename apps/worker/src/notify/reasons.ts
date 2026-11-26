@@ -85,7 +85,7 @@ const COPY: Record<NotifyReason, Copy> = {
 };
 
 const CONVERSATION_PATH = '/conversas/';
-const USAGE_PATH = '/mais/plano-e-uso';
+const USAGE_PATH = '/mais/conta/plano-e-uso';
 const USAGE_REASONS: ReadonlySet<NotifyReason> = new Set([
   NotifyReason.usageWarning,
   NotifyReason.usageFull,

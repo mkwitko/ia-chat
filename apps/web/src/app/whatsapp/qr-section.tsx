@@ -26,7 +26,7 @@ export function QrSection() {
   const status = useQrStatus().data;
   if (!status || (!status.available && !status.channel)) return null;
   return (
-    <section className="grid gap-3 px-4 md:px-0">
+    <section className="grid gap-3">
       <h2 className="text-lg">{Copy.heading}</h2>
       {status.channel ? (
         <ChannelView channel={status.channel} />

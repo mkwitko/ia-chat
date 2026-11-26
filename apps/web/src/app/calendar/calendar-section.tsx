@@ -19,15 +19,24 @@ const RETURN_OK = 'ok';
 
 /** Spec 05 / 10: connect Google Agenda, pick the calendar, see the status, disconnect. */
 export function CalendarSection() {
-  const status = useCalendarStatus();
   return (
-    <section className="grid gap-3 px-4 md:px-0">
+    <section className="grid gap-3">
       <h2 className="text-lg">{Copy.heading}</h2>
       <p className="text-sm text-muted-foreground">{Copy.intro}</p>
+      <CalendarConnect />
+    </section>
+  );
+}
+
+/** Connect, choose and disconnect, without the heading (Meu consultório › Google Agenda). */
+export function CalendarConnect() {
+  const status = useCalendarStatus();
+  return (
+    <div className="grid gap-3">
       <ReturnNotice />
       {status.isError && <p role="alert">{Copy.loadFailed}</p>}
       {status.data && <Body status={status.data} />}
-    </section>
+    </div>
   );
 }
 

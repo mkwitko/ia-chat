@@ -25,7 +25,6 @@ export function monthLabel(key: string): string {
 
 export const UsageCopy = {
   title: 'Plano e uso',
-  more: 'Mais',
   empty: {
     title: 'Nenhuma conversa neste mês ainda',
     body: 'Quando os pacientes escreverem, o uso aparece aqui, com o quanto falta para a franquia do seu plano.',

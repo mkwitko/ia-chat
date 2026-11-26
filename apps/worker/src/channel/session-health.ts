@@ -16,7 +16,7 @@ import type { Notice } from '../notify/reasons.ts';
 const UNREACHABLE = 'waha_unreachable';
 const NOT_FOUND = 404;
 const DOWN_TAG = 'channel_down';
-const CONNECTIONS_PATH = '/mais/conexoes';
+const CONNECTIONS_PATH = '/mais/consultorio/whatsapp';
 
 /** RN-38: no number, no content. What happened and where to tap. */
 export const CHANNEL_DOWN_NOTICE: Notice = {

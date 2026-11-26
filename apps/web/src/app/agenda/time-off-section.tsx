@@ -27,8 +27,8 @@ export function TimeOffSection({ timezone, professionalId }: Readonly<SectionPro
   const offs = useTimeOffs(professionalId);
   return (
     <section className="grid gap-3">
-      <h2 className="px-4 text-lg md:px-0">{Copy.offHeading}</h2>
-      <p className="px-4 text-sm text-muted-foreground md:px-0">{Copy.offIntro}</p>
+      <h2 className="text-lg">{Copy.offHeading}</h2>
+      <p className="text-sm text-muted-foreground">{Copy.offIntro}</p>
       {offs.isPending && <ListSkeleton />}
       {offs.isError && (
         <LoadError message={CommonCopy.loadFailed} onRetry={() => void offs.refetch()} />
@@ -52,7 +52,7 @@ function TimeOffList({
   const edit = useEditing();
   const create = useCreateTimeOff(professionalId);
   return (
-    <div className="grid gap-3 px-4 md:px-0">
+    <div className="grid gap-3">
       {timeOffs.length === 0 && edit.editing !== NEW_ITEM && (
         <p className="text-sm text-muted-foreground">{Copy.offEmpty}</p>
       )}

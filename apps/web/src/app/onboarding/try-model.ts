@@ -18,7 +18,7 @@ export type AdjustTarget = { label: string } & ({ step: Step } | { to: string })
 const TARGETS = {
   services: { label: 'serviços', step: Step.services },
   hours: { label: 'horários', step: Step.hours },
-  address: { label: 'endereço', to: Route.profile },
+  address: { label: 'endereço', to: Route.clinicAddress },
   knowledge: { label: 'respostas', to: Route.knowledge },
 } as const satisfies Record<string, AdjustTarget>;
 

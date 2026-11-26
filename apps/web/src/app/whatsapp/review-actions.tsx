@@ -18,7 +18,7 @@ function useDecisions(selections: ReviewSelection[]) {
   const discard = useDiscardReview();
   const done = (message: string) => {
     toast(message);
-    void navigate(Route.connections);
+    void navigate(Route.clinicWhatsapp);
   };
   const fail = () => toast.error(Copy.failed);
   return {

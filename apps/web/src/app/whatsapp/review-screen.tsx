@@ -23,7 +23,7 @@ export function ReviewScreen() {
   const contacts = useReviewContacts();
   return (
     <Screen title={Copy.title}>
-      <BackLink to={Route.connections} label={Copy.back} />
+      <BackLink to={Route.clinicWhatsapp} label={Copy.back} />
       <p className="max-w-prose px-4 pb-4 text-muted-foreground md:px-0">{Copy.intro}</p>
       {contacts.isPending && <ListSkeleton />}
       {contacts.isError && (

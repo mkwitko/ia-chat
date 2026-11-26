@@ -2,7 +2,7 @@ import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { PackagesSection } from '../profile/packages-section';
 import { useServices } from '../setup/setup-api';
 import { CommonCopy } from '../setup/setup-copy';
-import { ServiceList } from '../setup/services-screen';
+import { ServiceList } from '../setup/service-list';
 import type { OnboardingView } from './onboarding-api';
 import { Templates } from './templates-card';
 
@@ -12,7 +12,7 @@ export function ServicesStep({ view }: Readonly<{ view: OnboardingView }>) {
   return (
     <div className="grid gap-8">
       {view.specialty && <Templates pricesForbidden={view.pricesForbidden} />}
-      <div className="-mx-4 md:mx-0">
+      <div>
         {services.isPending && <ListSkeleton />}
         {services.isError && (
           <LoadError message={CommonCopy.loadFailed} onRetry={() => void services.refetch()} />

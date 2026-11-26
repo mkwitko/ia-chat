@@ -15,7 +15,7 @@ import { signState, verifyState } from './state.ts';
 
 const BASE = '/api/calendar/google';
 const CALLBACK = `${BASE}/callback`;
-const PANEL_PAGE = '/agenda/disponibilidade';
+const PANEL_PAGE = '/mais/consultorio/google-agenda';
 
 export const CalendarState = {
   off: 'off',

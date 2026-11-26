@@ -14,7 +14,7 @@ export function GrowthScreen() {
   const review = useReviewRequest();
   return (
     <Screen title={Copy.title} width={ScreenWidth.form}>
-      <BackLink to={Route.more} label={CommonCopy.more} />
+      <BackLink to={Route.assistant} label={CommonCopy.assistant} />
       <div className="grid gap-12 px-4 pt-2 pb-10 md:px-0">
         <p className="text-sm text-muted-foreground">{Copy.intro}</p>
         {(followUp.isPending || review.isPending) && <ListSkeleton />}

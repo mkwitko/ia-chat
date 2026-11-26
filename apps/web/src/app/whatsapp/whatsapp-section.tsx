@@ -23,20 +23,29 @@ type Phase = (typeof Phase)[keyof typeof Phase];
 
 /** Spec 03 "Onboarding do canal" and spec 10 "Conexões": connect the number, see its state. */
 export function WhatsappSection() {
+  return (
+    <section className="grid gap-3">
+      <h2 className="text-lg">{Copy.heading}</h2>
+      <p className="text-sm text-muted-foreground">{Copy.intro}</p>
+      <WhatsappConnect />
+    </section>
+  );
+}
+
+/** The state of the number and the one button that connects it (Meu consultório › WhatsApp). */
+export function WhatsappConnect() {
   const status = useWhatsappStatus();
   const { appId, configId, available, channel } = status.data ?? {};
   return (
-    <section className="grid gap-3 px-4 md:px-0">
-      <h2 className="text-lg">{Copy.heading}</h2>
-      <p className="text-sm text-muted-foreground">{Copy.intro}</p>
-      <p className="text-sm text-muted-foreground">{Copy.payment}</p>
+    <div className="grid gap-3">
       {status.isError && <p role="alert">{Copy.loadFailed}</p>}
       {status.data && (!available || !appId || !configId) && <Unavailable />}
       {channel && <ChannelState channel={channel} />}
       {appId && configId && (
         <ConnectButton ids={{ appId, configId }} label={channel ? Copy.reconnect : Copy.connect} />
       )}
-    </section>
+      <p className="text-sm text-muted-foreground">{Copy.payment}</p>
+    </div>
   );
 }
 
@@ -129,6 +138,8 @@ function ConnectButton({ ids, label }: Readonly<{ ids: SignupIds; label: string 
     <div className="grid gap-2">
       <Button
         className="justify-self-start"
+        // Connected already: changing the number is the rare path, so it does not shout.
+        variant={label === Copy.reconnect ? 'outline' : 'default'}
         disabled={phase !== Phase.idle}
         onClick={() => void start()}
       >

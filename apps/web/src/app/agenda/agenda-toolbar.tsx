@@ -45,7 +45,7 @@ export function AgendaToolbar({ day, view, onChange, onNew }: Readonly<ToolbarPr
         </Button>
       </div>
       <Link
-        to={Route.agendaAvailability}
+        to={Route.clinicHours}
         className="flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
       >
         <Settings2 className="size-4" aria-hidden="true" />
