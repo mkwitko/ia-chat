@@ -10,7 +10,7 @@ const INVALID_ENV = 'Invalid environment';
 const POSTGRES_PROTOCOL = /^postgres(ql)?$/;
 
 /** Optional text: unset or empty (a blank line in .env) both mean "off". */
-const optionalText = z
+export const optionalText = z
   .string()
   .optional()
   .transform((value) => {
@@ -38,6 +38,8 @@ export const observabilityEnvSchema = z.object({
 export const baseEnvSchema = z.object({
   NODE_ENV: z.enum(NodeEnv).default(NodeEnv.development),
   DATABASE_URL: z.url({ protocol: POSTGRES_PROTOCOL }),
+  /** Transactional email (Resend). Required in production; without it development logs the emails. */
+  RESEND_API_KEY: optionalText,
   ...observabilityEnvSchema.shape,
 });
 

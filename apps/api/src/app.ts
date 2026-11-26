@@ -14,6 +14,7 @@ import type { HealthDeps } from './health/health-routes.ts';
 import { fastifyObservability, setupObservability } from './observability.ts';
 import { registerControlRoutes } from './conversations/control-routes.ts';
 import { registerInboxRoutes } from './conversations/inbox-routes.ts';
+import { mediaStoreOf, registerMediaRoute } from './conversations/media-route.ts';
 import { registerCustomerRoutes } from './customers/customers-routes.ts';
 import { registerHomeRoutes } from './home/home-routes.ts';
 import { registerResultsRoutes } from './results/results-routes.ts';
@@ -45,6 +46,9 @@ import { registerWaitlistIfConfigured } from './waitlist/waitlist-routes.ts';
 import type { TurnstileVerifier } from './waitlist/turnstile.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
 import { registerWhatsappSignupRoutes } from './whatsapp/routes.ts';
+
+/** One proxy in front: the edge. */
+const TRUSTED_PROXY_HOPS = 1;
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -81,8 +85,12 @@ export interface AppDeps extends HealthDeps {
 }
 
 export function buildApp(deps: AppDeps): FastifyInstance {
-  const { env, db, email, enqueueInbound, send } = deps;
-  const app = Fastify(fastifyObservability(env));
+  const { env, db, email, enqueueInbound } = deps;
+  // Behind the edge (Caddy), which sets X-Forwarded-For to Cloudflare's CF-Connecting-IP.
+  const app = Fastify({
+    ...fastifyObservability(env),
+    trustProxy: (_address: string, hop: number) => hop < TRUSTED_PROXY_HOPS,
+  });
   app.decorate('db', db);
   setupObservability(app, deps);
   setupCalendar(app, deps);
@@ -95,18 +103,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   registerModelRoutes(app, deps);
   registerSettingsRoutes(app);
   registerWaitlistIfConfigured(app, deps);
-  registerInboxRoutes(app, {
-    send:
-      send ??
-      createChannelSender({
-        accessToken: env.META_ACCESS_TOKEN,
-        readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
-        devFallback: env.NODE_ENV !== NodeEnv.production,
-        log: (fields, message) => {
-          app.log.info(fields, message);
-        },
-      }),
-  });
+  registerInbox(app, deps);
   registerPushRoutes(app, { publicKey: env.PUSH_VAPID_PUBLIC_KEY });
   const hub = createInboxHub(env.DATABASE_URL, app.log);
   registerEventsRoute(app, hub);
@@ -119,6 +116,23 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   registerBillingRoutes(app, deps.billing);
   registerWhatsappSignupRoutes(app, { config: whatsappSignupConfig(env), fetch: deps.metaFetch });
   return app;
+}
+
+/** The inbox: thread, drafts, sending as the professional, and the patient's media (E-10). */
+function registerInbox(app: FastifyInstance, { env, send }: Pick<AppDeps, 'env' | 'send'>): void {
+  registerInboxRoutes(app, {
+    send:
+      send ??
+      createChannelSender({
+        accessToken: env.META_ACCESS_TOKEN,
+        readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
+        devFallback: env.NODE_ENV !== NodeEnv.production,
+        log: (fields, message) => {
+          app.log.info(fields, message);
+        },
+      }),
+  });
+  registerMediaRoute(app, mediaStoreOf(env));
 }
 
 /** Panel routes that call the model: the simulator and the onboarding prefill (spec 09, 10). */

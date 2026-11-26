@@ -84,4 +84,32 @@ describe('deterministic pre-filters (spec 04, "Fluxo de um turno")', () => {
       kind: PrefilterKind.model,
     });
   });
+
+  describe('media (E-10, spec 03 table)', () => {
+    const kindOf = (...messages: Parameters<typeof prefilter>[0]) =>
+      prefilter(messages, HEALTH_URGENCY_TERMS).kind;
+    const audio = (transcript: string | null) => ({ type: MessageType.audio, text: transcript });
+
+    it('sends a transcribed audio to the model and checks urgency on the transcript', () => {
+      expect(kindOf(audio('quero marcar uma avaliação'))).toBe(PrefilterKind.model);
+      expect(kindOf(audio('to com dor no peito'))).toBe(PrefilterKind.urgency);
+    });
+
+    it('asks to resend or write when the audio has no transcript or the media is unavailable', () => {
+      expect(kindOf(audio(null))).toBe(PrefilterKind.mediaUnavailable);
+      expect(kindOf({ type: MessageType.image, text: null, mediaUnavailable: true })).toBe(
+        PrefilterKind.mediaUnavailable,
+      );
+    });
+
+    it('never interprets an image or document: the professional will look', () => {
+      expect(kindOf({ type: MessageType.image, text: null })).toBe(PrefilterKind.media);
+      expect(kindOf({ type: MessageType.document, text: null })).toBe(PrefilterKind.media);
+      expect(kindOf({ type: MessageType.image, text: 'meu exame' })).toBe(PrefilterKind.model);
+    });
+
+    it('registers a location without answering it', () => {
+      expect(kindOf({ type: MessageType.location, text: null })).toBe(PrefilterKind.ignore);
+    });
+  });
 });

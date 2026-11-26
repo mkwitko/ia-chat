@@ -14,6 +14,8 @@ export interface InboundJobDeps {
   /** Queues the turn (E-11). Runs after commit, so the turn sees the new turn_version. */
   scheduleTurn: (tenantId: string, request: TurnRequest) => Promise<void>;
   /** Pushes the 80% and 100% franchise warnings (E-18). */
+  /** Queues the media download (E-10). Runs after commit; the job reads the stored message. */
+  scheduleMedia?: (tenantId: string, messageId: string) => Promise<void>;
   notifyUsage?: (tenantId: string, notice: UsageNotice) => void;
 }
 
@@ -27,7 +29,7 @@ export async function processInboundEvent(
   const stored = await tx.inboundEvent.findUniqueOrThrow({ where: { id: inboundEventId } });
   if (stored.processedAt || !stored.channelId) return undefined;
   const events = parseCloudChanges(stored.payload);
-  const { alerts, turns, usage } = await applyInboundEvents(tx, {
+  const { alerts, turns, usage, media } = await applyInboundEvents(tx, {
     tenantId: stored.tenantId,
     channelId: stored.channelId,
     events,
@@ -41,6 +43,7 @@ export async function processInboundEvent(
   });
   return async () => {
     for (const notice of usage) deps?.notifyUsage?.(stored.tenantId, notice);
+    for (const messageId of media) await deps?.scheduleMedia?.(stored.tenantId, messageId);
     for (const turn of turns) await deps?.scheduleTurn(stored.tenantId, turn);
   };
 }

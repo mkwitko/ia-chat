@@ -1,5 +1,5 @@
 import { aiConfigured, createEnvGateway, dbUsageStore, markedStore } from '@app/ai';
-import { AsaasClient, NodeEnv } from '@app/core';
+import { AsaasClient, NodeEnv, resendEmailSender } from '@app/core';
 import { createDb, INBOUND_QUEUE, QUEUE_SCHEMA, sendTenantJob } from '@app/db';
 import { AlertEvent, initSentry, logProcessErrors } from '@app/observability';
 import { PgBoss } from 'pg-boss';
@@ -9,7 +9,7 @@ import { SIMULATOR_USAGE_PREFIX } from './simulator/simulator-routes.ts';
 
 const LISTEN_HOST = '0.0.0.0';
 const QUEUE_ERROR = 'queue error';
-const NO_EMAIL_PROVIDER = 'No email provider configured for production (E-00f).';
+const NO_EMAIL_PROVIDER = 'RESEND_API_KEY is required in production.';
 
 const env = parseApiEnv(process.env);
 const sentryOn = initSentry({
@@ -18,7 +18,7 @@ const sentryOn = initSentry({
   release: env.APP_RELEASE,
   environment: env.NODE_ENV,
 });
-if (env.NODE_ENV === NodeEnv.production) throw new Error(NO_EMAIL_PROVIDER);
+if (env.NODE_ENV === NodeEnv.production && !env.RESEND_API_KEY) throw new Error(NO_EMAIL_PROVIDER);
 
 // App role: the queues are created by `pnpm db:migrate` (RN-02).
 const boss = new PgBoss({
@@ -50,6 +50,7 @@ const app = buildApp({
   env,
   db,
   enqueueInbound,
+  ...(env.RESEND_API_KEY ? { email: resendEmailSender(env.RESEND_API_KEY) } : {}),
   ...(env.ASAAS_API_KEY
     ? { billing: new AsaasClient({ apiKey: env.ASAAS_API_KEY, baseUrl: env.ASAAS_BASE_URL }) }
     : {}),

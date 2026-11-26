@@ -43,10 +43,20 @@ export * from './invite/invite.ts';
 export * from './invite/slug.ts';
 export * from './trial/emails.ts';
 export type { EmailMessage, EmailSender } from './trial/email-types.ts';
+export * from './trial/resend-sender.ts';
 export * from './calendar/index.ts';
 export * from './reminders/plan.ts';
 export * from './reminders/templates.ts';
 export * from './billing/index.ts';
 export * from './whatsapp/signup.ts';
 export * from './meta/pricing.ts';
+export * from './media/info.ts';
+export {
+  createMediaStore,
+  mediaKey,
+  r2Config,
+  r2EnvSchema,
+  type MediaStore,
+  type R2Config,
+} from './media/store.ts';
 export * from './profile/business-profile.ts';

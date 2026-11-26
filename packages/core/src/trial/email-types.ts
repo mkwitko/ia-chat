@@ -4,7 +4,7 @@ export interface EmailMessage {
   text: string;
 }
 
-/** Transactional email. The real provider arrives with the account from E-00f. */
+/** Transactional email: Resend in production (resend-sender.ts), the log in development. */
 export interface EmailSender {
   send(message: EmailMessage): Promise<void>;
 }

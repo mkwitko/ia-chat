@@ -1,4 +1,5 @@
 import { ContentType, type MessageContent } from '@app/channels';
+import { MediaState } from '@app/core';
 import { MessageType, type Prisma } from '@app/db';
 
 const TYPE_BY_CONTENT: Readonly<Record<MessageContent['type'], MessageType>> = {
@@ -26,9 +27,8 @@ export function contentColumns(content: MessageContent): {
     return { type, text: null, media: { lat: content.lat, lng: content.lng } };
   if (content.type === ContentType.unsupported)
     return { type, text: null, media: { raw: content.raw } };
-  return {
-    type,
-    text: content.caption ?? null,
-    media: { mediaId: content.mediaId, mime: content.mime },
-  };
+  const media = { mediaId: content.mediaId, mime: content.mime };
+  // Stickers are never downloaded (spec 03); the rest waits for the media job (E-10).
+  const state = content.type === ContentType.sticker ? {} : { state: MediaState.pending };
+  return { type, text: content.caption ?? null, media: { ...media, ...state } };
 }

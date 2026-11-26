@@ -123,6 +123,17 @@ Implementação (E-09, 24/11/2026):
 - **Envio a BSUID (nv).** Quando o paciente esconde o telefone, o cliente envia para o BSUID. Confirmar com o número de teste da Meta.
 - **Alertas (RF-25 e RF-26).** Falha com erro 131047 (janela expirada) ou 131042 (pagamento) gera log de erro para o operador; reconciliação diária às 7h de São Paulo lista mensagens de saída sem status há mais de 1 hora, por tenant, sem conteúdo.
 
+Implementação (E-10, 25/11/2026):
+
+- **Job `media.fetch`.** O processamento do webhook grava a mensagem de áudio, imagem ou documento com `media = { mediaId, mime, state: 'pending', attempts: 0 }` e, depois do commit, enfileira o job. Ele resolve a URL na Graph API, baixa, grava no R2 em `tenants/<tenant_id>/media/<id da mensagem>.<ext>` (RN-05) e passa o estado para `stored` com a chave. Figurinha não é baixada (sem `state`). Mídia do eco do dono também é guardada (para o painel), mas só o áudio do paciente é transcrito.
+- **Tentativas (RF-24).** Cada falha soma em `attempts`; o job falha de verdade (o pg-boss tenta de novo com espera crescente) até a terceira, quando o estado vira `unavailable` e o job termina sem erro. Os logs levam só ids e o nome do erro.
+- **Armazenamento.** Pedido assinado (SigV4, URL pré-assinada, sem SDK: `packages/core/src/media/sigv4.ts`, conferido contra o exemplo publicado pela AWS) para o R2, que é compatível com S3. Variáveis `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_MEDIA_BUCKET` e `R2_ENDPOINT` (opcional). Sem elas a mídia não é baixada e o painel mostra "indisponível".
+- **O turno espera a mídia.** O turno que encontra mídia ainda em `pending` não roda; quando o job termina (guardada ou indisponível), ele pede um novo turno. Se o job se perder, o turno espera no máximo 2 minutos e segue tratando a mídia como indisponível. Se o turno já respondeu nesse meio-tempo, o fim tardio do job não gera segunda resposta.
+- **Áudio.** A transcrição vai para `messages.text` (o áudio não tem legenda) e entra no histórico do modelo como `[áudio transcrito] ...`. Um áudio sem texto (indisponível ou silêncio) recebe a mensagem fixa de reenvio. A lista de urgência vale sobre a transcrição.
+- **Corte em 3 minutos.** Os áudios do WhatsApp são Ogg/Opus: o corte é feito na última página Ogg antes de 180 s (a posição de cada página vem no cabeçalho), sem decodificar. Outro contêiner segue inteiro e a transcrição é cortada na proporção. Nos dois casos `media.truncated = true` e a resposta ganha, no código, o aviso fixo de que só os 3 primeiros minutos foram ouvidos.
+- **Imagem e documento (RN-22).** Nunca vão a modelo. Sozinhos (sem legenda), recebem a mensagem fixa "recebi, o profissional vai ver", a conversa passa para o profissional e ele é notificado. Com legenda, a legenda é texto do paciente e o turno segue normal. Localização e figurinha sozinhas não geram resposta.
+- **Painel.** A conversa traz `media: { state, mime, url }`; a `url` é a rota `GET /api/conversations/:id/messages/:messageId/media`, que confere o tenant e responde 302 para uma URL assinada do R2 de 5 minutos. O painel mostra player e transcrição do áudio, pré-visualização da imagem e link do documento.
+
 Tratamento por tipo de conteúdo:
 
 | Tipo | Conduta |

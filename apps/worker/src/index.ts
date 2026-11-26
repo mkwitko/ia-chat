@@ -29,9 +29,10 @@ import { NotifyReason, startNotifier, startSummaryNotifier } from './notify/inde
 import { sendNightlySummary } from './agenda/nightly-summary.ts';
 import { syncSummarySchedules } from './agenda/summary-schedule.ts';
 import { turnScheduler } from './conversation/turn-scheduler.ts';
+import { mediaScheduler, startMediaWorker } from './media/wiring.ts';
 import { processInboundEvent } from './inbound/job.ts';
 import { findStaleMessages } from './inbound/reconcile.ts';
-import { logEmailSender } from './trial/log-sender.ts';
+import { workerEmailSender } from './trial/log-sender.ts';
 import { sweepTrials } from './trial/sweep.ts';
 import { startReminderSweep } from './reminders/wiring.ts';
 import { startBilling } from './billing/wiring.ts';
@@ -83,12 +84,8 @@ for (const queue of QUEUES) {
 }
 
 const appLog = {
-  warn: (fields: object, message: string) => {
-    log.warn(fields, message);
-  },
-  info: (fields: object, message: string) => {
-    log.info(fields, message);
-  },
+  warn: log.warn.bind(log),
+  info: log.info.bind(log),
 };
 const notifier = startNotifier({ db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
 const remind = (tenantId: string, reason: NotifyReason) => (conversationId: string) => {
@@ -105,6 +102,7 @@ await workTenantQueue({
     processInboundEvent(tx, data, {
       alert,
       scheduleTurn: turnScheduler(boss),
+      scheduleMedia: mediaScheduler(boss),
       notifyUsage: (tenantId, { reason, conversationId }) => {
         remind(tenantId, reason)(conversationId);
       },
@@ -158,7 +156,7 @@ await boss.work(SUMMARY_SYNC_QUEUE.name, async () => {
 
 // S-05 (RF-84, RF-88): abandonment reminders and the end of the trial, once each, every hour.
 const webOrigin = process.env.WEB_ORIGIN ?? DEFAULT_WEB_ORIGIN;
-const trialEmail = logEmailSender((fields, message) => {
+const trialEmail = workerEmailSender(env, (fields, message) => {
   log.info(fields, message);
 });
 await boss.schedule(TRIAL_SWEEP_QUEUE.name, TRIAL_SWEEP_CRON);
@@ -189,7 +187,7 @@ await startReminderSweep({
   tokenKey: process.env.META_TOKEN_KEY,
   log: appLog.info,
 });
-
+await startMediaWorker({ boss, db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
 const turns = await startTurnWorker({
   boss,
   db,

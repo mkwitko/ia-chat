@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# Static panel (apps/web) and public site (apps/site), served by Caddy with automatic HTTPS.
+# Static panel (apps/web) and public site (apps/site), served by Caddy over HTTP behind the Cloudflare Tunnel.
 FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS build
 WORKDIR /app
 RUN npm install --global pnpm@12.21.0

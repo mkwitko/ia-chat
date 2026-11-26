@@ -61,7 +61,7 @@ Não é código. Quem faz é você; começa já.
 
 ### E-00f Nome e contas
 - [ ] Escolher o nome (a skill `founder-brand` ajuda) e conferir marca no INPI
-- [ ] Registrar domínio; criar contas de GitHub, Cloudflare e e-mail transacional
+- [x] Registrar domínio; criar contas de GitHub, Cloudflare e e-mail transacional (consultorioaberto.com.br; e-mail pela Resend, `packages/core/src/trial/resend-sender.ts`)
 
 ### E-00g Chaves e acessos para desenvolver
 Necessárias a partir de E-06. Vão num `.env` local, nunca no repositório.
@@ -105,7 +105,7 @@ Spec: `02-arquitetura.md` (modelo de dados), `03` (RF-23b).
 ### E-04 Autenticação
 Spec: `06-seguranca-e-lgpd.md` (RN-33, RN-34).
 - [x] Better Auth com Postgres, organizações como tenant, papéis dono, profissional e recepcionista
-- [x] Cadastro, login por e-mail e por Google, verificação de e-mail, recuperação de senha. Google entra quando houver credencial (E-00c); e-mail real com o provedor de E-00f, até lá vai para o log em desenvolvimento
+- [x] Cadastro, login por e-mail e por Google, verificação de e-mail, recuperação de senha. Google entra quando houver credencial (E-00c); e-mail real pela Resend (`RESEND_API_KEY`); sem a chave vai para o log em desenvolvimento
 - [x] Middleware do Fastify que resolve usuário, tenant e papel e abre `withTenant`
 - [x] Convite de membro
 - [x] **(teste primeiro)** Recepcionista não acessa cobrança nem integrações; usuário de um tenant não acessa outro
@@ -176,10 +176,11 @@ Spec: `03-whatsapp-e-conversa.md` (duas formas de conexão, motor).
 - [ ] A mesma suíte de contrato do E-09 passa neste adaptador
 
 ### E-10 Mídia e áudio
-- [ ] Job imediato de download para o R2, com caminho por tenant e URL assinada
-- [ ] Novas tentativas e estado "mídia indisponível"
-- [ ] Transcrição pelo AI Gateway; corte em 3 minutos com aviso
-- [ ] Conduta por tipo de conteúdo conforme a tabela da especificação
+- [x] Job imediato de download para o R2, com caminho por tenant e URL assinada
+- [x] Novas tentativas e estado "mídia indisponível"
+- [x] Transcrição pelo AI Gateway; corte em 3 minutos com aviso
+- [x] Conduta por tipo de conteúdo conforme a tabela da especificação
+- [ ] Transcrição real com áudio de paciente (chamada paga, precisa de aprovação): só os testes com modelo falso rodaram
 
 ### E-11 Turnos
 Spec: `03-whatsapp-e-conversa.md` (entrega natural).
@@ -340,10 +341,10 @@ Spec: `05-agenda-e-pagamentos.md` (assinatura do SaaS).
 
 ### E-26 Produção
 Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
-- [ ] Escolher o provedor pelos critérios da especificação
-  - Feito: comparação de três opções em `02-arquitetura.md`. Falta o dono escolher e criar a conta.
+- [x] Escolher o provedor pelos critérios da especificação
+  - Decisão do dono (25/11/2026): o piloto roda no servidor próprio já existente (Oracle Cloud, ARM64, 2 vCPU, 12 GB), compartilhado com outros projetos; tráfego público só pelo Cloudflare Tunnel, sem porta aberta. Comparação original em `02-arquitetura.md`.
 - [ ] API, worker, Postgres e gateway na rede privada; deploy automatizado
-  - Feito no código: `docker/Dockerfile`, `docker/edge/` (Caddy com HTTPS), `docker-compose.prod.yml` (sem porta do Postgres exposta, serviço `migrate`), `.github/workflows/deploy.yml` (GHCR + SSH, desligado sem os segredos `DEPLOY_*`). Falta o servidor, o DNS e os segredos; o gateway de WhatsApp (WAHA) entra no compose quando o canal QR for ativado.
+  - Feito no código: `docker/Dockerfile`, `docker/edge/` (Caddy em HTTP na rede interna), `cloudflared` no compose (Cloudflare Tunnel), `docker-compose.prod.yml` (nenhuma porta publicada, limites de memória, serviço `migrate`), `.github/workflows/deploy.yml` (imagens arm64 no runner ARM, GHCR; SSH desligado sem os segredos `DEPLOY_*`); o gateway de WhatsApp (WAHA) entra no compose quando o canal QR for ativado.
 - [x] Arquivamento de WAL no R2, backup completo e diferencial, cifrados (pgBackRest, `docker/postgres/`; semanal completo, diário diferencial, 4 completos retidos)
 - [x] Script de restauração em ponto no tempo num servidor descartável, executado com sucesso (`scripts/restore-pitr.sh`; ensaio completo contra MinIO local em `scripts/test-backup-drill.sh`, passou em 25/11/2026). Falta rodar contra o bucket real do R2 no primeiro deploy
 - [ ] Alertas: WAL atrasado, disco, fila parada, canal desconectado, falha de entrega, erro de webhook

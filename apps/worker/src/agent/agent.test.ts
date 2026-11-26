@@ -173,4 +173,25 @@ describe('conversation agent (E-13)', () => {
     expect(reply).toMatchObject({ handoff: true, urgent: true, model: 'none' });
     expect(fake.prompts).toHaveLength(0);
   });
+
+  it('answers an image alone with the fixed "professional will look" and hands off, no model (RN-22)', async () => {
+    const scope = await conversation({ autonomy: Autonomy.auto, answered: true });
+    const fake = scripted([]);
+    const reply = await agentWith(fake.model)(turnOf(scope, [null], MessageType.image));
+    expect(reply).toMatchObject({ text: AgentCopy.mediaReceived, handoff: true, model: 'none' });
+    expect(fake.prompts).toHaveLength(0);
+  });
+
+  it('asks to resend when the audio could not be heard, and says when it was cut at 3 minutes', async () => {
+    const scope = await conversation({ autonomy: Autonomy.auto, answered: true });
+    const fake = scripted([{ text: 'Claro, qual dia?' }]);
+    const lost = await agentWith(fake.model)(turnOf(scope, [null], MessageType.audio));
+    expect(lost).toMatchObject({ text: AgentCopy.mediaUnavailable, handoff: false });
+    const long = turnOf(scope, ['quero marcar uma consulta'], MessageType.audio);
+    const reply = await agentWith(fake.model)({
+      ...long,
+      messages: long.messages.map((message) => ({ ...message, audioTruncated: true })),
+    });
+    expect(reply?.text).toBe(`Claro, qual dia?\n\n${AgentCopy.audioTruncated}`);
+  });
 });

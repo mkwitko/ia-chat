@@ -100,6 +100,9 @@ async function applyPrefilter(
   if (kind === PrefilterKind.urgency) return urgent;
   if (kind === PrefilterKind.ignore) return null;
   if (kind === PrefilterKind.unsupported) return fixed(AgentCopy.unsupported, false);
+  if (kind === PrefilterKind.mediaUnavailable) return fixed(AgentCopy.mediaUnavailable, false);
+  // Image or document alone: nothing is read (RN-22); the professional is told and takes over.
+  if (kind === PrefilterKind.media) return fixed(AgentCopy.mediaReceived, true);
   if (kind === PrefilterKind.optOut) {
     await recordClientConsent(db, {
       tenantId: turn.tenantId,
@@ -146,7 +149,7 @@ async function generate(
     if (!checked.ok) return fixed(AgentCopy.handoffNotice(input.profile), true);
     const { result } = checked;
     return {
-      text: identified(result.text, input),
+      text: audioNotice(identified(result.text, input), turn),
       model: modelKey(result.model),
       costMicroUsd: result.costMicroUsd,
       mode: input.autonomy === Autonomy.approve ? DeliveryMode.draft : DeliveryMode.send,
@@ -158,6 +161,13 @@ async function generate(
       return fixed(AgentCopy.handoffNotice(input.profile), true);
     throw error;
   }
+}
+
+/** Spec 03: an audio cut at three minutes is always said, whatever the model wrote. */
+function audioNotice(text: string, turn: RespondInput): string {
+  return turn.messages.some((message) => message.audioTruncated)
+    ? `${text}\n\n${AgentCopy.audioTruncated}`
+    : text;
 }
 
 /** Fixed answers keep their message first (SAMU before anything) and introduce after. */
