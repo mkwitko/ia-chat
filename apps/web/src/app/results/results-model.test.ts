@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { durationOf, formatSeconds, rateOf } from './results-model';
+import { durationOf, formatSeconds, moneyOf, rateOf } from './results-model';
 
 describe('rateOf', () => {
   it('rounds to a whole percent when the sample is enough', () => {
@@ -27,5 +27,13 @@ describe('formatSeconds', () => {
     expect(formatSeconds(90)).toBe('2 min');
     expect(formatSeconds(3600)).toBe('1 h');
     expect(formatSeconds(4800)).toBe('1 h 20 min');
+  });
+});
+
+describe('moneyOf', () => {
+  it('shows the sum only once the count reaches the sample', () => {
+    expect(moneyOf(5, 90_000, 5)).toEqual({ kind: 'ok', count: 5, cents: 90_000 });
+    expect(moneyOf(4, 72_000, 5)).toEqual({ kind: 'insufficient', count: 4 });
+    expect(moneyOf(0, 0, 5)).toEqual({ kind: 'insufficient', count: 0 });
   });
 });

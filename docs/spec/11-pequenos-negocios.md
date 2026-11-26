@@ -148,6 +148,7 @@ Princípio: **medir antes de afirmar.** O piloto começa com uma linha de base e
 | 13 | Indicações (P1) | Cadastros com código ÷ códigos distribuídos; ativados e assinantes à parte | tabela de indicação | M-11 |
 | 14 | Avaliações pedidas e recebidas (P1) | Pedidos enviados e avaliações públicas obtidas; sem nota inventada | `scheduled_messages`; avaliação lançada à mão | M-12 |
 | 15 | Custo por conversa | Custo de IA em reais ÷ conversas do período (câmbio H-09) | `ai_usage` | Nada |
+| 16 | Dinheiro recuperado (H-41) | Soma de `services.price_cents` dos agendamentos `created_by = ai` com `status = completed` e início no período; com o consultório fechado: criados fora de toda `availability_rules` na hora local | `appointments`, `services`, `availability_rules` | Nada |
 
 **Linha de base** (antes de ligar o assistente, 14 dias):
 

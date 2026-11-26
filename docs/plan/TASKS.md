@@ -532,7 +532,7 @@ Spec: 11 ("Modelo de indicação"), H-27. Bloqueio: código; recompensa é decis
 ### M-12 Avaliações e relatório simples (P1)
 Spec: 11 (métricas 13 e 14). Bloqueio: código; depende de M-08 e E-22.
 - [ ] Pedido de avaliação depois do atendimento realizado, com consentimento; link do perfil público que o dono informa
-- [ ] Relatório semanal de uma tela, por e-mail ou push, com as métricas de Resultados
+- [x] Relatório semanal de uma tela, por e-mail ou push, com as métricas de Resultados Feito (H-41): segunda 08:00 no fuso do consultório, cinco linhas (conversas respondidas, agendamentos do assistente, comparecimentos, recuperado, perguntas sem resposta), e-mail ao dono e push; desliga em Mais > Notificações
 - Pronto quando: o relatório do piloto sai sem número calculado à mão.
 
 ### M-13 Outros segmentos e P2 (depois do piloto)
@@ -547,3 +547,9 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] API de clientes, Início e Resultados do mês, com testes
 - [x] Telas Início, Clientes e Resultados; navegação de cinco itens
 - [ ] Passada no navegador em 360 px e 1280 px (quatro estados por tela)
+
+### SMB-02 Dinheiro recuperado e relatório semanal (pesquisa 09 #1 e #2)
+- [x] **(teste primeiro)** Cálculo: agendados pelo assistente, "Compareceu", preço do serviço, por semana local, com o consultório fechado (`packages/db/src/results/recovered.test.ts`)
+- [x] Início: "Recuperado este mês" com a contagem e "Como calculamos"; Resultados: total e detalhe por semana; "Ainda sem dados" abaixo de 5
+- [x] Relatório semanal (fila `report.weekly`, migração `weekly_report`), e-mail e push, sem nome nem conteúdo; desligar em Mais
+- Pronto quando: `vitest` do cálculo e do relatório passa e as telas mostram o valor com a fórmula.
