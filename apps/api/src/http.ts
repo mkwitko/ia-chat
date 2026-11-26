@@ -51,6 +51,7 @@ export const ErrorCode = {
   suggestFailed: 'suggest_failed',
   historyNotOffered: 'history_not_offered',
   historyWindowClosed: 'history_window_closed',
+  historyNotDone: 'history_not_done',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

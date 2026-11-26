@@ -19,6 +19,7 @@ import {
   type Tx,
 } from './index.ts';
 import { FIXTURE, SEED_TENANT_NAME } from './seed-data.ts';
+import { seedImportStaging } from './seed-import.ts';
 
 interface Ids {
   tenantId: string;
@@ -43,6 +44,7 @@ export async function seedTenant(db: Db, name: string = SEED_TENANT_NAME): Promi
     const ids = await seedSetup(tx, tenant.id);
     await seedConversation(tx, ids);
     await seedSchedule(tx, ids);
+    await seedImportStaging(tx, ids);
   });
   return tenant.id;
 }

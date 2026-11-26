@@ -2,6 +2,9 @@ import { Check, ChevronRight, Circle } from 'lucide-react';
 import { Link } from 'react-router';
 import { Route } from '@/routes';
 import { useOnboarding, type OnboardingView } from '../onboarding/onboarding-api';
+import { useReviewContacts } from '../whatsapp/review-api';
+import { ReviewCopy } from '../whatsapp/review-copy';
+import { HistoryState, useWhatsappStatus } from '../whatsapp/whatsapp-api';
 
 // docs/research/09, "Adiar para depois da ativação": what is worth refining once the assistant
 // is on, on Início, until each item is done. Facts come from GET /api/onboarding.
@@ -24,7 +27,7 @@ interface Item {
   to?: string;
 }
 
-function itemsOf({ checklist }: OnboardingView): Item[] {
+function itemsOf({ checklist }: OnboardingView, staged: number): Item[] {
   return [
     { label: ChecklistCopy.tone, done: checklist.tone, to: Route.tone },
     { label: ChecklistCopy.reminders, done: true },
@@ -35,14 +38,19 @@ function itemsOf({ checklist }: OnboardingView): Item[] {
       to: checklist.unanswered > 0 ? Route.knowledge : Route.profile,
     },
     { label: ChecklistCopy.team, done: checklist.team, to: Route.team },
+    ...(staged > 0
+      ? [{ label: ReviewCopy.checklist(staged), done: false, to: Route.importReview }]
+      : []),
   ];
 }
 
 /** Shown after the guided setup, while something on the list is still open. */
 export function ChecklistCard() {
   const view = useOnboarding().data;
+  const history = useWhatsappStatus().data?.channel?.history.state;
+  const staged = useReviewContacts(history === HistoryState.done).data?.length ?? 0;
   if (view?.current !== null) return null;
-  const items = itemsOf(view);
+  const items = itemsOf(view, staged);
   if (items.every((item) => item.done)) return null;
   return (
     <section

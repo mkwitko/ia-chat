@@ -1,19 +1,19 @@
-import { ContactAction, InboundKind, type InboundEvent } from '@app/channels';
-import { MESSAGE_TEXT_RETENTION_DAYS } from '@app/core';
 import {
-  HistoryImportState,
-  MessageAuthor,
-  MessageDirection,
-  MessageStatus,
-  type Tx,
-} from '@app/db';
-import { upsertContact } from './contacts.ts';
+  ContactAction,
+  InboundKind,
+  stageContact,
+  stageMessage,
+  type InboundEvent,
+} from '@app/channels';
+import { MESSAGE_TEXT_RETENTION_DAYS } from '@app/core';
+import { HistoryImportState, type Tx } from '@app/db';
 import { contentColumns } from './message-row.ts';
 
 // E-24b, spec 03 "Histórico da coexistência": what the `history` and `smb_app_state_sync` webhooks
-// bring is stored as read-only context. Messages are flagged `imported`: they never open a turn,
-// never count as a conversation, never move the unread count or the control, and the assistant
-// never reads them. Nothing is imported unless the owner authorized it in the panel (`requested`).
+// bring goes to a staging area, never to Clientes or conversations. The owner reviews it in the
+// panel and only the chosen contacts and messages are imported (commitImport: messages flagged
+// `imported`, never answered, never read by the assistant). Nothing is staged unless the owner
+// authorized it (`requested`), and nothing after the review is closed (`history_reviewed_at`).
 
 const MS_PER_DAY = 86_400_000;
 const PERCENT_DONE = 100;
@@ -58,15 +58,16 @@ export async function applyHistoryEvents(
   if (events.length === 0) return;
   const channel = await tx.channel.findUniqueOrThrow({
     where: { id: channelId },
-    select: { historyImport: true },
+    select: { historyImport: true, historyReviewedAt: true },
   });
-  if (!AUTHORIZED.has(channel.historyImport)) return;
+  if (!AUTHORIZED.has(channel.historyImport) || channel.historyReviewedAt) return;
   const cutoff = Date.now() - MESSAGE_TEXT_RETENTION_DAYS * MS_PER_DAY;
   for (const event of events) {
     if (event.kind === InboundKind.historyMessage) {
-      if (event.at.getTime() >= cutoff) await importMessage(tx, { tenantId, channelId, event });
+      if (event.at.getTime() >= cutoff)
+        await stageHistoryMessage(tx, { tenantId, channelId, event });
     } else if (event.kind === InboundKind.contactSync) {
-      await importContact(tx, tenantId, event);
+      await stageHistoryContact(tx, { tenantId, channelId, event });
     } else {
       await recordProgress(tx, channelId, event);
     }
@@ -75,52 +76,36 @@ export async function applyHistoryEvents(
 
 type MessageEvent = Extract<HistoryEvent, { kind: typeof InboundKind.historyMessage }>;
 
-async function importMessage(
+/** The thread message waits in staging (`import_messages`) until the owner picks whose to bring. */
+async function stageHistoryMessage(
   tx: Tx,
   scope: { tenantId: string; channelId: string; event: MessageEvent },
 ): Promise<void> {
   const { tenantId, channelId, event } = scope;
-  const contact = await upsertContact(tx, { tenantId, ref: event.contact, optIn: false });
-  const conversation = await tx.conversation.upsert({
-    where: { tenantId_channelId_contactId: { tenantId, channelId, contactId: contact.id } },
-    create: { tenantId, channelId, contactId: contact.id },
-    update: {},
-  });
-  const { count } = await tx.message.createMany({
-    data: {
-      tenantId,
-      channelId,
-      conversationId: conversation.id,
-      ...contentColumns(event.content),
-      direction: event.fromOwner ? MessageDirection.outbound : MessageDirection.inbound,
-      author: event.fromOwner ? MessageAuthor.human : MessageAuthor.patient,
-      status: event.fromOwner ? MessageStatus.sent : MessageStatus.received,
+  await stageMessage(tx, {
+    tenantId,
+    channelId,
+    ref: event.contact,
+    message: {
       providerMessageId: event.providerMessageId,
-      providerTimestamp: event.at,
-      imported: true,
-      sentFromPhone: event.fromOwner,
-      createdAt: event.at, // the original time: thread order, and retention counts from it
+      fromOwner: event.fromOwner,
+      at: event.at,
+      ...contentColumns(event.content),
     },
-    skipDuplicates: true,
   });
-  if (count === 0) return;
-  const latest = conversation.lastMessageAt;
-  if (!latest || latest < event.at)
-    await tx.conversation.update({
-      where: { id: conversation.id },
-      data: { lastMessageAt: event.at },
-    });
 }
 
-/** The owner's phone book: name and phone into Clientes. No consent: they have not written to us. */
-async function importContact(
+/** The owner's phone book: staged by name and phone. They become clients only if the owner picks them. */
+async function stageHistoryContact(
   tx: Tx,
-  tenantId: string,
-  event: Extract<HistoryEvent, { kind: typeof InboundKind.contactSync }>,
+  scope: { tenantId: string; channelId: string; event: ContactEvent },
 ): Promise<void> {
-  if (event.action === ContactAction.remove) return; // removing from the phone book keeps the client
-  await upsertContact(tx, { tenantId, ref: event.contact, optIn: false });
+  const { tenantId, channelId, event } = scope;
+  if (event.action === ContactAction.remove) return; // removing from the phone book changes nothing here
+  await stageContact(tx, { tenantId, channelId, ref: event.contact });
 }
+
+type ContactEvent = Extract<HistoryEvent, { kind: typeof InboundKind.contactSync }>;
 
 async function recordProgress(
   tx: Tx,

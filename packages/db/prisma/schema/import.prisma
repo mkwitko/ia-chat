@@ -1,0 +1,47 @@
+// Staging area of the coexistence history import (E-24b, spec 03): what Meta sends waits here until
+// the owner chooses who becomes a client and whose messages come over. Staged rows are purged on
+// confirm, on "descartar tudo" and after IMPORT_STAGING_DAYS.
+
+/// One person from the phone book or an old thread, not yet a client.
+model ImportContact {
+  id             String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  channelId      String    @map("channel_id") @db.Uuid
+  /// Phone key (ninth digit normalized) or, without a phone, the BSUID.
+  key            String
+  bsuid          String?
+  phoneE164      String?   @map("phone_e164")
+  name           String?
+  messageCount   Int       @default(0) @map("message_count")
+  firstMessageAt DateTime? @map("first_message_at") @db.Timestamptz
+  lastMessageAt  DateTime? @map("last_message_at") @db.Timestamptz
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  messages ImportMessage[] @relation("ImportMessage_contact")
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, channelId, key])
+  @@map("import_contacts")
+}
+
+/// A staged message: text (or a media placeholder), kept only until the owner decides.
+model ImportMessage {
+  id                String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId          String      @map("tenant_id") @db.Uuid
+  importContactId   String      @map("import_contact_id") @db.Uuid
+  providerMessageId String      @map("provider_message_id")
+  fromOwner         Boolean     @map("from_owner")
+  type              MessageType
+  text              String?
+  media             Json?
+  at                DateTime    @db.Timestamptz
+  createdAt         DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  contact ImportContact @relation("ImportMessage_contact", fields: [tenantId, importContactId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, importContactId, providerMessageId])
+  @@index([tenantId, importContactId, at])
+  @@map("import_messages")
+}

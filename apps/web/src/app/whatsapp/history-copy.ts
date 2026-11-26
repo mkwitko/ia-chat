@@ -7,8 +7,8 @@ export const HistoryCopy = {
   deadline: (when: string) => `Você pode decidir até ${when}. Depois disso a Meta não deixa pedir.`,
   imports: 'O que trazemos',
   importsList: [
-    'Nome e número dos seus contatos, para aparecerem em Clientes.',
-    'As mensagens de texto dos últimos 90 dias, para você ler dentro de cada conversa.',
+    'Nome e número dos seus contatos, para você escolher quem vira cliente.',
+    'As mensagens de texto dos últimos 90 dias, só das conversas que você escolher trazer.',
   ],
   discards: 'O que não trazemos e o que não fazemos',
   discardsList: [
@@ -28,7 +28,7 @@ export const HistoryCopy = {
     percent === null
       ? 'Trazendo o histórico. Pode levar alguns minutos; deixe o app WhatsApp Business aberto.'
       : `Trazendo o histórico: ${String(percent)}%. Deixe o app WhatsApp Business aberto.`,
-  done: 'Histórico trazido. As conversas antigas aparecem em Conversas, marcadas como do histórico.',
+  done: 'Histórico recebido. Só entra em Clientes e em Conversas o que você escolher; o resto é apagado.',
   unavailable:
     'O histórico não foi liberado no app do celular, então não veio nada. Para tentar de novo, seria preciso refazer a conexão.',
   suggestTitle: 'Perguntas frequentes a partir do histórico',
