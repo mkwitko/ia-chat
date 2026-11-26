@@ -21,6 +21,7 @@ function fakeClient(failSubscribe = false, funded = true) {
       return Promise.resolve();
     },
     hasPaymentMethod: () => Promise.resolve(funded),
+    requestAppData: () => Promise.resolve(),
     templateKeys: () => Promise.resolve(new Set([`${MessageTemplates.confirmation.name}:pt_BR`])),
     createTemplate: (_waba: string, template: { name: string }) => {
       calls.push(`template:${template.name}`);

@@ -94,7 +94,7 @@ export interface AppDeps extends HealthDeps {
 }
 
 export function buildApp(deps: AppDeps): FastifyInstance {
-  const { env, db, email, enqueueInbound } = deps;
+  const { env, db, email } = deps;
   // Behind the edge (Caddy), which sets X-Forwarded-For to Cloudflare's CF-Connecting-IP.
   const app = Fastify({
     ...fastifyObservability(env),
@@ -119,18 +119,27 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   const hub = createInboxHub(env.DATABASE_URL, app.log);
   registerEventsRoute(app, hub);
   app.addHook('onClose', () => hub.close());
-  const { META_APP_SECRET: appSecret, META_VERIFY_TOKEN: verifyToken } = env;
-  if (appSecret && verifyToken && enqueueInbound) {
-    registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
-  }
-  if (env.WAHA_WEBHOOK_SECRET && enqueueInbound)
-    registerWahaWebhook(app, { secret: env.WAHA_WEBHOOK_SECRET, enqueue: enqueueInbound });
+  registerWhatsappWebhooks(app, deps);
   registerQrRoutes(app, { waha: deps.waha ?? wahaConfig(env) });
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
   registerSupportRoutes(app, { whatsapp: env.SUPPORT_WHATSAPP, email: env.SUPPORT_EMAIL });
-  registerWhatsappSignupRoutes(app, { config: whatsappSignupConfig(env), fetch: deps.metaFetch });
+  registerWhatsappSignupRoutes(app, {
+    config: whatsappSignupConfig(env),
+    fetch: deps.metaFetch,
+    gateway: deps.simulatorGateway,
+  });
   return app;
+}
+
+/** Inbound WhatsApp: the Cloud API (E-09) and the WAHA gateway (E-09b), each when configured. */
+function registerWhatsappWebhooks(app: FastifyInstance, { env, enqueueInbound }: AppDeps): void {
+  if (!enqueueInbound) return;
+  const { META_APP_SECRET: appSecret, META_VERIFY_TOKEN: verifyToken } = env;
+  if (appSecret && verifyToken)
+    registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
+  if (env.WAHA_WEBHOOK_SECRET)
+    registerWahaWebhook(app, { secret: env.WAHA_WEBHOOK_SECRET, enqueue: enqueueInbound });
 }
 
 /** The inbox: thread, drafts, sending as the professional, and the patient's media (E-10). */

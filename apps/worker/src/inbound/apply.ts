@@ -13,11 +13,13 @@ import {
 import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts';
 import { applyChannelState } from './channel-state.ts';
 import { resolveContact } from './contacts.ts';
+import { applyHistoryEvents, isHistoryEvent, type HistoryEvent } from './history-apply.ts';
 import { countMessage, MessageCategory, type UsageNotice } from '../usage/counters.ts';
 import { contentColumns } from './message-row.ts';
 import { mediaToFetch } from './media-request.ts';
 import { recordMetaUsage } from './meta-usage.ts';
 
+type LiveEvent = Exclude<InboundEvent, HistoryEvent>;
 const WINDOW_MS = 86_400_000; // Meta customer service window: 24 h from the patient's last message
 type ConversationEvent = Extract<
   InboundEvent,
@@ -69,7 +71,10 @@ export async function applyInboundEvents(
   tx: Tx,
   { tenantId, channelId, events }: InboundScope,
 ): Promise<InboundResult> {
-  const ordered = [...events].sort((a, b) => a.at.getTime() - b.at.getTime()); // RF-23: provider time
+  await applyHistoryEvents(tx, { tenantId, channelId, events: events.filter(isHistoryEvent) });
+  const ordered = events
+    .filter((event): event is LiveEvent => !isHistoryEvent(event))
+    .sort((a, b) => a.at.getTime() - b.at.getTime()); // RF-23: provider time
   const result: InboundResult = { alerts: [], turns: [], usage: [], media: [], channelDown: false };
   for (const event of ordered) await applyOne(tx, { tenantId, channelId, event, result });
   return result;
@@ -87,7 +92,7 @@ async function applyStateEvent(
 interface ApplyOne {
   tenantId: string;
   channelId: string;
-  event: InboundEvent;
+  event: LiveEvent;
   result: InboundResult;
 }
 
@@ -206,6 +211,7 @@ function messageRow({
     status: fromPatient ? MessageStatus.received : MessageStatus.sent,
     providerMessageId: event.providerMessageId,
     providerTimestamp: event.at,
+    sentFromPhone: !fromPatient, // an echo: the owner wrote it in the Business app
   };
 }
 

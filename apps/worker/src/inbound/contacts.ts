@@ -15,6 +15,18 @@ type Contact = Awaited<ReturnType<Tx['contact']['create']>>;
  * that was known by only one of the two gets the other completed instead of a duplicate.
  */
 export async function resolveContact(tx: Tx, tenantId: string, ref: ContactRef): Promise<Contact> {
+  return upsertContact(tx, { tenantId, ref, optIn: true });
+}
+
+interface Upsert {
+  tenantId: string;
+  ref: ContactRef;
+  /** Writing first is an opt-in; a name from the owner's phone book or an old thread is not. */
+  optIn: boolean;
+}
+
+/** The lookup and completion of `resolveContact`; the opt-in is recorded only when asked. */
+export async function upsertContact(tx: Tx, { tenantId, ref, optIn }: Upsert): Promise<Contact> {
   const key = ref.phoneE164 ? phoneKey(ref.phoneE164) : null;
   const byBsuid = ref.bsuid
     ? await tx.contact.findUnique({ where: { tenantId_bsuid: { tenantId, bsuid: ref.bsuid } } })
@@ -29,15 +41,16 @@ export async function resolveContact(tx: Tx, tenantId: string, ref: ContactRef):
       data: { tenantId, bsuid: ref.bsuid ?? null, name: ref.name ?? null, ...phone },
     });
     // Writing first is the opt-in to the conversation itself (not to marketing).
-    await recordConsent(tx, {
-      tenantId,
-      contactId: created.id,
-      kind: ConsentKind.opt_in,
-      category: ConsentCategory.service,
-      source: ConsentSource.patient_message,
-      actor: { type: ConsentActor.contact },
-      now: new Date(),
-    });
+    if (optIn)
+      await recordConsent(tx, {
+        tenantId,
+        contactId: created.id,
+        kind: ConsentKind.opt_in,
+        category: ConsentCategory.service,
+        source: ConsentSource.patient_message,
+        actor: { type: ConsentActor.contact },
+        now: new Date(),
+      });
     return created;
   }
   // ponytail: a person already stored twice (one record by BSUID, another by phone) is not

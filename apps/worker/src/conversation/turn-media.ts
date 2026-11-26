@@ -38,7 +38,12 @@ export function turnMessage(row: Row): TurnMessage {
 /** Everything unanswered since pendingSince, including messages of a discarded turn (A-03). */
 export function unansweredMessages(tx: Tx, conversationId: string, pendingSince: Date) {
   return tx.message.findMany({
-    where: { conversationId, author: MessageAuthor.patient, createdAt: { gte: pendingSince } },
+    where: {
+      conversationId,
+      imported: false,
+      author: MessageAuthor.patient,
+      createdAt: { gte: pendingSince },
+    },
     orderBy: [{ providerTimestamp: 'asc' }, { createdAt: 'asc' }],
     select: {
       id: true,

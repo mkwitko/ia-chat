@@ -35,6 +35,7 @@ export async function readWeeklyReport(
       where: {
         direction: MessageDirection.outbound,
         author: { in: ANSWERED_BY },
+        imported: false,
         createdAt: created,
       },
       distinct: ['conversationId'],
