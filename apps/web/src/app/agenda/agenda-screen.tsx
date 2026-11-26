@@ -23,9 +23,10 @@ function useAgendaParams() {
   const [params, setParams] = useSearchParams();
   const requested = params.get(DAY_PARAM) ?? '';
   // The computer opens on the week (more than one day in view); the phone on the day.
-  const fallback = useMedia(WIDE_QUERY) ? View.week : View.day;
+  const wide = useMedia(WIDE_QUERY);
   const asked = params.get(VIEW_PARAM);
-  const view = asked === View.week || asked === View.day ? asked : fallback;
+  const valid = asked === View.week || asked === View.day ? asked : View.week;
+  const view = wide ? valid : View.day;
   return {
     view,
     requested,

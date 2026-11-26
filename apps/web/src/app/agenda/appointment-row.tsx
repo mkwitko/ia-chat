@@ -37,17 +37,7 @@ export function AppointmentRow({ item, timezone, onMove, professional }: Readonl
         <span className="w-14 shrink-0 font-semibold tabular-nums">
           {timeLabel(item.startsAt, timezone)}
         </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate font-semibold">
-            {item.patientName ?? item.patientPhone ?? Copy.noPatient}
-          </span>
-          <span className="block truncate text-sm text-muted-foreground">
-            {item.serviceName} · {labelOf(Copy.status, item.status) ?? item.status} ·{' '}
-            {item.createdBy === CreatedBy.ai ? Copy.byAssistant : Copy.byYou}
-            {item.calendarSync === CalendarSync.failed && ` · ${Copy.notSynced}`}
-          </span>
-          {professional && <ProfessionalTag name={professional} />}
-        </span>
+        <RowText item={item} professional={professional} />
         <ChevronDown
           className={cn(
             'size-5 shrink-0 text-muted-foreground transition-transform',
@@ -56,7 +46,17 @@ export function AppointmentRow({ item, timezone, onMove, professional }: Readonl
           aria-hidden="true"
         />
       </button>
-      {open && <RowActions item={item} timezone={timezone} onMove={onMove} onCancel={leave} />}
+      {open && (
+        <RowActions
+          item={item}
+          timezone={timezone}
+          onMove={onMove}
+          onCancel={(options) => {
+            setOpen(false);
+            leave(options);
+          }}
+        />
+      )}
     </li>
   );
 }
@@ -94,5 +94,23 @@ function RowActions({
         {Copy.cancel}
       </Button>
     </div>
+  );
+}
+
+/** Who, what, and the state on its own line so it is never cut off. */
+function RowText({ item, professional }: Readonly<Pick<RowProps, 'item' | 'professional'>>) {
+  return (
+    <span className="min-w-0 flex-1">
+      <span className="block truncate font-semibold">
+        {item.patientName ?? item.patientPhone ?? Copy.noPatient}
+      </span>
+      <span className="block truncate text-sm text-muted-foreground">{item.serviceName}</span>
+      <span className="block text-sm text-pretty text-muted-foreground">
+        {labelOf(Copy.status, item.status) ?? item.status} ·{' '}
+        {item.createdBy === CreatedBy.ai ? Copy.byAssistant : Copy.byYou}
+        {item.calendarSync === CalendarSync.failed && ` · ${Copy.notSynced}`}
+      </span>
+      {professional && <ProfessionalTag name={professional} />}
+    </span>
   );
 }

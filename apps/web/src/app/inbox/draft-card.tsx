@@ -2,7 +2,7 @@ import { FilePen } from 'lucide-react';
 import { useState } from 'react';
 import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
-import { confirmThen } from '@/components/ui/confirm-dialog';
+import { confirmThen, questionOf } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import { ApiError } from '@/lib/api';
 import { DraftAction, useDecideDraft, type PendingDraft } from './inbox-api';
@@ -103,7 +103,7 @@ function ViewButtons({ busy, run, go }: Readonly<Buttons>) {
         disabled={busy}
         onClick={() => {
           confirmThen(
-            { title: Copy.confirmDiscard, confirm: Copy.confirmYes, destructive: true },
+            { ...questionOf(Copy.confirmDiscard), confirm: Copy.confirmYes, destructive: true },
             () => {
               run(DraftAction.discard);
             },

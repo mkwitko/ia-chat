@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Route } from '@/routes';
 import { AgendaCopy as Copy } from './agenda-copy';
-import { addDaysIso, dayTitle, shortDay } from './agenda-dates';
+import { addDaysIso, compactDayTitle, dayTitle, shortDay } from './agenda-dates';
 
 export const DAY_PARAM = 'dia';
 export const VIEW_PARAM = 'visao';
@@ -17,9 +17,9 @@ interface ToolbarProps {
   onChange: (next: Record<string, string>) => void;
 }
 
-function rangeLabel(day: string, view: View): string {
+function rangeLabel(day: string, view: View, short: boolean): string {
   if (!day) return '';
-  if (view === View.day) return dayTitle(day);
+  if (view === View.day) return short ? compactDayTitle(day) : dayTitle(day);
   return `${shortDay(day)} a ${shortDay(addDaysIso(day, WEEK_DAYS - 1))}`;
 }
 
@@ -36,7 +36,7 @@ export function AgendaToolbar({ day, view, onChange }: Readonly<ToolbarProps>) {
       >
         {Copy.today}
       </Button>
-      <div className="ml-auto hidden md:block">
+      <div className="ml-auto hidden lg:block">
         <ViewSwitch view={view} onChange={onChange} />
       </div>
     </div>
@@ -70,7 +70,8 @@ function DayNav({ day, view, onChange }: Readonly<ToolbarProps>) {
         className="min-w-0 flex-1 text-center font-semibold first-letter:uppercase md:w-56 md:flex-none"
         aria-live="polite"
       >
-        {rangeLabel(day, view)}
+        <span className="md:hidden">{rangeLabel(day, view, true)}</span>
+        <span className="hidden md:inline">{rangeLabel(day, view, false)}</span>
       </p>
       <Button variant="ghost" size="icon" aria-label={Copy.next} onClick={move(step)}>
         <ChevronRight aria-hidden="true" />

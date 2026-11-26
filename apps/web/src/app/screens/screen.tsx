@@ -30,10 +30,14 @@ export function Screen(props: Readonly<ScreenProps>) {
         className,
       )}
     >
-      <div className="flex items-center gap-2 px-4 pt-5 pb-4 md:px-0 md:pt-0 md:pb-6">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-3 px-4 pt-5 pb-4 md:px-0 md:pt-0 md:pb-6">
         <h1 className="text-xl">{title}</h1>
         {help && <HelpLink article={help} />}
-        {action && <div className="ml-auto">{action}</div>}
+        {action && (
+          <div className="basis-full sm:ml-auto sm:basis-auto [&>*]:w-full sm:[&>*]:w-auto">
+            {action}
+          </div>
+        )}
       </div>
       {hint && help && <FirstVisitHint id={help} text={hint} />}
       {children}
