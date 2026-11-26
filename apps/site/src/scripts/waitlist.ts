@@ -10,6 +10,11 @@ const FORM = '[data-waitlist]';
 const STATUS = '[data-status]';
 const TOKEN_FIELD = 'cf-turnstile-response';
 const OK_STATUS = 201;
+// M-11: the link a business shares is /?ref=CODE. The code rides along in this tab until the form
+// is sent; the API keeps it only if some business really has it. Nothing is sent to anyone else.
+const REF_PARAM = 'ref';
+const REF_STORAGE_KEY = 'referral-code';
+const MAX_REF = 16;
 
 const MESSAGES = {
   sending: 'Enviando...',
@@ -17,6 +22,16 @@ const MESSAGES = {
   invalid: 'Não conseguimos validar o envio. Confira o e-mail e a verificação e tente de novo.',
   failed: 'Não conseguimos enviar agora. Tente de novo em alguns minutos.',
 } as const;
+
+function referralCode(): string | undefined {
+  const fromUrl = new URLSearchParams(window.location.search).get(REF_PARAM)?.trim();
+  try {
+    if (fromUrl) sessionStorage.setItem(REF_STORAGE_KEY, fromUrl.slice(0, MAX_REF));
+    return sessionStorage.getItem(REF_STORAGE_KEY) ?? undefined;
+  } catch {
+    return fromUrl?.slice(0, MAX_REF);
+  }
+}
 
 function field(data: FormData, name: string): string | undefined {
   const value = data.get(name);
@@ -40,6 +55,7 @@ async function submit(form: HTMLFormElement, status: HTMLElement): Promise<void>
         email: field(data, 'email'),
         name: field(data, 'name'),
         specialty: field(data, 'specialty'),
+        ref: referralCode(),
         token,
       }),
     });

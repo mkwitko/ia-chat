@@ -56,6 +56,11 @@ export const MoreCopy = {
       hint: 'Mensagem a quem parou de responder e pedido de avaliação',
       to: Route.growth,
     },
+    {
+      label: 'Indique e ganhe',
+      hint: 'Seu link para indicar outros profissionais',
+      to: Route.referral,
+    },
     { label: 'Equipe', hint: 'Quem mais acessa o painel', to: Route.team },
     { label: 'Ajuda e suporte', hint: 'Artigos e conversa com a gente', to: Route.support },
   ],

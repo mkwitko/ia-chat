@@ -1,3 +1,4 @@
+import { REFERRAL_CODE_PATTERN } from '@app/core';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import type { EmailSender } from '../email/outbox.ts';
@@ -24,6 +25,8 @@ const bodySchema = z.object({
     .transform((value) => value.toLowerCase()),
   name: z.string().trim().max(MAX_TEXT).optional(),
   specialty: z.string().trim().max(MAX_TEXT).optional(),
+  /** M-11: the code of the business whose link brought the person; a bad one is ignored. */
+  ref: z.string().trim().toUpperCase().regex(REFERRAL_CODE_PATTERN).optional().catch(undefined),
   token: z.string().min(1).max(MAX_TOKEN),
 });
 
@@ -77,16 +80,31 @@ async function signUp({ app, deps }: Context, request: FastifyRequest, reply: Fa
   const body = bodySchema.safeParse(request.body);
   if (!body.success)
     return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
-  const { token, ...data } = body.data;
+  const { token, ref, ...data } = body.data;
   if (!(await deps.verify(token, request.ip))) {
     return reply.code(HttpStatus.badRequest).send({ error: ErrorCode.invalidRequest });
   }
   const { count } = await app.db.client.waitlistEntry.createMany({
-    data: { ...data, name: data.name ?? null, specialty: data.specialty ?? null },
+    data: {
+      ...data,
+      name: data.name ?? null,
+      specialty: data.specialty ?? null,
+      referralCode: await knownReferral(app, ref),
+    },
     skipDuplicates: true,
   });
   if (count > 0) await confirm(app, deps, data.email);
   return reply.code(HttpStatus.created).send({ ok: true });
+}
+
+/** Only a code some business really has is stored; the answer never says which are valid. */
+async function knownReferral(app: FastifyInstance, ref: string | undefined) {
+  if (!ref) return null;
+  const owner = await app.db.client.tenant.findUnique({
+    where: { referralCode: ref },
+    select: { id: true },
+  });
+  return owner ? ref : null;
 }
 
 /** A signup whose confirmation cannot be sent is removed, so trying again works. */

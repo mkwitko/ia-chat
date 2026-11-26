@@ -37,6 +37,7 @@ import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerPlacesRoutes } from './setup/places-routes.ts';
 import { registerProfessionalRoutes } from './setup/professionals-routes.ts';
 import { registerProfessionalServiceRoutes } from './setup/professional-services-routes.ts';
+import { registerReferralRoutes } from './growth/referral-routes.ts';
 import { registerLeadFollowUpRoutes } from './growth/lead-follow-up-routes.ts';
 import { registerReviewRequestRoutes } from './growth/review-request-routes.ts';
 import { registerProfileRoutes } from './setup/profile-routes.ts';
@@ -115,6 +116,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   registerModelRoutes(app, deps);
   registerSettingsRoutes(app);
   registerWaitlistIfConfigured(app, deps);
+  registerReferralRoutes(app, { siteOrigin: env.SITE_ORIGIN });
   registerInbox(app, deps);
   registerPushRoutes(app, { publicKey: env.PUSH_VAPID_PUBLIC_KEY });
   const hub = createInboxHub(env.DATABASE_URL, app.log);
