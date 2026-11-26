@@ -1,6 +1,6 @@
-# Ideia (revisão de posicionamento e nome, 25/11/2026)
+# Consultório Aberto
 
-Gerado a partir de `PRODUCT.md`, `docs/spec/01`, `07`, `11`, `docs/brand.md` e das decisões do dono em 25/11/2026. Não altera código nem renomeia nada.
+Ideia revista em 25/11/2026. Gerado a partir de `PRODUCT.md`, `docs/spec/01`, `07`, `11`, `docs/brand.md` e das decisões do dono em 25/11/2026. Não altera código nem renomeia nada.
 
 ## O negócio
 
@@ -18,7 +18,7 @@ Pequenos negócios e profissionais autônomos de serviço com hora marcada no Br
 
 - Mercado: pequenos negócios de serviço com hora marcada (dono, 25/11/2026).
 - MVP: recepcionista com IA + Google Agenda + WhatsApp oficial (Coexistência) + lista simples de clientes + resultados.
-- O nome "Consultório Aberto" é específico de saúde; o dono quer um nome mais amplo.
+- Nome: **Consultório Aberto**, mantido pelo dono em 25/11/2026 (substitui a busca por um nome mais amplo). Primeiro público: saúde e bem-estar que atende sozinho.
 - Não é CRM corporativo nem "sistema operacional de IA" (`docs/spec/11`).
 
 ## O que NÃO está provado
@@ -27,4 +27,8 @@ Nenhum cliente pagante, depoimento ou métrica real ainda. Preços são hipótes
 
 ## Linha de posicionamento (recomendada)
 
-Para o dono de um pequeno negócio com hora marcada, que perde clientes porque não consegue responder o WhatsApp enquanto atende, a <nome> é a recepcionista virtual com IA que transforma conversas em horários marcados e ajuda a recuperar quem sumiu, sem trocar o seu número e com você no controle.
+Para o dono de um pequeno negócio com hora marcada, que perde clientes porque não consegue responder o WhatsApp enquanto atende, o Consultório Aberto é a recepcionista virtual com IA que transforma conversas em horários marcados e ajuda a recuperar quem sumiu, sem trocar o seu número e com você no controle.
+
+## Atualização da suíte (25/11/2026)
+
+Preços: Essencial R$ 197, Agenda R$ 297, Pro R$ 497, Clínica R$ 697 (2 profissionais; do 3º, R$ 147/mês cada). Implantação: removida (configuração assistida incluída). Teste: 14 dias da conexão do WhatsApp, até 100 conversas. Entrada por convite com onboarding guiado de cerca de 9 minutos. Cada cliente paga a Meta no próprio cartão (1.000 respostas/mês grátis por número). Detalhes em `pricing.md`; linha de posicionamento final em `marketing.md`.

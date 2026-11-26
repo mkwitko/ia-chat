@@ -1,0 +1,13 @@
+{
+  "id": "P001",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "A ideia de uma recepcionista de IA no meu WhatsApp, o mesmo número onde eu falo com paciente, me deixa com o pé atrás. Não sei o total que vou pagar no fim do mês com a Meta somada ao plano, e não fecho nada assim.",
+  "objection": "Não sei quanto vai sair no meu cartão no fim do mês: plano, implantação de R$ 497 e a cobrança da Meta somadas. Sem esse número eu não compro.",
+  "would_change_my_mind": "Um exemplo real de conta mensal com o plano Agenda, a Meta e as conversas a mais já somados, e um teste em que eu possa ver a IA respondendo antes de pagar a implantação.",
+  "price_too_cheap": 79,
+  "price_cheap": 147,
+  "price_expensive": 247,
+  "price_too_expensive": 297
+}

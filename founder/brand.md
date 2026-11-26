@@ -123,3 +123,7 @@ O dono manteve **Consultório Aberto**: as rodadas acima soaram leves demais. `c
 - Com .com.br e .com livres: Agenda Sempre Aberta, Consultório Sempre Aberto, Recepção Sempre Aberta, Porta Sempre Aberta, Aberto o Dia Todo (`abertotododia`), Aberto 24h (`abertoate24h`), Sempre Atendendo, Não Fecha Nunca.
 - **Tamo Aberto**: descartado. `tamoaberto.com.br` está no ar desde 10/2026 como "Tamo Aberto: sua loja de delivery sem comissão", um SaaS para pequeno negócio vendido pelo WhatsApp e por link. É público vizinho e o nome é igual. Variações livres (.com.br e .com): Tamos Aberto, Estamos Abertos.
 - **Marca AI / Marca Aí**: descartado. Já existem dois produtos com esse nome: "MarcaAí — Agende sua quadra" (`usemarcaai.com`, agendamento de quadras esportivas) e "Marca Aí — desafios e check-ins" (`marcaaiapp.com`). `marcaai.com.br` (desde 2013), `.com`, `.ia.br` e `.app.br` têm dono, e `marca.ai` está à venda na Spaceship. "Marca" também quer dizer brand, o que confunde a busca.
+
+## Nota (25/11/2026): direção visual mudou
+
+O dono manteve o nome **Consultório Aberto**. A direção visual do painel mudou para **grafite monocromático com jade** como única cor de assinatura (jade = "o assistente está aqui"), substituindo o azul-petróleo de 24/11. Fonte de verdade: `DESIGN.md`. Cores, tipografia e primeiras telas descritas acima neste arquivo que conflitem com `DESIGN.md` ficam valendo só como histórico; a landing nova segue `DESIGN.md` e `landing-brief.md`.

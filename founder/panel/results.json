@@ -1,0 +1,146 @@
+{
+ "business": "Consultório Aberto: recepcionista com IA no WhatsApp para pequenos negócios de hora marcada no Brasil",
+ "seed": 594702,
+ "dealt": 20,
+ "answered": 18,
+ "skipped": [
+  [
+   "P019",
+   "missing"
+  ],
+  [
+   "P020",
+   "missing"
+  ]
+ ],
+ "buys": 0,
+ "passes": 18,
+ "buy_rate": 0.0,
+ "by_segment": [
+  [
+   "Clínica ou espaço com 2 a 4 profissionais e secretária (faturamento mensal em R$)",
+   5,
+   0.0
+  ],
+  [
+   "Autônomo de saúde e bem-estar que atende sozinho (faturamento mensal em R$)",
+   8,
+   0.0
+  ],
+  [
+   "Dono de salão, estúdio ou estética pequeno (faturamento mensal em R$)",
+   5,
+   0.0
+  ]
+ ],
+ "by_behaviour": [
+  [
+   "Responde tudo pelo celular",
+   5,
+   0.0
+  ],
+  [
+   "Compra por indicação",
+   3,
+   0.0
+  ],
+  [
+   "Ama ferramenta nova",
+   2,
+   0.0
+  ],
+  [
+   "Desconfiado de robô",
+   3,
+   0.0
+  ],
+  [
+   "Caçador de preço",
+   2,
+   0.0
+  ],
+  [
+   "Tem secretária ou ajudante",
+   3,
+   0.0
+  ]
+ ],
+ "by_income": [
+  [
+   "$40,000 and up",
+   6,
+   0.0
+  ],
+  [
+   "under $18,000",
+   6,
+   0.0
+  ],
+  [
+   "$18,000 to $40,000",
+   6,
+   0.0
+  ]
+ ],
+ "why_not": [
+  [
+   "trust",
+   11,
+   [
+    "A ideia de uma recepcionista de IA no meu WhatsApp, o mesmo número onde eu falo com paciente, me deixa com o pé atrás. Não sei o total que vou pagar no fim do mês com a Meta somada ao plano, e não fecho nada assim.",
+    "Eu já respondo o WhatsApp no celular entre um atendimento e outro e dou conta. Não confio que uma IA fale com meus pacientes sem eu ver o que ela escreveu, e já pago um sistema de agenda, então não sei o que isso acrescenta."
+   ],
+   [
+    "P001",
+    "P002"
+   ]
+  ],
+  [
+   "habit",
+   4,
+   [
+    "Eu atendo sozinha e já dou conta do WhatsApp entre um atendimento e outro, mesmo que seja corrido. Não quero mexer na forma como eu trabalho agora nem aprender mais um sistema, e uma recepcionista de IA no meu número parece coisa que eu ia ter que ficar vigiando.",
+    "Eu compro por indicação. Ninguém da minha área recomendou isso, então não tenho por que trocar a rotina. Minha primeira reação é que não quero aprender mais um sistema."
+   ],
+   [
+    "P006",
+    "P014"
+   ]
+  ],
+  [
+   "price",
+   3,
+   [
+    "Com 2 a 4 profissionais e a secretária, o plano Agenda mais a implantação já pesam demais para mim. Além disso, não confio em recepcionista de robô falando com meus pacientes; quem marca e responde quero que seja gente.",
+    "Eu sei que perdi cliente por responder no dia seguinte, mas R$ 497 de implantação mais R$ 197 por mês pesa muito pra quem fatura pouco. E meus clientes preferem falar com gente, não com um robô no WhatsApp."
+   ],
+   [
+    "P010",
+    "P012"
+   ]
+  ]
+ ],
+ "why_yes": [],
+ "flip": [
+  "Um exemplo real de conta mensal com o plano Agenda, a Meta e as conversas a mais já somados, e um teste em que eu possa ver a IA respondendo antes de pagar a implantação.",
+  "Ver outro autônomo de saúde, da minha área, usando por dois meses e dizendo que perdeu menos pacientes e que não precisou ajustar nada depois.",
+  "Uma colega de profissão que já usa me contar que funciona na prática e que ela não perdeu nenhum paciente com a IA respondendo.",
+  "Ver funcionando com o meu número e a minha agenda, com clientes reais aceitando bem o atendimento e sem eu precisar revisar cada resposta.",
+  "Ver uma clínica parecida usando por uns meses, com resultado comprovado (menos faltas ou mais horários preenchidos), e poder testar sem pagar a implantação.",
+  "Se eu visse que a agenda dela me tira de verdade horas de WhatsApp por semana, com o meu número, sem eu precisar mexer em nada e com um período de teste sem risco.",
+  "Ver dez ou quinze conversas reais de outro profissional da minha área, com agenda marcada certinha, antes de pagar.",
+  "Ver outro salão ou estúdio parecido com o meu usando e com as clientes elogiando, sem reclamação, e poder cancelar sem multa logo no começo.",
+  "Testar de graça e ver na prática que ela só responde com o preço e o horário que eu cadastrei e que nada sai sem eu aprovar.",
+  "Ver funcionando de verdade por um mês, com preço menor ou sem a taxa de implantação, e poder assumir a conversa sempre que quiser sem perder nada.",
+  "Ver a IA atendendo de verdade no meu número, com a minha agenda e os meus preços, e eu aprovando cada resposta por um tempo sem nenhum erro.",
+  "Testar com meus próprios clientes por uns dias, sem pagar a implantação antes, e ver que os pacientes não percebem que é robô.",
+  "Uma colega do meu ramo, que eu conheço, me mostrar que usa há meses e que a agenda dela ficou organizada sem erro.",
+  "Um colega de profissão que já usa e recomenda, com a experiência dele mostrando que dá menos trabalho do que responder sozinho.",
+  "Um plano de entrada perto de R$ 97 com o mesmo teste grátis e sem a taxa de implantação.",
+  "Ver funcionando de verdade, com a minha agenda, durante o teste grátis, sem precisar pagar a implantação antes.",
+  "Uma resposta por escrito sobre onde ficam as conversas, quem acessa e como apago os dados do cliente, mais um teste que eu possa encerrar sem pagar a implantação.",
+  "Ver que ela aguenta sozinha uma semana de conversas reais com a minha secretária de férias, sem eu precisar mexer em nada."
+ ],
+ "purchases_first_month_per_buyer": null,
+ "price_answers": 18
+}

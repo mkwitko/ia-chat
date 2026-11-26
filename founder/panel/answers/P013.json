@@ -1,0 +1,13 @@
+{
+  "id": "P013",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Eu não compro coisa nova de software pelo anúncio. Se uma colega de profissão que eu conheço não tivesse usado e recomendado, eu não olharia duas vezes. Ainda mais com R$ 497 de implantação antes de ver se funciona.",
+  "objection": "Não sei se a IA vai marcar errado ou responder mal uma paciente, e não tenho tempo para corrigir bagunça no meio do atendimento. Também acho que R$ 297 por mês mais R$ 497 de entrada é muito para quem fatura pouco.",
+  "would_change_my_mind": "Uma colega do meu ramo, que eu conheço, me mostrar que usa há meses e que a agenda dela ficou organizada sem erro.",
+  "price_too_cheap": 97,
+  "price_cheap": 150,
+  "price_expensive": 250,
+  "price_too_expensive": 350
+}
