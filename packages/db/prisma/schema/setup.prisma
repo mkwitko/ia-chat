@@ -108,6 +108,8 @@ model Service {
   name             String
   durationMinutes  Int      @map("duration_minutes")
   priceCents       Int      @map("price_cents")
+  /// H-52: Pix deposit asked when the assistant books this service; null = no deposit.
+  depositCents     Int?     @map("deposit_cents")
   visibleToPatient Boolean  @default(true) @map("visible_to_patient")
   active           Boolean  @default(true)
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz

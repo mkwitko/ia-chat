@@ -109,6 +109,7 @@ model Tenant {
   pushSubscriptions    PushSubscription[]
   calendarIntegration  CalendarIntegration?
   featureSettings      FeatureSetting[]
+  depositSettings      DepositSettings?
 
   @@map("tenants")
 }
