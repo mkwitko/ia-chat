@@ -99,6 +99,7 @@ describe('availability with Google', () => {
     const scope = await db.withTenant(tenantId, async (tx) =>
       slotsIn(tx, {
         ...(await loadScope(tx)),
+        professionalId: (await tx.professional.findFirstOrThrow()).id,
         durationMinutes: 60,
         from: MONDAY_9,
         to: new Date(MONDAY_9.getTime() + 3 * HOUR_MS),

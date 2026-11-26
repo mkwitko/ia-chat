@@ -37,6 +37,7 @@ const bookSchema = z
   .object({
     key: z.uuid(),
     serviceId: z.uuid(),
+    professionalId: z.uuid().optional(),
     startsAt: z.iso.datetime({ offset: true }),
     contactId: z.uuid().optional(),
     newPatient: newPatient.optional(),
@@ -98,6 +99,7 @@ async function createAppointment(request: FastifyRequest, reply: FastifyReply) {
     tenantId: tenant.tenantId,
     contactId: contact.id,
     serviceId: body.serviceId,
+    professionalId: body.professionalId,
     startsAt: new Date(body.startsAt),
     key: `${KEY_PREFIX}:${body.key}`,
     createdBy: AppointmentCreator.human,

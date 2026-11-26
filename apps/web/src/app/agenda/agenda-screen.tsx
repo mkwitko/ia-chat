@@ -6,9 +6,11 @@ import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { Screen } from '../screens/screen';
 import { AgendaBody } from './agenda-body';
 import { AgendaCopy as Copy } from './agenda-copy';
-import { useAgenda } from './agenda-api';
+import { useAgenda, type AgendaView } from './agenda-api';
 import { AgendaToolbar, DAY_PARAM, VIEW_PARAM, View, WEEK_DAYS } from './agenda-toolbar';
 import { BookingForm, BookingKind, type BookingTarget } from './booking-form';
+import { PROFESSIONAL_PARAM } from './professional-api';
+import { ProfessionalFilter } from './professional-controls';
 
 const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -23,6 +25,7 @@ function useAgendaParams() {
   return {
     view,
     requested,
+    professionalId: params.get(PROFESSIONAL_PARAM) ?? '',
     days: view === View.week ? WEEK_DAYS : 1,
     change: (next: Record<string, string>) => {
       setParams({ ...Object.fromEntries(params), ...next }, { replace: true });
@@ -32,10 +35,13 @@ function useAgendaParams() {
 
 /** Spec 10, "Agenda": the day on the phone, the week as seven day columns on the computer. */
 export function AgendaScreen() {
-  const { view, requested, days, change } = useAgendaParams();
+  const { view, requested, days, change, professionalId } = useAgendaParams();
   const agenda = useAgenda(ISO_DAY.test(requested) ? requested : undefined, days);
   const [booking, setBooking] = useState<BookingTarget | null>(null);
   const day = agenda.data?.from ?? requested;
+  const team = agenda.data?.professionals ?? [];
+  const shown = agenda.data && onlyOf(agenda.data, professionalId);
+  const names = team.length > 1 && !professionalId ? namesOf(team) : undefined;
   return (
     <Screen title={NavCopy.agenda}>
       <AgendaToolbar
@@ -43,9 +49,10 @@ export function AgendaScreen() {
         view={view}
         onChange={change}
         onNew={() => {
-          setBooking({ kind: BookingKind.new, day });
+          setBooking({ kind: BookingKind.new, day, professionalId });
         }}
       />
+      {team.length > 1 && <TeamFilter team={team} value={professionalId} onChange={change} />}
       {booking && agenda.data && (
         <BookingForm
           target={booking}
@@ -59,7 +66,43 @@ export function AgendaScreen() {
       {agenda.isError && (
         <LoadError message={Copy.loadFailed} onRetry={() => void agenda.refetch()} />
       )}
-      {agenda.data && <AgendaBody agenda={agenda.data} days={days} onNew={setBooking} />}
+      {shown && <AgendaBody agenda={shown} days={days} onNew={setBooking} names={names} />}
     </Screen>
+  );
+}
+
+/** One professional's appointments and time offs; '' keeps everyone's. */
+function onlyOf(agenda: AgendaView, professionalId: string): AgendaView {
+  if (!professionalId) return agenda;
+  const mine = (item: { professionalId: string }) => item.professionalId === professionalId;
+  return {
+    ...agenda,
+    appointments: agenda.appointments.filter(mine),
+    timeOffs: agenda.timeOffs.filter(mine),
+  };
+}
+
+const namesOf = (team: AgendaView['professionals']) =>
+  new Map(team.map((one) => [one.id, one.name]));
+
+interface TeamFilterProps {
+  team: AgendaView['professionals'];
+  value: string;
+  onChange: (next: Record<string, string>) => void;
+}
+
+/** Clínica: everyone's agenda or one professional's (spec 10, "Agenda"). */
+function TeamFilter({ team, value, onChange }: Readonly<TeamFilterProps>) {
+  return (
+    <div className="py-3 md:-mt-2 md:mb-6 md:py-0">
+      <ProfessionalFilter
+        professionals={team}
+        value={value}
+        withAll
+        onChange={(id) => {
+          onChange({ [PROFESSIONAL_PARAM]: id });
+        }}
+      />
+    </div>
   );
 }

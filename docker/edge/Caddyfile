@@ -44,6 +44,9 @@ http://www.{$SITE_DOMAIN}:80 {
 http://{$SITE_DOMAIN}:80 {
 	import common
 	root * /srv/site
+	# The panel's "Ajuda e suporte" (S-07) reads the public search index across origins.
+	@helpindex path /ajuda/busca.json
+	header @helpindex Access-Control-Allow-Origin "*"
 	try_files {path} {path}.html {path}/index.html
 	file_server
 }

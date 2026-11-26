@@ -38,8 +38,8 @@ Cada linha aponta o que existe hoje (inventário completo na auditoria) e a etap
 | Lembretes e confirmações | AUSENTE | E-22 |
 | Gestão de cancelamento | PARCIAL | M-09 |
 | Lista de espera de agenda | IMPLEMENTADO (spec 05, "Cancelamento, lista de espera e falta") | M-09 |
-| Recuperação de lead | AUSENTE | M-10 |
-| Follow-up | AUSENTE (tipo `follow_up` existe, sem job) | M-10, Fase 4 |
+| Recuperação de lead | IMPLEMENTADO (H-44) | M-10 |
+| Follow-up | IMPLEMENTADO para lead (H-44) e após falta (M-09) | M-10, Fase 4 |
 | Indicações | AUSENTE | M-11 |
 | Avaliações | AUSENTE | M-12 |
 | Origem do lead | AUSENTE | M-06 (em andamento) |
@@ -115,6 +115,10 @@ Vale para todo segmento com `sensitivity = health` e, por segurança, como padr�
 5. **Tudo que o modelo grava passa por filtro:** `registrar_duvida_sem_resposta`, `atualizar_nome_do_contato` e o resumo de conversa passam pelo juízo `informacao_de_saude` (já medido na E-07) e têm limite de tamanho; se positivo, não grava o texto e registra só "pergunta de saúde".
 6. **Retenção:** conteúdo de mensagem tem prazo definido (E-26); resumo não guarda o que a mensagem não pode guardar.
 7. **Política do WhatsApp para saúde:** validar a política da Meta para o segmento **antes de ativar** qualquer cliente de saúde na conexão oficial. Bloqueio jurídico e de conta (E-00b, E-00e), não de código.
+
+## Retomada de lead (M-10)
+
+Configurações > Retorno de clientes. Interruptor desligado por padrão; espera de 1 a 14 dias (padrão 2); texto sugerido que só vale depois de o dono confirmar (salvar é aprovar). Uma única mensagem por contato (livro-razão em `scheduled_messages`, tipo `lead_follow_up`), só a quem nunca teve agendamento e cuja última mensagem foi do assistente ou do profissional. Passa pela trava de envio: opt-out (M-01), controle da IA (RF-31) e janela de 24 h; fora da janela não há template aprovado (E-00b), então nada sai e o profissional recebe um aviso. No máximo 5 por consultório por minuto. Hipótese H-44.
 
 ## Modelo de indicação
 

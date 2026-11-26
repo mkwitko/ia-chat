@@ -1,5 +1,5 @@
 import { aiConfigured, createEnvGateway, dbUsageStore, markedStore } from '@app/ai';
-import { AsaasClient, NodeEnv, resendEmailSender } from '@app/core';
+import { AsaasClient, NodeEnv, resendEmailSender, resendKeyFor } from '@app/core';
 import { createDb, INBOUND_QUEUE, QUEUE_SCHEMA, sendTenantJob } from '@app/db';
 import { AlertEvent, initSentry, logProcessErrors } from '@app/observability';
 import { PgBoss } from 'pg-boss';
@@ -37,6 +37,7 @@ const enqueueInbound = async (tenantId: string, inboundEventId: string) => {
 };
 
 const db = createDb(env.DATABASE_URL);
+const resendKey = resendKeyFor(env);
 // Simulator (spec 10): same gateway as production, usage rows tagged `simulator:`.
 const simulatorGateway = aiConfigured(env)
   ? createEnvGateway({
@@ -50,7 +51,7 @@ const app = buildApp({
   env,
   db,
   enqueueInbound,
-  ...(env.RESEND_API_KEY ? { email: resendEmailSender(env.RESEND_API_KEY) } : {}),
+  ...(resendKey ? { email: resendEmailSender(resendKey) } : {}),
   ...(env.ASAAS_API_KEY
     ? { billing: new AsaasClient({ apiKey: env.ASAAS_API_KEY, baseUrl: env.ASAAS_BASE_URL }) }
     : {}),

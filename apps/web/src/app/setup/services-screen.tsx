@@ -2,7 +2,8 @@ import { formatCents } from '@/lib/money';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen, ScreenWidth } from '../screens/screen';
+import { cn } from '@/lib/utils';
+import { Screen, SETTINGS_COLUMNS } from '../screens/screen';
 import { AddButton } from './add-button';
 import { feedback } from './feedback';
 import { RowActions } from './fields';
@@ -22,9 +23,9 @@ import { NEW_ITEM, useEditing } from './use-editing';
 export function ServicesScreen() {
   const services = useServices();
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <BackLink to={Route.more} label={CommonCopy.more} />
-      <div className="grid gap-10 pt-2 pb-10">
+      <div className={cn(SETTINGS_COLUMNS, 'pt-2 pb-10')}>
         <section className="grid gap-3">
           <h2 className="px-4 text-lg md:px-0">{Copy.servicesHeading}</h2>
           {services.isPending && <ListSkeleton />}

@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { ProgressBar } from '../screens/progress-bar';
-import { Screen, ScreenWidth } from '../screens/screen';
-import { Status, Step, useOnboarding, type OnboardingView } from './onboarding-api';
+import { Screen } from '../screens/screen';
+import { Step, useOnboarding, type OnboardingView } from './onboarding-api';
 import { OnboardingCopy as Copy, STEP_INFO } from './onboarding-copy';
 import { StepPanel } from './step-panel';
-
-const STATUS_LABEL: Record<Status, string> = {
-  [Status.done]: Copy.statusDone,
-  [Status.skipped]: Copy.statusSkipped,
-};
+import { STATUS_LABEL, StepRail } from './step-rail';
 
 /**
  * Spec 09/10, H-37 and H-39: one guided flow, one step at a time, in order (where clients find
@@ -19,7 +15,7 @@ const STATUS_LABEL: Record<Status, string> = {
 export function OnboardingScreen() {
   const onboarding = useOnboarding();
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <div className="grid gap-4 px-4 pb-10 md:px-0">
         <p className="text-sm text-muted-foreground">{Copy.intro}</p>
         {onboarding.isPending && <ListSkeleton />}
@@ -39,36 +35,51 @@ function Flow({ view }: Readonly<{ view: OnboardingView }>) {
   if (!open) return <Summary view={view} onPick={setPicked} />;
   const index = steps.indexOf(open);
   const previous = steps[index - 1];
-  const label = Copy.progress(index + 1, steps.length);
   return (
-    <section
-      className="grid gap-5 rounded-xl border bg-card p-4 shadow-card md:p-6"
-      aria-labelledby="step-title"
-    >
+    <div className="grid gap-4 lg:grid-cols-[17rem_minmax(0,1fr)] lg:items-start lg:gap-10">
+      <StepRail view={view} open={open} onPick={setPicked} />
+      <section
+        className="grid gap-5 rounded-xl border bg-card p-4 shadow-card md:p-6 xl:p-8"
+        aria-labelledby="step-title"
+      >
+        <StepHeading step={open} position={index + 1} total={steps.length} />
+        <StepPanel
+          key={open}
+          step={open}
+          view={view}
+          onSettled={() => {
+            setPicked(null);
+          }}
+          onBack={
+            previous
+              ? () => {
+                  setPicked(previous);
+                }
+              : null
+          }
+          onGoTo={setPicked}
+        />
+      </section>
+    </div>
+  );
+}
+
+function StepHeading({
+  step,
+  position,
+  total,
+}: Readonly<{ step: Step; position: number; total: number }>) {
+  const label = Copy.progress(position, total);
+  return (
+    <>
       <div className="grid gap-2">
         <span className="text-xs font-medium text-muted-foreground">{label}</span>
-        <ProgressBar value={index + 1} total={steps.length} label={label} />
+        <ProgressBar value={position} total={total} label={label} />
       </div>
       <h2 id="step-title" className="text-lg">
-        {STEP_INFO[open].title}
+        {STEP_INFO[step].title}
       </h2>
-      <StepPanel
-        key={open}
-        step={open}
-        view={view}
-        onSettled={() => {
-          setPicked(null);
-        }}
-        onBack={
-          previous
-            ? () => {
-                setPicked(previous);
-              }
-            : null
-        }
-        onGoTo={setPicked}
-      />
-    </section>
+    </>
   );
 }
 

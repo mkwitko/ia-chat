@@ -25,6 +25,8 @@ export interface InviteResult {
   invite: Invite;
   /** Shown once: the token exists only in the link. */
   link: string | null;
+  /** The link went to the invite's address by email. */
+  emailed: boolean;
 }
 
 const PATH = '/api/operator/invites';

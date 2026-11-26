@@ -12,7 +12,7 @@ export async function listUpcoming(
   const rows = await db.withTenant(req.tenantId, (tx) =>
     tx.appointment.findMany({
       where: { contactId: req.contactId, status: { in: LIVE }, startsAt: { gte: req.now } },
-      include: { service: true },
+      include: { service: true, professional: true },
       orderBy: { startsAt: 'asc' },
     }),
   );

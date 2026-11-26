@@ -36,12 +36,13 @@ export function BookingForm({ target, timezone, onClose }: Readonly<FormProps>) 
         value={form.day.value}
         onChange={(value) => {
           form.day.set(value);
-          form.slot.set('');
+          form.slot.set(null);
         }}
       />
       <SlotPicker
         day={form.day.value}
         serviceId={form.service.id}
+        professionalId={form.professionalId}
         timezone={timezone}
         value={form.slot.value}
         onChange={form.slot.set}

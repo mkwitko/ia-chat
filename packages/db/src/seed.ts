@@ -67,6 +67,9 @@ async function seedSetup(tx: Tx, tenantId: string): Promise<Ids> {
   const service = await tx.service.create({ data: { tenantId, ...FIXTURE.service } });
   const location = await tx.location.create({ data: { tenantId, ...FIXTURE.location } });
   await tx.availabilityRule.create({ data: { tenantId, professionalId, ...FIXTURE.availability } });
+  await tx.professionalService.create({
+    data: { tenantId, professionalId, serviceId: service.id },
+  });
   await tx.timeOff.create({ data: { tenantId, professionalId, ...FIXTURE.timeOff } });
   await tx.knowledgeItem.create({ data: { tenantId, ...FIXTURE.knowledge } });
   const contact = await tx.contact.create({

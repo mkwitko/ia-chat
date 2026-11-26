@@ -5,7 +5,8 @@ import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen, ScreenWidth } from '../screens/screen';
+import { cn } from '@/lib/utils';
+import { Screen, SETTINGS_COLUMNS } from '../screens/screen';
 import { TextField } from '../setup/fields';
 import { CommonCopy } from '../setup/setup-copy';
 import { useInvite, useInvitations, useMembers } from './team-api';
@@ -16,7 +17,7 @@ import { TeamCopy as Copy, TeamRole } from './team-copy';
 export function TeamScreen() {
   const role = authClient.useActiveMember().data?.role;
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <BackLink to={Route.more} label={CommonCopy.more} />
       <p className="px-4 pb-2 text-muted-foreground md:px-0">{Copy.intro}</p>
       {role && role !== TeamRole.owner ? (
@@ -43,10 +44,12 @@ function TeamContent() {
       />
     );
   return (
-    <div className="grid gap-10 pt-4 pb-10">
+    <div className={cn(SETTINGS_COLUMNS, 'pt-4 pb-10')}>
       <InviteForm />
-      <InviteRows items={invitations.data} />
-      <MemberRows items={members.data} />
+      <div className="grid gap-10">
+        <InviteRows items={invitations.data} />
+        <MemberRows items={members.data} />
+      </div>
     </div>
   );
 }
@@ -73,7 +76,7 @@ function InviteForm() {
   });
   return (
     <form
-      className="grid gap-3 px-4 md:px-0"
+      className="grid max-w-2xl gap-3 px-4 md:px-0"
       onSubmit={(event) => {
         event.preventDefault();
         invite.send({ email: email.trim().toLowerCase(), role });
