@@ -70,7 +70,7 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
         </MetricGrid>
       </Section>
       <div className="px-4 pt-8 md:px-0">
-        <MoreOptions label={Copy.allNumbers}>
+        <MoreOptions flush label={Copy.allNumbers}>
           <RecoveredWeeks
             weeks={results.recoveredMoney.weeks}
             withMoney={results.recoveredMoney.count >= results.minSample}

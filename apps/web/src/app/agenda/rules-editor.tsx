@@ -26,6 +26,7 @@ export function RulesEditor(props: Readonly<EditorProps>) {
   const [rules, setRules] = useState(props.initial);
   const save = useSaveRules(props.professionalId);
   const valid = validWindows(rules);
+  const changed = JSON.stringify(rules) !== JSON.stringify(props.initial);
   return (
     <form
       className="grid gap-3"
@@ -40,14 +41,15 @@ export function RulesEditor(props: Readonly<EditorProps>) {
         });
       }}
     >
+      <p className="font-medium">{Copy.nowLabel(hoursSummary(props.initial).value)}</p>
       <QuickHours rules={rules} onChange={setRules} />
-      <p className="font-medium">{Copy.nowLabel(hoursSummary(rules).value)}</p>
       <WeekList rules={rules} onChange={setRules} />
       {!valid && (
         <p role="alert" className="text-sm text-danger">
           {Copy.invalidWindows}
         </p>
       )}
+      {changed && <Draft rules={rules} />}
       <FormActions
         pending={save.isPending}
         disabled={!valid || (onSaved !== undefined && rules.length === 0)}
@@ -60,13 +62,22 @@ export function RulesEditor(props: Readonly<EditorProps>) {
 /** Exceptions (lunch break, Saturday morning) one tap away; the week stays short. */
 function WeekList({ rules, onChange }: Readonly<Omit<RowProps, 'weekday'>>) {
   return (
-    <MoreOptions label={Copy.dayByDay}>
+    <MoreOptions flush label={Copy.dayByDay}>
       <ul className="divide-y border-y md:rounded-xl md:border">
         {WEEK_ORDER.map((weekday) => (
           <WeekdayRow key={weekday} weekday={weekday} rules={rules} onChange={onChange} />
         ))}
       </ul>
     </MoreOptions>
+  );
+}
+
+/** Unsaved hours, named as such next to "Salvar". */
+function Draft({ rules }: Readonly<{ rules: RuleWindow[] }>) {
+  return (
+    <p className="text-sm font-medium text-attention">
+      {Copy.afterSave(hoursSummary(rules).value)}
+    </p>
   );
 }
 

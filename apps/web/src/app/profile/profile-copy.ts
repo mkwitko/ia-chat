@@ -36,6 +36,8 @@ export const ProfileCopy = {
   packagePricePlaceholder: '800',
   addPackage: 'Adicionar pacote',
   removePackage: (name: string) => `Remover o pacote ${name}`,
+  removePackageConfirm: (name: string) =>
+    `Remover o pacote "${name}"? Quem já comprou continua com as sessões.`,
   noPackages: 'Nenhum pacote. Se você vende sessões em pacote, cadastre aqui.',
   placesHeading: 'Endereços',
   placesIntro: 'O primeiro é o endereço principal. Atende em mais de um lugar? Adicione os outros.',

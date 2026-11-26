@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { AvailabilityCopy as Copy } from './agenda-copy';
 import type { RuleWindow } from './agenda-api';
-import { applyToDays, WEEK_ORDER, WORKWEEK } from './rules-model';
+import { applyToDays, commonWindow, WEEK_ORDER, WORKWEEK } from './rules-model';
 
 const DEFAULT_WINDOW = { start: '08:00', end: '18:00' } as const;
 interface Window {
@@ -22,8 +22,10 @@ interface QuickHoursProps {
  * The day-by-day list below stays for exceptions (lunch break, Saturday morning).
  */
 export function QuickHours({ rules, onChange }: Readonly<QuickHoursProps>) {
-  const [days, setDays] = useState<readonly number[]>(WORKWEEK);
-  const [window, setWindow] = useState<Window>(DEFAULT_WINDOW);
+  // Start from what is saved: the most common window and the days that have it.
+  const [seed] = useState(() => commonWindow(rules));
+  const [days, setDays] = useState<readonly number[]>(seed?.days ?? WORKWEEK);
+  const [window, setWindow] = useState<Window>(seed?.window ?? DEFAULT_WINDOW);
   const valid = days.length > 0 && window.start < window.end;
   return (
     <fieldset className="grid gap-3 rounded-xl border bg-card p-4">

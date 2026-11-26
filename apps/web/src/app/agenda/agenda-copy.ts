@@ -97,6 +97,7 @@ export const AvailabilityCopy = defineMessages({
     weekdaysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
     quickTitle: 'Mesmo horário em vários dias',
     nowLabel: (summary: string) => `Como está agora: ${summary}.`,
+    afterSave: (summary: string) => `Depois de salvar: ${summary}. Ainda não foi salvo.`,
     dayByDay: 'Ajustar dia a dia (almoço, sábado e outros)',
     quickDays: 'Dias que recebem este horário',
     quickApply: (days: number) =>

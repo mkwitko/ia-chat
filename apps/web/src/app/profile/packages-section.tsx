@@ -1,4 +1,5 @@
-import { X } from 'lucide-react';
+import { confirmRemove } from '@/components/ui/confirm-dialog';
+import { CommonCopy } from '../setup/setup-copy';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { formatCents, parseReais } from '@/lib/money';
@@ -67,14 +68,14 @@ function PackageList({ packages, pending, onRemove }: Readonly<ListProps>) {
           <span className="tabular-nums">{formatCents(item.priceCents)}</span>
           <Button
             variant="ghost"
-            size="icon"
+            className="text-danger"
             aria-label={Copy.removePackage(item.name)}
             disabled={pending}
             onClick={() => {
-              onRemove(index);
+              confirmRemove(Copy.removePackageConfirm(item.name), onRemove, index);
             }}
           >
-            <X aria-hidden="true" />
+            {CommonCopy.remove}
           </Button>
         </li>
       ))}
