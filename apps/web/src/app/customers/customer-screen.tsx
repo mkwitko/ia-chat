@@ -1,14 +1,17 @@
+import { MessageCircle } from 'lucide-react';
 import { Link, useParams } from 'react-router';
+import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { conversationPath, Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
+import { MoreOptions } from '../screens/editor-screen';
 import { Screen, ScreenWidth } from '../screens/screen';
 import { Note } from '../screens/section';
 import { AppointmentsSection } from './customer-appointments';
 import { ConsentSection } from './customer-consent';
 import { PackagesSection } from './customer-packages';
-import { customerName } from './customer-format';
+import { customerName, formatPhone } from './customer-format';
 import { OriginSection } from './customer-origin';
 import { StageSection } from './customer-stage';
 import { useCustomer } from './customers-api';
@@ -44,28 +47,32 @@ function Content({ customer }: Readonly<{ customer: CustomerDetail }>) {
     <div className="grid pb-10">
       <div className="grid gap-2 px-4 pb-2 md:px-0">
         <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          {customer.phone && <span className="tabular-nums">{customer.phone}</span>}
+          {customer.phone && <span className="tabular-nums">{formatPhone(customer.phone)}</span>}
           <StageBadge stage={customer.stage} />
         </p>
         {customer.conversationId && (
-          <Link
-            to={conversationPath(customer.conversationId)}
-            className="flex min-h-11 items-center text-sm font-semibold text-primary"
-          >
-            {Copy.openConversation}
-          </Link>
+          <Button asChild className="w-full sm:w-fit">
+            <Link to={conversationPath(customer.conversationId)}>
+              <MessageCircle aria-hidden="true" />
+              {Copy.openConversation}
+            </Link>
+          </Button>
         )}
       </div>
-      <Note>{Copy.autoStatus}</Note>
-      <OriginSection customer={customer} />
       <AppointmentsSection appointments={customer.appointments} />
       <PackagesSection customerId={customer.id} />
-      <ConsentSection
-        customerId={customer.id}
-        optedOut={customer.optedOut}
-        entries={customer.consent}
-      />
-      <StageSection customerId={customer.id} stage={customer.stage} entries={customer.stages} />
+      <div className="px-4 pt-8 md:px-0">
+        <MoreOptions label={Copy.moreLabel}>
+          <Note>{Copy.autoStatus}</Note>
+          <OriginSection customer={customer} />
+          <ConsentSection
+            customerId={customer.id}
+            optedOut={customer.optedOut}
+            entries={customer.consent}
+          />
+          <StageSection customerId={customer.id} stage={customer.stage} entries={customer.stages} />
+        </MoreOptions>
+      </div>
     </div>
   );
 }
