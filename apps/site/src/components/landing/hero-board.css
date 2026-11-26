@@ -1,0 +1,306 @@
+/* The hero's two-lane board (HeroBoard.astro). Mobile: time runs down, your lane is the left
+   rail. From 960px: time runs right, one row per lane. Everything is visible by default; the
+   sequence only plays when the visitor has not asked for reduced motion. */
+.board {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation);
+}
+.board figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.board .hour {
+  font-weight: 600;
+  font-size: 15px;
+}
+.board .tag {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-2);
+}
+.board .lanes {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 12px 14px;
+  padding: 16px;
+  font-size: 15px;
+  line-height: 21px;
+}
+.board p {
+  margin: 0;
+}
+.board time {
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-2);
+}
+.board .lane {
+  display: none;
+}
+.board .busy {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.board .busy strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.board .busy svg {
+  flex: none;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.board .busy-bar {
+  grid-column: 1;
+  grid-row: 2 / 7;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background:
+    repeating-linear-gradient(135deg, var(--line-strong) 0 1px, transparent 1px 6px),
+    var(--surface-2);
+}
+.board .ev {
+  grid-column: 2;
+  display: grid;
+  gap: 4px;
+}
+.board .e1 {
+  grid-row: 2;
+}
+.board .e2 {
+  grid-row: 3;
+}
+.board .e3 {
+  grid-row: 4;
+}
+.board .e4 {
+  grid-row: 5;
+}
+.board .e5 {
+  grid-row: 6;
+  grid-column: 2;
+}
+.board .end {
+  grid-row: 7;
+  grid-column: 1 / -1;
+}
+.board .in {
+  justify-items: start;
+}
+.board .out {
+  justify-items: end;
+}
+.board .bubble {
+  max-width: 88%;
+  padding: 8px 12px;
+  border-radius: var(--radius-bubble);
+}
+.board .in .bubble {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-top-left-radius: 6px;
+}
+.board .out .bubble {
+  background: var(--jade-soft);
+  border-top-right-radius: 6px;
+}
+.board .bubble b {
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  color: var(--jade-ink);
+}
+.board .slot,
+.board .booked {
+  padding: 8px 12px;
+  border-radius: var(--radius);
+}
+.board .slot {
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.board .booked {
+  position: relative;
+  background: var(--jade-soft);
+  border: 1px solid var(--jade);
+  font-size: 14px;
+  line-height: 19px;
+}
+.board .booked strong {
+  display: block;
+  font-weight: 600;
+}
+.board .booked small {
+  font-size: 12px;
+  color: var(--jade-ink);
+}
+.board .end {
+  display: grid;
+  gap: 2px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.board .end strong {
+  font-weight: 600;
+}
+.board .end span {
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+@media (min-width: 960px) {
+  .board figcaption {
+    padding: 14px 24px;
+  }
+  .board .lanes {
+    grid-template-columns: 132px repeat(4, minmax(0, 1fr)) minmax(0, 0.95fr);
+    grid-template-rows: 56px auto auto;
+    gap: 20px 16px;
+    padding: 24px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .board .lane {
+    display: block;
+    align-self: center;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .board .l-wa {
+    grid-row: 2;
+    align-self: start;
+    padding-top: 22px;
+  }
+  .board .l-ag {
+    grid-row: 3;
+  }
+  .board .busy-bar,
+  .board .busy {
+    grid-row: 1;
+    grid-column: 2 / 6;
+  }
+  .board .busy-bar {
+    border-radius: var(--radius);
+  }
+  .board .busy {
+    position: relative;
+    z-index: 1;
+    align-self: center;
+    justify-self: start;
+    margin-left: 12px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .board .ev {
+    grid-row: 2;
+    align-content: start;
+  }
+  .board .e1 {
+    grid-column: 2;
+  }
+  .board .e2 {
+    grid-column: 3;
+  }
+  .board .e3 {
+    grid-column: 4;
+  }
+  .board .e4 {
+    grid-column: 5;
+  }
+  .board .bubble {
+    max-width: 100%;
+  }
+  .board .e5 {
+    grid-row: 3;
+    grid-column: 5;
+  }
+  .board .end {
+    grid-row: 1 / 4;
+    grid-column: 6;
+    align-content: start;
+    padding: 0 0 0 16px;
+    border-top: 0;
+    border-left: 1px solid var(--line-strong);
+  }
+  .board .end time {
+    font-size: 28px;
+    line-height: 34px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .board .ev,
+  .board .end {
+    animation: board-rise 700ms var(--ease-out) var(--d) both;
+  }
+  .board .booked {
+    animation:
+      board-rise 700ms var(--ease-out) var(--d) both,
+      board-ring 1.4s var(--ease-out) calc(var(--d) + 0.4s) both;
+  }
+  .board .busy-bar {
+    animation: board-fill-down 5s linear 0.2s both;
+  }
+  @media (min-width: 960px) {
+    .board .busy-bar {
+      animation-name: board-fill-right;
+    }
+  }
+}
+@keyframes board-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+}
+@keyframes board-fill-down {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes board-fill-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes board-ring {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--jade) 45%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--jade) 0%, transparent);
+  }
+}

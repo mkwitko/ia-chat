@@ -1,5 +1,12 @@
 ---
-// Section 4: the approval card, from a real panel screenshot with fictitious data.
+// Section 4: the approval card, from a real panel screenshot with fictitious data. Each verb is
+// keyed by number to where its button sits on the screenshot (positions in % of the image).
+const verbs = [
+  { name: 'Enviar', text: 'A resposta está certa: sai como está.', x: 6.5, y: 75.8 },
+  { name: 'Editar', text: 'Ajuste uma palavra e envie com o seu jeito.', x: 29.5, y: 75.8 },
+  { name: 'Descartar', text: 'Não sai nada. Você responde do seu jeito.', x: 52, y: 75.8 },
+  { name: 'Assumir', text: 'Qualquer conversa, com um toque. O assistente para ali.', x: 71.5, y: 9.8 },
+] as const;
 ---
 
 <section class="control wrap" aria-labelledby="controle">
@@ -9,12 +16,17 @@
       O assistente escreve o rascunho e nada vai para o paciente até você decidir. Quando quiser,
       deixa automático.
     </p>
-    <dl class="verbs">
-      <div><dt>Enviar</dt><dd>A resposta está certa: sai como está.</dd></div>
-      <div><dt>Editar</dt><dd>Ajuste uma palavra e envie com o seu jeito.</dd></div>
-      <div><dt>Descartar</dt><dd>Não sai nada. Você responde do seu jeito.</dd></div>
-      <div><dt>Assumir</dt><dd>Qualquer conversa, com um toque. O assistente para ali.</dd></div>
-    </dl>
+    <ol class="verbs">
+      {
+        verbs.map((verb, i) => (
+          <li>
+            <span class="key" aria-hidden="true">{i + 1}</span>
+            <strong>{verb.name}</strong>
+            <span class="what">{verb.text}</span>
+          </li>
+        ))
+      }
+    </ol>
   </div>
   <figure class="shot">
     <div class="frame">
@@ -29,6 +41,13 @@
           alt="Tela do painel no celular: o paciente João Exemplo pergunta quanto custa a avaliação; abaixo, o rascunho do assistente com o preço e os botões Enviar, Editar e Descartar, e no topo o botão Assumir."
         />
       </picture>
+      {
+        verbs.map((verb, i) => (
+          <span class="key pin" aria-hidden="true" style={`left:${String(verb.x)}%;top:${String(verb.y)}%`}>
+            {i + 1}
+          </span>
+        ))
+      }
     </div>
     <figcaption>Tela real do painel, com dados fictícios.</figcaption>
   </figure>
@@ -55,32 +74,44 @@
     max-width: 44ch;
   }
   .verbs {
+    list-style: none;
     margin: 32px 0 0;
+    padding: 0;
     border-top: 1px solid var(--line);
   }
-  .verbs div {
+  .verbs li {
     display: grid;
-    grid-template-columns: 112px 1fr;
-    gap: 16px;
+    grid-template-columns: 24px 1fr;
+    align-items: start;
+    gap: 2px 12px;
     padding: 14px 0;
     border-bottom: 1px solid var(--line);
   }
-  dt {
-    font-weight: 600;
-  }
-  dd {
-    margin: 0;
+  .what {
+    grid-column: 2;
     color: var(--ink-2);
+  }
+  .key {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--action);
+    color: var(--action-ink);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
   }
   .shot {
     margin: 0;
     justify-self: center;
-    width: min(100%, 340px);
+    width: min(100%, 300px);
   }
   .frame {
+    position: relative;
     border: 9px solid #111214;
     border-radius: 40px;
-    overflow: hidden;
     aspect-ratio: 1 / 2;
     background: var(--surface);
     box-shadow:
@@ -96,8 +127,14 @@
     display: block;
     width: 100%;
     height: 100%;
+    border-radius: 31px;
     object-fit: cover;
     object-position: top;
+  }
+  .pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 3px var(--bg);
   }
   figcaption {
     margin-top: 12px;
@@ -105,13 +142,22 @@
     font-size: 13px;
     color: var(--ink-2);
   }
-
   @media (min-width: 960px) {
     .control {
       grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
       align-items: center;
       gap: 48px;
       padding-top: 144px;
+    }
+    .shot {
+      width: min(100%, 340px);
+    }
+    .verbs li {
+      grid-template-columns: 24px 112px 1fr;
+      gap: 16px;
+    }
+    .what {
+      grid-column: 3;
     }
   }
 </style>

@@ -1,0 +1,61 @@
+---
+import './hero-board.css';
+// One hour on two lanes (founder/landing-brief.md, section 1): you are in the treatment room while
+// the assistant answers on WhatsApp and books in Google Agenda. Fictitious data, labelled as such.
+// CSS-only sequence in hero-board.css; with reduced motion everything is shown at once.
+---
+
+<figure class="board" aria-labelledby="board-cap">
+  <figcaption id="board-cap">
+    <span class="hour">Quarta, das 15:00 às 16:00</span>
+    <span class="tag">Exemplo com dados fictícios</span>
+  </figcaption>
+  <div class="lanes">
+    <p class="lane l-you" aria-hidden="true">Você</p>
+    <p class="lane l-wa" aria-hidden="true">WhatsApp do consultório</p>
+    <p class="lane l-ag" aria-hidden="true">Google Agenda</p>
+
+    <div class="busy-bar" aria-hidden="true"></div>
+    <p class="busy">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+        <rect x="4.5" y="1.5" width="7" height="13" rx="1.5"></rect>
+        <path d="M2 2l12 12"></path>
+      </svg>
+      <span><strong>Você, em atendimento</strong> · celular no bolso</span>
+    </p>
+
+    <div class="ev in e1" style="--d: 0.5s">
+      <time>15:12</time>
+      <p class="bubble"><span class="sr-only">Paciente:</span>Oi! Quanto é a avaliação? Tem horário amanhã?</p>
+    </div>
+    <div class="ev out e2" style="--d: 1.6s">
+      <time>15:12</time>
+      <p class="bubble">
+        <b>Assistente</b>Oi, Joana! A avaliação custa R$ 180,00 e dura 50 minutos. Amanhã tenho 15:00
+        ou 17:30. Qual fica melhor?
+      </p>
+    </div>
+    <div class="ev in e3" style="--d: 2.8s">
+      <time>15:14</time>
+      <p class="bubble"><span class="sr-only">Paciente:</span>15h, por favor</p>
+    </div>
+    <div class="ev out e4" style="--d: 3.8s">
+      <time>15:14</time>
+      <p class="bubble">
+        <b>Assistente</b>Combinado: amanhã, quinta, às 15:00. Te lembro um dia antes.
+      </p>
+    </div>
+    <div class="slot e5" aria-hidden="true"><time>qui. 15:00</time>livre</div>
+    <p class="booked e5" style="--d: 4.4s">
+      <span class="sr-only">Google Agenda:</span>
+      <time>qui. 15:00</time>
+      <strong>Avaliação · Joana Souza</strong>
+      <small>marcado pelo assistente</small>
+    </p>
+    <p class="end" style="--d: 5.2s">
+      <time>16:00</time>
+      <strong>Você sai da sala.</strong>
+      <span>Nenhuma mensagem esperando. A Joana já está na agenda.</span>
+    </p>
+  </div>
+</figure>
