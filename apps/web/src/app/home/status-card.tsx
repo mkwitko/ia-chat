@@ -22,7 +22,7 @@ import { TipCopy, useNextTip } from './use-next-tip';
 
 const Copy = HomeCopy.status;
 
-function useTopStatus(): TopStatus {
+export function useTopStatus(): TopStatus {
   const alerts = useServiceAlerts();
   const setup = useSetupProgress();
   const trial = useTrial().data;
@@ -93,20 +93,19 @@ function ActionButton({ action, strong }: Readonly<{ action: StatusAction; stron
   const variant = strong ? 'default' : 'outline';
   if (action.to)
     return (
-      <Button asChild variant={variant} className="w-full sm:w-auto">
+      <Button asChild variant={variant} className="w-full @lg:w-auto">
         <Link to={action.to}>{action.label}</Link>
       </Button>
     );
   return (
-    <Button variant={variant} className="w-full sm:w-auto" onClick={action.onAction}>
+    <Button variant={variant} className="w-full @lg:w-auto" onClick={action.onAction}>
       {action.label}
     </Button>
   );
 }
 
 /** Início's one status area: the most important thing, its button, and the service in words. */
-export function StatusCard() {
-  const status = useTopStatus();
+export function StatusCard({ status }: Readonly<{ status: TopStatus }>) {
   const Icon = ICON[status.kind];
   const problem = status.kind === StatusKind.problem;
   const strong = problem || status.kind === StatusKind.setup;
@@ -115,11 +114,11 @@ export function StatusCard() {
       aria-label={Copy.label}
       role={problem ? 'alert' : undefined}
       className={cn(
-        'mx-4 mb-8 grid gap-4 rounded-xl border bg-card p-5 shadow-card md:mx-0',
+        '@container mx-4 mb-8 grid gap-4 rounded-xl border bg-card p-5 shadow-card md:mx-0',
         problem && 'border-danger/40 bg-danger-soft',
       )}
     >
-      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-x-8">
+      <div className="grid gap-4 @lg:grid-cols-[minmax(0,1fr)_auto] @lg:items-center @lg:gap-x-8">
         <div className="grid gap-2">
           <h2 className="flex items-start gap-2.5 text-lg">
             <Icon
@@ -139,7 +138,7 @@ export function StatusCard() {
       </div>
       <ServiceStatus
         inline
-        className="border-t pt-4 sm:flex sm:flex-wrap sm:gap-x-8 [&_li]:text-sm"
+        className="border-t pt-4 @lg:flex @lg:flex-wrap @lg:gap-x-8 [&_li]:text-sm"
       />
     </section>
   );

@@ -36,6 +36,7 @@ function CountLink({ to, label }: Readonly<{ to: string; label: string }>) {
 
 /** The count lines under the conversations, only those with something in them. */
 function countsOf({ attention, toConfirm, notBooked }: HomeView) {
+  const ending = attention.endingPackages;
   // Drafts already listed as conversation rows are not counted twice.
   const listedDrafts = attention.conversations.filter(
     (item) => item.state === InboxState.awaitingApproval,
@@ -56,6 +57,12 @@ function countsOf({ attention, toConfirm, notBooked }: HomeView) {
       to: Route.customers,
       show: notBooked.recoverable > 0,
       label: Copy.notBooked(notBooked.recoverable),
+    },
+    // Research 09 #7: one client opens that client; several open the list.
+    {
+      to: ending.length === 1 && ending[0] ? customerPath(ending[0].contactId) : Route.customers,
+      show: ending.length > 0,
+      label: Copy.ending(ending.length),
     },
   ].filter((item) => item.show);
 }
@@ -79,7 +86,7 @@ export function AttentionSection({ home }: Readonly<{ home: HomeView }>) {
           </li>
         ))}
         {counts.map((item) => (
-          <CountLink key={item.to} to={item.to} label={item.label} />
+          <CountLink key={item.label} to={item.to} label={item.label} />
         ))}
       </CardList>
     </Section>
@@ -108,32 +115,6 @@ export function ToMarkSection({ home }: Readonly<{ home: HomeView }>) {
               </span>
             </span>
             <AttendanceButtons appointmentId={item.id} />
-          </li>
-        ))}
-      </CardList>
-    </>
-  );
-}
-
-/** Research 09 #7: the client's latest package with one session left or just used up. */
-export function EndingSection({ home }: Readonly<{ home: HomeView }>) {
-  const items = home.attention.endingPackages;
-  if (items.length === 0) return null;
-  return (
-    <>
-      <h2 className="px-4 pt-6 pb-2 text-lg md:px-0">{Copy.endingHeading}</h2>
-      <CardList>
-        {items.map((item) => (
-          <li key={item.id}>
-            <Link to={customerPath(item.contactId)} className={ROW_LINK}>
-              <span className="grid flex-1">
-                <span className="font-semibold">{item.contactName ?? Copy.noPatient}</span>
-                <span className="text-sm text-muted-foreground tabular-nums">
-                  {Copy.ending(item.name, item.remaining)}
-                </span>
-              </span>
-              <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-            </Link>
           </li>
         ))}
       </CardList>

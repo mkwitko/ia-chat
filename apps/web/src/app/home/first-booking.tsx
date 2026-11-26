@@ -43,7 +43,7 @@ export function FirstBookingMoment({ home }: Readonly<{ home: HomeView }>) {
   return (
     <section
       aria-label={Copy.title}
-      className="mx-4 mb-8 grid gap-4 rounded-xl border border-jade/30 bg-jade-soft p-5 sm:flex sm:items-start md:mx-0"
+      className="mx-4 mt-8 grid gap-4 rounded-xl border border-jade/30 bg-jade-soft p-5 sm:flex sm:items-start md:mx-0"
     >
       <span className="moment-in grid size-10 shrink-0 place-items-center rounded-full bg-jade text-card">
         <Check className="size-5" strokeWidth={2.5} aria-hidden="true" />

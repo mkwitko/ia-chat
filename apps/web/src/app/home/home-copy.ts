@@ -25,11 +25,6 @@ export const HomeCopy = defineMessages({
       tipTitle: 'Sugestão para melhorar o atendimento',
       okTitle: 'Tudo funcionando',
     },
-    quick: {
-      label: 'Atalhos',
-      newBooking: 'Novo agendamento',
-      tryAssistant: 'Testar o assistente',
-    },
     attentionHeading: 'Precisa de você',
     allClear: 'Nada esperando por você agora.',
     drafts: (count: number) =>
@@ -49,19 +44,14 @@ export const HomeCopy = defineMessages({
     notBooked: (count: number) =>
       plural(count, '1 pessoa conversou e não agendou', '# pessoas conversaram e não agendaram'),
     toMarkHeading: 'Veio ou faltou?',
-    endingHeading: 'Pacotes no fim',
-    ending: (name: string, remaining: number) =>
-      remaining === 0 ? `${name}: sessões acabaram` : `${name}: resta 1 sessão`,
+    ending: (count: number) =>
+      plural(count, '1 cliente com o pacote no fim', '# clientes com o pacote no fim'),
     todayHeading: 'Hoje',
     todayEmpty: 'Ninguém marcado para hoje.',
     todayDone: 'Mais ninguém para hoje.',
     seeAgenda: 'Ver a agenda',
     noPatient: 'Paciente sem nome',
-    monthHeading: 'Este mês',
-    month: (contacts: number, booked: number) =>
-      `${plural(contacts, '1 contato', '# contatos')} e ${plural(booked, '1 agendamento', '# agendamentos')}.`,
-    recovered: (money: string) => `${money} de atendimentos que o assistente marcou.`,
-    seeResults: 'Ver resultados',
+    seeResults: 'Ver como foi o mês',
   },
   [Locale.enUS]: {},
 });

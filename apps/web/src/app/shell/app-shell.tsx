@@ -8,7 +8,6 @@ import { needsYou } from '../inbox/conversations-screen';
 import { useInboxEvents } from '../inbox/use-inbox-events';
 import { AlertBar } from './alert-bar';
 import { Navigation } from './navigation';
-import { SetupStrip } from './setup-progress';
 import { useServiceAlerts } from './use-service-alerts';
 
 /** Signed-in frame: alert strip, navigation and the current screen. */
@@ -30,9 +29,8 @@ function Frame() {
   const pending = conversations.data?.filter(needsYou).length ?? 0;
   return (
     <div className="flex h-full flex-col">
-      {/* At most one strip: what stops the service, else the way back to the setup. */}
+      {/* Only what stops the service; the way back to the setup lives in Início and Mais. */}
       {!onHome && alert && <AlertBar alert={alert} />}
-      {!alert && <SetupStrip />}
       {!connected && (
         <p role="status" className="bg-muted px-4 py-1 text-center text-xs text-muted-foreground">
           {InboxCopy.reconnecting}
