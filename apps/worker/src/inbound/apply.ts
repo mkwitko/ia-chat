@@ -1,7 +1,6 @@
-import { ChannelState, InboundKind, type InboundEvent } from '@app/channels';
+import { InboundKind, type ChannelState, type InboundEvent } from '@app/channels';
 import {
   ActorType,
-  ChannelStatus,
   ControlReason,
   ConversationControl,
   MessageAuthor,
@@ -12,6 +11,7 @@ import {
   type Tx,
 } from '@app/db';
 import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts';
+import { applyChannelState } from './channel-state.ts';
 import { resolveContact } from './contacts.ts';
 import { countMessage, MessageCategory, type UsageNotice } from '../usage/counters.ts';
 import { contentColumns } from './message-row.ts';
@@ -33,11 +33,6 @@ const STATUS_RANK: Readonly<Record<MessageStatus, number>> = {
   [MessageStatus.delivered]: 2,
   [MessageStatus.read]: 3,
   [MessageStatus.failed]: 2,
-};
-const CHANNEL_STATUS: Readonly<Record<ChannelState, ChannelStatus>> = {
-  [ChannelState.connected]: ChannelStatus.connected,
-  [ChannelState.disconnected]: ChannelStatus.disconnected,
-  [ChannelState.restricted]: ChannelStatus.restricted,
 };
 
 // RF-25: failures the operator must see. 131047: 24 h window expired; 131042: payment issue.
@@ -66,6 +61,8 @@ export interface InboundResult {
   usage: UsageNotice[];
   /** Messages whose media the media job must fetch (E-10), queued after commit. */
   media: string[];
+  /** A connected channel went down (RF-29): alert and push after commit. */
+  channelDown: boolean;
 }
 
 export async function applyInboundEvents(
@@ -73,9 +70,18 @@ export async function applyInboundEvents(
   { tenantId, channelId, events }: InboundScope,
 ): Promise<InboundResult> {
   const ordered = [...events].sort((a, b) => a.at.getTime() - b.at.getTime()); // RF-23: provider time
-  const result: InboundResult = { alerts: [], turns: [], usage: [], media: [] };
+  const result: InboundResult = { alerts: [], turns: [], usage: [], media: [], channelDown: false };
   for (const event of ordered) await applyOne(tx, { tenantId, channelId, event, result });
   return result;
+}
+
+/** RF-29: a drop is reported once per batch, after commit. */
+async function applyStateEvent(
+  tx: Tx,
+  { channelId, state, result }: { channelId: string; state: ChannelState; result: InboundResult },
+): Promise<void> {
+  const down = await applyChannelState(tx, channelId, state);
+  if (down) result.channelDown = true;
 }
 
 interface ApplyOne {
@@ -87,10 +93,7 @@ interface ApplyOne {
 
 async function applyOne(tx: Tx, { tenantId, channelId, event, result }: ApplyOne): Promise<void> {
   if (event.kind === InboundKind.channelState) {
-    await tx.channel.update({
-      where: { id: channelId },
-      data: { status: CHANNEL_STATUS[event.state] },
-    });
+    await applyStateEvent(tx, { channelId, state: event.state, result });
     return;
   }
   if (event.kind !== InboundKind.status) {

@@ -106,6 +106,8 @@ export interface SendResult {
 export interface TemplateRef {
   name: string;
   language: string;
+  /** The approved text with {{n}} placeholders: the QR code channel sends it as plain text. */
+  body?: string | undefined;
 }
 
 export interface ChannelAdapter {

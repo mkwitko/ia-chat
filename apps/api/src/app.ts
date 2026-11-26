@@ -1,5 +1,5 @@
 import type { AiGateway } from '@app/ai';
-import { createChannelSender, type ChannelSend } from '@app/channels';
+import { createChannelSender, wahaConfig, type ChannelSend, type WahaConfig } from '@app/channels';
 import { NodeEnv, channelTokenReader, whatsappSignupConfig, type BillingProvider } from '@app/core';
 import type { Db } from '@app/db';
 import type { Alert } from '@app/observability';
@@ -46,7 +46,9 @@ import type { ApiEnv } from './env.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
 import { registerWaitlistIfConfigured } from './waitlist/waitlist-routes.ts';
 import type { TurnstileVerifier } from './waitlist/turnstile.ts';
+import { registerWahaWebhook } from './webhooks/waha.ts';
 import { registerWhatsappWebhook } from './webhooks/whatsapp.ts';
+import { registerQrRoutes } from './whatsapp/qr-routes.ts';
 import { registerWhatsappSignupRoutes } from './whatsapp/routes.ts';
 
 /** One proxy in front: the edge. */
@@ -82,6 +84,8 @@ export interface AppDeps extends HealthDeps {
   calendarFetch?: typeof fetch;
   /** Test seam: the `fetch` used for the Graph API in Embedded Signup (E-24). */
   metaFetch?: typeof fetch;
+  /** Test seam: the WAHA gateway (E-09b), with a fake fetch. */
+  waha?: WahaConfig;
   /** Test seam: reads the owner's page for the onboarding prefill (spec 09). */
   prefillFetch?: PageFetcher;
 }
@@ -115,6 +119,9 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   if (appSecret && verifyToken && enqueueInbound) {
     registerWhatsappWebhook(app, { appSecret, verifyToken, enqueue: enqueueInbound });
   }
+  if (env.WAHA_WEBHOOK_SECRET && enqueueInbound)
+    registerWahaWebhook(app, { secret: env.WAHA_WEBHOOK_SECRET, enqueue: enqueueInbound });
+  registerQrRoutes(app, { waha: deps.waha ?? wahaConfig(env) });
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
   registerWhatsappSignupRoutes(app, { config: whatsappSignupConfig(env), fetch: deps.metaFetch });
@@ -129,6 +136,7 @@ function registerInbox(app: FastifyInstance, { env, send }: Pick<AppDeps, 'env' 
       createChannelSender({
         accessToken: env.META_ACCESS_TOKEN,
         readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
+        waha: wahaConfig(env),
         devFallback: env.NODE_ENV !== NodeEnv.production,
         log: (fields, message) => {
           app.log.info(fields, message);

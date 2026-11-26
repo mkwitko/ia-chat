@@ -17,5 +17,29 @@ services:
       timeout: 3s
       retries: 15
 
+  # E-09b: the QR code gateway, only with `docker compose --profile qr up -d` (x86 dev machines;
+  # production uses the ARM64 image). The api on the host is reached at host.docker.internal.
+  waha:
+    profiles: [qr]
+    image: devlikeapro/waha:gows-2026.10.1@sha256:1f7faeb0227ad5edb5711f7058bfce807ea65e5f92234af0778e4db140f6eb46
+    environment:
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      WAHA_API_KEY: ${WAHA_API_KEY:-chave-de-desenvolvimento}
+      WAHA_BASE_URL: http://127.0.0.1:${WAHA_PORT:-3010}
+      WHATSAPP_HOOK_URL: http://host.docker.internal:${PORT:-3000}/webhooks/waha
+      WHATSAPP_HOOK_EVENTS: message.any,message.ack,session.status
+      WHATSAPP_HOOK_HMAC_KEY: ${WAHA_WEBHOOK_SECRET:-segredo-de-desenvolvimento}
+      WHATSAPP_FILES_LIFETIME: '3600'
+      WAHA_PRINT_QR: 'False'
+      WAHA_LOG_LEVEL: warn
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - '127.0.0.1:${WAHA_PORT:-3010}:3000'
+    mem_limit: 384m
+    volumes:
+      - wahasessions:/app/.sessions
+
 volumes:
   pgdata:
+  wahasessions:

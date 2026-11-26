@@ -1,4 +1,4 @@
-import { createChannelSender, createTemplateSender } from '@app/channels';
+import { createChannelSender, createTemplateSender, wahaConfig } from '@app/channels';
 import { NodeEnv, channelTokenReader } from '@app/core';
 import { REMINDER_SWEEP_QUEUE, type Db } from '@app/db';
 import type { Alert } from '@app/observability';
@@ -34,6 +34,7 @@ export async function startReminderSweep(wiring: ReminderWiring): Promise<void> 
   const config = {
     accessToken: wiring.accessToken,
     readChannelToken: channelTokenReader(wiring.tokenKey),
+    waha: wahaConfig(process.env),
     devFallback: wiring.nodeEnv !== NodeEnv.production,
     log,
   };

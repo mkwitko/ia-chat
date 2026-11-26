@@ -12,6 +12,8 @@ export const AlertEvent = {
   jobFailed: 'job_failed',
   /** Google Calendar token revoked or expired for good: the tenant must reconnect (E-21, A-13). */
   calendarDisconnected: 'calendar_disconnected',
+  /** WhatsApp connection down (QR code session dropped, RF-29): the owner must scan again. */
+  channelDisconnected: 'channel_disconnected',
 } as const;
 export type AlertEvent = (typeof AlertEvent)[keyof typeof AlertEvent];
 

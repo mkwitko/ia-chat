@@ -1,4 +1,5 @@
 import { aiEnvSchema } from '@app/ai';
+import { wahaEnvSchema } from '@app/channels';
 import {
   baseEnvSchema,
   billingEnvSchema,
@@ -29,6 +30,7 @@ export const apiEnvSchema = baseEnvSchema
   .extend(billingEnvSchema.shape)
   .extend(whatsappSignupEnvSchema.shape)
   .extend(r2EnvSchema.shape)
+  .extend(wahaEnvSchema.shape)
   .extend({
     PORT: z.coerce.number().int().positive().default(DEFAULT_PORT),
     BETTER_AUTH_SECRET: z.string().min(MIN_SECRET_LENGTH),
