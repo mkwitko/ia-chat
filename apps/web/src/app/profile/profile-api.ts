@@ -54,6 +54,8 @@ export interface Professional {
 
 /** Error code of a removal refused because the row is in use (409). */
 export const IN_USE = 'in_use';
+/** A new professional refused by the plan (409). */
+export const PLAN_LIMIT = 'plan_limit';
 
 const Method = { post: 'POST', put: 'PUT', delete: 'DELETE' } as const;
 export const ProfilePath = {

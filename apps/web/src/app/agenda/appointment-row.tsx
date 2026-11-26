@@ -6,15 +6,18 @@ import { AgendaCopy as Copy } from './agenda-copy';
 import { dayOf, timeLabel } from './agenda-dates';
 import { CalendarSync, CreatedBy, useCancel, type AppointmentItem } from './agenda-api';
 import type { BookingTarget } from './booking-form';
+import { ProfessionalTag } from './professional-controls';
 
 interface RowProps {
   item: AppointmentItem;
   timezone: string;
   onMove: (target: BookingTarget) => void;
+  /** Shown when the agenda mixes professionals. */
+  professional?: string | undefined;
 }
 
 /** Patient, service and state; a tap opens remarcar and cancelar (spec 10, "Agenda"). */
-export function AppointmentRow({ item, timezone, onMove }: Readonly<RowProps>) {
+export function AppointmentRow({ item, timezone, onMove, professional }: Readonly<RowProps>) {
   const [open, setOpen] = useState(false);
   return (
     <li>
@@ -38,6 +41,7 @@ export function AppointmentRow({ item, timezone, onMove }: Readonly<RowProps>) {
             {item.createdBy === CreatedBy.ai ? Copy.byAssistant : Copy.byYou}
             {item.calendarSync === CalendarSync.failed && ` · ${Copy.notSynced}`}
           </span>
+          {professional && <ProfessionalTag name={professional} />}
         </span>
       </button>
       {open && <RowActions item={item} timezone={timezone} onMove={onMove} />}

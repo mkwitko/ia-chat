@@ -2,12 +2,18 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { ApiError } from '@/lib/api';
 import { AgendaCopy } from './agenda-copy';
-import { useBook, useReschedule, type AppointmentItem, type PatientChoice } from './agenda-api';
+import {
+  useBook,
+  useReschedule,
+  type AppointmentItem,
+  type PatientChoice,
+  type Slot,
+} from './agenda-api';
 
 export const BookingKind = { new: 'new', move: 'move' } as const;
 
 export type BookingTarget =
-  | { kind: typeof BookingKind.new; day: string }
+  | { kind: typeof BookingKind.new; day: string; professionalId?: string }
   | { kind: typeof BookingKind.move; appointment: AppointmentItem; day: string };
 
 function errorText(error: Error): string {
@@ -44,25 +50,30 @@ export function useBookingForm({
   const [patient, setPatient] = useState<PatientChoice | null>(null);
   const [serviceId, setServiceId] = useState(moving ? target.appointment.serviceId : '');
   const [day, setDay] = useState(target.day);
-  const [startsAt, setStartsAt] = useState('');
+  const [slot, setSlot] = useState<Slot | null>(null);
   const book = useBook();
   const move = useReschedule();
   const done = outcome(onClose, () => {
-    setStartsAt('');
+    setSlot(null);
   });
   const submit = () => {
+    if (!slot) return;
+    const { startsAt, professionalId } = slot;
     if (moving)
       move.mutate({ id: target.appointment.id, key, startsAt }, done(AgendaCopy.rescheduled));
-    else if (patient) book.mutate({ key, serviceId, startsAt, patient }, done(AgendaCopy.booked));
+    else if (patient)
+      book.mutate({ key, serviceId, startsAt, professionalId, patient }, done(AgendaCopy.booked));
   };
   return {
     moving,
-    ready: Boolean(startsAt && serviceId && (moving || patient)),
+    /** A move stays with the same professional; a new booking follows the Agenda filter. */
+    professionalId: moving ? target.appointment.professionalId : target.professionalId,
+    ready: Boolean(slot && serviceId && (moving || patient)),
     pending: book.isPending || move.isPending,
     patient: { set: setPatient },
     service: { id: serviceId, set: setServiceId },
     day: { value: day, set: setDay },
-    slot: { value: startsAt, set: setStartsAt },
+    slot: { value: slot, set: setSlot },
     submit,
   };
 }
