@@ -48,6 +48,13 @@ export function compactDayTitle(day: string): string {
   });
 }
 
+/** "qui" and "26" for the phone's week strip. */
+export function stripDay(day: string): { weekday: string; date: string } {
+  const at = new Date(`${day}T00:00:00Z`);
+  const weekday = at.toLocaleDateString(LOCALE, { timeZone: 'UTC', weekday: 'short' });
+  return { weekday: weekday.replace('.', ''), date: String(at.getUTCDate()) };
+}
+
 /** "04/01" for a range label. */
 export function shortDay(day: string): string {
   return new Date(`${day}T00:00:00Z`).toLocaleDateString(LOCALE, {

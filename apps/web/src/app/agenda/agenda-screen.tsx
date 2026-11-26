@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import { CalendarPlus } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { AgendaToolbar, HoursLink, DAY_PARAM, VIEW_PARAM, View, WEEK_DAYS } from
 import { BookingForm, BookingKind, type BookingTarget } from './booking-form';
 import { PROFESSIONAL_PARAM } from './professional-api';
 import { ProfessionalFilter } from './professional-controls';
+import { PhoneWeek } from './week-strip';
 
 const NEW_PARAM = 'novo';
 const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -26,8 +27,10 @@ function useAgendaParams() {
   const wide = useMedia(WIDE_QUERY);
   const asked = params.get(VIEW_PARAM);
   const valid = asked === View.week || asked === View.day ? asked : View.week;
-  const view = wide ? valid : View.day;
+  // Phone: the week strip on top of one day, so the toolbar steps a week at a time.
+  const view = wide ? valid : View.week;
   return {
+    wide,
     view,
     requested,
     professionalId: params.get(PROFESSIONAL_PARAM) ?? '',
@@ -58,9 +61,9 @@ function useBooking(day: string, professionalId: string) {
   return state;
 }
 
-/** Spec 10, "Agenda": the day on the phone, the week as seven day columns on the computer. */
+/** Spec 10, "Agenda": the week strip and one day on the phone, the week as day columns on the computer. */
 export function AgendaScreen() {
-  const { view, requested, days, change, professionalId } = useAgendaParams();
+  const { wide, view, requested, days, change, professionalId } = useAgendaParams();
   const agenda = useAgenda(ISO_DAY.test(requested) ? requested : undefined, days);
   const day = agenda.data?.from ?? requested;
   const [booking, setBooking] = useBooking(day, professionalId);
@@ -91,10 +94,21 @@ export function AgendaScreen() {
       {agenda.isError && (
         <LoadError message={Copy.loadFailed} onRetry={() => void agenda.refetch()} />
       )}
-      {shown && <AgendaBody agenda={shown} days={days} onNew={setBooking} names={names} />}
+      {shown && (
+        <ViewBody wide={wide} agenda={shown} days={days} onNew={setBooking} names={names} />
+      )}
       <HoursLink />
     </Screen>
   );
+}
+
+/** The computer shows the days side by side; the phone, the week strip over one day. */
+function ViewBody({
+  wide,
+  ...body
+}: Readonly<{ wide: boolean } & ComponentProps<typeof AgendaBody>>) {
+  if (wide) return <AgendaBody {...body} />;
+  return <PhoneWeek agenda={body.agenda} onNew={body.onNew} names={body.names} />;
 }
 
 /** The screen's one primary action, next to the title. */
