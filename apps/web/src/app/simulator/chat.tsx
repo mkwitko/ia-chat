@@ -20,7 +20,7 @@ export function Chat({ lines }: Readonly<{ lines: ChatLine[] }>) {
   );
 }
 
-function Bubble({ line }: Readonly<{ line: ChatLine }>) {
+export function Bubble({ line }: Readonly<{ line: ChatLine }>) {
   const patient = line.role === SimRole.patient;
   return (
     <div
@@ -38,7 +38,7 @@ function Bubble({ line }: Readonly<{ line: ChatLine }>) {
 }
 
 /** What the answer used: tool calls and registered facts, derived by the server. */
-function Used({ reply }: Readonly<{ reply: SimulationReply }>) {
+export function Used({ reply }: Readonly<{ reply: SimulationReply }>) {
   return (
     <div className="max-w-[85%] justify-self-end text-sm text-muted-foreground">
       <p className="font-semibold">{Copy.usedTitle}</p>

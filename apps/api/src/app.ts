@@ -26,6 +26,8 @@ import { devEmailSender } from './email/dev-sender.ts';
 import type { EmailSender } from './email/outbox.ts';
 import { registerInviteRoutes } from './invites/invite-routes.ts';
 import { registerOnboardingRoutes } from './onboarding/onboarding-routes.ts';
+import { registerPrefillRoutes } from './onboarding/prefill/prefill-routes.ts';
+import { fetchPage, type PageFetcher } from './onboarding/prefill/safe-fetch.ts';
 import { registerTrialRoutes } from './trial/trial-routes.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
@@ -75,6 +77,8 @@ export interface AppDeps extends HealthDeps {
   calendarFetch?: typeof fetch;
   /** Test seam: the `fetch` used for the Graph API in Embedded Signup (E-24). */
   metaFetch?: typeof fetch;
+  /** Test seam: reads the owner's page for the onboarding prefill (spec 09). */
+  prefillFetch?: PageFetcher;
 }
 
 export function buildApp(deps: AppDeps): FastifyInstance {
@@ -89,7 +93,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   registerInviteRoutes(app, env);
   registerOperatorRoutes(app);
   registerControlRoutes(app);
-  registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
+  registerModelRoutes(app, deps);
   registerSettingsRoutes(app);
   registerWaitlistIfConfigured(app, deps);
   registerInbox(app, deps);
@@ -122,6 +126,15 @@ function registerInbox(app: FastifyInstance, { env, send }: Pick<AppDeps, 'env' 
       }),
   });
   registerMediaRoute(app, mediaStoreOf(env));
+}
+
+/** Panel routes that call the model: the simulator and the onboarding prefill (spec 09, 10). */
+function registerModelRoutes(app: FastifyInstance, deps: AppDeps): void {
+  registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
+  registerPrefillRoutes(app, {
+    gateway: deps.simulatorGateway,
+    fetchPage: deps.prefillFetch ?? fetchPage,
+  });
 }
 
 /** Panel settings and agenda: each module registers its own guarded routes. */

@@ -144,8 +144,10 @@ export const useCancel = () =>
   useWrite([Path.agenda], (id: string) =>
     api(`${Path.appointments}/${id}/cancel`, { method: Method.post, body: {} }),
   );
+// The guided setup's hours step waits for a saved grid (H-39).
+const ONBOARDING = '/api/onboarding';
 export const useSaveRules = () =>
-  useWrite([Path.availability, Path.agenda], (rules: RuleWindow[]) =>
+  useWrite([Path.availability, Path.agenda, ONBOARDING], (rules: RuleWindow[]) =>
     api(Path.availability, { method: Method.put, body: { rules } }),
   );
 export const useSaveSummaryTime = () =>

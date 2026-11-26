@@ -10,6 +10,7 @@ import { parseApiEnv } from './env.ts';
 import { createInvite } from './invites/invite-store.ts';
 import { INVITE_COOKIE } from './invites/signup-gate.ts';
 import { MemoryOutbox } from './email/outbox.ts';
+import type { PageFetcher } from './onboarding/prefill/safe-fetch.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
 
 // Test-only helpers: a real app on the dev database, with a fake mailbox.
@@ -53,6 +54,7 @@ export interface TestAppOptions {
   calendarFetch?: typeof fetch;
   metaFetch?: typeof fetch;
   billing?: BillingProvider;
+  prefillFetch?: PageFetcher;
 }
 
 export async function startTestApp(
@@ -73,6 +75,7 @@ export async function startTestApp(
     ...(options.calendarFetch ? { calendarFetch: options.calendarFetch } : {}),
     ...(options.billing ? { billing: options.billing } : {}),
     ...(options.metaFetch ? { metaFetch: options.metaFetch } : {}),
+    ...(options.prefillFetch ? { prefillFetch: options.prefillFetch } : {}),
   });
   register(app);
   await app.ready();

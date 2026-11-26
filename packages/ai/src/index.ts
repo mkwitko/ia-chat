@@ -1,4 +1,11 @@
 export { BudgetExceededError, DEFAULT_CAPS, type Caps } from './budget.ts';
+export type { ExtractRequest } from './extract.ts';
+export {
+  pageInput,
+  PREFILL_INSTRUCTIONS,
+  prefillSchema,
+  type PrefillExtraction,
+} from './prefill.ts';
 export { aiEnvSchema, type AiEnv } from './env.ts';
 export { aiConfigured, createEnvGateway, markedStore } from './env-gateway.ts';
 export {

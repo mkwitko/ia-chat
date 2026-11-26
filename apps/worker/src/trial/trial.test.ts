@@ -83,10 +83,9 @@ describe('abandonment reminders (RF-84)', () => {
     expect(sent).toHaveLength(1);
 
     const done = parseProgress({});
-    for (const step of ['account', 'services', 'location', 'tone', 'simulator'] as const)
+    for (const step of ['account', 'services', 'hours', 'simulator'] as const)
       markStep(done, { step, status: 'done', now: CREATED });
-    for (const step of ['whatsapp', 'google'] as const)
-      markStep(done, { step, status: 'skipped', now: CREATED });
+    markStep(done, { step: 'whatsapp', status: 'skipped', now: CREATED });
     markStep(done, { step: 'activation', status: 'done', now: CREATED });
     const finished = await setup(done);
     await finished.sweep(after(10));

@@ -7,6 +7,7 @@ import {
 } from 'ai';
 import { propagateAttributes } from '@langfuse/tracing';
 import { assertWithinBudget, type Caps } from './budget.ts';
+import { extractObject, type ExtractRequest } from './extract.ts';
 import { withFallback } from './fallback.ts';
 import { judge, type JudgeProvider, type JudgeQuestions, type JudgeRequest } from './judge.ts';
 import { modelKey, type ModelRef } from './models.ts';
@@ -82,6 +83,7 @@ export function createAiGateway(deps: GatewayDeps) {
   const ctx: Context = { deps, now: deps.now ?? (() => new Date()) };
   return {
     generate: (request: GenerateRequest) => generate(ctx, request),
+    extract: <T>(request: ExtractRequest<T>) => extractObject(ctx, request),
     judge: <Q extends JudgeQuestions>(scope: CallScope, request: JudgeRequest<Q>) =>
       judgeAndRecord(ctx, scope, request),
     transcribe: (request: TranscribeRequest) =>

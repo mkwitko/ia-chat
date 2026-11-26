@@ -7,7 +7,8 @@ import {
   type OnboardingProgress,
 } from '@app/core';
 import type { Tx } from '@app/db';
-import { documentSet, whatsappConnected } from './requirements.ts';
+import { checklistOf } from './checklist.ts';
+import { documentSet, hoursSet, whatsappConnected } from './requirements.ts';
 
 /** Saved onboarding progress of the tenant (server-side, so it resumes on any device). */
 export async function readProgress(tx: Tx, tenantId: string): Promise<OnboardingProgress> {
@@ -39,5 +40,7 @@ export async function progressView(tx: Tx, tenantId: string) {
     specialties: SPECIALTY_OPTIONS,
     documentSet: await documentSet(tx, tenantId),
     whatsappConnected: await whatsappConnected(tx),
+    hoursSet: await hoursSet(tx),
+    checklist: await checklistOf(tx, tenantId),
   };
 }

@@ -7,6 +7,7 @@ import { Screen } from '../screens/screen';
 import { Note, Section } from '../screens/section';
 import { AttentionSection, hasAttention } from './attention-section';
 import { NotBookedSection, TodaySection } from './day-sections';
+import { ChecklistCard } from './checklist-card';
 import { NextStepCard } from './next-step';
 import { useHome, type HomeView } from './home-api';
 import { HomeCopy as Copy } from './home-copy';
@@ -38,6 +39,7 @@ export function HomeScreen() {
   return (
     <Screen title={Copy.title}>
       <NextStepCard />
+      <ChecklistCard />
       {home.isPending && <ListSkeleton />}
       {home.isError && <LoadError message={Copy.loadFailed} onRetry={() => void home.refetch()} />}
       {home.data &&
