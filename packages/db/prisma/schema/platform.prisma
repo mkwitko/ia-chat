@@ -19,6 +19,11 @@ model Tenant {
   reminderOffsetsMinutes Int[]        @default([1440, 120]) @map("reminder_offsets_minutes")
   /// M-09: after a "faltou", ask the client when to reschedule (owner's switch, off by default).
   noShowFollowUp         Boolean      @default(false) @map("no_show_follow_up")
+  /// M-10: one message to a lead that went quiet (owner's switch, off by default).
+  leadFollowUp           Boolean      @default(false) @map("lead_follow_up")
+  leadFollowUpDays       Int          @default(2) @map("lead_follow_up_days")
+  /// The text the owner approved; null until they confirm one, and nothing is sent while null.
+  leadFollowUpText       String?      @map("lead_follow_up_text")
   /// How the assistant introduces itself (spec 04, "Identificação").
   assistantName          String       @default("Assistente virtual") @map("assistant_name")
   /// How the assistant presents itself (owner decision, 24/11/2026; spec 01 "Limites").

@@ -62,3 +62,4 @@ export {
   type R2Config,
 } from './media/store.ts';
 export * from './profile/business-profile.ts';
+export * from './growth/index.ts';
