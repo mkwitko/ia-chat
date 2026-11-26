@@ -43,6 +43,7 @@ Requisitos têm identificador (`RF-` funcional, `RN-` não funcional). Hipótese
 | Voz | Transcrição de áudio no MVP; resposta em áudio e voz clonada do próprio profissional na Fase 5, com termo de consentimento | Custo baixo na entrada; o paciente segue informado de que é assistente virtual |
 | Linguagem | TypeScript em Node | Carga de espera, não de CPU; Go ou Rust não mudam o gargalo. Ver [plano](../plan/IMPLEMENTACAO.md) |
 | Telefonia | Fora do roadmap inicial | Calling API é incompatível com coexistência |
+| Documentos legais | Versão 1.0 em `docs/legal/`, vigente a partir de 25/11/2026, aprovada pelo dono sem revisão de advogado ("pode aprovar tudo sem advogado"). Titular: Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, também encarregado. O site publica os textos direto de `docs/legal/` | Decisão do dono em 25/11/2026; o risco jurídico fica com ele. Pendências operacionais em `docs/legal/README.md` |
 
 ## Onde discordo do master prompt
 

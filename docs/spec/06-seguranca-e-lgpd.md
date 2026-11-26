@@ -62,6 +62,8 @@ O contrato de operador precisa cobrir, no mínimo: objeto e finalidade do tratam
 | RF-63 | Encerramento de conta: exportação disponível por 30 dias, depois eliminação completa |
 | RF-64 | Registro de consentimento e de opt-out por contato, com data e origem |
 
+**Eliminação de conta encerrada (RF-63, implementada na E-26).** Uma rotina diária do worker (`retention.tenant_deletion`, 03:30 de São Paulo) apaga os dados de negócio do tenant 30 dias depois de a conta ser encerrada: status `cancelled` (relógio em `tenants.cancelled_at`, preenchido por gatilho sempre que o status vira `cancelled`) ou teste terminado sem assinatura (`restricted` com `trial_ended_at`, RF-88). A exclusão roda em `withTenant`, uma transação por tenant, e é idempotente (`tenants.data_deleted_at`). Apagados: mensagens, conversas, contatos, agenda, pagamentos, canais (e os tokens cifrados), conhecimento, equipe, assinaturas push, integração de agenda e a conta de usuário de quem só pertencia a esse tenant. `consent_events` e `contact_stage_events` são só de inserção para o papel da aplicação; a função SQL `erase_closed_tenant_events` (migration `erase_append_only`) é o único caminho para apagá-los e recusa tenant com conta aberta. Ficam, sem conteúdo de conversa: `audit_log` (RN-07), `usage_counters` e a linha do tenant, anonimizada (nome, `slug`, documento, logo e metadados). Os backups do R2 mantêm os dados apagados até saírem da retenção (4 backups completos, cerca de 28 dias); isso entra no aviso de privacidade. A falha de um tenant gera alerta só com o identificador e a rotina tenta de novo no dia seguinte.
+
 O prazo de guarda de prontuário não se aplica aqui: o sistema não é prontuário (nv). Deixar isso explícito nos termos.
 
 ## Segurança técnica

@@ -1,0 +1,162 @@
+# Production on any Linux VPS: docs/ops/producao.md. Development uses docker-compose.yml instead.
+#   .env     app settings and secrets (api, worker, migrate) + the compose variables below
+#   .env.db  database passwords and backup (pgBackRest) settings (postgres, backup only)
+# Compose variables read from .env: PANEL_DOMAIN, API_DOMAIN, SITE_DOMAIN, ACME_EMAIL,
+# IMAGE_PREFIX (default: build locally), IMAGE_TAG.
+x-app: &app
+  env_file: .env
+  restart: unless-stopped
+  networks: [private]
+
+x-pgbackrest: &pgbackrest
+  PGBACKREST_STANZA: main
+  PGBACKREST_PG1_PATH: /var/lib/postgresql/18/docker
+  PGBACKREST_REPO1_TYPE: s3
+  PGBACKREST_REPO1_PATH: /consultorio
+  PGBACKREST_REPO1_S3_URI_STYLE: path
+  PGBACKREST_REPO1_CIPHER_TYPE: aes-256-cbc
+  PGBACKREST_REPO1_RETENTION_FULL: '4'
+  PGBACKREST_REPO1_RETENTION_DIFF: '7'
+  PGBACKREST_COMPRESS_TYPE: zst
+  PGBACKREST_START_FAST: 'y'
+  PGBACKREST_LOG_PATH: /var/log/pgbackrest
+  PGBACKREST_LOCK_PATH: /tmp/pgbackrest
+
+services:
+  postgres:
+    image: ${IMAGE_PREFIX:-consultorio}/postgres:${IMAGE_TAG:-local}
+    build: { context: docker/postgres }
+    # No published port (RN-14): only the services on the private network reach it.
+    env_file: .env.db
+    environment:
+      <<: *pgbackrest
+      POSTGRES_USER: postgres
+      POSTGRES_DB: app
+    command:
+      - postgres
+      - -c
+      - wal_level=replica
+      - -c
+      - archive_mode=on
+      - -c
+      - archive_command=pgbackrest --stanza=main archive-push %p
+      # A quiet database still switches WAL at least every 5 minutes (RN-13 alert is at 15).
+      - -c
+      - archive_timeout=300
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - pgsocket:/var/run/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d app']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    stop_grace_period: 60s
+    networks: [private]
+
+  backup:
+    image: ${IMAGE_PREFIX:-consultorio}/postgres:${IMAGE_TAG:-local}
+    user: postgres
+    command: ['/usr/local/bin/backup-loop.sh']
+    env_file: .env.db
+    environment: *pgbackrest
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - pgsocket:/var/run/postgresql
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD', '/usr/local/bin/wal-health.sh']
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 10m
+    restart: unless-stopped
+    networks: [private]
+
+  migrate:
+    <<: *app
+    image: ${IMAGE_PREFIX:-consultorio}/api:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: docker/Dockerfile, args: { APP: api } }
+    # Applies the SQL migrations and creates the pg-boss queues (as the owner role, RN-02).
+    command: ['pnpm', '--dir', '/app', 'db:migrate']
+    restart: 'no'
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    <<: *app
+    image: ${IMAGE_PREFIX:-consultorio}/api:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: docker/Dockerfile, args: { APP: api } }
+    environment:
+      PORT: '3000'
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1),()=>process.exit(1))
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  worker:
+    <<: *app
+    image: ${IMAGE_PREFIX:-consultorio}/worker:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: docker/Dockerfile, args: { APP: worker } }
+    environment:
+      WORKER_HEALTH_PORT: '3001'
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3001/ready').then((r)=>process.exit(r.ok?0:1),()=>process.exit(1))
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  # Caddy: automatic HTTPS, the static panel and site, and the proxy to the api. The only service with ports.
+  edge:
+    image: ${IMAGE_PREFIX:-consultorio}/edge:${IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: docker/edge/Dockerfile
+      args:
+        VITE_HELP_URL: ${VITE_HELP_URL:-}
+        VITE_SENTRY_DSN: ${VITE_SENTRY_DSN:-}
+        VITE_RELEASE: ${VITE_RELEASE:-}
+        PUBLIC_TURNSTILE_SITE_KEY: ${PUBLIC_TURNSTILE_SITE_KEY:-}
+        PUBLIC_API_URL: ${PUBLIC_API_URL:-}
+    environment:
+      PANEL_DOMAIN: ${PANEL_DOMAIN:?set PANEL_DOMAIN}
+      API_DOMAIN: ${API_DOMAIN:?set API_DOMAIN}
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+    networks: [private]
+
+networks:
+  private: {}
+
+volumes:
+  pgdata:
+  pgsocket:
+  caddy_data:
+  caddy_config:

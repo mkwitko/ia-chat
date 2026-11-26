@@ -1,0 +1,139 @@
+name: Deploy
+
+# After CI passes on main: build the images, push them to GHCR and deploy over SSH.
+# Off until the repository secrets DEPLOY_HOST, DEPLOY_USER and DEPLOY_KEY exist: without them the
+# `gate` job reports "disabled" and every other job is skipped (docs/ops/producao.md).
+# Optional: secret DEPLOY_KNOWN_HOSTS (output of `ssh-keyscan <host>` checked by you once);
+# repository variables VITE_HELP_URL, VITE_SENTRY_DSN, PUBLIC_TURNSTILE_SITE_KEY, PUBLIC_API_URL
+# (public values baked into the panel and site bundles), DEPLOY_PATH (default /opt/consultorio).
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - id: check
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          if [ -n "$HOST" ] && [ -n "$DEPLOY_USER" ] && [ -n "$KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Deploy disabled: DEPLOY_HOST, DEPLOY_USER or DEPLOY_KEY is not set."
+          fi
+
+  images:
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - { name: api, context: ., file: docker/Dockerfile, app: api }
+          - { name: worker, context: ., file: docker/Dockerfile, app: worker }
+          - { name: edge, context: ., file: docker/edge/Dockerfile, app: '' }
+          - { name: postgres, context: docker/postgres, file: docker/postgres/Dockerfile, app: '' }
+    steps:
+      # Actions pinned by commit SHA (supply chain).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+      - id: prefix
+        run: echo "value=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          push: true
+          tags: |
+            ${{ steps.prefix.outputs.value }}/${{ matrix.name }}:${{ github.event.workflow_run.head_sha || github.sha }}
+            ${{ steps.prefix.outputs.value }}/${{ matrix.name }}:latest
+          build-args: |
+            APP=${{ matrix.app }}
+            VITE_HELP_URL=${{ vars.VITE_HELP_URL }}
+            VITE_SENTRY_DSN=${{ vars.VITE_SENTRY_DSN }}
+            VITE_RELEASE=${{ github.event.workflow_run.head_sha || github.sha }}
+            PUBLIC_TURNSTILE_SITE_KEY=${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
+            PUBLIC_API_URL=${{ vars.PUBLIC_API_URL }}
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+
+  deploy:
+    needs: [gate, images]
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+      - name: Prepare SSH
+        env:
+          KEY: ${{ secrets.DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          if [ -n "$KNOWN_HOSTS" ]; then
+            printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            # Trust on first use: set DEPLOY_KNOWN_HOSTS to pin the server key.
+            ssh-keyscan -H "$HOST" > ~/.ssh/known_hosts
+          fi
+      - name: Copy the compose file and deploy
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/consultorio' }}
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+        run: |
+          prefix="ghcr.io/${GITHUB_REPOSITORY,,}"
+          target="$DEPLOY_USER@$HOST"
+          ssh_opts=(-i ~/.ssh/deploy_key -o BatchMode=yes)
+          scp "${ssh_opts[@]}" docker-compose.prod.yml "$target:$DEPLOY_PATH/docker-compose.prod.yml"
+          printf '%s' "$GHCR_TOKEN" | ssh "${ssh_opts[@]}" "$target" \
+            "docker login ghcr.io -u '$GHCR_USER' --password-stdin"
+          ssh "${ssh_opts[@]}" "$target" bash -s <<EOF
+          set -euo pipefail
+          cd '$DEPLOY_PATH'
+          sed -i '/^IMAGE_PREFIX=/d;/^IMAGE_TAG=/d' .env
+          printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\n' '$prefix' '$SHA' >> .env
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          docker image prune -f
+          EOF

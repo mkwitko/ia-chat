@@ -53,6 +53,10 @@ model Tenant {
   billingOverageThrough DateTime? @map("billing_overage_through") @db.Date
   /// Cancelled subscription: the assistant works until here (end of the paid period), then stops.
   billingEndsAt         DateTime? @map("billing_ends_at") @db.Timestamptz
+  /// E-26 (RF-63): when the status became cancelled (set by a trigger); the 30-day deletion clock starts here.
+  cancelledAt         DateTime?    @map("cancelled_at") @db.Timestamptz
+  /// E-26: when the deletion job erased this tenant's business data; null = not yet.
+  dataDeletedAt       DateTime?    @map("data_deleted_at") @db.Timestamptz
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
