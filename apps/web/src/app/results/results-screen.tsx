@@ -4,6 +4,7 @@ import { dateFormat } from '@/i18n/locale';
 import { OriginLabel } from '../customers/customers-labels';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
+import { MoreOptions } from '../screens/editor-screen';
 import { ChoicePills } from '../screens/choice-pills';
 import { Screen } from '../screens/screen';
 import { HelpArticle } from '../screens/screen-help';
@@ -60,33 +61,38 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
     <div className="pb-10">
       <Note>{since ? Copy.baseline(since) : Copy.baselineNoDate}</Note>
       <RecoveredSection results={results} />
-      <Section title={Copy.conversations.title}>
+      <Section title={Copy.mainTitle}>
         <MetricGrid>
           <CountMetric {...Copy.conversations} count={results.conversations} />
-          <CountMetric {...Copy.newContacts} count={results.newContacts} />
+          <CountMetric {...Copy.booked} count={results.appointments.booked} />
+          <NoShowMetric results={results} />
           <ResponseMetrics results={results} />
         </MetricGrid>
       </Section>
-      <Section title={Copy.booked.title}>
-        <MetricGrid>
-          <AgendaMetrics results={results} />
-        </MetricGrid>
-        <div className="pt-2">
+      <div className="px-4 pt-8 md:px-0">
+        <MoreOptions label={Copy.allNumbers}>
+          <RecoveredWeeks
+            weeks={results.recoveredMoney.weeks}
+            withMoney={results.recoveredMoney.count >= results.minSample}
+          />
+          <MetricGrid>
+            <CountMetric {...Copy.newContacts} count={results.newContacts} />
+            <AgendaMetrics results={results} />
+          </MetricGrid>
           <Note>{Copy.requestsNote}</Note>
-        </div>
-      </Section>
-      <OriginSection results={results} />
+          <OriginSection results={results} />
+        </MoreOptions>
+      </div>
     </div>
   );
 }
 
 function RecoveredSection({ results }: Readonly<{ results: ResultsView }>) {
-  const { weeks, ...totals } = results.recoveredMoney;
-  const figure = { ...totals, minSample: results.minSample };
+  const { count, valueCents, afterHours } = results.recoveredMoney;
+  const figure = { count, valueCents, afterHours, minSample: results.minSample };
   return (
     <div className="pt-4">
       <RecoveredCard title={RecoveredCopy.resultsTitle} figure={figure} />
-      <RecoveredWeeks weeks={weeks} withMoney={totals.count >= results.minSample} />
     </div>
   );
 }
@@ -108,18 +114,22 @@ function ResponseMetrics({ results }: Readonly<{ results: ResultsView }>) {
   );
 }
 
-function AgendaMetrics({ results }: Readonly<{ results: ResultsView }>) {
+function NoShowMetric({ results }: Readonly<{ results: ResultsView }>) {
   const { attended, noShow, unmarked } = results.attendance;
   return (
+    <RateMetric
+      {...Copy.noShow}
+      rate={rateOf(noShow, attended + noShow, results.minSample)}
+      detail={Copy.noShow.unmarked(unmarked)}
+    />
+  );
+}
+
+function AgendaMetrics({ results }: Readonly<{ results: ResultsView }>) {
+  return (
     <>
-      <CountMetric {...Copy.booked} count={results.appointments.booked} />
       <CountMetric {...Copy.rescheduled} count={results.appointments.rescheduled} />
       <CountMetric {...Copy.cancelled} count={results.appointments.cancelled} />
-      <RateMetric
-        {...Copy.noShow}
-        rate={rateOf(noShow, attended + noShow, results.minSample)}
-        detail={Copy.noShow.unmarked(unmarked)}
-      />
       <CountMetric {...Copy.recovered} count={results.recovered} />
       <CountMetric {...Copy.repeatBookings} count={results.repeatBookings} />
     </>

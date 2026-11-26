@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { usePushState, usePushSubscribe } from '@/lib/push';
 import type { OnboardingView } from './onboarding-api';
+import { IphoneInstall } from './iphone-install';
 import { OnboardingCopy } from './onboarding-copy';
 
 export const ActivationCopy = {
   phoneHeading: 'No seu celular',
   install: 'Pôr um atalho na tela do celular',
-  installHint:
-    'Abre como um aplicativo. No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início".',
+  installHint: 'Abre como um aplicativo, direto da tela do seu celular.',
   installed: 'Atalho criado neste celular',
   notify: 'Receber avisos no celular',
   notifyHint: 'Para saber na hora quando um rascunho espera sua aprovação ou alguém pede você.',
@@ -78,6 +78,7 @@ function InstallRow() {
       )}
       {!installed && !prompt && <p className="font-medium">{ActivationCopy.install}</p>}
       {!installed && <p className="text-sm text-muted-foreground">{ActivationCopy.installHint}</p>}
+      {!installed && <IphoneInstall />}
     </div>
   );
 }

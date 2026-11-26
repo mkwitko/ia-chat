@@ -32,7 +32,8 @@ export const CustomerCopy = defineMessages({
     back: 'Clientes',
     loadFailed: 'Não conseguimos carregar este cliente.',
     notFound: 'Cliente não encontrado.',
-    openConversation: 'Abrir conversa',
+    openConversation: 'Abrir a conversa no WhatsApp',
+    moreLabel: 'Origem, pedido para parar e situação',
     autoStatus:
       'O status muda sozinho conforme as mensagens e os atendimentos. Você só precisa marcar à mão quando alguém desistir.',
     originHeading: 'Origem',

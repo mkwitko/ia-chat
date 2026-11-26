@@ -6,6 +6,8 @@ import { defineMessages } from '@/i18n/messages';
 export const ResultsCopy = defineMessages({
   [Locale.ptBR]: {
     title: 'Resultados',
+    mainTitle: 'O principal',
+    allNumbers: 'Ver todos os números',
     back: 'Início',
     hint: 'Como foi o atendimento no período escolhido. Cada número tem "Como calculamos" com a conta por trás.',
     loadFailed: 'Não conseguimos carregar os resultados.',
