@@ -1,4 +1,5 @@
-// Panel copy in pt-BR for Resultados (RN-56). Every number comes with its formula.
+// Panel copy in pt-BR for Resultados (RN-56). Plain sentences under each number; the formulas
+// live together in "Como calculamos" at the end of the page (round 3).
 
 import { Locale } from '@/i18n/locale';
 import { defineMessages } from '@/i18n/messages';
@@ -9,13 +10,12 @@ export const ResultsCopy = defineMessages({
     mainTitle: 'O principal',
     allNumbers: 'Ver todos os números',
     back: 'Início',
-    hint: 'Como foi o atendimento no período escolhido. Cada número tem "Como calculamos" com a conta por trás.',
+    hint: 'Como foi o atendimento no período escolhido. A conta de cada número fica em "Como calculamos", no fim da página.',
     loadFailed: 'Não conseguimos carregar os resultados.',
     periodLabel: 'Período',
     periods: { month: 'Este mês', last_month: 'Mês passado', last_90_days: 'Últimos 90 dias' },
-    insufficient: 'Sem dados suficientes',
-    insufficientCounts: (part: number, total: number) => `${String(part)} de ${String(total)}`,
-    formulaLabel: 'Como é calculado',
+    insufficient: 'Ainda poucos dados',
+    howTitle: 'Como calculamos',
     conversations: {
       title: 'Conversas',
       formula: 'Pessoas diferentes que conversaram com você no período.',
@@ -26,12 +26,16 @@ export const ResultsCopy = defineMessages({
     },
     firstResponse: {
       title: 'Tempo até a primeira resposta',
-      formula: 'Mediana do tempo entre a primeira mensagem do paciente e a primeira resposta.',
-      sample: (count: number) => `Calculado sobre ${String(count)} conversas.`,
+      formula:
+        'Quanto a pessoa espera, em geral, entre a primeira mensagem e a primeira resposta: metade das conversas é respondida mais rápido que isso.',
+      sample: (count: number) =>
+        count === 1 ? 'Só 1 conversa até agora.' : `Só ${String(count)} conversas até agora.`,
     },
     escalation: {
       title: 'Conversas que passaram para você',
-      formula: 'Conversas em que o assistente passou para você, dividido por todas as conversas.',
+      formula: 'De todas as conversas, quantas o assistente passou para você responder.',
+      counts: (part: number, total: number) =>
+        `${String(part)} de ${String(total)} conversas passaram para você.`,
     },
     booked: {
       title: 'Agendamentos feitos',
@@ -48,11 +52,17 @@ export const ResultsCopy = defineMessages({
     },
     noShow: {
       title: 'Faltas',
-      formula: 'Faltas dividido por (comparecimentos + faltas) entre os atendimentos já marcados.',
+      formula:
+        'Dos atendimentos em que você marcou se a pessoa veio, quantos tiveram falta. Os que ainda não foram marcados ficam de fora.',
+      counts: (noShow: number, total: number) => {
+        if (total === 0) return 'Você ainda não marcou se as pessoas vieram.';
+        if (noShow === 0) return `Ninguém faltou nos ${String(total)} atendimentos marcados.`;
+        return `${String(noShow)} de ${String(total)} pessoas faltaram.`;
+      },
       unmarked: (count: number) =>
         count === 1
-          ? '1 atendimento sem presença marcada.'
-          : `${String(count)} atendimentos sem presença marcada.`,
+          ? 'Falta marcar se 1 pessoa veio.'
+          : `Falta marcar se ${String(count)} pessoas vieram.`,
     },
     recovered: {
       title: 'Contatos retomados',
@@ -63,7 +73,6 @@ export const ResultsCopy = defineMessages({
       formula: 'Agendamentos feitos por pessoas que já tinham comparecido antes.',
     },
     originTitle: 'De onde vêm os contatos',
-    originFormula: 'Contatos novos do período, agrupados pela origem.',
     originEmpty: 'Nenhum contato novo neste período.',
     referrals: { title: 'Indicações', formula: 'Contatos novos que chegaram por indicação.' },
     baseline: (since: string) =>

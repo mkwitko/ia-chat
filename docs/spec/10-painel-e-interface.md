@@ -107,7 +107,7 @@ No atendimento que já começou, o profissional marca "Compareceu" ou "Faltou" (
 
 ### Resultados do mês
 
-`/resultados`, filtro de período (este mês, mês passado, últimos 90 dias). Só dados reais; cada número mostra a conta e a fórmula; abaixo de 5 casos aparece "sem dados suficientes" com as contagens, nunca um percentual.
+`/resultados`, filtro de período (este mês, mês passado, últimos 90 dias). Só dados reais; abaixo de 5 casos aparece "Ainda poucos dados" com as contagens, nunca um percentual. Rodada 3 (26/11/2026): sob cada número, uma frase simples com a contagem ("Ninguém faltou nos 6 atendimentos marcados.", "Falta marcar se 4 pessoas vieram."), sem jargão ("mediana", "dividido por"); as fórmulas e o aviso de linha de base ficam juntos em "Como calculamos", dobrado no fim da página.
 
 | Número | Fórmula |
 |---|---|
