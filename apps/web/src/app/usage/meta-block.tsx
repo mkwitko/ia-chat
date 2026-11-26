@@ -1,3 +1,4 @@
+import { LoadError } from '../inbox/query-states';
 import { useMetaUsage, type MetaUsage } from './usage-api';
 import { UsageCopy } from './usage-copy';
 
@@ -10,7 +11,7 @@ export function MetaBlock() {
   return (
     <section aria-label={Copy.heading} className="grid gap-3 px-4 md:px-0">
       <h2 className="text-lg">{Copy.heading}</h2>
-      {meta.isError && <p className="text-sm text-muted-foreground">{Copy.loadFailed}</p>}
+      {meta.isError && <LoadError message={Copy.loadFailed} onRetry={() => void meta.refetch()} />}
       {meta.data && <MetaDetails meta={meta.data} />}
       <p className="text-sm text-muted-foreground">{Copy.note}</p>
     </section>

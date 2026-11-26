@@ -1,3 +1,4 @@
+import { LoadError } from '../inbox/query-states';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -106,7 +107,8 @@ function PreviewButton({ open, onToggle }: Readonly<{ open: boolean; onToggle: (
 
 function Preview({ id }: Readonly<{ id: string }>) {
   const messages = useStagedMessages(id, true);
-  if (messages.isError) return <p className="pl-8 text-sm text-danger">{Copy.previewFailed}</p>;
+  if (messages.isError)
+    return <LoadError message={Copy.previewFailed} onRetry={() => void messages.refetch()} />;
   return (
     <div className="ml-8 grid gap-2 rounded-lg bg-muted p-3" aria-busy={messages.isPending}>
       <p className="text-sm font-semibold">{Copy.previewHeading}</p>

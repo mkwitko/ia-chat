@@ -1,3 +1,4 @@
+import { LoadError } from '../inbox/query-states';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { notifyError } from '@/lib/notify';
@@ -36,7 +37,9 @@ export function CalendarConnect() {
   return (
     <div className="grid gap-3">
       <ReturnNotice />
-      {status.isError && <p role="alert">{Copy.loadFailed}</p>}
+      {status.isError && (
+        <LoadError message={Copy.loadFailed} onRetry={() => void status.refetch()} />
+      )}
       {status.data && <Body status={status.data} />}
     </div>
   );
