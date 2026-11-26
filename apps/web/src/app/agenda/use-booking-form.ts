@@ -1,3 +1,4 @@
+import { labelOf } from '@/i18n/messages';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { notifyError } from '@/lib/notify';
@@ -18,7 +19,8 @@ export type BookingTarget =
   | { kind: typeof BookingKind.move; appointment: AppointmentItem; day: string };
 
 function errorText(error: Error): string {
-  const known = error instanceof ApiError && error.code ? AgendaCopy.errors[error.code] : undefined;
+  const known =
+    error instanceof ApiError && error.code ? labelOf(AgendaCopy.errors, error.code) : undefined;
   return known ?? AgendaCopy.failed;
 }
 

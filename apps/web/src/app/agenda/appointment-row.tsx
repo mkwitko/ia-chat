@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { labelOf } from '@/i18n/messages';
 import { restoreOnError, useLeaving } from '@/components/ui/undo';
 import { feedback } from '../setup/feedback';
 import { AgendaCopy as Copy } from './agenda-copy';
@@ -39,7 +40,7 @@ export function AppointmentRow({ item, timezone, onMove, professional }: Readonl
             {item.patientName ?? item.patientPhone ?? Copy.noPatient}
           </span>
           <span className="block truncate text-sm text-muted-foreground">
-            {item.serviceName} · {Copy.status[item.status] ?? item.status} ·{' '}
+            {item.serviceName} · {labelOf(Copy.status, item.status) ?? item.status} ·{' '}
             {item.createdBy === CreatedBy.ai ? Copy.byAssistant : Copy.byYou}
             {item.calendarSync === CalendarSync.failed && ` · ${Copy.notSynced}`}
           </span>
