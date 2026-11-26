@@ -7,7 +7,7 @@ import { audit, AuditAction } from './audit.ts';
 import { notFound, parsed, tenantOf } from './guarded.ts';
 
 // Spec 05, "Agenda por profissional": the services a professional performs. An empty list means
-// every service (H-42), so a one-professional tenant never has to set it.
+// every service (H-45), so a one-professional tenant never has to set it.
 
 const PATH = '/api/professionals/:id/services';
 const ENTITY = 'professional_services';

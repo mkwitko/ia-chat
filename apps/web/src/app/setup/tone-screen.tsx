@@ -3,7 +3,7 @@ import { Route } from '@/routes';
 import { ChoiceList } from '../assistant/choice-list';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen, ScreenWidth } from '../screens/screen';
+import { Screen } from '../screens/screen';
 import { AreaField, FormActions, TextField } from './fields';
 import { feedback } from './feedback';
 import { useSaveTone, useTone, type Tone } from './setup-api';
@@ -17,7 +17,7 @@ const NEWLINE = '\n';
 export function ToneScreen() {
   const tone = useTone();
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <BackLink to={Route.assistant} label={CommonCopy.assistant} />
       {tone.isPending && <ListSkeleton />}
       {tone.isError && (

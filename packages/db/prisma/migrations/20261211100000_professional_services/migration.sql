@@ -1,5 +1,5 @@
 -- Agenda por profissional (spec 05): which services each professional performs. A professional
--- without rows performs every service (H-42). The overlap constraint is already per professional
+-- without rows performs every service (H-45). The overlap constraint is already per professional
 -- (appointments_no_overlap, migration agenda).
 
 -- CreateTable

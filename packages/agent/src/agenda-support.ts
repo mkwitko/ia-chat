@@ -53,8 +53,7 @@ export interface Gate {
 }
 
 export type GateResult =
-  | { ok: false; error: string }
-  | { ok: true; professionalId: string | undefined };
+  { ok: false; error: string } | { ok: true; professionalId: string | undefined };
 
 /**
  * The code, not the model, enforces the confirmation: the patient said yes (the model's flag)

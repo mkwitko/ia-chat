@@ -11,7 +11,7 @@ const CHIP =
   'flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors hover:border-line-strong has-focus-visible:outline-2 has-focus-visible:outline-ring';
 const CHOSEN = 'border-primary bg-primary text-primary-foreground';
 
-/** Spec 05: which services this professional performs; none chosen means all of them (H-42). */
+/** Spec 05: which services this professional performs; none chosen means all of them (H-45). */
 export function ProfessionalServices({ professionalId }: Readonly<{ professionalId: string }>) {
   const services = useServices();
   const linked = useProfessionalServices(professionalId);

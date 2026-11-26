@@ -5,7 +5,7 @@ import { ApiError } from '@/lib/api';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen, ScreenWidth } from '../screens/screen';
+import { Screen } from '../screens/screen';
 import { useBilling, useCancel, useChangePlan, useSubscribe, type Billing } from './billing-api';
 import { BillingCopy as Copy, PLAN_LABEL } from './billing-copy';
 import { DocumentForm } from './document-form';
@@ -23,7 +23,7 @@ function onError(error: Error) {
 export function BillingScreen() {
   const billing = useBilling();
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <BackLink to={Route.more} label={Copy.more} />
       {billing.isPending && <ListSkeleton />}
       {billing.isError && (

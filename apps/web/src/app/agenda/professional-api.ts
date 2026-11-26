@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 // Mirrors apps/api/src/setup/professional-services-routes.ts: the services a professional
-// performs. An empty list means every service (H-42).
+// performs. An empty list means every service (H-45).
 
 const PUT = 'PUT';
 const servicesPath = (id: string) => `/api/professionals/${id}/services`;

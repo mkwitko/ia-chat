@@ -76,7 +76,7 @@ export function AvailabilityScreen() {
   );
 }
 
-/** H-42: the connected Google Agenda is the first professional's; the others use this page only. */
+/** H-45: the connected Google Agenda is the first professional's; the others use this page only. */
 function CalendarOrNote({
   owner,
   elsewhere,

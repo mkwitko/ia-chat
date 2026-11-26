@@ -4,7 +4,7 @@ import { slotsIn, type SlotWindow } from './availability.ts';
 
 // Spec 05, "Agenda por profissional": each professional has their own rules, blocks and
 // appointments; a service is performed by the professionals linked to it. A professional with no
-// link performs every service (H-42), so a one-professional tenant needs no setup.
+// link performs every service (H-45), so a one-professional tenant needs no setup.
 
 const FIRST = { createdAt: 'asc' } as const;
 

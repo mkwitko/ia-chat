@@ -422,7 +422,8 @@ Spec: `09-site-aquisicao-suporte.md`.
 
 ### S-07 Suporte pelo próprio produto
 - [ ] Tenant de suporte com a central de ajuda como base de conhecimento
-- [ ] Botão no painel que abre o suporte com o contexto da conta
+- [x] Botão no painel que abre o suporte com o contexto da conta
+  - Mais > Ajuda e suporte (`/mais/ajuda`): busca no índice público da central (`/ajuda/busca.json` do site, liberado para outras origens no Caddy; precisa de `VITE_HELP_URL`) e "Falar com o suporte" por WhatsApp (`SUPPORT_WHATSAPP`, escondido se vazio) ou e-mail (`SUPPORT_EMAIL`), com mensagem pronta: código curto da conta, plano, situação e tela. Nunca dados de paciente. `GET /api/support`. Falta: último erro e estado das integrações na mensagem (RF-91)
 - [ ] Transferência para nós pelo inbox
 
 ### S-08 Busca
@@ -520,8 +521,8 @@ Spec: 05, 11. Bloqueio: código; depende de E-22 e M-01.
 
 ### M-10 Recuperação de lead e follow-up (P1)
 Spec: 11, 03. Bloqueio: código; Meta para fora da janela de 24 h (E-00b); depende de M-01 e E-22.
-- [ ] Regra simples: lead `conversando` sem resposta há N dias recebe uma mensagem aprovada pelo dono, uma vez
-- [ ] Respeita controle humano (RF-31), opt-out e limite de envio
+- [x] Regra simples: lead `conversando` sem resposta há N dias recebe uma mensagem aprovada pelo dono, uma vez Feito (H-44): Configurações > Retorno de clientes; padrão desligado, 2 dias, texto confirmado pelo dono; fora da janela de 24 h avisa o profissional
+- [x] Respeita controle humano (RF-31), opt-out e limite de envio Feito: mesma trava das demais mensagens ativas, 5 por consultório por minuto
 - Pronto quando: o envio só acontece com consentimento e o dono aprovou o texto.
 
 ### M-11 Indicação (P1)
@@ -535,6 +536,16 @@ Spec: 11 (métricas 13 e 14). Bloqueio: código; depende de M-08 e E-22.
 - [ ] Pedido de avaliação depois do atendimento realizado, com consentimento; link do perfil público que o dono informa
 - [x] Relatório semanal de uma tela, por e-mail ou push, com as métricas de Resultados Feito (H-41): segunda 08:00 no fuso do consultório, cinco linhas (conversas respondidas, agendamentos do assistente, comparecimentos, recuperado, perguntas sem resposta), e-mail ao dono e push; desliga em Mais > Notificações
 - Pronto quando: o relatório do piloto sai sem número calculado à mão.
+
+### AGP-01 Agenda por profissional (P1, pesquisa 09 #16)
+Spec: 05 ("Agenda por profissional"), 10 ("Agenda"), H-45. Bloqueio: código; venda do Clínica é decisão do dono.
+- [x] **(teste primeiro)** Horários de todos que fazem o serviço, com nome; agendamento por profissional e constraint por profissional (`packages/db/src/agenda/professionals.test.ts`)
+- [x] **(teste primeiro)** Ferramentas: `consultar_horarios`, `agendar` e `remarcar` com `profissional` opcional; a oferta guarda o profissional (`apps/worker/src/agent/professional-tools.test.ts`); fim da transferência de H-38
+- [x] `professional_services` com RLS e teste de isolamento; horários, bloqueios e serviços por profissional na API; limite de profissionais por plano (409 `plan_limit`)
+- [x] Painel: filtro por profissional na Agenda, iniciais e nome em cada atendimento, troca de profissional em Disponibilidade com "Serviços que atende"
+- [ ] Google Agenda por profissional (hoje vale para o primeiro; H-45)
+- [ ] Cobrança do profissional extra do Clínica (R$ 147) quando o plano entrar em venda
+- Pronto quando: com dois profissionais, o assistente oferece horários dos dois com o nome e grava o agendamento no profissional da oferta (teste).
 
 ### M-13 Outros segmentos e P2 (depois do piloto)
 Gerador de página, Google Meu Negócio, campanhas, automações avançadas, insights de IA, templates de outros segmentos. Sem tarefas até o piloto entregar a linha de base e a decisão do nome (H-30).

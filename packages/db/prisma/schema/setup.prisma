@@ -103,7 +103,7 @@ model Service {
 }
 
 /// Services a professional performs (spec 05, "Agenda por profissional"). A professional without
-/// any row performs every service (H-42).
+/// any row performs every service (H-45).
 model ProfessionalService {
   id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenantId       String   @map("tenant_id") @db.Uuid

@@ -8,7 +8,7 @@ const valid = {
 
 describe('parseEnv', () => {
   it('returns typed values for a valid environment', () => {
-    expect(parseEnv(valid)).toEqual(valid);
+    expect(parseEnv(valid)).toEqual({ ...valid, EMAIL_SEND_IN_DEV: false });
   });
 
   it('defaults NODE_ENV to development', () => {

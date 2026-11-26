@@ -51,7 +51,8 @@ async function offeredProfessional(
       to: new Date(req.startsAt.getTime() + ONE_MS),
       now: req.now,
     });
-    if (slots.some((slot) => slot.start.getTime() === req.startsAt.getTime())) return professionalId;
+    if (slots.some((slot) => slot.start.getTime() === req.startsAt.getTime()))
+      return professionalId;
   }
   const taken = await tx.appointment.count({
     where: {
@@ -64,7 +65,7 @@ async function offeredProfessional(
   throw new AgendaFailure(taken > 0 ? AgendaError.slotTaken : AgendaError.slotUnavailable);
 }
 
-/** Who takes the booking: the requested professional, else the first free performer (H-42). */
+/** Who takes the booking: the requested professional, else the first free performer (H-45). */
 export async function professionalFor(
   tx: Tx,
   { scope, req, service }: { scope: AgendaScope; req: BookRequest; service: ServiceRow },

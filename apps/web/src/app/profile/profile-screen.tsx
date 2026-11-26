@@ -1,7 +1,8 @@
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { Screen, ScreenWidth } from '../screens/screen';
+import { cn } from '@/lib/utils';
+import { Screen, SETTINGS_COLUMNS } from '../screens/screen';
 import { CommonCopy } from '../setup/setup-copy';
 import { PackagesSection } from './packages-section';
 import { PlacesSection } from './places-section';
@@ -15,19 +16,23 @@ import { WelcomeSection } from './welcome-section';
 export function ProfileScreen() {
   const profile = useProfile();
   return (
-    <Screen title={Copy.title} width={ScreenWidth.form}>
+    <Screen title={Copy.title}>
       <BackLink to={Route.more} label={CommonCopy.more} />
-      <div className="grid gap-12 px-4 pt-2 pb-10 md:px-0">
-        <p className="text-sm text-muted-foreground">{Copy.intro}</p>
-        {profile.isPending && <ListSkeleton />}
-        {profile.isError && (
-          <LoadError message={CommonCopy.loadFailed} onRetry={() => void profile.refetch()} />
-        )}
-        {profile.data && <ProfileForm initial={profile.data} />}
-        <PackagesSection />
-        <PlacesSection />
-        <TeamSection />
-        <WelcomeSection />
+      <p className="px-4 pt-2 pb-8 text-sm text-muted-foreground md:px-0">{Copy.intro}</p>
+      <div className={cn(SETTINGS_COLUMNS, 'px-4 pb-10 md:px-0')}>
+        <div>
+          {profile.isPending && <ListSkeleton />}
+          {profile.isError && (
+            <LoadError message={CommonCopy.loadFailed} onRetry={() => void profile.refetch()} />
+          )}
+          {profile.data && <ProfileForm initial={profile.data} />}
+        </div>
+        <div className="grid gap-12">
+          <PackagesSection />
+          <PlacesSection />
+          <TeamSection />
+          <WelcomeSection />
+        </div>
       </div>
     </Screen>
   );

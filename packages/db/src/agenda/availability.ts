@@ -34,7 +34,7 @@ export async function loadScope(tx: Tx): Promise<AgendaScope> {
 }
 
 /**
- * H-42: the tenant's Google Calendar (E-21) is the first professional's. The others run on the
+ * H-45: the tenant's Google Calendar (E-21) is the first professional's. The others run on the
  * panel's rules only, so their bookings neither read nor write it.
  */
 export async function calendarFor(
@@ -59,7 +59,7 @@ export interface SlotWindow {
   from: Date;
   to: Date;
   now: Date;
-  /** The tenant's connected calendar: its busy time is subtracted for its owner (E-21, H-42). */
+  /** The tenant's connected calendar: its busy time is subtracted for its owner (E-21, H-45). */
   calendar?: CalendarLink | undefined;
 }
 
