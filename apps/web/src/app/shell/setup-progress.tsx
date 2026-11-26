@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import { cn } from '@/lib/utils';
 import { Route } from '@/routes';
 import { useOnboarding } from '../onboarding/onboarding-api';
@@ -8,7 +8,7 @@ import { ProgressBar } from '../screens/progress-bar';
 import { progressOf, type SetupProgress } from './setup-model';
 
 export const SetupCopy = {
-  label: (done: number, total: number) => `Configuração · ${String(done)} de ${String(total)}`,
+  label: (done: number, total: number) => `Primeiros passos · ${String(done)} de ${String(total)}`,
   next: 'Próximo passo',
   continue: 'Continuar configuração',
 } as const;
@@ -17,6 +17,12 @@ export const SetupCopy = {
 export function useSetupProgress(): SetupProgress | null {
   const data = useOnboarding().data;
   return data ? progressOf(data, (step) => STEP_INFO[step].title) : null;
+}
+
+/** The card and the strip step aside on "Meu consultório", which shows its own count. */
+function useShownProgress(): SetupProgress | null {
+  const progress = useSetupProgress();
+  return useLocation().pathname.startsWith(Route.clinic) ? null : progress;
 }
 
 const linkState = ({ isActive }: { isActive: boolean }) =>
@@ -28,7 +34,7 @@ const linkState = ({ isActive }: { isActive: boolean }) =>
 
 /** Desktop sidebar: "Configuração · X de N", the bar and the step that is next. */
 export function SetupProgressCard() {
-  const progress = useSetupProgress();
+  const progress = useShownProgress();
   if (!progress) return null;
   const label = SetupCopy.label(progress.done, progress.total);
   return (
@@ -42,7 +48,7 @@ export function SetupProgressCard() {
 
 /** Phone: a thin strip under the alerts while setup is unfinished. */
 export function SetupStrip() {
-  const progress = useSetupProgress();
+  const progress = useShownProgress();
   if (!progress) return null;
   const label = SetupCopy.label(progress.done, progress.total);
   return (

@@ -8,7 +8,7 @@ import { useProfilePatch, type BusinessPackage } from './profile-api';
 import { ProfileCopy as Copy } from './profile-copy';
 
 const EMPTY = '';
-const ADD_CLASS = 'col-span-2 justify-self-start md:col-span-1';
+const ADD_CLASS = 'col-span-2 justify-self-start';
 const MAX_SESSIONS = 100;
 
 /** M-04: packages with an exact price the assistant quotes ("4 sessões", R$ 800,00). */
@@ -117,13 +117,13 @@ function PackageForm({
   const { name, setName, price, setPrice, invalid, ready, submit } = form;
   return (
     <form
-      className="grid grid-cols-2 items-end gap-3 md:grid-cols-[minmax(0,1fr)_6rem_9rem_auto] xl:grid-cols-[minmax(0,1fr)_5rem_7rem] 2xl:grid-cols-[minmax(0,1fr)_6rem_9rem_auto]"
+      className="grid grid-cols-2 items-end gap-3"
       onSubmit={(event) => {
         event.preventDefault();
         submit();
       }}
     >
-      <div className="col-span-2 md:col-span-1">
+      <div className="col-span-2">
         <TextField
           id="package-name"
           label={Copy.packageName}

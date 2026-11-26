@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
-import { cleanProfile } from '../profile/profile-form';
+import { cleanProfile } from '../clinic/use-profile-editor';
 import { ProfilePath, type Place, type ProfileView } from '../profile/profile-api';
 import { ONBOARDING_KEY } from './onboarding-api';
 import { PrefillCopy } from './prefill-copy';

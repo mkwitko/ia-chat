@@ -37,7 +37,7 @@ function NoOptions() {
     <div className="grid gap-1 px-4 pt-3 text-sm text-muted-foreground md:px-0">
       <p>{Copy.noOptions}</p>
       <Link
-        to={Route.profile}
+        to={Route.clinicServices}
         className="flex min-h-11 w-fit items-center font-semibold text-foreground underline-offset-4 hover:underline"
       >
         {Copy.openProfile}

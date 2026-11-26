@@ -11,7 +11,7 @@ export function WhatsappStep() {
         <Smartphone className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
         {Copy.phoneHint}
       </p>
-      <div className="-mx-4 md:mx-0">
+      <div>
         <WhatsappSection />
       </div>
       <WelcomeSection />

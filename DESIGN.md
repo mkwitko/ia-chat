@@ -55,9 +55,10 @@ Cada cor de estado tem o seu fundo `-soft` (`#FEF0E1` / `#2E1E10`, `#F1ECFC` / `
 
 ## Layout
 
-- **Sempre largura total.** Sem coluna de 720 px no meio da tela. Margem lateral de 16 px no celular, 32 px a partir de `md`, 48 px a partir de `xl`. As páginas de ajuste e a Configuração também ocupam a largura toda (decisão do dono, 26/11/2026): blocos independentes lado a lado a partir de `xl` (`SETTINGS_COLUMNS`: Perfil, Serviços e local, Conexões, Equipe), Assistente com o formulário à esquerda e os atalhos (Tom, Base, Simulador) numa coluna à direita, Configuração com a lista dos seis passos à esquerda e o passo aberto à direita a partir de `lg`. Só o campo guarda medida: rótulo, campo e dica até `max-w-2xl`. A ficha do cliente e a disponibilidade da agenda continuam em `max-w-3xl`.
+- **Listas e telas de trabalho em largura total.** Margem lateral de 16 px no celular, 32 px a partir de `md`, 48 px a partir de `xl`. Conversas, Agenda, Clientes e Início usam a largura toda.
+- **Ajustes em uma coluna** (decisão do dono, 26/11/2026, que substitui as colunas lado a lado da mesma data): página de ajuste é um resumo em `max-w-2xl`; editor é uma coluna de até 560 px (`max-w-[35rem]`), alinhada à esquerda da área de trabalho. Nunca dois formulários lado a lado. A ficha do cliente continua em `max-w-3xl`.
 - **Celular (360–390 px) primeiro:** barra inferior com cinco itens, listas de ponta a ponta, uma coluna.
-- **Computador (`md`+):** barra lateral de 256 px: nome do consultório, cartão "Configuração · X de N" enquanto houver passo pendente, navegação (Início, Conversas, Agenda, Clientes e o grupo recolhível "Configurações" com as páginas de ajuste), e no rodapé a situação do atendimento (assistente e WhatsApp, em palavras), "Aparência" e "Sair". A lateral rola sozinha se a tela for baixa.
+- **Computador (`md`+):** barra lateral de 256 px: nome do consultório, cartão "Primeiros passos · X de N" enquanto houver passo pendente, navegação (Início, Conversas, Agenda, Clientes e o grupo recolhível "Configurações" com as páginas de ajuste), e no rodapé a situação do atendimento (assistente e WhatsApp, em palavras), "Aparência" e "Sair". A lateral rola sozinha se a tela for baixa.
 - **Usar a largura (`lg`+):** Conversas em lista + conversa lado a lado (como o WhatsApp Web); Agenda abre na semana, com os dias em colunas (2 em `md`, 3 em `xl`, 4 em `2xl`); Início com os quatro números numa faixa e duas colunas a partir de `xl` (o que precisa de você e hoje / quem não agendou e resultados); Resultados em grade de números. Não há segunda coluna de menu: a lista de ajustes mora na lateral.
 - Grade de 4 px. Espaçamentos: 4, 8, 12, 16, 20, 24, 32, 48.
 - Raio: 10 px em campos e botões, 14 px em cartões e listas, 18 px nas bolhas, círculo em avatares e selos.
@@ -65,7 +66,7 @@ Cada cor de estado tem o seu fundo `-soft` (`#FEF0E1` / `#2E1E10`, `#F1ECFC` / `
 ## Componentes
 
 - **Navegação:** no celular, Início, Conversas, Agenda, Clientes, Mais (spec 10); no computador, Mais dá lugar ao grupo "Configurações" (ícone de engrenagem, seta que gira), recolhível, aberto sozinho quando uma página de ajuste está ativa; os itens do grupo vêm recuados, só com o nome, e o contador do Assistente em `--attention-soft`. Item ativo em tinta, fundo `--surface-2` na lateral, e o **traço jade**: 2 px na borda de cima no celular, na borda esquerda na lateral (também nos itens do grupo). Conversas leva o contador de pendências em `--attention`. "Configuração" não tem aba: no celular pertence a Mais, que fica ativo em `/configuracao`; no computador o cartão do topo é a volta.
-- **Volta à configuração:** enquanto houver passo pendente, "Configuração · X de N" com barra jade no topo da lateral (computador), numa faixa fina sob os alertas (celular) e como primeira linha de Mais, todos levando a `/configuracao`; o Início mostra o cartão "Próximo passo: {passo}" com um botão "Continuar configuração". Tudo some quando a configuração termina.
+- **Volta à configuração:** enquanto houver passo pendente, "Primeiros passos · X de N" com barra jade no topo da lateral (computador), numa faixa fina sob os alertas (celular) e como primeira linha de Mais, todos levando a `/configuracao`; o Início mostra o cartão "Próximo passo: {passo}" com um botão "Continuar configuração". Tudo some quando a configuração termina.
 - **Faixa de alerta:** no topo, acima de tudo, em `--danger-soft`, com uma frase e o botão que leva à correção.
 - **Linha de conversa:** 72 px, avatar com iniciais (círculo com borda), nome, trecho, hora e selo de quem está com a conversa; a aberta fica em `--surface-2`.
 - **Bolhas:** paciente à esquerda em `--surface` com borda; assistente à direita em `--jade-soft` com rótulo "Assistente" em `--jade-ink`; você à direita em `--action` com texto `--action-ink` e rótulo "Você"; sistema no centro em pílula. Autoria por rótulo e posição, não só por cor. Largura máxima de 85% (36rem no computador).
@@ -80,6 +81,9 @@ Cada cor de estado tem o seu fundo `-soft` (`#FEF0E1` / `#2E1E10`, `#F1ECFC` / `
 - **Ícones:** lucide-react, traço 1,75 na navegação, 24 px na barra inferior e 18 px na lateral. Sempre com rótulo; ícone sozinho só com `aria-label`.
 - **Superfícies do navegador:** seleção de texto em `--jade-soft`, cursor de texto em jade, barra de rolagem fina em `--line-strong`, foco com contorno em tinta.
 - **Símbolo provisório:** porta entreaberta em `apps/web/src/app/brand-mark.tsx`, em tinta, até o logo ser desenhado (`docs/brand.md`).
+
+- **Resumo de ajustes** (`SummaryScreen` + `SummaryList`): título, uma linha de para que serve, "Faltam N itens" ou "Tudo pronto por aqui.", e a lista. Cada linha (80 px de alvo) tem ícone de traço, o assunto em 16 px/500, o valor atual em palavras em `--ink-2` (até duas linhas) e a situação com ícone e texto: "Feito" (visto, `--ok`), "Falta configurar" (alerta, `--attention`) ou "Opcional" (`--ink-2`). À direita, "Editar ›"; a primeira linha que falta configurar leva o botão cheio "Configurar", o único da tela. A linha inteira é o link.
+- **Editor** (`EditorScreen`): "‹ {resumo}" no topo, título, uma linha de explicação, os campos essenciais, "Mais opções" (um `<details>` em cartão, fechado) com o resto, e embaixo "Salvar" (cheio, largura total no celular) e "Voltar" (fantasma). Salvou: aviso "Alterações salvas." e volta ao resumo.
 
 ## Movimento
 

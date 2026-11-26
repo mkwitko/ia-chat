@@ -1,14 +1,12 @@
 import { ChevronDown, Settings } from 'lucide-react';
 import { useId, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
-import { MoreCopy, NavCopy } from '@/copy';
+import { NavCopy } from '@/copy';
 import { cn } from '@/lib/utils';
 import { Route } from '@/routes';
 import type { MoreRow } from '../screens/more-item-link';
 import { MoreRowCopy } from '../screens/more-item-link';
 import { useSettingsRows } from '../screens/settings-rows';
-
-const NOTIFICATIONS: MoreRow = { label: MoreCopy.notifications, hint: '', to: Route.more };
 
 const ROW =
   'relative flex min-h-9 items-center gap-2 rounded-md pr-3 pl-[2.625rem] text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring';
@@ -35,7 +33,7 @@ export function SettingsGroup() {
   const active = isSettingsPath(useLocation().pathname);
   const [open, setOpen] = useOpen(active);
   const listId = useId();
-  const rows = [...useSettingsRows(), NOTIFICATIONS];
+  const rows = useSettingsRows();
   return (
     <div className="grid gap-0.5">
       <button
@@ -75,11 +73,7 @@ export function SettingsGroup() {
 function SettingsLink({ row }: Readonly<{ row: MoreRow }>) {
   if (!row.to) return null;
   return (
-    <NavLink
-      to={row.to}
-      end={row.to === Route.more}
-      className={({ isActive }) => cn(ROW, isActive && ACTIVE)}
-    >
+    <NavLink to={row.to} className={({ isActive }) => cn(ROW, isActive && ACTIVE)}>
       <span className="min-w-0 flex-1 truncate">{row.label}</span>
       {row.badge ? (
         <span className="rounded-full bg-attention-soft px-1.5 text-xs leading-5 font-semibold text-foreground">

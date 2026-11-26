@@ -8,7 +8,7 @@ import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
 import { Screen, ScreenWidth } from '../screens/screen';
-import { CommonCopy } from '../setup/setup-copy';
+import { AccountCopy } from '../account-settings/account-copy';
 import { ReferralCopy as Copy } from './referral-copy';
 
 // Mirrors GET /api/growth/referral (the web does not import server code).
@@ -25,7 +25,7 @@ export function ReferralScreen() {
   const referral = useQuery({ queryKey: [PATH], queryFn: () => api<ReferralView>(PATH) });
   return (
     <Screen title={Copy.title} width={ScreenWidth.form}>
-      <BackLink to={Route.more} label={CommonCopy.more} />
+      <BackLink to={Route.account} label={AccountCopy.title} />
       <div className="grid gap-8 px-4 pt-2 pb-10 md:px-0">
         <p className="text-sm text-muted-foreground">{Copy.intro}</p>
         {referral.isPending && <ListSkeleton />}

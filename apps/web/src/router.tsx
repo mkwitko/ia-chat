@@ -5,7 +5,19 @@ import { InvitePage } from './app/account/invite-page';
 import { SignUpPage } from './app/account/signup-page';
 import { StartPage } from './app/account/start-page';
 import { AgendaScreen } from './app/agenda/agenda-screen';
-import { AvailabilityScreen } from './app/agenda/availability-screen';
+import { HoursEditor } from './app/agenda/hours-editor';
+import { AccountScreen, NotificationsScreen } from './app/account-settings/account-screen';
+import { BusinessEditor } from './app/clinic/business-editor';
+import { ClinicScreen } from './app/clinic/clinic-screen';
+import { legacyRoutes } from './app/clinic/legacy-redirect';
+import {
+  AddressEditor,
+  CalendarEditor,
+  ServicesEditor,
+  TeamEditor,
+  WhatsappEditor,
+} from './app/clinic/list-editors';
+import { PaymentsEditor } from './app/clinic/payments-editor';
 import { AssistantScreen } from './app/assistant/assistant-screen';
 import { OnboardingScreen } from './app/onboarding/onboarding-screen';
 import { LoginPage } from './app/login/login-page';
@@ -16,13 +28,10 @@ import { CustomersScreen } from './app/customers/customers-screen';
 import { HomeScreen } from './app/home/home-screen';
 import { ResultsScreen } from './app/results/results-screen';
 import { MoreScreen } from './app/screens/more-screen';
-import { ConnectionsScreen } from './app/whatsapp/connections-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
 import { ReviewScreen } from './app/whatsapp/review-screen';
 import { GrowthScreen } from './app/growth/growth-screen';
 import { ReferralScreen } from './app/referral/referral-screen';
-import { ProfileScreen } from './app/profile/profile-screen';
-import { ServicesScreen } from './app/setup/services-screen';
 import { ToneScreen } from './app/setup/tone-screen';
 import { SimulatorScreen } from './app/simulator/simulator-screen';
 import { OperatorScreen } from './app/operator/operator-screen';
@@ -55,7 +64,6 @@ export const router = createBrowserRouter([
         ],
       },
       { path: Route.agenda, element: <AgendaScreen /> },
-      { path: Route.agendaAvailability, element: <AvailabilityScreen /> },
       { path: Route.home, element: <HomeScreen /> },
       { path: Route.legacyToday, element: <Navigate to={Route.home} replace /> },
       { path: Route.customers, element: <CustomersScreen /> },
@@ -69,9 +77,17 @@ export const router = createBrowserRouter([
           { path: Route.tone, element: <ToneScreen /> },
           { path: Route.knowledge, element: <KnowledgeScreen /> },
           { path: Route.simulator, element: <SimulatorScreen /> },
-          { path: Route.services, element: <ServicesScreen /> },
-          { path: Route.profile, element: <ProfileScreen /> },
-          { path: Route.connections, element: <ConnectionsScreen /> },
+          { path: Route.clinic, element: <ClinicScreen /> },
+          { path: Route.clinicBusiness, element: <BusinessEditor /> },
+          { path: Route.clinicServices, element: <ServicesEditor /> },
+          { path: Route.clinicHours, element: <HoursEditor /> },
+          { path: Route.clinicAddress, element: <AddressEditor /> },
+          { path: Route.clinicTeam, element: <TeamEditor /> },
+          { path: Route.clinicPayments, element: <PaymentsEditor /> },
+          { path: Route.clinicCalendar, element: <CalendarEditor /> },
+          { path: Route.clinicWhatsapp, element: <WhatsappEditor /> },
+          { path: Route.account, element: <AccountScreen /> },
+          { path: Route.accountNotifications, element: <NotificationsScreen /> },
           { path: Route.importReview, element: <ReviewScreen /> },
           { path: Route.usage, element: <UsageScreen /> },
           { path: Route.billing, element: <BillingScreen /> },
@@ -81,6 +97,7 @@ export const router = createBrowserRouter([
           { path: Route.support, element: <SupportScreen /> },
         ],
       },
+      ...legacyRoutes(),
       { path: Route.onboarding, element: <OnboardingScreen /> },
       { path: Route.operator, element: <OperatorScreen /> },
     ],

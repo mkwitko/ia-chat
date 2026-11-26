@@ -32,11 +32,7 @@ export function PlacesSection() {
   if (!places.data) return null;
   const list = places.data.locations;
   return (
-    <section className="grid gap-3" aria-labelledby="places-heading">
-      <h2 id="places-heading" className="text-lg">
-        {Copy.placesHeading}
-      </h2>
-      <p className="text-sm text-muted-foreground">{Copy.placesIntro}</p>
+    <div className="grid gap-3">
       {list.map((place, index) => (
         <PlaceRow key={place.id} place={place} main={index === 0} edit={edit} />
       ))}
@@ -56,7 +52,7 @@ export function PlacesSection() {
           }}
         />
       )}
-    </section>
+    </div>
   );
 }
 

@@ -15,7 +15,7 @@ export const HistoryCopy = {
     'Áudios, imagens e documentos: não são baixados.',
     'Mensagens com mais de 90 dias: descartadas.',
     'O assistente não lê nem responde essas mensagens antigas.',
-    'Mensagens sobre sintomas ou saúde nunca vão para a IA.',
+    'Mensagens sobre sintomas ou saúde nunca são lidas pelo assistente.',
   ],
   phoneStep:
     'O celular vai perguntar se você permite compartilhar o histórico. Deixe o app WhatsApp Business aberto até terminar.',
@@ -33,13 +33,13 @@ export const HistoryCopy = {
     'O histórico não foi liberado no app do celular, então não veio nada. Para tentar de novo, seria preciso refazer a conexão.',
   suggestTitle: 'Perguntas frequentes a partir do histórico',
   suggestWhy:
-    'A IA lê só as perguntas sem informação de saúde e sugere as mais comuns. Nada é publicado: você responde e aprova em Assistente.',
-  suggest: 'Sugerir com IA',
+    'O assistente lê só as perguntas sem informação de saúde e sugere as mais comuns. Nada é publicado: você responde e aprova em Assistente.',
+  suggest: 'Sugerir perguntas frequentes',
   suggesting: 'Procurando…',
   suggestedNone: 'Nenhuma pergunta nova para sugerir.',
   suggested: (count: number) =>
     count === 1
       ? '1 pergunta nova foi para a lista do assistente.'
       : `${String(count)} perguntas novas foram para a lista do assistente.`,
-  suggestOff: 'A sugestão com IA não está disponível agora.',
+  suggestOff: 'A sugestão não está disponível agora.',
 } as const;

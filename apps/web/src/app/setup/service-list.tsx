@@ -1,50 +1,13 @@
 import { formatCents } from '@/lib/money';
-import { Route } from '@/routes';
-import { ListSkeleton, LoadError } from '../inbox/query-states';
-import { BackLink } from '../screens/back-link';
-import { cn } from '@/lib/utils';
-import { Screen, SETTINGS_COLUMNS } from '../screens/screen';
 import { AddButton } from './add-button';
 import { feedback } from './feedback';
 import { RowActions } from './fields';
-import { LocationSection } from './location-section';
 import { ServiceForm } from './service-form';
-import {
-  useArchiveService,
-  useCreateService,
-  useServices,
-  useUpdateService,
-  type Service,
-} from './setup-api';
-import { CommonCopy, ServicesCopy as Copy } from './setup-copy';
+import { useArchiveService, useCreateService, useUpdateService, type Service } from './setup-api';
+import { ServicesCopy as Copy } from './setup-copy';
 import { NEW_ITEM, useEditing } from './use-editing';
 
-/** Spec 10, "Serviços e local". */
-export function ServicesScreen() {
-  const services = useServices();
-  return (
-    <Screen title={Copy.title}>
-      <BackLink to={Route.more} label={CommonCopy.more} />
-      <div className={cn(SETTINGS_COLUMNS, 'pt-2 pb-10')}>
-        <section className="grid gap-3">
-          <h2 className="px-4 text-lg md:px-0">{Copy.servicesHeading}</h2>
-          {services.isPending && <ListSkeleton />}
-          {services.isError && (
-            <LoadError message={CommonCopy.loadFailed} onRetry={() => void services.refetch()} />
-          )}
-          {services.data && (
-            <ServiceList
-              services={services.data.services}
-              pricesForbidden={services.data.pricesForbidden}
-            />
-          )}
-        </section>
-        <LocationSection />
-      </div>
-    </Screen>
-  );
-}
-
+/** Spec 10, "Serviços e preços": the services, each edited in place. */
 export function ServiceList({
   services,
   pricesForbidden,
@@ -52,7 +15,7 @@ export function ServiceList({
   const edit = useEditing();
   const create = useCreateService();
   return (
-    <div className="grid gap-3 px-4 md:px-0">
+    <div className="grid gap-3">
       {pricesForbidden && (
         <p className="rounded-lg bg-attention-soft px-3 py-2 text-sm">{Copy.pricesForbidden}</p>
       )}
@@ -101,7 +64,7 @@ function ServiceItem({
     );
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border bg-card p-4">
-      <div className="min-w-0 flex-1">
+      <div className="min-w-48 flex-1">
         <p className="font-semibold">{service.name}</p>
         <p className="text-sm text-muted-foreground">
           {Copy.minutes(service.durationMinutes)} ·{' '}

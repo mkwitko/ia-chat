@@ -28,14 +28,14 @@ export function HoursStep({ onDone }: Readonly<{ onDone: () => void }>) {
       {saved.length === 0 && (
         <p className="rounded-lg bg-attention-soft px-3 py-2 text-sm">{Copy.defaultHoursNote}</p>
       )}
-      <div className="-mx-4 md:mx-0">
+      <div>
         <RulesEditor
           initial={saved.length > 0 ? saved : DEFAULT_GRID}
           saveLabel={Copy.saveHours}
           onSaved={onDone}
         />
       </div>
-      <div className="-mx-4 md:mx-0">
+      <div>
         <CalendarSection />
       </div>
     </div>

@@ -15,6 +15,6 @@ export function useCalendarAlert(): ServiceAlert | null {
   return {
     message: CalendarCopy.needsReconnect,
     action: CalendarCopy.bannerAction,
-    onAction: () => void navigate(Route.agendaAvailability),
+    onAction: () => void navigate(Route.clinicHours),
   };
 }

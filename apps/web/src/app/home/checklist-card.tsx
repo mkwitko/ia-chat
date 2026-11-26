@@ -31,11 +31,11 @@ function itemsOf({ checklist }: OnboardingView, staged: number): Item[] {
   return [
     { label: ChecklistCopy.tone, done: checklist.tone, to: Route.tone },
     { label: ChecklistCopy.reminders, done: true },
-    { label: ChecklistCopy.reviewLink, done: checklist.reviewLink, to: Route.profile },
+    { label: ChecklistCopy.reviewLink, done: checklist.reviewLink, to: Route.clinicBusiness },
     {
       label: ChecklistCopy.faq(checklist.unanswered),
       done: checklist.unanswered === 0 && checklist.packages > 0,
-      to: checklist.unanswered > 0 ? Route.knowledge : Route.profile,
+      to: checklist.unanswered > 0 ? Route.knowledge : Route.clinicServices,
     },
     { label: ChecklistCopy.team, done: checklist.team, to: Route.team },
     ...(staged > 0

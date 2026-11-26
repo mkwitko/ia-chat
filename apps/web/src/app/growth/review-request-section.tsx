@@ -76,7 +76,7 @@ function LinkStatus({ link }: Readonly<{ link: string | null }>) {
     return (
       <p className="text-sm">
         {Copy.needsLink}{' '}
-        <Link to={Route.profile} className="font-medium underline underline-offset-4">
+        <Link to={Route.clinicBusiness} className="font-medium underline underline-offset-4">
           {Copy.addLink}
         </Link>
       </p>
