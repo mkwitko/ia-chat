@@ -1,6 +1,7 @@
 import { aiEnvSchema } from '@app/ai';
 import {
   baseEnvSchema,
+  optionalText,
   billingEnvSchema,
   googleCalendarEnvSchema,
   parseEnvWith,
@@ -11,6 +12,7 @@ import * as z from 'zod';
 
 const MIN_SECRET_LENGTH = 32;
 const DEFAULT_PORT = 3000;
+const PHONE_DIGITS = /^\d{10,15}$/;
 
 const operatorEmails = z
   .string()
@@ -49,6 +51,10 @@ export const apiEnvSchema = baseEnvSchema
     /** Cloudflare Turnstile secret key (S-01). Without it and SITE_ORIGIN the waitlist route is off. */
     /** Platform operators (E-27, H-23): comma-separated emails. Empty means nobody. */
     OPERATOR_EMAILS: operatorEmails,
+    /** Support WhatsApp number, digits with country code (S-07). Unset hides "Falar pelo WhatsApp". */
+    SUPPORT_WHATSAPP: optionalText.pipe(z.string().regex(PHONE_DIGITS).optional()),
+    /** Support e-mail (S-07). Unset hides "Falar por e-mail". */
+    SUPPORT_EMAIL: optionalText.pipe(z.email().optional()),
     TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
   });
 

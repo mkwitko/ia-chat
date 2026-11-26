@@ -1,6 +1,5 @@
-import { ChevronRight, ExternalLink } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { NavLink } from 'react-router';
-import { HELP_URL } from '@/lib/config';
 import { cn } from '@/lib/utils';
 
 export const MoreRowCopy = { soon: 'Em breve', waiting: 'Aguardando você:' } as const;
@@ -13,8 +12,6 @@ export interface MoreRow {
   label: string;
   hint: string;
   to?: string | undefined;
-  /** The help center item: opens the site's help center when HELP_URL is configured. */
-  helpLink?: boolean;
   /** Count of things waiting on the owner, shown as a pill. */
   badge?: number | undefined;
 }
@@ -32,14 +29,6 @@ function RowText({ row, compact }: Readonly<{ row: MoreRow; compact: boolean }>)
 
 /** One row of "Mais": every row ends the same way (chevron, external mark or "Em breve"). */
 export function MoreItemLink({ row, compact }: Readonly<{ row: MoreRow; compact: boolean }>) {
-  if (row.helpLink && HELP_URL) {
-    return (
-      <a href={HELP_URL} target="_blank" rel="noreferrer" className={ROW}>
-        <RowText row={row} compact={compact} />
-        <ExternalLink className={ICON} aria-hidden="true" />
-      </a>
-    );
-  }
   if (!row.to) {
     return (
       <div className={cn(ROW, 'hover:bg-transparent')}>
