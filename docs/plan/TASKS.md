@@ -536,7 +536,7 @@ Spec: 11 ("Modelo de indicação"), H-27. Bloqueio: código; recompensa é decis
 
 ### M-12 Avaliações e relatório simples (P1)
 Spec: 11 (métricas 13 e 14). Bloqueio: código; depende de M-08 e E-22.
-- [ ] Pedido de avaliação depois do atendimento realizado, com consentimento; link do perfil público que o dono informa
+- [x] Pedido de avaliação depois do atendimento realizado, com consentimento; link do perfil público que o dono informa Feito (H-48): Configurações > Retorno e avaliações; padrão desligado, 3 h, uma vez por atendimento e por cliente a cada 90 dias; exige o link no perfil
 - [x] Relatório semanal de uma tela, por e-mail ou push, com as métricas de Resultados Feito (H-41): segunda 08:00 no fuso do consultório, cinco linhas (conversas respondidas, agendamentos do assistente, comparecimentos, recuperado, perguntas sem resposta), e-mail ao dono e push; desliga em Mais > Notificações
 - Pronto quando: o relatório do piloto sai sem número calculado à mão.
 
