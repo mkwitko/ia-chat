@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 
 export const GrowthPath = {
   leadFollowUp: '/api/growth/lead-follow-up',
+  reviewRequest: '/api/growth/review-request',
 } as const;
 const PUT = 'PUT';
 
@@ -31,5 +32,30 @@ export function useSaveLeadFollowUp() {
     mutationFn: (body: LeadFollowUpInput) =>
       api<LeadFollowUpView>(GrowthPath.leadFollowUp, { method: PUT, body }),
     onSuccess: (data) => client.setQueryData([GrowthPath.leadFollowUp], data),
+  });
+}
+
+export interface ReviewRequestView {
+  enabled: boolean;
+  delayHours: number;
+  /** From the business profile; null means the switch cannot be turned on. */
+  reviewLink: string | null;
+  defaultDelayHours: number;
+}
+
+export type ReviewRequestInput = Pick<ReviewRequestView, 'enabled' | 'delayHours'>;
+
+export const useReviewRequest = () =>
+  useQuery({
+    queryKey: [GrowthPath.reviewRequest],
+    queryFn: () => api<ReviewRequestView>(GrowthPath.reviewRequest),
+  });
+
+export function useSaveReviewRequest() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (body: ReviewRequestInput) =>
+      api<ReviewRequestView>(GrowthPath.reviewRequest, { method: PUT, body }),
+    onSuccess: (data) => client.setQueryData([GrowthPath.reviewRequest], data),
   });
 }

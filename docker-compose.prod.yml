@@ -2,7 +2,8 @@
 #   .env     app settings and secrets (api, worker, migrate) + the compose variables below
 #   .env.db  database passwords and backup (pgBackRest) settings (postgres, backup only)
 #   .env.tunnel  TUNNEL_TOKEN of the Cloudflare Tunnel (cloudflared only)
-# Compose variables read from .env: PANEL_DOMAIN, SITE_DOMAIN, IMAGE_PREFIX (default: build locally), IMAGE_TAG.
+# Compose variables read from .env: PANEL_DOMAIN, SITE_DOMAIN, IMAGE_PREFIX (default: build locally), IMAGE_TAG,
+# WAHA_API_KEY and WAHA_WEBHOOK_SECRET (QR code gateway, E-09b).
 # No published ports: the public traffic arrives through the Cloudflare Tunnel (cloudflared -> edge:80).
 # Memory caps fit a shared 2 vCPU / 12 GB host.
 name: consultorio-aberto
@@ -146,6 +147,38 @@ services:
     depends_on:
       migrate: { condition: service_completed_successfully }
 
+  # E-09b: WhatsApp by QR code (spec 03, RF-27 to RF-29). WAHA with the GOWS engine (whatsmeow),
+  # ARM64 image pinned by digest (RF-29b: update only after testing). Private network only: no
+  # published port; the api and the worker call it at http://waha:3000 with WAHA_API_KEY, and it
+  # posts every event to the api signed with HMAC-SHA512 (WAHA_WEBHOOK_SECRET).
+  waha:
+    image: devlikeapro/waha:gows-arm-2026.10.1@sha256:c77d6cbdad7e1ba5dd2647f215018cb8224bb10503ee38b06271179a43eb9bc7
+    environment:
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      WAHA_API_KEY: ${WAHA_API_KEY:?set WAHA_API_KEY}
+      WAHA_BASE_URL: http://waha:3000
+      WHATSAPP_HOOK_URL: http://api:3000/webhooks/waha
+      WHATSAPP_HOOK_EVENTS: message.any,message.ack,session.status
+      WHATSAPP_HOOK_HMAC_KEY: ${WAHA_WEBHOOK_SECRET:?set WAHA_WEBHOOK_SECRET}
+      WHATSAPP_HOOK_RETRIES_POLICY: exponential
+      WHATSAPP_HOOK_RETRIES_DELAY_SECONDS: '2'
+      WHATSAPP_HOOK_RETRIES_ATTEMPTS: '8'
+      WHATSAPP_RESTART_ALL_SESSIONS: 'True'
+      # Media stays an hour: the media job downloads it right after the webhook, with retries.
+      WHATSAPP_FILES_LIFETIME: '3600'
+      WAHA_DASHBOARD_ENABLED: 'false'
+      WHATSAPP_SWAGGER_ENABLED: 'false'
+      WAHA_PRINT_QR: 'False'
+      # warn: no message content in the logs (RN-38).
+      WAHA_LOG_LEVEL: warn
+      WAHA_HTTP_LOG_LEVEL: warn
+      WAHA_LOG_FORMAT: JSON
+    mem_limit: 384m
+    volumes:
+      - wahasessions:/app/.sessions
+    restart: unless-stopped
+    networks: [private]
+
   # Caddy over plain HTTP on the private network: the static panel and site, and the proxy to the api.
   # TLS ends at Cloudflare; the tunnel routes every public hostname to http://edge:80.
   edge:
@@ -185,3 +218,4 @@ networks:
 volumes:
   pgdata:
   pgsocket:
+  wahasessions:

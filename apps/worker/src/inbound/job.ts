@@ -1,4 +1,4 @@
-import { parseCloudChanges } from '@app/channels';
+import { parseStoredEvents } from '@app/channels';
 import type { AfterCommit, Tx } from '@app/db';
 import { AlertEvent, type Alert } from '@app/observability';
 import * as z from 'zod';
@@ -17,6 +17,8 @@ export interface InboundJobDeps {
   /** Queues the media download (E-10). Runs after commit; the job reads the stored message. */
   scheduleMedia?: (tenantId: string, messageId: string) => Promise<void>;
   notifyUsage?: (tenantId: string, notice: UsageNotice) => void;
+  /** RF-29: a connected channel went down (operator alert and the owner's push). */
+  channelDown?: (tenantId: string) => void;
 }
 
 /** inbound.process: turns one stored webhook batch into messages and statuses (RF-21). */
@@ -28,8 +30,8 @@ export async function processInboundEvent(
   const { inboundEventId } = jobData.parse(data);
   const stored = await tx.inboundEvent.findUniqueOrThrow({ where: { id: inboundEventId } });
   if (stored.processedAt || !stored.channelId) return undefined;
-  const events = parseCloudChanges(stored.payload);
-  const { alerts, turns, usage, media } = await applyInboundEvents(tx, {
+  const events = parseStoredEvents(stored.provider, stored.payload);
+  const { alerts, turns, usage, media, channelDown } = await applyInboundEvents(tx, {
     tenantId: stored.tenantId,
     channelId: stored.channelId,
     events,
@@ -42,6 +44,7 @@ export async function processInboundEvent(
     data: { processedAt: new Date(), error: null },
   });
   return async () => {
+    if (channelDown) deps?.channelDown?.(stored.tenantId);
     for (const notice of usage) deps?.notifyUsage?.(stored.tenantId, notice);
     for (const messageId of media) await deps?.scheduleMedia?.(stored.tenantId, messageId);
     for (const turn of turns) await deps?.scheduleTurn(stored.tenantId, turn);

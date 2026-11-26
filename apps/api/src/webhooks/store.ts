@@ -1,8 +1,7 @@
 import { createHash } from 'node:crypto';
-import type { InboundBatch } from '@app/channels';
+import { InboundProvider, type InboundBatch } from '@app/channels';
 import type { Db, Prisma } from '@app/db';
 
-export const CLOUD_PROVIDER = 'whatsapp_cloud';
 const HASH = 'sha256';
 
 /** Hands a stored batch to the worker (pg-boss in production, a spy in tests). */
@@ -17,9 +16,10 @@ export type StoreOutcome = (typeof StoreOutcome)[keyof typeof StoreOutcome];
  */
 export async function storeBatch(
   db: Db,
-  batch: InboundBatch,
+  batch: InboundBatch & { provider?: InboundProvider },
   enqueue: EnqueueInbound,
 ): Promise<StoreOutcome> {
+  const provider = batch.provider ?? InboundProvider.cloud;
   const route = await db.client.channelRoute.findUnique({ where: { accountId: batch.accountId } });
   if (!route) return StoreOutcome.unknownAccount;
   const payload = batch.raw as Prisma.InputJsonValue;
@@ -30,7 +30,7 @@ export async function storeBatch(
       create: {
         tenantId: route.tenantId,
         channelId: route.channelId,
-        provider: CLOUD_PROVIDER,
+        provider,
         payload,
         payloadHash,
       },

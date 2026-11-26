@@ -1,7 +1,7 @@
 import { randomInt, randomUUID } from 'node:crypto';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import type { AiGateway } from '@app/ai';
-import type { ChannelSend } from '@app/channels';
+import type { ChannelSend, WahaConfig } from '@app/channels';
 import type { BillingProvider } from '@app/core';
 import { createDb, type Db } from '@app/db';
 import { buildApp } from './app.ts';
@@ -55,6 +55,7 @@ export interface TestAppOptions {
   metaFetch?: typeof fetch;
   billing?: BillingProvider;
   prefillFetch?: PageFetcher;
+  waha?: WahaConfig;
 }
 
 export async function startTestApp(
@@ -76,6 +77,7 @@ export async function startTestApp(
     ...(options.billing ? { billing: options.billing } : {}),
     ...(options.metaFetch ? { metaFetch: options.metaFetch } : {}),
     ...(options.prefillFetch ? { prefillFetch: options.prefillFetch } : {}),
+    ...(options.waha ? { waha: options.waha } : {}),
   });
   register(app);
   await app.ready();

@@ -59,11 +59,14 @@ export const BILLING_RECONCILE_QUEUE: QueueDefinition = { name: 'billing.reconci
 export const MEDIA_QUEUE: QueueDefinition = { name: 'media.fetch' };
 /** E-26 (RF-63): daily erasure of the data of accounts closed for 30 days. */
 export const TENANT_DELETION_QUEUE: QueueDefinition = { name: 'retention.tenant_deletion' };
-/** E-24b (H-47): daily purge of staged history import data the owner did not decide on. */
+/** E-24b (H-49): daily purge of staged history import data the owner did not decide on. */
 export const IMPORT_STAGING_PURGE_QUEUE: QueueDefinition = { name: 'retention.import_staging' };
 
 /** Research 09 #2: the owner's Monday report of one tenant; one pg-boss schedule per tenant. */
 export const WEEKLY_REPORT_QUEUE: QueueDefinition = { name: 'report.weekly' };
+
+/** E-09b (RF-29): every 5 minutes, checks each QR code session against the WAHA gateway. */
+export const SESSION_HEALTH_QUEUE: QueueDefinition = { name: 'channel.session_health' };
 
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
@@ -81,4 +84,5 @@ export const QUEUES: readonly QueueDefinition[] = [
   TENANT_DELETION_QUEUE,
   IMPORT_STAGING_PURGE_QUEUE,
   WEEKLY_REPORT_QUEUE,
+  SESSION_HEALTH_QUEUE,
 ];

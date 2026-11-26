@@ -4,7 +4,7 @@ import { createDb, MessageType } from '@app/db';
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import { purgeStagedImports } from './staging.ts';
 
-// E-24b (H-47): staged contacts and message texts the owner did not decide on are purged after 7 days.
+// E-24b (H-49): staged contacts and message texts the owner did not decide on are purged after 7 days.
 
 const db = createDb(process.env.DATABASE_URL ?? '');
 afterAll(() => db.client.$disconnect());

@@ -1,6 +1,6 @@
 import { aiConfigured, aiEnvSchema, createEnvGateway, startTracing } from '@app/ai';
 import { pushEnvSchema, vapidFrom } from '../notify/push.ts';
-import { createChannelSender } from '@app/channels';
+import { createChannelSender, wahaConfig, wahaEnvSchema } from '@app/channels';
 import {
   NodeEnv,
   channelTokenReader,
@@ -38,7 +38,8 @@ const workerEnvSchema = aiEnvSchema
     META_TOKEN_KEY: z.string().min(1).optional(),
   })
   .extend(pushEnvSchema.shape)
-  .extend(googleCalendarEnvSchema.shape);
+  .extend(googleCalendarEnvSchema.shape)
+  .extend(wahaEnvSchema.shape);
 
 interface TurnWiring {
   boss: PgBoss;
@@ -118,6 +119,7 @@ function turnDeps({ db, boss, notifier, alert, env, nodeEnv, log }: DepsSources)
     send: createChannelSender({
       accessToken: env.META_ACCESS_TOKEN,
       readChannelToken: channelTokenReader(env.META_TOKEN_KEY),
+      waha: wahaConfig(env),
       devFallback: nodeEnv !== NodeEnv.production,
       log: log.info,
     }),

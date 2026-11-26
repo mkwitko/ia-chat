@@ -18,7 +18,7 @@ export interface StagingPurgeResult {
 }
 
 /**
- * E-24b (H-47): once a day, deletes staged history (contacts and their message texts) the owner did
+ * E-24b (H-49): once a day, deletes staged history (contacts and their message texts) the owner did
  * not decide on within IMPORT_STAGING_DAYS. Counts only in the result; safe to run any number of times.
  */
 export async function purgeStagedImports(deps: StagingPurgeDeps): Promise<StagingPurgeResult> {

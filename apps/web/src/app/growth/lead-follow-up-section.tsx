@@ -5,6 +5,7 @@ import { feedback } from '../setup/feedback';
 import { AreaField } from '../setup/fields';
 import { CommonCopy } from '../setup/setup-copy';
 import { useSaveLeadFollowUp, type LeadFollowUpView } from './growth-api';
+import { SwitchRow } from './switch-row';
 import { FOLLOW_UP_DAY_OPTIONS, GrowthCopy, MAX_FOLLOW_UP_TEXT } from './growth-copy';
 
 const Copy = GrowthCopy.followUp;
@@ -29,7 +30,13 @@ export function LeadFollowUpSection({ view }: Readonly<{ view: LeadFollowUpView 
       <h2 id="growth-follow-up" className="text-lg">
         {Copy.heading}
       </h2>
-      <EnableToggle checked={enabled} onChange={setEnabled} />
+      <SwitchRow
+        id="growth-follow-up"
+        label={Copy.toggle}
+        hint={Copy.toggleHint}
+        checked={enabled}
+        onChange={setEnabled}
+      />
       <DaysSelect value={days} onChange={setDays} />
       <ApprovedText view={view} text={text} onChange={setText} approved={approved} />
       <Button
@@ -101,32 +108,6 @@ function ApprovedText({ view, text, approved, onChange }: Readonly<TextProps>) {
           {Copy.useDefault}
         </Button>
       )}
-    </div>
-  );
-}
-
-function EnableToggle({
-  checked,
-  onChange,
-}: Readonly<{ checked: boolean; onChange: (value: boolean) => void }>) {
-  return (
-    <div className="grid gap-1">
-      <label className="flex min-h-11 items-center gap-3 text-sm font-medium">
-        <input
-          type="checkbox"
-          role="switch"
-          className="size-5 shrink-0 accent-primary"
-          aria-describedby="growth-follow-up-hint"
-          checked={checked}
-          onChange={(event) => {
-            onChange(event.target.checked);
-          }}
-        />
-        {Copy.toggle}
-      </label>
-      <p id="growth-follow-up-hint" className="pl-8 text-sm text-muted-foreground">
-        {Copy.toggleHint}
-      </p>
     </div>
   );
 }
