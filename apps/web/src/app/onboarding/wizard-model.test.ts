@@ -15,6 +15,9 @@ describe('setup wizard', () => {
     expect(settlesStep(Page.find)).toBe(false);
     expect(settlesStep(Page.document)).toBe(true);
     expect(settlesStep(Page.services)).toBe(true);
+    // The live test comes after activation and saves nothing.
+    expect(settlesStep(Page.liveTest)).toBe(false);
+    expect(PAGES.at(-1)).toBe(Page.liveTest);
   });
 
   it('resumes where the owner stopped', () => {

@@ -13,7 +13,7 @@ export const OnboardingCopy = defineMessages({
     allDone: 'Configuração concluída. Toque num passo para revisar.',
     documentSaved: 'CPF ou CNPJ já informado.',
     activationNeedsWhatsapp:
-      'Para ativar, conecte o WhatsApp no passo 2. Os 14 dias de teste começam quando ele conecta.',
+      'Para ativar, conecte o WhatsApp (passo 4, "Vamos ligar o seu WhatsApp"). Os 14 dias de teste começam quando ele conecta.',
     documentRequired: 'Informe o CPF ou CNPJ antes de seguir.',
     whatsappRequired: 'O WhatsApp ainda não está conectado. Conecte ou toque em "Conectar depois".',
     hoursRequired: 'Confirme pelo menos uma faixa de horário antes de seguir.',

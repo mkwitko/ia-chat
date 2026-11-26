@@ -7,6 +7,7 @@ import { WhatsappConnect } from '../whatsapp/whatsapp-section';
 import { ActivationStep } from './activation-step';
 import { FindSection } from './find-section';
 import { HoursStep } from './hours-step';
+import { LiveTest } from './live-test';
 import { useRefreshOnboarding, type OnboardingView, type Step } from './onboarding-api';
 import { OnboardingCopy } from './onboarding-copy';
 import { ServicesStep } from './services-step';
@@ -45,6 +46,8 @@ export function PageBody(props: Readonly<PageBodyProps>) {
       return <TryChat onGoTo={onGoTo} />;
     case Page.activation:
       return <ActivationStep view={view} />;
+    case Page.liveTest:
+      return <LiveTest />;
     default: {
       const never: never = page;
       return never;
