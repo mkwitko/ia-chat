@@ -70,3 +70,5 @@ modules:
     - founder-operations
   not_applicable:
     - opportunity-intelligence
+  specialist_required:
+    - legal-and-compliance-review
