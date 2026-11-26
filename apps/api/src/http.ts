@@ -45,6 +45,8 @@ export const ErrorCode = {
   prefillFailed: 'prefill_failed',
   pasteText: 'paste_text',
   pageUnreadable: 'page_unreadable',
+  suggestOff: 'suggest_off',
+  suggestFailed: 'suggest_failed',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

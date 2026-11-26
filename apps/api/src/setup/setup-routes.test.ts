@@ -113,36 +113,13 @@ describe('location', () => {
 });
 
 describe('knowledge base', () => {
-  it('lists unanswered questions apart and answers them in one step', async () => {
-    const pending = await ctx.db.withTenant(tenantId, (tx) =>
-      tx.knowledgeItem.create({
-        data: { tenantId, question: 'Tem estacionamento?', source: 'unanswered' },
-      }),
-    );
+  it('creates and lists a manual item', async () => {
     const manual = await call('POST', '/api/knowledge', {
-      payload: {
-        question: 'Aceita cartão?',
-        answer: 'Sim, débito e crédito.',
-      },
+      payload: { question: 'Aceita cartão?', answer: 'Sim, débito e crédito.' },
     });
     expect(manual.statusCode).toBe(201);
-    const before = (await call('GET', '/api/knowledge')).json<{ unanswered: { id: string }[] }>();
-    expect(before.unanswered.map((item) => item.id)).toEqual([pending.id]);
-    await call('PUT', `/api/knowledge/${pending.id}`, {
-      payload: {
-        question: 'Tem estacionamento?',
-        answer: 'Sim, na rua.',
-      },
-    });
-    const after = (await call('GET', '/api/knowledge')).json<{
-      items: { answer: string }[];
-      unanswered: [];
-    }>();
-    expect(after.unanswered).toEqual([]);
-    expect(after.items.map((item) => item.answer).sort((a, b) => a.localeCompare(b))).toEqual([
-      'Sim, débito e crédito.',
-      'Sim, na rua.',
-    ]);
+    const view = (await call('GET', '/api/knowledge')).json<{ items: { answer: string }[] }>();
+    expect(view.items.map((item) => item.answer)).toEqual(['Sim, débito e crédito.']);
   });
 
   it('refuses an empty answer', async () => {

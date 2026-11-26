@@ -30,6 +30,7 @@ import { registerPrefillRoutes } from './onboarding/prefill/prefill-routes.ts';
 import { fetchPage, type PageFetcher } from './onboarding/prefill/safe-fetch.ts';
 import { registerTrialRoutes } from './trial/trial-routes.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
+import { registerUnansweredRoutes } from './setup/unanswered-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerPlacesRoutes } from './setup/places-routes.ts';
 import { registerProfessionalRoutes } from './setup/professionals-routes.ts';
@@ -138,6 +139,7 @@ function registerInbox(app: FastifyInstance, { env, send }: Pick<AppDeps, 'env' 
 /** Panel routes that call the model: the simulator and the onboarding prefill (spec 09, 10). */
 function registerModelRoutes(app: FastifyInstance, deps: AppDeps): void {
   registerSimulatorRoutes(app, { gateway: deps.simulatorGateway });
+  registerUnansweredRoutes(app, { gateway: deps.simulatorGateway });
   registerPrefillRoutes(app, {
     gateway: deps.simulatorGateway,
     fetchPage: deps.prefillFetch ?? fetchPage,
