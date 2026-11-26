@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { ApiError } from '@/lib/api';
 import { FormActions, TextField } from '../setup/fields';
 import { useSaveDocument } from './billing-api';
@@ -10,9 +11,9 @@ const Status = { badRequest: 400, forbidden: 403, conflict: 409 } as const;
 
 export function onDocumentError(error: Error) {
   const status = error instanceof ApiError ? error.status : 0;
-  if (status === Status.conflict) toast.error(Copy.documentTaken);
-  else if (status === Status.badRequest) toast.error(Copy.documentInvalid);
-  else toast.error(status === Status.forbidden ? Copy.forbidden : Copy.failed);
+  if (status === Status.conflict) notifyError(Copy.documentTaken);
+  else if (status === Status.badRequest) notifyError(Copy.documentInvalid);
+  else notifyError(status === Status.forbidden ? Copy.forbidden : Copy.failed);
 }
 
 /** RF-81: CPF or CNPJ, one trial per document. In Assinatura and in the first onboarding step. */

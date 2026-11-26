@@ -10,7 +10,7 @@ Define o que cada tela contém e como se comporta. Não define aparência: cor, 
 | RN-51 | Instalável (PWA), com notificação push. No iOS, o push exige o app instalado na tela inicial: o onboarding orienta |
 | RN-52 | Tudo o que o profissional precisa no dia cabe em quatro telas: início, conversas, agenda, clientes. Configuração fica fora do caminho |
 | RN-53 | Toda tela tem os quatro estados desenhados: carregando, vazio, erro e com dados. O estado vazio explica o que fazer |
-| RN-54 | Nenhuma ação destrutiva sem confirmação; toda ação tem retorno visível em até 100 ms |
+| RN-54 | Nenhuma ação destrutiva sem confirmação; toda ação tem retorno visível em até 100 ms. A confirmação é a janela do painel (nunca a do navegador). O que dá para desfazer (cancelar atendimento, tirar da lista de espera, remover folga, descartar pergunta) sai da tela na hora com "Desfazer" por 6 s, e só então vai ao servidor; o que não dá (desconectar, remover da equipe, registrar pedido para parar) pede confirmação. Todo erro diz o que houve, o que fazer e, quando uma alteração falhou, traz "Tentar de novo" |
 | RN-55 | Acessibilidade: contraste AA, alvos de toque de 44 px, navegação por teclado, leitor de tela, respeito a "reduzir movimento" |
 | RN-56 | Textos em português do Brasil, na segunda pessoa, sem termo de software. "Assistente", nunca "bot", "agente" ou "IA" sozinha |
 | RN-57 | Nada de enfeite sem função: sem gradiente decorativo, sem cartões idênticos com ícone, sem emoji como ícone, sem números de vaidade |
@@ -34,7 +34,11 @@ Lateral no computador (decisão do dono, 26/11/2026): nome do consultório, o ca
 
 Ajustes para quem nunca usou um sistema assim (decisão do dono, 26/11/2026, depois de "está difícil de fazer a configuração e encontrar as coisas"): o grupo tem no máximo cinco entradas, **Meu consultório**, **Assistente**, **Equipe** (só o dono), **Conta** e **Ajuda** (e Operador para quem é operador). Cada página de ajuste é um **resumo**: uma linha por assunto, com o valor atual em palavras ("Ter a Qui, 7h–20h") e a situação ("Feito", "Falta configurar" ou "Opcional"); a primeira linha que falta configurar leva o único botão cheio da tela. Tocar numa linha abre um **editor só daquele assunto**, numa rota própria: uma coluna de até 560 px, os 2 a 4 campos essenciais, o resto em "Mais opções", um "Salvar" e um "Voltar"; salvou, volta ao resumo. Listas (serviços, endereços, quem atende) salvam item a item, sem "Salvar" da página. Cada coisa mora num lugar só: o Google Agenda saiu da Disponibilidade e das Conexões e virou uma linha de Meu consultório; a Disponibilidade saiu da Agenda e virou Meu consultório › Horários. Os endereços antigos redirecionam mantendo a consulta (`/agenda/disponibilidade` → `/mais/consultorio/horarios`, `/mais/perfil` → `/mais/consultorio`, `/mais/servicos` → `/mais/consultorio/servicos`, `/mais/conexoes` → `/mais/consultorio/whatsapp`, `/mais/plano-e-uso` e `/mais/assinatura` → `/mais/conta/...`, `/mais/retorno` → `/mais/assistente/retorno`).
 
-Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsApp desconectado, Google expirado, pagamento da Meta ausente, assinatura vencida, franquia estourada. Cada alerta tem um botão que leva à correção.
+Textos e idioma (decisão do dono, 26/11/2026): todo texto do painel mora em recursos por idioma (`defineMessages` em `apps/web/src/i18n`), com pt-BR como padrão e en-US como esqueleto que cai no pt-BR chave a chave. Dicionário tipado próprio, sem biblioteca: as mensagens já eram objetos e funções (plurais, valores), o compilador confere cada chave, e nenhuma dependência resolve isso em menos linhas. Datas, números e dinheiro sempre por `Intl` com o idioma ativo. A escolha do idioma (`ca-locale` no navegador) é lida ao abrir; ainda não há seletor na tela (só pt-BR é produto).
+
+Ajuda na tela (26/11/2026): cada tela do dia a dia tem um "?" ao lado do título que abre o artigo da Central de ajuda sobre ela, e uma dica curta na primeira visita, que some com "Entendi" (guardada no navegador).
+
+Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento (no máximo uma faixa por vez; com alerta, a faixa "Primeiros passos" do celular espera): WhatsApp desconectado, Google expirado, pagamento da Meta ausente, assinatura vencida, franquia estourada. Cada alerta tem um botão que leva à correção.
 
 ## Telas
 
@@ -68,15 +72,13 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsA
 
 ### Início
 
-Substitui o antigo "Hoje" (`/inicio`; `/hoje` redireciona).
+Substitui o antigo "Hoje" (`/inicio`; `/hoje` redireciona). Redesenho de 26/11/2026 (dono: "uma tarefa por tela", usuário extremamente leigo): uma área de situação, depois uma lista do que fazer.
 
-- **Recuperado este mês** (H-41): no topo, a soma do preço dos serviços dos atendimentos que o assistente agendou e que você marcou "Compareceu", com a contagem ao lado e "Como calculamos" num toque; abaixo de 5 atendimentos, "Ainda sem dados".
-- **O mês em quatro números**, todos contados do banco e cada um um link para onde agir: contatos no mês (Clientes), agendamentos (Agenda), aguardando retorno (Conversas) e cancelamentos (Agenda). Cancelamento conta no dia em que foi feito.
-- **O que precisa de você**: conversas aguardando, rascunhos para aprovar, perguntas que o assistente não soube, atendimentos que já passaram sem "compareceu/faltou" marcado (com os dois botões ali mesmo) e atendimentos das próximas 48 h ainda sem confirmação. Item vazio some; sem nada, "Tudo em dia".
-- **Pacotes terminando** (H-43), dentro de "O que precisa de você": clientes cujo pacote mais recente tem 1 sessão ou acabou há até 30 dias, com link para a ficha.
+- **Quadro de situação** (um só, no topo): mostra a coisa mais importante agora, com um botão. Ordem: o que impede o atendimento (teste terminado, WhatsApp desconectado, Google expirado, notificações desligadas) em vermelho; senão o próximo passo da configuração com a barra; senão o fim do teste nos últimos 3 dias; senão uma sugestão de melhoria (uma por vez, no lugar da antiga lista "Para deixar o assistente ainda melhor"); senão "Tudo funcionando". Embaixo, sempre, a situação em palavras: assistente, WhatsApp e dias de teste. No Início a faixa de alerta do topo não aparece, porque o quadro já mostra o mesmo alerta; a faixa de teste ativo saiu de todas as telas (a contagem mora no quadro e no rodapé da lateral).
+- **Precisa de você**: conversas aguardando, respostas para aprovar (sem repetir as que já aparecem como conversa), atendimentos das próximas 48 h sem confirmação, perguntas que o assistente não soube e quem conversou e não agendou e pode ser retomado (link para Clientes; nenhuma mensagem sai sozinha daqui). Depois, "Veio ou faltou?" (atendimentos que já passaram, com os dois botões ali mesmo) e "Pacotes no fim" (H-43). Item vazio some; sem nada, "Nada esperando por você agora".
 - **Hoje**: os atendimentos do dia.
-- **Não agendaram**: quantos contatos estão em "Não agendou" e quantos podem ser retomados (não pediram para parar e falaram com você nos últimos 30 dias). Nenhuma mensagem sai sozinha daqui: o link leva à ficha do cliente.
-- **Resultados do mês**: botão "Ver resultados".
+- **Atalhos**: Novo agendamento (`/agenda?novo=1` abre o formulário), Ver conversas, Testar o assistente.
+- **Este mês**: uma frase (contatos e agendamentos; o valor recuperado, H-41, quando há amostra) e "Ver resultados". Os números completos e "Como calculamos" ficam em Resultados.
 
 ### Clientes
 

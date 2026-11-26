@@ -1,4 +1,4 @@
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { Control, useSetControl } from './inbox-api';
 import { ConversationCopy as Copy } from './inbox-copy';
@@ -14,7 +14,7 @@ export function ControlBar({
   const change = () => {
     if (!ensureOnline()) return;
     set.mutate(mine ? Control.ai : Control.human, {
-      onError: () => toast.error(Copy.controlFailed),
+      onError: () => notifyError(Copy.controlFailed),
     });
   };
   return (

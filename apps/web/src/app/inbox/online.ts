@@ -1,4 +1,4 @@
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { ConversationCopy } from './inbox-copy';
 
 /**
@@ -7,6 +7,6 @@ import { ConversationCopy } from './inbox-copy';
  */
 export function ensureOnline(): boolean {
   if (navigator.onLine) return true;
-  toast.error(ConversationCopy.offline);
+  notifyError(ConversationCopy.offline);
   return false;
 }

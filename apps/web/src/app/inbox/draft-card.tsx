@@ -1,6 +1,6 @@
 import { FilePen } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { DraftAction, useDecideDraft, type PendingDraft } from './inbox-api';
@@ -152,7 +152,7 @@ function runner(decide: ReturnType<typeof useDecideDraft>, turnId: string): Run 
     const body = edited === undefined ? {} : { text: edited };
     decide.mutate(
       { action, turnId, ...body },
-      { onError: (error) => toast.error(failureText(error)) },
+      { onError: (error) => notifyError(failureText(error)) },
     );
   };
 }

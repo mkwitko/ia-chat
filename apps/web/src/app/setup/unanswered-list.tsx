@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
+import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 import { AreaField, FormActions } from './fields';
 import { feedback } from './feedback';
 import {
@@ -35,17 +36,33 @@ function useDraft(question: string, onDraft: (text: string) => void) {
       onSuccess: ({ suggestion }) => {
         onDraft(suggestion);
       },
-      onError: () => toast.error(Copy.suggestFailed),
+      onError: () => notifyError(Copy.suggestFailed),
     });
   };
   return { run, pending: suggest.isPending, done: suggest.isSuccess };
 }
 
+/** "Ignorar" with "Desfazer": the question leaves at once and is dropped when the toast closes. */
+function useDismiss(ids: string[]) {
+  const mutation = useDismissUnanswered();
+  const { gone, leave } = useLeaving();
+  const dismiss = () => {
+    leave({
+      message: Copy.dismissed,
+      commit: (restore) => {
+        commitOrRestore(() => mutation.mutateAsync(ids), restore, feedback.onError);
+      },
+    });
+  };
+  return { gone, dismiss };
+}
+
 function UnansweredCard({ item }: Readonly<{ item: Unanswered }>) {
   const [answer, setAnswer] = useState('');
   const approve = useApproveUnanswered();
-  const dismiss = useDismissUnanswered();
+  const { gone, dismiss } = useDismiss(item.ids);
   const draft = useDraft(item.question, setAnswer);
+  if (gone) return null;
   return (
     <form
       className="grid gap-3 rounded-xl border border-attention/40 bg-attention-soft p-4"
@@ -71,13 +88,7 @@ function UnansweredCard({ item }: Readonly<{ item: Unanswered }>) {
         placeholder={Copy.answerPlaceholder}
         {...(draft.done ? { hint: Copy.suggestHint } : {})}
       />
-      <CardActions
-        pending={approve.isPending}
-        draft={draft}
-        onDismiss={() => {
-          if (window.confirm(Copy.dismissConfirm)) dismiss.mutate(item.ids, feedback);
-        }}
-      />
+      <CardActions pending={approve.isPending} draft={draft} onDismiss={dismiss} />
     </form>
   );
 }

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
+import { confirmThen, questionOf } from '@/components/ui/confirm-dialog';
 import { Label } from '@/components/ui/label';
 import {
   CalendarState,
@@ -76,7 +78,7 @@ function ConnectButton({ label }: Readonly<{ label: string }>) {
       className="justify-self-start"
       disabled={connect.isPending}
       onClick={() => {
-        connect.mutate(undefined, { onError: () => toast.error(Copy.connectFailed) });
+        connect.mutate(undefined, { onError: () => notifyError(Copy.connectFailed) });
       }}
     >
       {connect.isPending ? Copy.connecting : label}
@@ -101,7 +103,7 @@ function CalendarPicker({ status }: Readonly<{ status: CalendarStatus }>) {
         className="justify-self-start"
         disabled={!current || choose.isPending}
         onClick={() => {
-          choose.mutate(current, { onError: () => toast.error(Copy.saveFailed) });
+          choose.mutate(current, { onError: () => notifyError(Copy.saveFailed) });
         }}
       >
         {Copy.save}
@@ -144,8 +146,16 @@ function DisconnectButton() {
       className="justify-self-start"
       disabled={disconnect.isPending}
       onClick={() => {
-        if (!window.confirm(Copy.disconnectConfirm)) return;
-        disconnect.mutate(undefined, { onSuccess: () => toast.success(Copy.disconnected) });
+        confirmThen(
+          {
+            ...questionOf(Copy.disconnectConfirm),
+            confirm: Copy.disconnectAction,
+            destructive: true,
+          },
+          () => {
+            disconnect.mutate(undefined, { onSuccess: () => toast.success(Copy.disconnected) });
+          },
+        );
       }}
     >
       {Copy.disconnect}

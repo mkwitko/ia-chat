@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormActions, TextField } from '../setup/fields';
@@ -39,7 +40,7 @@ const EMPTY = '';
 function announceEmail({ invite, link, emailed }: InviteResult) {
   if (!link || !invite.email) return;
   if (emailed) toast.success(Copy.emailed(invite.email));
-  else toast.error(Copy.emailFailed);
+  else notifyError(Copy.emailFailed);
 }
 
 function useNewInvite(onLink: OnLink) {
@@ -57,7 +58,7 @@ function useNewInvite(onLink: OnLink) {
           setEmail(EMPTY);
         },
         onError: () => {
-          toast.error(Copy.failed);
+          notifyError(Copy.failed);
         },
       },
     );
@@ -103,7 +104,7 @@ function LinkBox({ link }: Readonly<{ link: string }>) {
   const copy = () => {
     navigator.clipboard.writeText(link).then(
       () => toast.success(Copy.copied),
-      () => toast.error(Copy.copyFailed),
+      () => notifyError(Copy.copyFailed),
     );
   };
   return (
@@ -168,7 +169,7 @@ function InviteActions({ id, onLink }: Readonly<{ id: string; onLink: OnLink }>)
           announceEmail(result);
         },
         onError: () => {
-          toast.error(Copy.failed);
+          notifyError(Copy.failed);
         },
       },
     );

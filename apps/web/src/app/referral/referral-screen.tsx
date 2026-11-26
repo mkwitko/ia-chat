@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -58,7 +59,7 @@ function LinkSection({ view }: Readonly<{ view: ReferralView }>) {
   const copy = () => {
     navigator.clipboard.writeText(view.link).then(
       () => toast.success(Copy.copied),
-      () => toast.error(Copy.copyFailed),
+      () => notifyError(Copy.copyFailed),
     );
   };
   return (

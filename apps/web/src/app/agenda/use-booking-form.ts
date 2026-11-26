@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { ApiError } from '@/lib/api';
 import { AgendaCopy } from './agenda-copy';
 import {
@@ -28,7 +29,7 @@ function outcome(onClose: () => void, onFailure: () => void) {
       onClose();
     },
     onError: (error: Error) => {
-      toast.error(errorText(error));
+      notifyError(errorText(error));
       onFailure();
     },
   });

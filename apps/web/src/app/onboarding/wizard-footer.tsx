@@ -1,4 +1,4 @@
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { onDocumentError } from '../billing/document-form';
@@ -23,7 +23,7 @@ const BLOCK_MESSAGE: Readonly<Record<string, string>> = {
 
 function onSaveError(error: Error) {
   const message = error instanceof ApiError && error.code ? BLOCK_MESSAGE[error.code] : undefined;
-  if (message) toast.error(message);
+  if (message) notifyError(message);
   else notifySaveError(error);
 }
 

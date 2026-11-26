@@ -1,4 +1,4 @@
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { usePushState, usePushSubscribe } from '@/lib/push';
 import { PushCopy } from '../inbox/inbox-copy';
 import type { ServiceAlert } from './alert-bar';
@@ -17,9 +17,9 @@ export function usePushAlert(): ServiceAlert | null {
     onAction: () => {
       subscribe().then(
         (granted) => {
-          if (!granted) toast.error(PushCopy.denied);
+          if (!granted) notifyError(PushCopy.denied);
         },
-        () => toast.error(PushCopy.failed),
+        () => notifyError(PushCopy.failed),
       );
     },
   };

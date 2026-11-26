@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { CardList, Note, Section } from '../screens/section';
@@ -82,7 +83,7 @@ function Adjust({ customerId, packageId }: Readonly<{ customerId: string; packag
         onSuccess: () => toast.success(Copy.adjusted),
         onError: (error) => {
           const code = error instanceof ApiError ? error.code : undefined;
-          toast.error((code && Copy.adjustErrors[code]) ?? Copy.failed);
+          notifyError((code && Copy.adjustErrors[code]) ?? Copy.failed);
         },
       },
     );

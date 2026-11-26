@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import { useAttendance } from './customers-api';
@@ -34,7 +35,7 @@ export function AttendanceButtons({
               { id: appointmentId, outcome },
               {
                 onSuccess: () => toast.success(Copy.attendanceSaved),
-                onError: (error) => toast.error(failure(error)),
+                onError: (error) => notifyError(failure(error)),
               },
             );
           }}

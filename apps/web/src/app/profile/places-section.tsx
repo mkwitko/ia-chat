@@ -1,6 +1,7 @@
+import { confirmRemove } from '@/components/ui/confirm-dialog';
 import { useState } from 'react';
 import { ApiError } from '@/lib/api';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { AddButton } from '../setup/add-button';
 import { feedback } from '../setup/feedback';
 import { AreaField, FormActions, RowActions, TextField } from '../setup/fields';
@@ -19,7 +20,7 @@ import { ProfileCopy as Copy } from './profile-copy';
 export const removeFeedback = {
   onSuccess: feedback.onSuccess,
   onError: (error: Error) => {
-    if (error instanceof ApiError && error.code === IN_USE) toast.error(Copy.inUse);
+    if (error instanceof ApiError && error.code === IN_USE) notifyError(Copy.inUse);
     else feedback.onError(error);
   },
 };
@@ -92,8 +93,7 @@ function PlaceRow({ place, main, edit }: Readonly<RowProps>) {
           edit.open(place.id);
         }}
         onRemove={() => {
-          if (window.confirm(Copy.removeConfirm(place.name)))
-            remove.mutate(place.id, removeFeedback);
+          confirmRemove(Copy.removeConfirm(place.name), remove.mutate, place.id, removeFeedback);
         }}
       />
     </div>

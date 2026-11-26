@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useId } from 'react';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { api } from '@/lib/api';
 
 // Research 09 #2: the Monday report (e-mail and notification) is on by default; turned off here.
@@ -30,7 +30,7 @@ export function WeeklyReportToggle() {
   const save = useMutation({
     mutationFn: (enabled: boolean) => api<Setting>(PATH, { method: PUT, body: { enabled } }),
     onSuccess: (data) => client.setQueryData(KEY, data),
-    onError: () => toast.error(WeeklyReportCopy.failed),
+    onError: () => notifyError(WeeklyReportCopy.failed),
   });
   const checked = save.isPending ? save.variables : (setting.data?.enabled ?? true);
   return (

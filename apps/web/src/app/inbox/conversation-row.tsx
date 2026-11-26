@@ -46,7 +46,10 @@ const rowClass = ({ isActive }: { isActive: boolean }) =>
   );
 
 /** 72 px row (DESIGN.md): avatar, name, preview, time and who has the conversation. */
-export function ConversationRow({ item }: Readonly<{ item: ConversationSummary }>) {
+export function ConversationRow({
+  item,
+  inNeedsYouList = false,
+}: Readonly<{ item: ConversationSummary; inNeedsYouList?: boolean }>) {
   const name = displayName(item);
   const waiting = item.state === InboxState.needsYou || item.state === InboxState.awaitingApproval;
   return (
@@ -73,7 +76,9 @@ export function ConversationRow({ item }: Readonly<{ item: ConversationSummary }
           {previewOf(item.lastMessage)}
         </span>
         <span className="flex items-center gap-2">
-          <StateBadge state={item.state} />
+          {!(inNeedsYouList && item.state === InboxState.needsYou) && (
+            <StateBadge state={item.state} />
+          )}
           <UnreadCount count={item.unreadCount} />
         </span>
       </span>

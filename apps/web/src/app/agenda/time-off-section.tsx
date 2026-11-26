@@ -15,6 +15,7 @@ import {
 } from './agenda-api';
 import { TimeOffForm } from './time-off-form';
 import { Button } from '@/components/ui/button';
+import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 
 interface SectionProps {
   timezone: string;
@@ -92,10 +93,12 @@ function warnConflicts(result: unknown) {
 
 function TimeOffRow({ off, timezone }: Readonly<{ off: TimeOffItem; timezone: string }>) {
   const remove = useRemoveTimeOff();
+  const { gone, leave } = useLeaving();
   const first = shortDay(
     new Date(off.startsAt).toLocaleDateString('sv-SE', { timeZone: timezone }),
   );
   const kind = off.kind === TimeOffKind.vacation ? Copy.kindVacation : Copy.kindBlock;
+  if (gone) return null;
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border bg-card p-4">
       <div className="min-w-0 flex-1">
@@ -110,7 +113,12 @@ function TimeOffRow({ off, timezone }: Readonly<{ off: TimeOffItem; timezone: st
         className="text-danger"
         disabled={remove.isPending}
         onClick={() => {
-          if (window.confirm(Copy.removeConfirm)) remove.mutate(off.id, feedback);
+          leave({
+            message: Copy.removed,
+            commit: (restore) => {
+              commitOrRestore(() => remove.mutateAsync(off.id), restore, feedback.onError);
+            },
+          });
         }}
       >
         {CommonCopy.remove}

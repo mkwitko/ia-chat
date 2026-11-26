@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Route } from '@/routes';
@@ -118,7 +119,7 @@ function useConnectFlow(ids: SignupIds) {
   const start = async () => {
     setPhase(Phase.opening);
     const result = await runEmbeddedSignup(ids).catch(() => {
-      toast.error(Copy.sdkFailed);
+      notifyError(Copy.sdkFailed);
       return undefined;
     });
     if (result === null) toast(Copy.cancelled);
@@ -128,7 +129,7 @@ function useConnectFlow(ids: SignupIds) {
     }
     setPhase(Phase.finishing);
     finish.mutate(result, {
-      onError: (error) => toast.error(failureMessage(error)),
+      onError: (error) => notifyError(failureMessage(error)),
       onSettled: idle,
     });
   };
@@ -181,7 +182,7 @@ function RetryButton({ label }: Readonly<{ label: string }>) {
       className="justify-self-start"
       disabled={retry.isPending}
       onClick={() => {
-        retry.mutate(undefined, { onError: (error) => toast.error(failureMessage(error)) });
+        retry.mutate(undefined, { onError: (error) => notifyError(failureMessage(error)) });
       }}
     >
       {retry.isPending ? Copy.retrying : label}

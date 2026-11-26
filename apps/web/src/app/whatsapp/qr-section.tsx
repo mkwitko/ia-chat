@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
 import {
@@ -59,7 +59,7 @@ function Start({ version }: Readonly<{ version: string }>) {
     <QrTerms
       pending={connect.isPending}
       onAccept={() => {
-        connect.mutate(version, { onError: (error) => toast.error(failureMessage(error)) });
+        connect.mutate(version, { onError: (error) => notifyError(failureMessage(error)) });
       }}
       onCancel={() => {
         setOpen(false);
@@ -139,7 +139,7 @@ function NewQrButton() {
       className="justify-self-start"
       disabled={restart.isPending}
       onClick={() => {
-        restart.mutate(undefined, { onError: (error) => toast.error(failureMessage(error)) });
+        restart.mutate(undefined, { onError: (error) => notifyError(failureMessage(error)) });
       }}
     >
       {restart.isPending ? Copy.connecting : Copy.newQr}

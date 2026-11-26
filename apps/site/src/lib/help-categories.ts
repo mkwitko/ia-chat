@@ -1,6 +1,7 @@
 /** Help center categories (spec 09), in display order. */
 export const HELP_CATEGORIES = {
   comecar: 'Começar',
+  'dia-a-dia': 'No dia a dia',
   assistente: 'Assistente',
   whatsapp: 'WhatsApp e Google (em breve)',
   conta: 'Plano e cobrança',

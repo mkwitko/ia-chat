@@ -53,6 +53,7 @@ export const CustomerCopy = {
   optOutConfirm:
     'Registrar que esta pessoa pediu para parar? O assistente deixa de mandar mensagens por iniciativa própria.',
   consentSaved: 'Consentimento registrado.',
+  optOutAction: 'Registrar o pedido',
   stageHeading: 'Histórico do status',
   stageEmpty: 'O status ainda não mudou.',
   stageAutomatic: 'automático',

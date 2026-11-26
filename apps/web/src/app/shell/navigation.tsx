@@ -14,6 +14,7 @@ import { useSignOut } from './use-sign-out';
 
 /** Bottom bar on the phone, sidebar from md up (spec 10, "Navegação"). */
 export function Navigation({ pending }: Readonly<{ pending: number }>) {
+  const onHome = useLocation().pathname === Route.home;
   return (
     <nav
       aria-label={NavCopy.label}
@@ -37,7 +38,7 @@ export function Navigation({ pending }: Readonly<{ pending: number }>) {
         </div>
       </div>
       <div className="mt-auto hidden gap-4 border-t px-1 pt-4 md:grid">
-        <ServiceStatus />
+        {!onHome && <ServiceStatus />}
         <ThemeToggle />
         <SignOutButton />
       </div>
