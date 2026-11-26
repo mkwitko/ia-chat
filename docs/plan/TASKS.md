@@ -286,7 +286,7 @@ Decisão do dono (25/11/2026): para o piloto o **Google é a fonte oficial de di
 - [x] Remarcar e cancelar seguem o evento; painel e assistente usam o mesmo caminho
 - [x] Token revogado: parar de oferecer horários, `alert()` e faixa "Reconectar" no painel (A-13)
 - [ ] **Depois (não construir agora):** canal de notificação (watch) e sincronização incremental com `syncToken` em `external_busy` (A-12); job diário de renovação dos canais; tratamento de 410; alerta de conflito externo; job que repete eventos `calendar_sync = failed`
-- [ ] Passo do Google no onboarding (E-24) usar a seção "Google Agenda" da tela Disponibilidade
+- [x] Passo do Google no onboarding (E-24) usar a seção "Google Agenda" da tela Disponibilidade Feito: a seção fica no passo de horários (H-39)
 - [ ] Verificação do app no Google para uso público (E-00c; só usuários de teste conectam até lá)
 
 ### E-22 Confirmação e lembretes
@@ -318,6 +318,7 @@ Spec: `09-site-aquisicao-suporte.md` (cadastro e ativação), `03` (onboarding d
 - [ ] Conexão do Google
 - [ ] Mensagem de teste e ativação em "aprovar antes de enviar" Feito: ativação mantém "aprovar"; teste pelo simulador. Falta: mensagem de teste pelo canal real (depende da conexão)
 - [ ] Erros da Meta e do Google traduzidos para linguagem comum Feito: módulo `packages/core/src/onboarding/provider-errors.ts` com os códigos conhecidos (H-21). Ligado à tela de conexão do WhatsApp (E-24). Falta: conferir os códigos com a documentação e ligar à tela do Google
+- [x] Fluxo refeito na ordem da pesquisa 09 (H-39): seis passos no próprio painel, pré-preenchimento por link ou texto colado (H-40), mensagem de boas-vindas colada, pacotes, grade de horários com sugestão, teste com perguntas sugeridas e "Boa/Ajustar", ativação com instalar e notificações, lista do Início depois da ativação. Execução roteirizada no celular (390 px) em 27 s de ponta a ponta, sem contar leitura humana
 - [ ] Pessoa de fora da equipe ativa uma conta sem ajuda
 
 ### E-24b Onboarding pelo histórico (opcional)
@@ -481,7 +482,7 @@ Spec: 11, 01, 09. Bloqueio: código.
 - [x] Campos do perfil: descrição, telefone, site e rede social, formas de pagamento aceitas, política de cancelamento Feito: `tenants.business_profile` (H-38), tela Mais > Perfil do negócio (`/mais/perfil`), `GET/PUT /api/profile` com auditoria; também prazo de desmarcação, link de avaliação do Google, mensagem de boas-vindas e pacotes com valor exato aceito pela validação de saída
 - [x] Horário de funcionamento derivado das regras de disponibilidade entra no perfil do prompt (`hours`, `cancellationRule`), com preço e horário ainda só vindos de ferramenta Feito: `packages/agent/src/profile.ts` e `hours.ts`; a pergunta "abre sábado?" na bateria ainda não foi conferida
 - [x] Vários profissionais e locais no perfil, não só o primeiro Feito: `/api/locations` e `/api/professionals`; o prompt lista todos; o assistente marca só na agenda do primeiro e passa a conversa para os outros (H-38)
-- [ ] Passo de perfil no onboarding, com "a IA sugere, o dono aprova"; nada ativa sem aprovação do resumo
+- [x] Passo de perfil no onboarding, com "a IA sugere, o dono aprova"; nada ativa sem aprovação do resumo Feito: passo 1 "Onde seus clientes acham você" com leitura da página, uma chamada de IA e a tela "Encontramos isto, confere?" (H-40); nada é salvo sem o toque
 - [x] Texto novo da interface com "cliente" e "negócio" Feito nas telas novas (perfil e configuração guiada); as telas antigas mudam quando forem mexidas
 - Pronto quando: a pergunta "abre sábado?" é respondida pelo perfil, sem ferramenta e sem "vou verificar", num caso da bateria.
 

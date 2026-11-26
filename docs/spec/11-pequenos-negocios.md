@@ -67,7 +67,7 @@ Seis itens: **Início, Conversas, Agenda, Clientes, Resultados, Configurações.
 ## Cadastro (onboarding)
 
 1. Essencial primeiro: nome do negócio, o que faz, serviços com duração, dias e horários, endereço ou "atendo no cliente", telefone do WhatsApp.
-2. A IA pode **sugerir** (a partir de um site ou perfil público que o dono informar, ou de uma conversa curta) serviços, respostas de FAQ e tom. Tudo entra como rascunho.
+2. A IA pode **sugerir** (a partir de um site ou do Google Maps que o dono informar, ou do texto colado da bio) nome, endereço, telefone, horário, serviços, pacotes e descrição (H-40). Tudo entra como rascunho numa tela de revisão.
 3. **Nada vale até o dono aprovar.** A ativação exige aprovar o resumo do que o assistente vai dizer. A autonomia começa em "aprovar antes de enviar" (já é o padrão: H-22).
 4. Passos que dependem de conta externa (WhatsApp, Google) podem ser pulados e retomados.
 

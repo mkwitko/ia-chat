@@ -137,7 +137,7 @@ M-04 (`/mais/perfil`, H-38): nome, o que faz, telefone, site, rede social, link 
 
 ### Onboarding
 
-O convite (`/convite/:token`) confere o link (página amigável se inválido, vencido, usado ou cancelado) e leva à criação da conta (Google ou e-mail); `/criar-conta` sem convite explica que o acesso é por convite e aponta para a lista de espera. Depois, os passos de [09](09-site-aquisicao-suporte.md) como um fluxo só, um passo por tela, nesta ordem: CPF/CNPJ e especialidade, conectar WhatsApp, Google Agenda, serviços, valores e horários (com endereço e tom de voz), simulador, ativação. Barra de progresso ("Passo X de N"), botão Voltar, continuar depois. O botão de ativar fica desligado até o WhatsApp conectar.
+O convite (`/convite/:token`) confere o link (página amigável se inválido, vencido, usado ou cancelado) e leva à criação da conta (Google ou e-mail); `/criar-conta` sem convite explica que o acesso é por convite e aponta para a lista de espera. Depois, os seis passos de [09](09-site-aquisicao-suporte.md) como um fluxo só, um passo por tela, nesta ordem: onde seus clientes acham você (pré-preenchimento com revisão, área, CPF/CNPJ), conectar WhatsApp (com a mensagem de boas-vindas), serviços e pacotes, horários (com Google Agenda), teste com seus dados, ativação (com instalar e notificações). O trabalho de cada passo é feito no próprio passo. Depois da ativação, a lista "Para deixar o assistente ainda melhor" fica no Início até ser cumprida. Barra de progresso ("Passo X de N"), botão Voltar, continuar depois. O botão de ativar fica desligado até o WhatsApp conectar.
 
 ### Operador (interno)
 

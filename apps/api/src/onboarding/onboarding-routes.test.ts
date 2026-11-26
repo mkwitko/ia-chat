@@ -54,20 +54,34 @@ describe('progress', () => {
     await call('PUT', '/api/onboarding/steps/account', { status: 'done' });
     expect((await call('GET', '/api/onboarding')).json<View>().current).toBe('whatsapp');
     await call('PUT', '/api/onboarding/steps/whatsapp', { status: 'skipped' });
-    await call('PUT', '/api/onboarding/steps/google', { status: 'skipped' });
     await call('PUT', '/api/onboarding/steps/services', { status: 'done' });
     const resumed = (await call('GET', '/api/onboarding')).json<View>();
-    expect(resumed.current).toBe('location');
+    expect(resumed.current).toBe('hours');
     expect(resumed.specialty).toBe('quiropraxia');
   });
 
-  it('lets external steps be skipped without blocking the rest, but not the others', async () => {
+  it('lets the WhatsApp be skipped without blocking the rest, but not the others', async () => {
     const { call } = await newTenant();
     const skip = (step: string) =>
       call('PUT', `/api/onboarding/steps/${step}`, { status: 'skipped' });
     expect((await skip('whatsapp')).statusCode).toBe(200);
-    expect((await skip('google')).statusCode).toBe(200);
-    expect((await skip('tone')).statusCode).toBe(400);
+    expect((await skip('hours')).statusCode).toBe(400);
+  });
+
+  it('marks the hours done only with a weekly grid (H-39)', async () => {
+    const { call } = await newTenant();
+    const hours = () => call('PUT', '/api/onboarding/steps/hours', { status: 'done' });
+    expect((await hours()).json()).toEqual({ error: 'hours_required' });
+    await call('PUT', '/api/availability', {
+      rules: [{ weekday: 2, start: '07:00', end: '20:00' }],
+    });
+    expect((await hours()).statusCode).toBe(200);
+  });
+
+  it('lists what is left for later on Início (checklist), as facts only', async () => {
+    const { call } = await newTenant();
+    const view = (await call('GET', '/api/onboarding')).json<{ checklist: object }>();
+    expect(view.checklist).toEqual({ tone: false, reviewLink: false, packages: 0, unanswered: 0 });
   });
 
   it('activates only with the WhatsApp connected, in "aprovar antes de enviar"', async () => {

@@ -69,11 +69,9 @@ function MemberRow({ member, first, edit }: Readonly<RowProps>) {
     );
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border bg-card p-4">
-      <p className="min-w-0 flex-1 font-semibold">
+      <p className="grid min-w-48 flex-1 font-semibold">
         {member.name}
-        {first && (
-          <span className="ml-2 text-xs font-medium text-jade-ink">{Copy.agendaOwner}</span>
-        )}
+        {first && <span className="text-xs font-medium text-jade-ink">{Copy.agendaOwner}</span>}
       </p>
       <RowActions
         onEdit={() => {

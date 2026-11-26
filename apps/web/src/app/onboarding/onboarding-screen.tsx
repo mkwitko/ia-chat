@@ -12,8 +12,9 @@ const STATUS_LABEL: Record<Status, string> = {
 };
 
 /**
- * Spec 09/10 and H-37: one guided flow, one step at a time, in order (CPF/CNPJ, WhatsApp, Google,
- * services, simulator, activation), with a progress bar, a way back, and progress saved on the server.
+ * Spec 09/10, H-37 and H-39: one guided flow, one step at a time, in order (where clients find
+ * you, WhatsApp, services, hours, test, activation), with a progress bar, a way back, and
+ * progress saved on the server.
  */
 export function OnboardingScreen() {
   const onboarding = useOnboarding();
@@ -65,6 +66,7 @@ function Flow({ view }: Readonly<{ view: OnboardingView }>) {
               }
             : null
         }
+        onGoTo={setPicked}
       />
     </section>
   );

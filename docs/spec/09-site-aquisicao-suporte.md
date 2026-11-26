@@ -72,14 +72,16 @@ Não fazer: páginas por cidade geradas em massa nem texto genérico produzido p
 
 **Entrada só por convite (decisão do dono, 25/11/2026; H-37).** O operador cria em `/operador` um convite com o nome do consultório (e-mail opcional, só para preencher o cadastro). O link `/convite/:token` vale uma vez, por 7 dias; o banco guarda só o hash do token. O link leva direto à criação da conta (Google ou e-mail), que já abre o consultório com o nome do convite e cai na configuração guiada. Sem convite válido, a API recusa o cadastro (e-mail e Google) com mensagem que aponta para a lista de espera; quem já tem conta continua entrando normalmente. Quem foi convidado para a equipe de um consultório (convite de membro) também pode criar o próprio acesso.
 
-Fluxo guiado, um passo por vez, nesta ordem (decisão do dono, 25/11/2026), com o progresso salvo a cada passo:
+Fluxo guiado, um passo por vez, nesta ordem (decisão do dono, 25/11/2026; conteúdo dos passos pela pesquisa `docs/research/09-onboarding-e-features.md`, H-39), com o progresso salvo a cada passo, pensado para o celular e para menos de 10 minutos:
 
-1. Conta (pelo convite) e CPF ou CNPJ, com a especialidade. Modelos prontos por especialidade.
-2. Conectar WhatsApp (Embedded Signup, coexistência) e forma de pagamento na Meta. Pode ser pulado para seguir, mas a ativação exige o WhatsApp conectado.
-3. Conectar Google Calendar (opcional no Essencial).
-4. Serviços, valores e horários; endereço e instruções de chegada; tom de voz.
-5. **Simulador:** conversa com o assistente já configurado, sem enviar nada a pacientes.
-6. Ativação em "aprovar antes de enviar"; mensagem de teste pelo canal real quando houver.
+1. **Onde seus clientes acham você:** um campo para o link do site ou do Google Maps, ou o texto colado da bio do Instagram. O servidor lê a página e uma chamada de IA sugere nome, endereço, telefone, horário, serviços, pacotes e descrição (H-40). Tela única "Encontramos isto, confere?" com tudo editável; nada é salvo antes do toque em "Salvar o que conferi". Depois, a área (fichas) e o CPF ou CNPJ. "Ver uma conversa de exemplo" abre o simulador já neste passo.
+2. **Conectar WhatsApp** (Embedded Signup, coexistência) e forma de pagamento na Meta, mais o campo opcional "cole sua mensagem de boas-vindas atual" (a Meta não importa saudação nem ausência do app Business). Pode ser pulado para seguir, mas a ativação exige o WhatsApp conectado.
+3. **Serviços e preços:** exemplos da área a pedido, o que a revisão salvou, pacotes com valor exato.
+4. **Horários:** a grade da semana (a da revisão ou uma sugestão segunda a sexta, 9h às 18h, para confirmar) e a seção Google Agenda. Só avança com pelo menos uma faixa.
+5. **Teste com seus dados:** simulador com três perguntas sugeridas ("Quanto custa?", "Tem horário amanhã?", "Onde fica?") e, em cada resposta, "Boa" ou "Ajustar", que abre o lugar de onde a resposta veio (serviços, horários, endereço ou respostas).
+6. **Ativar** em "aprovar antes de enviar", com instalar o painel na tela inicial e permitir notificações.
+
+Depois da ativação, o Início mostra uma lista curta: tom de voz, lembretes (já ligados), link de avaliação do Google, pacotes e perguntas sem resposta, convidar a secretária (em breve).
 
 | ID | Requisito |
 |---|---|
