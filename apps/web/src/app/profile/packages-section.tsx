@@ -9,6 +9,7 @@ import { ProfileCopy as Copy } from './profile-copy';
 
 const EMPTY = '';
 const ADD_CLASS = 'col-span-2 justify-self-start md:col-span-1';
+const MAX_SESSIONS = 100;
 
 /** M-04: packages with an exact price the assistant quotes ("4 sessões", R$ 800,00). */
 export function PackagesSection() {
@@ -58,6 +59,11 @@ function PackageList({ packages, pending, onRemove }: Readonly<ListProps>) {
           className="flex items-center gap-3 py-1 pr-1 pl-4"
         >
           <span className="flex-1 font-medium">{item.name}</span>
+          {item.sessions !== undefined && (
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {Copy.packageSessionsCount(item.sessions)}
+            </span>
+          )}
           <span className="tabular-nums">{formatCents(item.priceCents)}</span>
           <Button
             variant="ghost"
@@ -79,19 +85,24 @@ function PackageList({ packages, pending, onRemove }: Readonly<ListProps>) {
 function usePackageForm(onAdd: (item: BusinessPackage) => void) {
   const [name, setName] = useState(EMPTY);
   const [price, setPrice] = useState(EMPTY);
+  const [sessions, setSessions] = useState(EMPTY);
   const priceCents = parseReais(price);
+  const count = sessions === EMPTY ? undefined : Number(sessions);
   const ready = priceCents !== null && name.trim().length > 0;
   const submit = () => {
     if (priceCents === null || !ready) return;
-    onAdd({ name: name.trim(), priceCents });
+    onAdd({ name: name.trim(), priceCents, ...(count ? { sessions: count } : {}) });
     setName(EMPTY);
     setPrice(EMPTY);
+    setSessions(EMPTY);
   };
   return {
     name,
     setName,
     price,
     setPrice,
+    sessions,
+    setSessions,
     invalid: price !== EMPTY && priceCents === null,
     ready,
     submit,
@@ -102,23 +113,27 @@ function PackageForm({
   pending,
   onAdd,
 }: Readonly<{ pending: boolean; onAdd: (item: BusinessPackage) => void }>) {
-  const { name, setName, price, setPrice, invalid, ready, submit } = usePackageForm(onAdd);
+  const form = usePackageForm(onAdd);
+  const { name, setName, price, setPrice, invalid, ready, submit } = form;
   return (
     <form
-      className="grid grid-cols-[minmax(0,1fr)_7rem] items-end gap-3 md:grid-cols-[minmax(0,1fr)_9rem_auto]"
+      className="grid grid-cols-2 items-end gap-3 md:grid-cols-[minmax(0,1fr)_6rem_9rem_auto]"
       onSubmit={(event) => {
         event.preventDefault();
         submit();
       }}
     >
-      <TextField
-        id="package-name"
-        label={Copy.packageName}
-        placeholder={Copy.packageNamePlaceholder}
-        value={name}
-        onChange={setName}
-        maxLength={80}
-      />
+      <div className="col-span-2 md:col-span-1">
+        <TextField
+          id="package-name"
+          label={Copy.packageName}
+          placeholder={Copy.packageNamePlaceholder}
+          value={name}
+          onChange={setName}
+          maxLength={80}
+        />
+      </div>
+      <SessionsField value={form.sessions} onChange={form.setSessions} />
       <TextField
         id="package-price"
         label={Copy.packagePrice}
@@ -132,5 +147,23 @@ function PackageForm({
         {Copy.addPackage}
       </Button>
     </form>
+  );
+}
+
+function SessionsField({
+  value,
+  onChange,
+}: Readonly<{ value: string; onChange: (value: string) => void }>) {
+  return (
+    <TextField
+      id="package-sessions"
+      label={Copy.packageSessions}
+      type="number"
+      inputMode="numeric"
+      min={1}
+      max={MAX_SESSIONS}
+      value={value}
+      onChange={onChange}
+    />
   );
 }

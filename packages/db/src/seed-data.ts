@@ -27,6 +27,13 @@ export const FIXTURE = {
   appointment: { startsAt: '2027-01-04 12:00Z', endsAt: '2027-01-04 12:50Z' },
   reminder: { sendAt: new Date('2027-01-03T12:00:00Z') },
   payment: { amountCents: 5_000, provider: 'pix_manual' },
+  clientPackage: {
+    name: 'Pacote 4 sessões (exemplo)',
+    sessions: 4,
+    priceCents: 80_000,
+    purchasedOn: new Date('2027-01-02T00:00:00Z'),
+    paid: true,
+  },
   aiUsage: {
     task: 'conversation',
     provider: 'fake',

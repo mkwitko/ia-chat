@@ -77,17 +77,17 @@ model ContactStageEvent {
 }
 
 model ConsentEvent {
-  id        String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  tenantId  String          @map("tenant_id") @db.Uuid
-  contactId String          @map("contact_id") @db.Uuid
-  kind      ConsentKind
-  category  ConsentCategory
-  source    ConsentSource
-  actorType String          @map("actor_type")
-  actorId   String?         @map("actor_id")
+  id         String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId   String          @map("tenant_id") @db.Uuid
+  contactId  String          @map("contact_id") @db.Uuid
+  kind       ConsentKind
+  category   ConsentCategory
+  source     ConsentSource
+  actorType  String          @map("actor_type")
+  actorId    String?         @map("actor_id")
   /// The wording the client saw when agreeing (form, import); null when none was shown.
-  noticeText String?        @map("notice_text")
-  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  noticeText String?         @map("notice_text")
+  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamptz
 
   tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   contact Contact @relation("ConsentEvent_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)

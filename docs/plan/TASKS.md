@@ -553,3 +553,10 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] Início: "Recuperado este mês" com a contagem e "Como calculamos"; Resultados: total e detalhe por semana; "Ainda sem dados" abaixo de 5
 - [x] Relatório semanal (fila `report.weekly`, migração `weekly_report`), e-mail e push, sem nome nem conteúdo; desligar em Mais
 - Pronto quando: `vitest` do cálculo e do relatório passa e as telas mostram o valor com a fórmula.
+
+### SMB-03 Saldo de pacotes de sessões (pesquisa 09 #7)
+- [x] Pacote do perfil com número de sessões; "Registrar pacote" na ficha (pacote, data, pago), migração `20261208100000_session_packages` com RLS e teste de isolamento (catálogo)
+- [x] **(teste primeiro)** Desconto automático: um por atendimento "Compareceu", do pacote mais antigo com saldo; desfazer devolve; falta e cancelado não descontam; ajuste manual de uma sessão com motivo (`packages/db/src/packages/packages.test.ts`)
+- [x] Ficha mostra "Pacote 4 sessões: 2 de 4 usadas" e histórico; Início, "Pacotes terminando"
+- [x] Ferramenta `consultar_saldo_de_pacotes` lendo o contato da conversa; texto do lembrete inalterado
+- Pronto quando: os testes do desconto, das rotas e da ferramenta passam e a ficha mostra o saldo.

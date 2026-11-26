@@ -1,0 +1,56 @@
+// Session packages a client bought (research 09 #7). Only a record: we never hold the patient's
+// money. Package name and session counts only; nothing clinical (spec 11, "Limite de dado de saúde").
+
+/// One package a client bought, as the owner recorded it. Name, sessions and price are copied from
+/// the business profile at the time, so a later profile edit does not change the client's balance.
+model ClientPackage {
+  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  contactId   String   @map("contact_id") @db.Uuid
+  name        String
+  sessions    Int
+  priceCents  Int      @map("price_cents")
+  /// Local date of the purchase, as the owner typed it.
+  purchasedOn DateTime @map("purchased_on") @db.Date
+  paid        Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  contact Contact        @relation("ClientPackage_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
+  entries PackageEntry[] @relation("PackageEntry_package")
+
+  @@unique([tenantId, id])
+  @@index([tenantId, contactId, purchasedOn])
+  @@map("client_packages")
+}
+
+/// Why a package's used count moved by one.
+enum PackageEntryReason {
+  attended
+  attendance_undone
+  correction
+  courtesy
+  outside_panel
+  other
+}
+
+/// The ledger of a package: +1 is one session used, -1 is one given back. Used = the sum.
+model PackageEntry {
+  id            String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId      String             @map("tenant_id") @db.Uuid
+  packageId     String             @map("package_id") @db.Uuid
+  /// Set for automatic entries (attendance); null for the owner's manual adjustments.
+  appointmentId String?            @map("appointment_id") @db.Uuid
+  delta         Int
+  reason        PackageEntryReason
+  actorId       String?            @map("actor_id")
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  package     ClientPackage @relation("PackageEntry_package", fields: [tenantId, packageId], references: [tenantId, id], onDelete: Restrict)
+  appointment Appointment?  @relation("PackageEntry_appointment", fields: [tenantId, appointmentId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, packageId])
+  @@index([tenantId, appointmentId])
+  @@map("package_entries")
+}

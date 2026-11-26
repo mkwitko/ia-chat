@@ -136,3 +136,19 @@ export {
   type RecoveredMoney,
   type RecoveredWeek,
 } from './results/recovered.ts';
+export {
+  contactPackages,
+  endingPackages,
+  type EndingPackage,
+  type PackageBalance,
+  type PackageEntryView,
+} from './packages/balance.ts';
+export { registerPackage, type PackagePurchase } from './packages/register.ts';
+export {
+  adjustPackage,
+  MANUAL_REASONS,
+  PackageError,
+  type AdjustResult,
+  type Adjustment,
+  type ManualReason,
+} from './packages/adjust.ts';

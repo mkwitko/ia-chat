@@ -4,22 +4,22 @@
 /// `appointments_no_overlap` (migration agenda) is the arbiter (A-10). It is not in this schema
 /// because Prisma cannot express it.
 model Appointment {
-  id             String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  tenantId       String                   @map("tenant_id") @db.Uuid
-  professionalId String                   @map("professional_id") @db.Uuid
-  contactId      String                   @map("contact_id") @db.Uuid
-  serviceId      String                   @map("service_id") @db.Uuid
-  locationId     String?                  @map("location_id") @db.Uuid
-  startsAt       DateTime                 @map("starts_at") @db.Timestamptz
-  endsAt         DateTime                 @map("ends_at") @db.Timestamptz
-  status         AppointmentStatus        @default(scheduled)
-  createdBy      AppointmentCreator       @default(human) @map("created_by")
+  id             String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId       String             @map("tenant_id") @db.Uuid
+  professionalId String             @map("professional_id") @db.Uuid
+  contactId      String             @map("contact_id") @db.Uuid
+  serviceId      String             @map("service_id") @db.Uuid
+  locationId     String?            @map("location_id") @db.Uuid
+  startsAt       DateTime           @map("starts_at") @db.Timestamptz
+  endsAt         DateTime           @map("ends_at") @db.Timestamptz
+  status         AppointmentStatus  @default(scheduled)
+  createdBy      AppointmentCreator @default(human) @map("created_by")
   /// One tool call per turn and action: a retried call returns the first result (E-20).
-  idempotencyKey String?                  @map("idempotency_key")
-  googleEventId  String?                  @map("google_event_id")
-  calendarSync   CalendarSyncState        @default(none) @map("calendar_sync")
-  createdAt      DateTime                 @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  idempotencyKey String?            @map("idempotency_key")
+  googleEventId  String?            @map("google_event_id")
+  calendarSync   CalendarSyncState  @default(none) @map("calendar_sync")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   professional Professional @relation("Appointment_professional", fields: [tenantId, professionalId], references: [tenantId, id], onDelete: Restrict)
@@ -29,6 +29,7 @@ model Appointment {
 
   scheduledMessages ScheduledMessage[] @relation("ScheduledMessage_appointment")
   payments          Payment[]          @relation("Payment_appointment")
+  packageEntries    PackageEntry[]     @relation("PackageEntry_appointment")
 
   @@unique([tenantId, id])
   @@index([tenantId, professionalId])

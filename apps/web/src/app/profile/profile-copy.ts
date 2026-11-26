@@ -26,9 +26,11 @@ export const ProfileCopy = {
   invalidUrl: 'Confira os links: site e avaliação começam com https://.',
   packagesHeading: 'Pacotes',
   packagesIntro:
-    'O assistente informa o valor exato do pacote. Pacote não é agendável: o cliente agenda cada sessão.',
+    'O assistente informa o valor exato do pacote. Pacote não é agendável: o cliente agenda cada sessão. Com o número de sessões, você registra o pacote na ficha do cliente e o saldo é contado a cada "Compareceu".',
   packageName: 'Pacote',
   packageNamePlaceholder: '4 sessões',
+  packageSessions: 'Sessões',
+  packageSessionsCount: (count: number) => (count === 1 ? '1 sessão' : `${String(count)} sessões`),
   packagePrice: 'Valor (R$)',
   packagePricePlaceholder: '800',
   addPackage: 'Adicionar pacote',

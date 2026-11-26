@@ -108,7 +108,7 @@ Etapas fixas: `novo` → `conversando` → `agendado` → `atendido`; saídas: `
 
 Vale para todo segmento com `sensitivity = health` e, por segurança, como padrão para qualquer um.
 
-1. **Sem dado clínico em CRM nem em memória.** Ficam fora: queixa, sintoma, diagnóstico, exame, medicamento, histórico clínico, resultado de tratamento. Cliente guarda nome, telefone, etapa, origem, consentimento, agendamentos e serviço contratado.
+1. **Sem dado clínico em CRM nem em memória.** Ficam fora: queixa, sintoma, diagnóstico, exame, medicamento, histórico clínico, resultado de tratamento. Cliente guarda nome, telefone, etapa, origem, consentimento, agendamentos e serviço contratado. Pacote de sessões (H-42) guarda só nome do pacote, número de sessões, preço, data e pago; o ajuste manual usa motivo de lista fixa, nunca texto livre.
 2. **O assistente não diagnostica, não indica tratamento, não faz triagem, não promete resultado.** Se o cliente descreve sintoma, acolhe em uma frase e oferece a avaliação com o profissional (regra já no prompt).
 3. **Dado mínimo:** o que não é preciso para agendar e lembrar não é coletado.
 4. **Pergunta clínica vai para uma pessoa:** transferência para humano; o assistente não responde nem registra o conteúdo.

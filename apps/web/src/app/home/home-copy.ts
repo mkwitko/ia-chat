@@ -23,6 +23,9 @@ export const HomeCopy = {
       ? '1 pergunta que o assistente não soube responder'
       : `${String(count)} perguntas que o assistente não soube responder`,
   toMarkHeading: 'Atendimentos para marcar presença',
+  endingHeading: 'Pacotes terminando',
+  ending: (name: string, remaining: number) =>
+    remaining === 0 ? `${name}: sessões acabaram` : `${name}: resta 1 sessão`,
   toConfirm: (count: number) =>
     count === 1
       ? '1 atendimento nas próximas 48 horas aguarda confirmação'

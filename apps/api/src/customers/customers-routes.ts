@@ -18,6 +18,7 @@ import { ErrorCode, HttpStatus } from '../http.ts';
 import { audit, AuditAction } from '../setup/audit.ts';
 import { notFound, parsed, tenantOf } from '../setup/guarded.ts';
 import { listCustomers, readCustomer } from './customers-view.ts';
+import { registerPackageRoutes } from './packages-routes.ts';
 
 // Spec 10, "Clientes". Reading is for any member; changing needs the agenda-booking permission.
 
@@ -58,6 +59,7 @@ export function registerCustomerRoutes(app: FastifyInstance): void {
   app.patch(ITEM_PATH, change, edit);
   app.post(`${ITEM_PATH}/stage`, change, setStage);
   app.post(`${ITEM_PATH}/consent`, change, setConsent);
+  registerPackageRoutes(app);
 }
 
 function list(request: FastifyRequest, reply: FastifyReply) {

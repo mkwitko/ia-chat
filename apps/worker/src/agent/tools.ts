@@ -3,6 +3,7 @@ import { KnowledgeSource, Plan, type CalendarResolver, type Db } from '@app/db';
 import { tool, type ToolSet } from 'ai';
 import * as z from 'zod';
 import { agendaTools } from './agenda-tools.ts';
+import { packageTool } from './package-tool.ts';
 import type { HealthGuard } from './health-guard.ts';
 
 // Essencial plan tools (spec 04, "Ferramentas"). tenant_id comes from the context, never
@@ -51,6 +52,7 @@ export function essentialTools(context: ToolContext): ToolSet {
     [ToolName.handoff]: handoffTool(context.effects),
     [ToolName.unanswered]: unansweredTool(recordUnanswered(context)),
     [ToolName.rename]: renameTool(context),
+    [ToolName.packages]: packageTool(context),
   };
 }
 

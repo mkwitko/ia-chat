@@ -8,6 +8,7 @@ export const ToolName = {
   handoff: 'transferir_para_humano',
   unanswered: 'registrar_duvida_sem_resposta',
   rename: 'atualizar_nome_do_contato',
+  packages: 'consultar_saldo_de_pacotes',
 } as const;
 
 export const AgendaToolName = {

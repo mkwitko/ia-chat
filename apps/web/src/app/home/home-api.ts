@@ -16,6 +16,15 @@ export interface HomeAppointment {
   serviceName: string;
 }
 
+export interface EndingPackage {
+  id: string;
+  contactId: string;
+  contactName: string | null;
+  name: string;
+  sessions: number;
+  remaining: number;
+}
+
 export interface HomeView {
   timezone: string;
   month: { contacts: number; booked: number; awaiting: number; cancelled: number };
@@ -25,6 +34,7 @@ export interface HomeView {
     drafts: number;
     unanswered: number;
     toMark: HomeAppointment[];
+    endingPackages: EndingPackage[];
   };
   today: HomeAppointment[];
   toConfirm: HomeAppointment[];

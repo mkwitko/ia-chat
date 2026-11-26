@@ -3,32 +3,33 @@
 /// RF-23b: resolved by bsuid first, then by phone_key (E.164 with the Brazilian
 /// mobile ninth digit removed, so both forms are the same contact).
 model Contact {
-  id        String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  tenantId  String    @map("tenant_id") @db.Uuid
-  bsuid     String?
-  phoneE164 String?   @map("phone_e164")
-  phoneKey  String?   @map("phone_key")
-  name      String?
-  consents  Json      @default("{}")
-  optOutAt  DateTime? @map("opt_out_at") @db.Timestamptz
+  id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId        String         @map("tenant_id") @db.Uuid
+  bsuid           String?
+  phoneE164       String?        @map("phone_e164")
+  phoneKey        String?        @map("phone_key")
+  name            String?
+  consents        Json           @default("{}")
+  optOutAt        DateTime?      @map("opt_out_at") @db.Timestamptz
   /// Only evidence sets it: the default is a direct WhatsApp message; the panel sets the rest.
-  origin    ContactOrigin @default(whatsapp_direct)
+  origin          ContactOrigin  @default(whatsapp_direct)
   /// Referral code or ad identifier; never personal data.
-  originRef String?   @map("origin_ref")
+  originRef       String?        @map("origin_ref")
   /// The owner's manual stage; ignored once a newer message or appointment change arrives.
   stageOverride   PipelineStage? @map("stage_override")
   stageOverrideAt DateTime?      @map("stage_override_at") @db.Timestamptz
   lostReason      LostReason?    @map("lost_reason")
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
-  conversations     Conversation[]     @relation("Conversation_contact")
-  appointments      Appointment[]      @relation("Appointment_contact")
-  scheduledMessages ScheduledMessage[] @relation("ScheduledMessage_contact")
+  conversations     Conversation[]      @relation("Conversation_contact")
+  appointments      Appointment[]       @relation("Appointment_contact")
+  scheduledMessages ScheduledMessage[]  @relation("ScheduledMessage_contact")
   stageEvents       ContactStageEvent[] @relation("ContactStageEvent_contact")
   consentEvents     ConsentEvent[]      @relation("ConsentEvent_contact")
+  clientPackages    ClientPackage[]     @relation("ClientPackage_contact")
 
   @@unique([tenantId, id])
   @@unique([tenantId, bsuid])
