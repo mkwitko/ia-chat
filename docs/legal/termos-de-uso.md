@@ -47,7 +47,9 @@ c) **Mercado Pago ou chave Pix**, quando o Cliente usar o sinal por Pix. O dinhe
 | Essencial | 300 | R$ 197,00 |
 | Agenda | 500 | R$ 297,00 |
 | Pro | 1.000 | R$ 497,00 |
-| Clínica | 1.000 mais pacote por profissional adicional | R$ 697,00 (profissional adicional: valor informado na página de preços) |
+| Clínica | 1.000, com 2 profissionais incluídos | R$ 697,00 (do 3º profissional em diante: R$ 147,00 por mês e 250 conversas a mais por profissional) |
+
+Os planos Pro e Clínica só podem ser contratados quando os recursos próprios deles forem lançados; até lá, ficam disponíveis os planos Essencial e Agenda.
 
 5.2. **Conversa** é a sequência de mensagens com o mesmo contato sem intervalo maior que 24 horas. Uma nova mensagem depois de 24 horas sem mensagens abre nova conversa.
 
