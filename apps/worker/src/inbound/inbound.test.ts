@@ -1,10 +1,15 @@
 import { randomUUID } from 'node:crypto';
-import { ContentType, InboundKind, parseCloudWebhook, type InboundEvent } from '@app/channels';
+import {
+  ContentType,
+  InboundKind,
+  parseCloudWebhook,
+  resolveContact,
+  type InboundEvent,
+} from '@app/channels';
 import { asBody, textMessage } from '@app/channels/fixtures';
 import { createDb, MessageAuthor, MessageDirection, MessageStatus } from '@app/db';
 import { afterAll, describe, expect, it } from 'vitest';
 import { applyInboundEvents } from './apply.ts';
-import { resolveContact } from './contacts.ts';
 import { processInboundEvent } from './job.ts';
 import { findStaleMessages } from './reconcile.ts';
 

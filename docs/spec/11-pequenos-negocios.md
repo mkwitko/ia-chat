@@ -40,7 +40,7 @@ Cada linha aponta o que existe hoje (inventário completo na auditoria) e a etap
 | Lista de espera de agenda | IMPLEMENTADO (spec 05, "Cancelamento, lista de espera e falta") | M-09 |
 | Recuperação de lead | IMPLEMENTADO (H-44) | M-10 |
 | Follow-up | IMPLEMENTADO para lead (H-44) e após falta (M-09) | M-10, Fase 4 |
-| Indicações | PARCIAL: código, link e contagem de cadastros (H-49); sem recompensa | M-11 |
+| Indicações | PARCIAL: código, link e contagem de cadastros (H-50); sem recompensa | M-11 |
 | Avaliações | IMPLEMENTADO (pedido; H-48) | M-12 |
 | Origem do lead | AUSENTE | M-06 (em andamento) |
 | Relatórios simples | AUSENTE | M-07 (em andamento), M-12 |
@@ -129,7 +129,7 @@ Configurações > Retorno e avaliações. Desligado por padrão; só liga com o 
 Meta: o crescimento vem de quem já usa.
 
 - **Código e link por cliente (negócio assinante):** cada consultório ou negócio tem um código curto e um link com ele, para dar a outro negócio.
-- **Feito em M-11 (H-49):** código e link por negócio (`tenants.referral_code`), o formulário do site manda `?ref=` e o cadastro na lista de espera grava o código (`waitlist_entries.referral_code`); Configurações > Indique e ganhe mostra o link e a contagem. Estados "ativou" e "assinou" e a recompensa ficam para depois.
+- **Feito em M-11 (H-50):** código e link por negócio (`tenants.referral_code`), o formulário do site manda `?ref=` e o cadastro na lista de espera grava o código (`waitlist_entries.referral_code`); Configurações > Indique e ganhe mostra o link e a contagem. Estados "ativou" e "assinou" e a recompensa ficam para depois.
 - **Registro:** quando alguém se cadastra com o código, grava-se quem indicou, a data e o estado (cadastrou, ativou, assinou). Ligação feita pelo cadastro, não por mensagem.
 - **Proibido:** o produto **não envia mensagem a um negócio indicado sem permissão** dele. O dono compartilha o link pelos próprios meios. Nada de importar contatos para disparo.
 - **Dado:** guarda-se o nome do negócio indicador e o código. Nada sobre o motivo da indicação.

@@ -18,6 +18,7 @@ import { ResultsScreen } from './app/results/results-screen';
 import { MoreScreen } from './app/screens/more-screen';
 import { ConnectionsScreen } from './app/whatsapp/connections-screen';
 import { KnowledgeScreen } from './app/setup/knowledge-screen';
+import { ReviewScreen } from './app/whatsapp/review-screen';
 import { GrowthScreen } from './app/growth/growth-screen';
 import { ReferralScreen } from './app/referral/referral-screen';
 import { ProfileScreen } from './app/profile/profile-screen';
@@ -71,6 +72,7 @@ export const router = createBrowserRouter([
           { path: Route.services, element: <ServicesScreen /> },
           { path: Route.profile, element: <ProfileScreen /> },
           { path: Route.connections, element: <ConnectionsScreen /> },
+          { path: Route.importReview, element: <ReviewScreen /> },
           { path: Route.usage, element: <UsageScreen /> },
           { path: Route.billing, element: <BillingScreen /> },
           { path: Route.team, element: <TeamScreen /> },

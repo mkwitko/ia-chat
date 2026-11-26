@@ -60,6 +60,8 @@ model Channel {
   historyAuthorizedAt DateTime?          @map("history_authorized_at") @db.Timestamptz
   /// Share of the history received so far (0 to 100), from the `history` webhooks.
   historyProgress     Int?               @map("history_progress")
+  /// When the owner confirmed or discarded the staged import; later history webhooks are ignored.
+  historyReviewedAt   DateTime?          @map("history_reviewed_at") @db.Timestamptz
   createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 

@@ -1,4 +1,4 @@
-import { InboundKind, type ChannelState, type InboundEvent } from '@app/channels';
+import { InboundKind, resolveContact, type ChannelState, type InboundEvent } from '@app/channels';
 import {
   ActorType,
   ControlReason,
@@ -12,7 +12,6 @@ import {
 } from '@app/db';
 import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts';
 import { applyChannelState } from './channel-state.ts';
-import { resolveContact } from './contacts.ts';
 import { applyHistoryEvents, isHistoryEvent, type HistoryEvent } from './history-apply.ts';
 import { countMessage, MessageCategory, type UsageNotice } from '../usage/counters.ts';
 import { contentColumns } from './message-row.ts';

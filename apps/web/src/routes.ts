@@ -23,6 +23,7 @@ export const Route = {
   services: '/mais/servicos',
   profile: '/mais/perfil',
   connections: '/mais/conexoes',
+  importReview: '/mais/conexoes/revisar-importacao',
   usage: '/mais/plano-e-uso',
   billing: '/mais/assinatura',
   team: '/mais/equipe',
