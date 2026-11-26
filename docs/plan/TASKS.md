@@ -539,12 +539,12 @@ Spec: 11 (métricas 13 e 14). Bloqueio: código; depende de M-08 e E-22.
 - Pronto quando: o relatório do piloto sai sem número calculado à mão.
 
 ### AGP-01 Agenda por profissional (P1, pesquisa 09 #16)
-Spec: 05 ("Agenda por profissional"), 10 ("Agenda"), H-47. Bloqueio: código; venda do Clínica é decisão do dono.
+Spec: 05 ("Agenda por profissional"), 10 ("Agenda"), H-45. Bloqueio: código; venda do Clínica é decisão do dono.
 - [x] **(teste primeiro)** Horários de todos que fazem o serviço, com nome; agendamento por profissional e constraint por profissional (`packages/db/src/agenda/professionals.test.ts`)
 - [x] **(teste primeiro)** Ferramentas: `consultar_horarios`, `agendar` e `remarcar` com `profissional` opcional; a oferta guarda o profissional (`apps/worker/src/agent/professional-tools.test.ts`); fim da transferência de H-38
 - [x] `professional_services` com RLS e teste de isolamento; horários, bloqueios e serviços por profissional na API; limite de profissionais por plano (409 `plan_limit`)
 - [x] Painel: filtro por profissional na Agenda, iniciais e nome em cada atendimento, troca de profissional em Disponibilidade com "Serviços que atende"
-- [ ] Google Agenda por profissional (hoje vale para o primeiro; H-47)
+- [ ] Google Agenda por profissional (hoje vale para o primeiro; H-45)
 - [ ] Cobrança do profissional extra do Clínica (R$ 147) quando o plano entrar em venda
 - Pronto quando: com dois profissionais, o assistente oferece horários dos dois com o nome e grava o agendamento no profissional da oferta (teste).
 
