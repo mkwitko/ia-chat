@@ -125,6 +125,18 @@ footer.foot {
   line-height: 20px;
 }
 
+.foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 12px;
+}
+.foot-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 /* Type and layout */
 h1 {
   font-size: 28px;

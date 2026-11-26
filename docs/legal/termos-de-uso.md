@@ -1,24 +1,12 @@
 # Termos de Uso — Consultório Aberto
 
-> **MINUTA — revisar com advogado antes de publicar.**
->
-> Pontos em aberto para o advogado:
->
-> 1. Aplicação do CDC a pequeno negócio e profissional autônomo (finalismo mitigado). Se aplicável, rever cláusulas 9 (sem reembolso proporcional), 14 (limitação de responsabilidade) e 18 (foro), e incluir o direito de arrependimento de 7 dias (art. 49) para contratação pela internet.
-> 2. Validade da limitação de responsabilidade ao valor pago em 12 meses.
-> 3. Régua de inadimplência (dia 0, dia 3, dia 7) e o destino dos dados após 30 dias de inadimplência.
-> 4. Modos de identidade em que o assistente não se anuncia como IA (cláusula 12.6; H-13).
-> 5. Mudança destes Termos com aviso de 30 dias e aceite tácito.
-> 6. Nota fiscal de serviço e tributos incluídos ou não no preço.
-> 7. Preencher dados da empresa, valores e foro.
-
-Versão: [DATA DA VERSÃO]
+**Versão 1.0 — vigente a partir de 25/11/2026**
 
 ## 1. Quem somos
 
-1.1. O Consultório Aberto é um serviço oferecido por [RAZÃO SOCIAL], CNPJ [CNPJ], com sede em [ENDEREÇO] ("nós").
+1.1. O Consultório Aberto é um serviço oferecido por Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, com sede em Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131 ("nós").
 
-1.2. Contato: [E-MAIL DE SUPORTE]. Encarregado pelo tratamento de dados pessoais: [NOME DO ENCARREGADO], [E-MAIL DO ENCARREGADO].
+1.2. Contato: mauriciokwt@gmail.com. Encarregado pelo tratamento de dados pessoais: Mauricio de Oliveira Kwitko, mauriciokwt@gmail.com.
 
 ## 2. O que é o serviço
 
@@ -52,20 +40,20 @@ c) **Mercado Pago ou chave Pix**, quando o Cliente usar o sinal por Pix. O dinhe
 
 ## 5. Planos e franquia
 
-5.1. Os planos e o que cada um inclui estão na página de preços em [URL DA PÁGINA DE PREÇOS]. Na data desta versão:
+5.1. Os planos e o que cada um inclui estão na página de preços em /precos. Na data desta versão:
 
 | Plano | Franquia mensal de conversas | Mensalidade |
 | --- | --- | --- |
-| Essencial | 300 | [VALOR] |
-| Agenda | 500 | [VALOR] |
-| Pro | 1.000 | [VALOR] |
-| Clínica | 1.000 mais pacote por profissional adicional | [VALOR] |
+| Essencial | 300 | R$ 197,00 |
+| Agenda | 500 | R$ 297,00 |
+| Pro | 1.000 | R$ 497,00 |
+| Clínica | 1.000 mais pacote por profissional adicional | R$ 697,00 (profissional adicional: valor informado na página de preços) |
 
 5.2. **Conversa** é a sequência de mensagens com o mesmo contato sem intervalo maior que 24 horas. Uma nova mensagem depois de 24 horas sem mensagens abre nova conversa.
 
 5.3. O uso é contado por mês civil.
 
-5.4. **Excedente.** Ao passar da franquia, o atendimento continua. Cada conversa acima da franquia é cobrada pelo preço de excedente do plano ([VALOR POR CONVERSA EXCEDENTE]), em cobrança separada com o mesmo vencimento da fatura seguinte.
+5.4. **Excedente.** Ao passar da franquia, o atendimento continua. Cada conversa acima da franquia é cobrada pelo preço de excedente do plano (R$ 0,40 nos planos Essencial e Agenda; R$ 0,35 nos planos Pro e Clínica), em cobrança separada com o mesmo vencimento da fatura seguinte.
 
 5.5. **Teto de excedente.** O Cliente pode definir um teto mensal para o excedente. Atingido o teto, o assistente passa a responder só que o profissional vai responder em breve e avisa o Cliente. O paciente nunca fica sem resposta.
 
@@ -93,7 +81,7 @@ c) **Mercado Pago ou chave Pix**, quando o Cliente usar o sinal por Pix. O dinhe
 
 7.2. A mensalidade é paga antecipadamente, por mês.
 
-7.3. Os preços podem ser reajustados uma vez a cada 12 meses por [ÍNDICE DE REAJUSTE], ou alterados com aviso de pelo menos 30 dias. O Cliente que não concordar pode cancelar antes da mudança.
+7.3. Os preços podem ser reajustados uma vez a cada 12 meses por IPCA, ou alterados com aviso de pelo menos 30 dias. O Cliente que não concordar pode cancelar antes da mudança.
 
 ## 8. Atraso no pagamento
 
@@ -105,13 +93,13 @@ b) **3 dias depois**, enviamos novo aviso;
 
 c) **7 dias depois**, o serviço entra em **modo restrito**: o assistente só avisa o paciente de que o profissional vai responder e o Cliente continua com acesso ao painel para ler as mensagens.
 
-8.2. Os dados ficam preservados por 30 dias a partir do modo restrito. Passado esse prazo sem pagamento, a conta é encerrada e os dados seguem a cláusula 10. [PONTO PARA O ADVOGADO: confirmar.]
+8.2. Os dados ficam preservados por 30 dias a partir do modo restrito. Passado esse prazo sem pagamento, a conta é encerrada e os dados seguem a cláusula 10.
 
 8.3. Pago o valor em aberto, o serviço volta ao normal.
 
 8.4. A cobrança de excedente vencida não aciona o modo restrito, mas continua devida.
 
-8.5. Sobre valores em atraso incidem multa de [2%] e juros de [1% ao mês]. [PONTO PARA O ADVOGADO.]
+8.5. Sobre valores em atraso incidem multa de 2% e juros de 1% ao mês.
 
 ## 9. Cancelamento
 
@@ -165,21 +153,21 @@ h) não tentar acessar dados de outros clientes, contornar limites técnicos ou 
 
 12.5. O serviço **não é prontuário**. O histórico de conversas não substitui o registro clínico que o profissional é obrigado a manter.
 
-12.6. O Cliente escolhe como o assistente se apresenta. Em qualquer modo, se perguntado diretamente, o assistente diz que é um assistente. O Cliente é responsável pela escolha do modo diante do paciente, do CDC e do seu conselho. [PONTO PARA O ADVOGADO: H-13.]
+12.6. O Cliente escolhe como o assistente se apresenta. Em qualquer modo, se perguntado diretamente, o assistente diz que é um assistente. O Cliente é responsável pela escolha do modo diante do paciente, do CDC e do seu conselho.
 
 12.7. Não usamos as conversas dos pacientes para treinar modelos de IA. Só contratamos provedores de IA em modalidade em que eles não treinam com os dados enviados.
 
 ## 13. Disponibilidade e suporte
 
-13.1. Buscamos manter o serviço disponível 24 horas por dia, mas **não garantimos funcionamento ininterrupto**. Meta: disponibilidade mensal de [99%] do painel e do recebimento de mensagens, sem contar manutenção avisada e falhas de terceiros (Meta, Google, provedores de IA, internet).
+13.1. Buscamos manter o serviço disponível 24 horas por dia, mas **não garantimos funcionamento ininterrupto**. Meta: disponibilidade mensal de 99% do painel e do recebimento de mensagens, sem contar manutenção avisada e falhas de terceiros (Meta, Google, provedores de IA, internet).
 
 13.2. Se os provedores de IA falharem, o serviço pode passar a funcionar sem IA (caixa de mensagens, mensagem fixa de ausência, confirmações e lembretes) até a normalização.
 
-13.3. Manutenções planejadas são avisadas com pelo menos [48 horas] e feitas, quando possível, fora do horário comercial.
+13.3. Manutenções planejadas são avisadas com pelo menos 48 horas e feitas, quando possível, fora do horário comercial.
 
-13.4. Suporte por [CANAL DE SUPORTE], em dias úteis, das [HORÁRIO]. Meta de primeira resposta: [1 dia útil].
+13.4. Suporte por e-mail mauriciokwt@gmail.com, em dias úteis, das 9h às 18h (horário de Brasília). Meta de primeira resposta: 1 dia útil.
 
-13.5. A meta da cláusula 13.1 não gera multa nem crédito automático. [PONTO PARA O ADVOGADO: avaliar crédito em fatura em caso de indisponibilidade relevante.]
+13.5. A meta da cláusula 13.1 não gera multa nem crédito automático.
 
 ## 14. Responsabilidade
 
@@ -197,7 +185,7 @@ d) bloqueio de número na conexão por QR code;
 
 e) lucros cessantes, perda de clientes ou de agendamentos, salvo dolo ou culpa grave.
 
-14.3. Salvo dolo, culpa grave ou violação de dados pessoais por nossa culpa, nossa responsabilidade total fica **limitada ao valor pago pelo Cliente nos 12 meses anteriores ao fato**. [PONTO PARA O ADVOGADO.]
+14.3. Salvo dolo, culpa grave ou violação de dados pessoais por nossa culpa, nossa responsabilidade total fica **limitada ao valor pago pelo Cliente nos 12 meses anteriores ao fato**.
 
 14.4. O Cliente responde perante nós por reclamações de terceiros causadas por violação destes Termos, das normas do seu conselho ou da lei, inclusive pelo conteúdo que cadastrar e pelas mensagens que enviar.
 
@@ -223,4 +211,4 @@ e) lucros cessantes, perda de clientes ou de agendamentos, salvo dolo ou culpa g
 
 18.1. Estes Termos seguem a lei brasileira.
 
-18.2. Fica eleito o foro da comarca de [COMARCA], salvo quando a lei garantir ao Cliente o foro do seu domicílio. [PONTO PARA O ADVOGADO.]
+18.2. Fica eleito o foro da comarca de Porto Alegre (RS), salvo quando a lei garantir ao Cliente o foro do seu domicílio.

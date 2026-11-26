@@ -1,17 +1,8 @@
 # Termo de Ciência — Conexão do WhatsApp por QR code (não oficial)
 
-> **MINUTA — revisar com advogado antes de publicar.**
->
-> Este termo é aceito no painel antes de conectar por QR code (RF-27). O aceite fica gravado em auditoria com data, hora e usuário. Recomenda-se também versão assinada (assinatura eletrônica) para o cliente piloto.
->
-> Pontos em aberto para o advogado:
->
-> 1. Nossa própria exposição por oferecer um meio que viola os termos do WhatsApp (pesquisa 07, seção 5), inclusive perante a Meta.
-> 2. Validade da renúncia e da cláusula de indenização (itens 5 e 6) se o Cliente for tratado como consumidor.
-> 3. Se o aceite por clique basta ou se é preciso assinatura eletrônica qualificada.
-> 4. Uso desse canal para negócio de saúde, diante da política da Meta e da LGPD (dado sensível em canal não oficial).
+**Versão 1.0 — vigente a partir de 25/11/2026**
 
-Versão: [DATA DA VERSÃO]
+Este termo é aceito no painel antes de conectar por QR code (RF-27). O aceite fica gravado em auditoria com data, hora e usuário. Recomenda-se também versão assinada (assinatura eletrônica) para o cliente piloto.
 
 Eu, [NOME DO USUÁRIO], em nome de [NOME DO CLIENTE], [CPF OU CNPJ], declaro que li e entendi o seguinte antes de conectar meu WhatsApp ao Consultório Aberto por QR code.
 
@@ -65,13 +56,13 @@ b) **conexão por QR code**, que funciona como um aparelho conectado ao meu What
 
 ## 6. Indenização
 
-6.1. Se a Meta ou terceiros reclamarem contra o Consultório Aberto pelo meu uso desta conexão em desacordo com este termo ou com os Termos de Uso, eu responderei pelos prejuízos causados. [PONTO PARA O ADVOGADO.]
+6.1. Se a Meta ou terceiros reclamarem contra o Consultório Aberto pelo meu uso desta conexão em desacordo com este termo ou com os Termos de Uso, eu responderei pelos prejuízos causados.
 
 ## 7. Mudança para a conexão oficial
 
 7.1. Posso trocar para a conexão oficial a qualquer momento. Contatos, conversas e agendamentos são mantidos na troca.
 
-7.2. O Consultório Aberto pode encerrar a oferta da conexão por QR code, com aviso de [30] dias, ou imediatamente se ela passar a pôr em risco a segurança do serviço ou se houver ordem de autoridade.
+7.2. O Consultório Aberto pode encerrar a oferta da conexão por QR code, com aviso de 30 dias, ou imediatamente se ela passar a pôr em risco a segurança do serviço ou se houver ordem de autoridade.
 
 ## 8. Aceite
 

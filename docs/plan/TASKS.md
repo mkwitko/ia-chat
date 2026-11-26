@@ -54,10 +54,10 @@ Não é código. Quem faz é você; começa já.
 - [ ] Olhar a reputação dos dois no Reclame Aqui e falar com o comercial (bloqueio de saldo, suporte)
 
 ### E-00e Jurídico
-- [ ] Minutas: termos de uso, aviso de privacidade, contrato de operador, lista de suboperadores
+- [x] Minutas: termos de uso, aviso de privacidade, contrato de operador, lista de suboperadores (versão 1.0 aprovada pelo dono em 25/11/2026, sem advogado)
 - [ ] Cláusulas-padrão da ANPD com cada provedor de IA
-- [ ] Termo de ciência da conexão por QR code
-- [ ] Termo de consentimento do piloto para depoimento e uso de números
+- [x] Termo de ciência da conexão por QR code
+- [x] Termo de consentimento do piloto para depoimento e uso de números
 
 ### E-00f Nome e contas
 - [ ] Escolher o nome (a skill `founder-brand` ajuda) e conferir marca no INPI
@@ -390,7 +390,8 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [ ] Revisão com `impeccable`
 
 ### S-02 Páginas legais
-- [ ] Termos, privacidade, contrato de operador, suboperadores, cookies, a partir das minutas de E-00e
+- [x] Termos, privacidade, contrato de operador, suboperadores e aviso ao paciente, renderizados de `docs/legal/` (`/termos`, `/privacidade`, `/contrato-de-operador`, `/suboperadores`, `/aviso-ao-paciente`, `/termo-conexao-qr`), com links no rodapé
+- [ ] Política de cookies (só quando o site passar a usar cookies)
 
 ### S-03 Número de demonstração
 - [ ] Tenant de consultório fictício num número nosso, pela conexão oficial

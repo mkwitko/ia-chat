@@ -1,16 +1,8 @@
 # Aviso de Privacidade ao Paciente — modelo
 
-> **MINUTA — revisar com advogado antes de publicar.**
->
-> Este é um **modelo** que o profissional (cliente do Consultório Aberto) adapta e publica. O aviso é **do profissional**, que é o controlador dos dados do paciente. Nós somos operadores.
->
-> Pontos em aberto para o advogado:
->
-> 1. Base legal para a queixa (dado de saúde, art. 11). A alínea "f" do inciso II (tutela da saúde) só vale para profissional ou serviço de saúde. Negócio que não é de saúde não deve perguntar a queixa sem outra base.
-> 2. Se a versão curta basta como informação na primeira mensagem ou se é preciso consentimento destacado antes de perguntar a queixa.
-> 3. Prazos de guarda (texto das mensagens até 90 dias após a última mensagem, H-34) e se o profissional pode configurar prazo maior.
-> 4. Como fica o aviso nos modos em que o assistente não se apresenta como IA (H-13).
-> 5. Lista de países: hoje "Estados Unidos e União Europeia"; confirmar com a lista de suboperadores.
+**Versão 1.0 — vigente a partir de 25/11/2026**
+
+Este é um **modelo** que o profissional (cliente do Consultório Aberto) adapta e publica. O aviso é **do profissional**, que é o controlador dos dados do paciente. Nós somos operadores.
 
 ## Versão curta (primeira mensagem no WhatsApp)
 
@@ -33,13 +25,13 @@ Observações para o profissional:
 
 **1. Quem trata seus dados**
 
-1.1. O responsável pelos seus dados (controlador) é [NOME DO PROFISSIONAL OU RAZÃO SOCIAL], [CPF OU CNPJ], [ENDEREÇO].
+1.1. O responsável pelos seus dados (controlador) é [NOME DO PROFISSIONAL OU RAZÃO SOCIAL], [CPF OU CNPJ], Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131.
 
 1.2. Contato para assuntos de privacidade: [E-MAIL OU TELEFONE DO CONTROLADOR]. Encarregado: [NOME E E-MAIL DO ENCARREGADO DO CONTROLADOR, OU "não indicado, conforme a Resolução CD/ANPD 2/2022"].
 
 **2. Atendimento automático**
 
-2.1. O atendimento pelo WhatsApp é feito por um **assistente virtual**, um programa com inteligência artificial, fornecido pelo Consultório Aberto ([RAZÃO SOCIAL], CNPJ [CNPJ]), que trata seus dados em nosso nome.
+2.1. O atendimento pelo WhatsApp é feito por um **assistente virtual**, um programa com inteligência artificial, fornecido pelo Consultório Aberto (Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44), que trata seus dados em nosso nome.
 
 2.2. O assistente informa serviços, valores, endereço e horários, agenda, remarca, cancela e envia confirmações e lembretes.
 
@@ -60,7 +52,7 @@ Observações para o profissional:
 | Finalidade | Base legal |
 | --- | --- |
 | Responder, agendar, confirmar e lembrar o atendimento | Procedimentos preliminares e execução de contrato (art. 7º, V) |
-| Saber o motivo da consulta para preparar o atendimento | Tutela da saúde, em procedimento realizado por profissional de saúde (art. 11, II, "f") [CONFIRMAR] |
+| Saber o motivo da consulta para preparar o atendimento | Tutela da saúde, em procedimento realizado por profissional de saúde (art. 11, II, "f") |
 | Mensagens de novidades, retorno ou campanhas | Só com seu consentimento (art. 7º, I), que você pode retirar |
 | Cumprir obrigações legais e defender direitos | Arts. 7º, II e VI; 11, II, "a" e "d" |
 
@@ -90,4 +82,4 @@ Observações para o profissional:
 
 8.3. Você também pode reclamar à ANPD (www.gov.br/anpd).
 
-Atualizado em [DATA].
+Modelo versão 1.0, de 25/11/2026.
