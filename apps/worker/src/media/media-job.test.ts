@@ -7,7 +7,7 @@ import {
   type MessageContent,
 } from '@app/channels';
 import { MAX_MEDIA_ATTEMPTS, MediaState, readMediaInfo } from '@app/core';
-import { createDb } from '@app/db';
+import { FeatureKey, createDb } from '@app/db';
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import { applyInboundEvents } from '../inbound/apply.ts';
 import type { TurnRequest } from '../conversation/schedule.ts';
@@ -124,6 +124,20 @@ describe('media job (E-10, RF-24)', () => {
         Promise.resolve(() => Promise.resolve({ bytes: Buffer.from('img'), mime: 'image/jpeg' })),
     });
     const { messageId } = await scope.receive(image);
+    await processMedia(fake.deps, { tenantId: scope.tenantId, messageId: messageId });
+    expect(readMediaInfo((await scope.message(messageId)).media)?.state).toBe(MediaState.stored);
+    expect(fake.deps.transcribe).not.toHaveBeenCalled();
+  });
+
+  it('stores audio without a transcript when the owner turned transcription off (H-51)', async () => {
+    const scope = await setup();
+    await db.withTenant(scope.tenantId, (tx) =>
+      tx.featureSetting.create({
+        data: { tenantId: scope.tenantId, feature: FeatureKey.audio_transcription, enabled: false },
+      }),
+    );
+    const fake = fakes();
+    const { messageId } = await scope.receive(audio);
     await processMedia(fake.deps, { tenantId: scope.tenantId, messageId: messageId });
     expect(readMediaInfo((await scope.message(messageId)).media)?.state).toBe(MediaState.stored);
     expect(fake.deps.transcribe).not.toHaveBeenCalled();

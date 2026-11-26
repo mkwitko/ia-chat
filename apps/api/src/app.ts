@@ -40,6 +40,7 @@ import { registerProfessionalServiceRoutes } from './setup/professional-services
 import { registerReferralRoutes } from './growth/referral-routes.ts';
 import { registerLeadFollowUpRoutes } from './growth/lead-follow-up-routes.ts';
 import { registerReviewRequestRoutes } from './growth/review-request-routes.ts';
+import { registerFeatureRoutes } from './features/feature-routes.ts';
 import { registerProfileRoutes } from './setup/profile-routes.ts';
 import { registerServiceRoutes } from './setup/services-routes.ts';
 import { registerSimulatorRoutes } from './simulator/simulator-routes.ts';
@@ -184,6 +185,7 @@ function registerSettingsRoutes(app: FastifyInstance): void {
   registerProfileRoutes(app);
   registerLeadFollowUpRoutes(app);
   registerReviewRequestRoutes(app);
+  registerFeatureRoutes(app);
   registerKnowledgeRoutes(app);
   registerOnboardingRoutes(app);
   registerTrialRoutes(app);

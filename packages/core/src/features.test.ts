@@ -1,0 +1,52 @@
+import { describe, expect, it } from 'vitest';
+import { Feature, featureStates, isFeature, planIncludes } from './features.ts';
+import { PlanId } from './plans.ts';
+
+const stateOf = (plan: PlanId, feature: Feature, choices = {}) =>
+  featureStates(plan, choices).find((state) => state.feature === feature);
+
+describe('features (H-51)', () => {
+  it('a plan includes its own features and those of the plans below', () => {
+    expect(planIncludes(PlanId.essencial, Feature.audioTranscription)).toBe(true);
+    expect(planIncludes(PlanId.essencial, Feature.pixDeposit)).toBe(false);
+    expect(planIncludes(PlanId.agenda, Feature.pixDeposit)).toBe(true);
+    expect(planIncludes(PlanId.pro, Feature.ocrIdCard)).toBe(true);
+    expect(planIncludes(PlanId.clinica, Feature.ocrMedicalRequest)).toBe(true);
+  });
+
+  it('is on by default when the plan includes it', () => {
+    expect(planIncludes(PlanId.agenda, Feature.ocrIdCard)).toBe(false);
+    expect(stateOf(PlanId.pro, Feature.ocrIdCard)).toMatchObject({
+      included: true,
+      enabled: true,
+    });
+  });
+
+  it('keeps the exam summary off until the owner turns it on (health data)', () => {
+    expect(stateOf(PlanId.pro, Feature.ocrMedicalRequest)?.enabled).toBe(false);
+    const on = { [Feature.ocrMedicalRequest]: true };
+    expect(stateOf(PlanId.pro, Feature.ocrMedicalRequest, on)?.enabled).toBe(true);
+  });
+
+  it('follows the owner when included', () => {
+    const off = { [Feature.ocrIdCard]: false };
+    expect(stateOf(PlanId.pro, Feature.ocrIdCard, off)?.enabled).toBe(false);
+  });
+
+  it('is never on outside the plan, whatever was saved, and says which plan has it', () => {
+    const on = { [Feature.pixDeposit]: true };
+    expect(stateOf(PlanId.essencial, Feature.pixDeposit, on)).toEqual({
+      feature: Feature.pixDeposit,
+      plan: PlanId.agenda,
+      included: false,
+      enabled: false,
+    });
+  });
+
+  it('lists every feature once and recognizes its keys', () => {
+    const keys = featureStates(PlanId.essencial, {}).map((state) => state.feature);
+    expect(new Set(keys).size).toBe(Object.values(Feature).length);
+    expect(isFeature('pix_deposit')).toBe(true);
+    expect(isFeature('teleport')).toBe(false);
+  });
+});

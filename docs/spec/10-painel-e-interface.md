@@ -162,6 +162,16 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
 
 `/mais/conta`, resumo com Plano e uso, Assinatura e Avisos e aparência (resumo da semana e tema).
 
+### Recursos
+
+`/mais/conta/recursos` (H-51, decisão do dono de 26/11/2026). Só o dono vê a linha em Conta e a tela. Uma lista com um interruptor por recurso do catálogo ([01](01-produto-e-planos.md), "Recursos"), nome e uma frase em palavras simples. Recurso fora do plano aparece desligado e travado, com "Disponível no plano X"; sem botão de compra nem aviso repetido. Cada toque salva na hora.
+
+Contrato da API (estável; o assistente de configuração também usa):
+
+- `GET /api/features` → `{ plan, features: [{ feature, plan, included, enabled }] }`. `plan` de cada item é o plano mais baixo que o inclui; `included` diz se o plano do consultório o tem; `enabled` é o valor efetivo (nunca `true` fora do plano).
+- `PUT /api/features` com `{ features: { <chave>: true | false } }` (uma ou mais chaves; só as enviadas mudam) → a mesma resposta do GET. Ligar recurso fora do plano: 422 `feature_not_in_plan`, nada salvo. Chave desconhecida ou corpo vazio: 400. Grava auditoria (`entity = features`).
+- Só o dono (permissão `features`): profissional e recepção recebem 403.
+
 ### Plano e uso
 
 - Plano atual, conversas usadas na franquia, previsão para o mês e o bloco "WhatsApp (Meta)": respostas grátis da Meta usadas no mês (ex.: "640 de 1.000"), mensagens com custo por categoria e custo estimado, `GET /api/usage/meta`. Texto: "Estimativa da Meta no seu cartão: R$ X". A Meta cobra no cartão do cliente; não entra na nossa fatura.

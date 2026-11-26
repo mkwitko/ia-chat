@@ -585,3 +585,11 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] Ficha mostra "Pacote 4 sessões: 2 de 4 usadas" e histórico; Início, "Pacotes terminando"
 - [x] Ferramenta `consultar_saldo_de_pacotes` lendo o contato da conversa; texto do lembrete inalterado
 - Pronto quando: os testes do desconto, das rotas e da ferramenta passam e a ficha mostra o saldo.
+
+### REC-01 Recursos por plano (decisão do dono, 26/11/2026, H-51)
+- [x] **(teste primeiro)** Catálogo e regra: plano mais baixo por recurso, ligado por padrão dentro do plano, nunca fora (`packages/core/src/features.test.ts`)
+- [x] Tabela `feature_settings` com RLS e linha de exemplo no isolamento por catálogo; apagada com o consultório
+- [x] `GET/PUT /api/features`, só o dono, 422 fora do plano, auditoria (`apps/api/src/features/features.test.ts`)
+- [x] Onde roda: transcrição de áudio confere o recurso; sinal e leituras de imagem conferem nas etapas seguintes
+- [x] Tela Conta > Recursos com um interruptor por recurso e o plano que tem os de fora
+- Pronto quando: os testes do catálogo, da API e do job de mídia passam.

@@ -36,6 +36,7 @@ export const Route = {
   importReview: '/mais/consultorio/whatsapp/revisar-importacao',
   account: '/mais/conta',
   accountNotifications: '/mais/conta/avisos-e-aparencia',
+  accountFeatures: '/mais/conta/recursos',
   referral: '/mais/conta/indique-e-ganhe',
   usage: '/mais/conta/plano-e-uso',
   billing: '/mais/conta/assinatura',

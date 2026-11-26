@@ -25,6 +25,7 @@ const statement = {
   assistant: [Action.read, Action.manage],
   agenda: [Action.read, Action.book, Action.manage],
   whatsapp: [Action.manage],
+  features: [Action.manage],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -37,6 +38,7 @@ export const roles = {
     assistant: [Action.read, Action.manage],
     agenda: [Action.read, Action.book, Action.manage],
     whatsapp: [Action.manage],
+    features: [Action.manage],
   }),
   [Role.professional]: ac.newRole({
     ...memberAc.statements,
@@ -65,6 +67,8 @@ export const Permission = {
   agendaBook: { agenda: [Action.book] },
   agendaManage: { agenda: [Action.manage] },
   whatsappManage: { whatsapp: [Action.manage] },
+  /** Recursos (H-51): which features run is the owner's, like the plan. */
+  featuresManage: { features: [Action.manage] },
 } as const satisfies Record<string, PermissionRequest>;
 
 export function isRole(value: string): value is Role {
