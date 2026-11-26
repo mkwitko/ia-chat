@@ -23,6 +23,11 @@ export const AgendaCopy = defineMessages({
       body: 'Quando o assistente marcar uma consulta, ela aparece aqui. Você também pode marcar um paciente agora.',
     },
     emptyWeek: 'Nada marcado neste dia.',
+    weekStrip: 'Escolha o dia',
+    dayCount: (day: string, count: number) => {
+      if (count === 0) return `${day}: nada marcado`;
+      return count === 1 ? `${day}: 1 atendimento` : `${day}: ${String(count)} atendimentos`;
+    },
     noPatient: 'Paciente sem nome',
     byAssistant: 'Marcado pelo assistente',
     byYou: 'Marcado por você',

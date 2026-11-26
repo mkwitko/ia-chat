@@ -3,13 +3,14 @@ import { customerPath } from '@/routes';
 import { customerName, dayLabel, dayTimeLabel } from './customer-format';
 import { CustomersCopy as Copy } from './customers-copy';
 import { OriginLabel } from './customers-labels';
-import type { CustomerSummary } from './customers-types';
+import { Origin, type CustomerSummary } from './customers-types';
 import { StageBadge } from './stage-badge';
 
 /** Name or phone, origin, status and the two dates that matter; opens the customer. */
 export function CustomerRow({ customer }: Readonly<{ customer: CustomerSummary }>) {
   const details = [
-    OriginLabel[customer.origin],
+    // Most people come straight through WhatsApp: only a different origin is worth a word.
+    customer.origin !== Origin.whatsappDirect && OriginLabel[customer.origin],
     customer.lastContactAt && `${Copy.lastContact} ${dayLabel(customer.lastContactAt)}`,
     customer.nextAppointmentAt &&
       `${Copy.nextAppointment} ${dayTimeLabel(customer.nextAppointmentAt)}`,

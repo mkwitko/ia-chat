@@ -57,7 +57,7 @@ export function AgendaBody({ agenda, days, onNew, names }: Readonly<BodyProps>) 
 
 const WEEK_GRID = 'grid gap-6 md:grid-cols-2 md:gap-x-4 xl:grid-cols-3 2xl:grid-cols-4';
 
-const covers = (
+export const covers = (
   span: { startsAt: string; endsAt: string },
   day: string,
   timezone: string,
