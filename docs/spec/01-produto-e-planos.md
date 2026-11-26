@@ -60,8 +60,8 @@ A estrutura proposta no master prompt faz sentido com três ajustes:
 | Plano | Inclui | Franquia mensal |
 |---|---|---|
 | Essencial | Atendimento, serviços e preços, endereço, tom de voz, base de conhecimento curta, inbox, transferência para humano, áudio do paciente, relatório básico | 300 conversas |
-| Agenda | Essencial + Google Calendar, agendar, remarcar, cancelar, confirmação, lembrete, regras de horário, sinal por Pix com chave manual (confirmação pelo profissional), leitura de comprovante de Pix, de documento ou carteirinha e de pedido médico ou exame (este desligado até o dono ligar) | 500 conversas |
-| Pro | Agenda + sinal Pix com confirmação automática (Mercado Pago, depois), follow-up, recuperação de interessados, reativação, pedido de avaliação, lista de espera, CRM administrativo, relatório de qualidade | 1.000 conversas |
+| Agenda | Essencial + Google Calendar, agendar, remarcar, cancelar, confirmação, lembrete, regras de horário, sinal por Pix com chave manual (confirmação pelo profissional) e leitura do comprovante de Pix | 500 conversas |
+| Pro | Agenda + sinal Pix com confirmação automática (Mercado Pago, depois), leitura de documento ou carteirinha, resumo de pedido médico ou exame (desligado até o dono ligar), follow-up, recuperação de interessados, reativação, pedido de avaliação, lista de espera, CRM administrativo, relatório de qualidade | 1.000 conversas |
 | Clínica | Pro + vários profissionais e agendas, equipe e permissões, salas e equipamentos, relatórios por profissional | 1.000 conversas com 2 profissionais; cada profissional a mais soma 250 conversas |
 
 "Conversa" para franquia: sequência de mensagens com o mesmo paciente sem intervalo maior que 24 horas.
@@ -86,10 +86,10 @@ Decisão do dono, 26/11/2026 (H-51). Cada recurso que o dono pode ligar ou desli
 | `audio_transcription` | Entender áudios do cliente (RF-08) | Essencial |
 | `pix_deposit` | Sinal por Pix com chave manual ([05](05-agenda-e-pagamentos.md)) | Agenda |
 | `ocr_pix_receipt` | Ler comprovante de Pix e sugerir a confirmação do sinal | Agenda |
-| `ocr_id_card` | Ler documento ou carteirinha e sugerir nome, CPF e nascimento | Agenda |
-| `ocr_medical_request` | Resumo factual de pedido médico ou exame, só para o profissional ([06](06-seguranca-e-lgpd.md)); nasce desligado | Agenda |
+| `ocr_id_card` | Ler documento ou carteirinha e sugerir nome, CPF e nascimento | Pro |
+| `ocr_medical_request` | Resumo factual de pedido médico ou exame, só para o profissional ([06](06-seguranca-e-lgpd.md)); nasce desligado | Pro |
 
-- Planos decididos pelo dono em 26/11/2026: o sinal manual e as leituras entram no Agenda (à venda), porque o Pro ainda não está à venda e o fluxo manual não nos custa nada; o Pro fica com a confirmação automática do sinal (Mercado Pago, depois). Preços sem mudança.
+- Planos decididos pelo dono em 26/11/2026: o sinal manual e a leitura do comprovante entram no Agenda (à venda), porque andam juntos e o fluxo manual não nos custa nada; o Pro ganha a leitura de documento ou carteirinha, o resumo de exame e a confirmação automática do sinal (Mercado Pago, depois). Preços sem mudança.
 - Dentro do plano, o recurso nasce ligado (menos o resumo de exame, dado de saúde, que nasce desligado); o dono desliga em Conta > Recursos. Fora do plano, nunca liga, e a tela mostra em que plano ele está, sem propaganda.
 - Onde o recurso roda (ferramenta do agente, job do worker), o código confere `featureEnabled` antes. Rebaixar o plano desliga na hora, mesmo com escolha salva.
 - Guardado em `feature_settings` (uma linha por escolha do dono, com RLS); sem linha vale o padrão do plano.

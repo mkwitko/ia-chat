@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { HOME_KEY } from '../customers/customers-api';
 import type { CustomerSummary } from '../customers/customers-types';
@@ -39,7 +39,20 @@ export interface HomeView {
   today: HomeAppointment[];
   toConfirm: HomeAppointment[];
   notBooked: { count: number; recoverable: number; items: CustomerSummary[] };
+  /** Someone of the account already closed the "first booking" card. */
+  firstBookingSeen: boolean;
 }
 
 export const useHome = () =>
   useQuery({ queryKey: HOME_KEY, queryFn: () => api<HomeView>('/api/home') });
+
+const POST = 'POST';
+
+/** Closes the "first booking" card for the whole account (round 3: was per browser). */
+export function useFirstBookingSeen() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => api<{ seen: boolean }>('/api/home/first-booking-seen', { method: POST }),
+    onSettled: () => client.invalidateQueries({ queryKey: HOME_KEY }),
+  });
+}

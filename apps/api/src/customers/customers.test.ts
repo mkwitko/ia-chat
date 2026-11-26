@@ -207,6 +207,8 @@ describe('attendance and the month on Início', () => {
       recovered: { count: number; minSample: number };
     }>();
     expect(home.recovered).toMatchObject({ count: 0, minSample: 5 });
+    await call('POST', '/api/home/first-booking-seen');
+    expect((await call('GET', '/api/home')).json()).toMatchObject({ firstBookingSeen: true });
     expect(home.month.contacts).toBeGreaterThanOrEqual(1);
     expect(home.month.booked).toBeGreaterThanOrEqual(2);
     const results = (await call('GET', '/api/results')).json<{
