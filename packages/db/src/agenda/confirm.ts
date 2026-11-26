@@ -27,13 +27,13 @@ export async function confirmAppointment(
         status: { in: LIVE },
         startsAt: { gt: req.now },
       },
-      include: { service: true },
+      include: { service: true, professional: true },
     });
     if (!found) return { ok: false, error: AgendaError.appointmentNotFound } as const;
     const updated = await tx.appointment.update({
       where: { id: found.id },
       data: { status: AppointmentStatus.confirmed },
-      include: { service: true },
+      include: { service: true, professional: true },
     });
     return { ok: true, value: toView(updated) } as const;
   });

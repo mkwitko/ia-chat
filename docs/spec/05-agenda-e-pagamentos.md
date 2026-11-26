@@ -28,9 +28,21 @@ Implementação (E-20, 25/11/2026): o intervalo é `starts_at`/`ends_at` (`times
 - **Remarcação** cancela o antigo e grava o novo na mesma transação; se o novo falhar, nada muda (A-14). Vale a mesma antecedência mínima do cancelamento.
 - **Antecedência mínima de cancelamento:** `tenants.cancel_notice_minutes` (padrão 1440, hipótese de 24 horas). Dentro do prazo a ferramenta devolve `cancelamento_fora_do_prazo` e o turno marca a transferência para o profissional (RF-44). O motivo do cancelamento não é gravado (pode conter dado de saúde).
 - Limite de agendamentos futuros por paciente (RF-45): 2, constante `MAX_FUTURE_APPOINTMENTS`; configurável fica para depois.
-- Profissional: o primeiro do tenant (o piloto tem um); vários entram com o plano Clínica.
+- Profissional: cada agendamento grava o seu; a constraint é por profissional, então dois profissionais podem atender no mesmo horário. Ver "Agenda por profissional".
 
 - Não há bloqueio de horário enquanto o assistente apenas lista opções. `held` só existe quando há sinal Pix pendente, com expiração (padrão 30 minutos); um job libera o horário vencido.
+
+### Agenda por profissional
+
+Implementado em 26/11/2026 (H-45; substitui a transferência de H-38).
+
+- Cada profissional tem as próprias regras semanais (`availability_rules`), bloqueios e férias (`time_off`) e agendamentos. A constraint `appointments_no_overlap` já separa por `professional_id`.
+- `professional_services` liga serviço a profissional, com RLS. Profissional sem nenhuma ligação faz todos os serviços.
+- `consultar_horarios(servico, a_partir_de, periodo?, profissional?)`: com `profissional`, só os horários dele (nome sem acento nem sobrenome serve; nome desconhecido devolve `profissional_nao_encontrado` e a lista de nomes). Sem, junta os horários livres de quem faz o serviço, uma opção por horário (empate fica com o profissional mais antigo), e cada opção traz `profissional` com o nome, que o assistente diz junto do horário. A oferta guarda o profissional.
+- `agendar` e `remarcar` aceitam `profissional?`. O profissional do agendamento é o pedido (a oferta anterior precisa ter sido com ele) ou o da oferta. Sem nenhum dos dois (oferta da lista de espera, painel), o primeiro profissional que faz o serviço e está livre naquela hora. Remarcar sem profissional mantém o do agendamento original. Profissional que não faz o serviço: `profissional_nao_encontrado`.
+- Aviso de férias (RF-14): só quando um profissional está em jogo (pedido ou único que faz o serviço).
+- Google Agenda: continua um por consultório e vale para o primeiro profissional (ocupação e eventos); os outros usam só as regras do painel. Google por profissional fica para depois (H-45).
+- Quantidade por plano: Essencial, Agenda e Pro, um profissional; Clínica inclui dois e aceita extras (R$ 147 cada, `EXTRA_PROFESSIONAL`). Criar além do limite devolve 409 `plan_limit`.
 
 ### Cálculo de disponibilidade
 

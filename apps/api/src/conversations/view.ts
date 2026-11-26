@@ -48,6 +48,10 @@ export interface MessageView {
   /** Audio, image or document: the panel opens it through MEDIA_PATH once stored. */
   media: { state: MediaState; mime: string; url: string | null } | null;
   at: Date;
+  /** E-24b: from the coexistence history; read-only context. */
+  imported: boolean;
+  /** The owner wrote it in the WhatsApp Business app ("Você (celular)"). */
+  sentFromPhone: boolean;
 }
 
 export interface ConversationSummary {
@@ -163,6 +167,8 @@ export async function readConversation(tx: Tx, conversationId: string) {
       text: m.text,
       media: mediaView(m.media, mediaUrl(conversationId, m.id)),
       at: m.createdAt,
+      imported: m.imported,
+      sentFromPhone: m.sentFromPhone,
     })),
     events: audit.map((entry) => controlEvent(entry.createdAt, entry.after)),
   };

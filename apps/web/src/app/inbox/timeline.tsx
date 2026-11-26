@@ -93,7 +93,8 @@ function Bubble({ message }: Readonly<{ message: MessageView }>) {
   return (
     <div className={cn('max-w-[85%] rounded-2xl px-3 py-2 lg:max-w-xl', SIDE[message.author])}>
       <p className={cn('text-xs font-semibold', LABEL[message.author])}>
-        {AuthorCopy[message.author]}
+        {message.sentFromPhone ? Copy.fromPhone : AuthorCopy[message.author]}
+        {message.imported && <span className="font-normal"> · {Copy.imported}</span>}
       </p>
       <MessageMedia message={message} />
       <p className="text-base break-words whitespace-pre-wrap">{bodyOf(message)}</p>

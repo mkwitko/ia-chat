@@ -8,8 +8,8 @@ import type { Db, Tx } from '../index.ts';
 import { finishBook, removeEvent } from '../calendar/sync.ts';
 import type { CalendarLink } from '../calendar/link.ts';
 import { withStageSync } from '../customers/sync.ts';
-import { assertBelowLimit, assertNotice, assertOffered, LIVE } from './guards.ts';
-import { loadScope } from './availability.ts';
+import { assertBelowLimit, assertNotice, ownedLive, professionalFor } from './guards.ts';
+import { calendarFor, loadScope } from './availability.ts';
 import { toView } from './view.ts';
 import { rebookSource, settleWaitlist } from './waitlist.ts';
 import { cancelPendingMessages, scheduleMessages } from '../reminders/schedule.ts';
@@ -28,6 +28,8 @@ export interface BookRequest {
   tenantId: string;
   contactId: string;
   serviceId: string;
+  /** Who serves; absent: the first professional performing the service who is free then. */
+  professionalId?: string | undefined;
   startsAt: Date;
   /** One per turn and action: a retried call returns the first result. */
   key: string;
@@ -115,7 +117,7 @@ async function runAgenda<T>(
 async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
   const done = await tx.appointment.findFirst({
     where: { idempotencyKey: req.key },
-    include: { service: true },
+    include: { service: true, professional: true },
   });
   if (done) return toView(done);
   const scope = await loadScope(tx);
@@ -123,11 +125,12 @@ async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
   if (!service) throw new AgendaFailure(AgendaError.serviceNotFound);
   await assertBelowLimit(tx, req);
   const endsAt = new Date(req.startsAt.getTime() + service.durationMinutes * MS_PER_MINUTE);
-  await assertOffered(tx, { scope, req, durationMinutes: service.durationMinutes });
+  const professionalId = await professionalFor(tx, { scope, req, service });
+  const calendar = await calendarFor(tx, { professionalId, calendar: req.calendar });
   const created = await tx.appointment.create({
     data: {
       tenantId: req.tenantId,
-      professionalId: scope.professionalId,
+      professionalId,
       contactId: req.contactId,
       serviceId: service.id,
       locationId: scope.locationId,
@@ -135,10 +138,10 @@ async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
       endsAt,
       createdBy: req.createdBy,
       idempotencyKey: req.key,
-      calendarSync: req.calendar ? CalendarSyncState.failed : CalendarSyncState.none,
+      calendarSync: calendar ? CalendarSyncState.failed : CalendarSyncState.none,
       rescheduledFromId: await rebookSource(tx, req),
     },
-    include: { service: true },
+    include: { service: true, professional: true },
   });
   await settleWaitlist(tx, {
     contactId: req.contactId,
@@ -152,7 +155,7 @@ async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
 async function moveIn(tx: Tx, req: MoveRequest): Promise<AppointmentView> {
   const done = await tx.appointment.findFirst({
     where: { idempotencyKey: req.key },
-    include: { service: true },
+    include: { service: true, professional: true },
   });
   if (done) return toView(done);
   const old = await ownedLive(tx, req);
@@ -163,13 +166,17 @@ async function moveIn(tx: Tx, req: MoveRequest): Promise<AppointmentView> {
     data: { status: AppointmentStatus.cancelled },
   });
   await cancelPendingMessages(tx, old.id);
-  return bookIn(tx, { ...req, serviceId: old.serviceId });
+  return bookIn(tx, {
+    ...req,
+    serviceId: old.serviceId,
+    professionalId: req.professionalId ?? old.professionalId,
+  });
 }
 
 async function cancelIn(tx: Tx, req: CancelRequest): Promise<AppointmentView> {
   const found = await tx.appointment.findFirst({
     where: { id: req.appointmentId, contactId: req.contactId },
-    include: { service: true },
+    include: { service: true, professional: true },
   });
   if (!found) throw new AgendaFailure(AgendaError.appointmentNotFound);
   if (found.status === AppointmentStatus.cancelled) return toView(found);
@@ -178,21 +185,8 @@ async function cancelIn(tx: Tx, req: CancelRequest): Promise<AppointmentView> {
   const updated = await tx.appointment.update({
     where: { id: found.id },
     data: { status: AppointmentStatus.cancelled },
-    include: { service: true },
+    include: { service: true, professional: true },
   });
   await cancelPendingMessages(tx, found.id);
   return toView(updated);
-}
-
-async function ownedLive(tx: Tx, req: MoveRequest) {
-  const found = await tx.appointment.findFirst({
-    where: {
-      id: req.appointmentId,
-      contactId: req.contactId,
-      status: { in: LIVE },
-      startsAt: { gte: req.now },
-    },
-  });
-  if (!found) throw new AgendaFailure(AgendaError.appointmentNotFound);
-  return found;
 }

@@ -41,12 +41,16 @@ export const ErrorCode = {
   whatsappTaken: 'whatsapp_taken',
   whatsappFailed: 'whatsapp_failed',
   inUse: 'in_use',
+  /** The plan has no room for another professional (founder/pricing.md). */
+  planLimit: 'plan_limit',
   prefillOff: 'prefill_off',
   prefillFailed: 'prefill_failed',
   pasteText: 'paste_text',
   pageUnreadable: 'page_unreadable',
   suggestOff: 'suggest_off',
   suggestFailed: 'suggest_failed',
+  historyNotOffered: 'history_not_offered',
+  historyWindowClosed: 'history_window_closed',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

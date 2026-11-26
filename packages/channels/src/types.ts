@@ -5,7 +5,17 @@ export const InboundKind = {
   ownerEcho: 'owner_echo',
   status: 'status',
   channelState: 'channel_state',
+  /** Coexistence history sync (E-24b): a past message, imported as read-only context. */
+  historyMessage: 'history_message',
+  historyProgress: 'history_progress',
+  /** The owner refused to share the history in the Business app (Meta error 2593109). */
+  historyDeclined: 'history_declined',
+  /** Coexistence phone-book sync (`smb_app_state_sync`). */
+  contactSync: 'contact_sync',
 } as const;
+
+export const ContactAction = { add: 'add', remove: 'remove' } as const;
+export type ContactAction = (typeof ContactAction)[keyof typeof ContactAction];
 
 export const ContentType = {
   text: 'text',
@@ -82,7 +92,19 @@ export type InboundEvent =
       pricing?: MessagePricing | undefined;
       at: Date;
     }
-  | { kind: typeof InboundKind.channelState; state: ChannelState; at: Date };
+  | { kind: typeof InboundKind.channelState; state: ChannelState; at: Date }
+  | {
+      kind: typeof InboundKind.historyMessage;
+      providerMessageId: string;
+      contact: ContactRef;
+      at: Date;
+      /** Text, or `unsupported` for anything else: history media is never downloaded. */
+      content: MessageContent;
+      fromOwner: boolean;
+    }
+  | { kind: typeof InboundKind.historyProgress; progress: number; at: Date }
+  | { kind: typeof InboundKind.historyDeclined; at: Date }
+  | { kind: typeof InboundKind.contactSync; contact: ContactRef; action: ContactAction; at: Date };
 
 export interface MessagePricing {
   billable: boolean;

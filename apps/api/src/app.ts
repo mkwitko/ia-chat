@@ -36,6 +36,7 @@ import { registerUnansweredRoutes } from './setup/unanswered-routes.ts';
 import { registerLocationRoutes } from './setup/location-routes.ts';
 import { registerPlacesRoutes } from './setup/places-routes.ts';
 import { registerProfessionalRoutes } from './setup/professionals-routes.ts';
+import { registerProfessionalServiceRoutes } from './setup/professional-services-routes.ts';
 import { registerLeadFollowUpRoutes } from './growth/lead-follow-up-routes.ts';
 import { registerReviewRequestRoutes } from './growth/review-request-routes.ts';
 import { registerProfileRoutes } from './setup/profile-routes.ts';
@@ -122,7 +123,11 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
   registerSupportRoutes(app, { whatsapp: env.SUPPORT_WHATSAPP, email: env.SUPPORT_EMAIL });
-  registerWhatsappSignupRoutes(app, { config: whatsappSignupConfig(env), fetch: deps.metaFetch });
+  registerWhatsappSignupRoutes(app, {
+    config: whatsappSignupConfig(env),
+    fetch: deps.metaFetch,
+    gateway: deps.simulatorGateway,
+  });
   return app;
 }
 
@@ -160,6 +165,7 @@ function registerSettingsRoutes(app: FastifyInstance): void {
   registerLocationRoutes(app);
   registerPlacesRoutes(app);
   registerProfessionalRoutes(app);
+  registerProfessionalServiceRoutes(app);
   registerProfileRoutes(app);
   registerLeadFollowUpRoutes(app);
   registerReviewRequestRoutes(app);

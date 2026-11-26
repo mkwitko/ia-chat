@@ -41,7 +41,7 @@ Cada linha aponta o que existe hoje (inventário completo na auditoria) e a etap
 | Recuperação de lead | IMPLEMENTADO (H-44) | M-10 |
 | Follow-up | IMPLEMENTADO para lead (H-44) e após falta (M-09) | M-10, Fase 4 |
 | Indicações | AUSENTE | M-11 |
-| Avaliações | IMPLEMENTADO (pedido; H-45) | M-12 |
+| Avaliações | IMPLEMENTADO (pedido; H-47) | M-12 |
 | Origem do lead | AUSENTE | M-06 (em andamento) |
 | Relatórios simples | AUSENTE | M-07 (em andamento), M-12 |
 
@@ -122,7 +122,7 @@ Configurações > Retorno de clientes. Interruptor desligado por padrão; espera
 
 ## Pedido de avaliação (M-12)
 
-Configurações > Retorno e avaliações. Desligado por padrão; só liga com o link de avaliação do Google preenchido no perfil do negócio. Depois que o atendimento é marcado "Compareceu" e passa o atraso (padrão 3 h), uma única mensagem fixa em código (agradecimento e o link; nada de saúde) pede a avaliação. Uma por atendimento (`scheduled_messages`, tipo `review_request`) e no máximo uma enviada por cliente a cada 90 dias. Mesma trava de envio das outras mensagens ativas (opt-out, controle da IA, janela de 24 h; fora dela o profissional é avisado). Hipótese H-45.
+Configurações > Retorno e avaliações. Desligado por padrão; só liga com o link de avaliação do Google preenchido no perfil do negócio. Depois que o atendimento é marcado "Compareceu" e passa o atraso (padrão 3 h), uma única mensagem fixa em código (agradecimento e o link; nada de saúde) pede a avaliação. Uma por atendimento (`scheduled_messages`, tipo `review_request`) e no máximo uma enviada por cliente a cada 90 dias. Mesma trava de envio das outras mensagens ativas (opt-out, controle da IA, janela de 24 h; fora dela o profissional é avisado). Hipótese H-47.
 
 ## Modelo de indicação
 

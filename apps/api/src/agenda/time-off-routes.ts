@@ -7,17 +7,33 @@ import { requireTenant, type TenantContext } from '../auth/tenant-guard.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { audit, AuditAction } from '../setup/audit.ts';
 import { notFound, parsed, tenantOf } from '../setup/guarded.ts';
-import { daySchema, idParams, minutesOf, timeSchema, toLocalDate } from './schemas.ts';
+import {
+  daySchema,
+  idParams,
+  minutesOf,
+  professionalOf,
+  professionalQuery,
+  timeSchema,
+  toLocalDate,
+} from './schemas.ts';
 
 // RF-41 (blocks and holidays) and RF-14 (vacation): both are time offs that `availableSlots`
-// already subtracts. A vacation is whole days; a block may cover part of one day.
+// already subtracts. A vacation is whole days; a block may cover part of one day. Each belongs
+// to one professional (without `professionalId`, the first).
 
 const PATH = '/api/time-offs';
 const ITEM_PATH = '/api/time-offs/:id';
 const ENTITY = 'time_off';
 const MAX_REASON = 120;
 const DAY_START = '00:00';
-const SELECT = { id: true, kind: true, startsAt: true, endsAt: true, reason: true } as const;
+const SELECT = {
+  id: true,
+  kind: true,
+  startsAt: true,
+  endsAt: true,
+  reason: true,
+  professionalId: true,
+} as const;
 
 const bodySchema = z
   .object({
@@ -28,6 +44,7 @@ const bodySchema = z
     fromTime: timeSchema.optional(),
     toTime: timeSchema.optional(),
     reason: z.string().trim().max(MAX_REASON).nullable().default(null),
+    professionalId: z.uuid().optional(),
   })
   .strict()
   .refine((body) => body.toDay >= body.fromDay)
@@ -41,10 +58,13 @@ export function registerTimeOffRoutes(app: FastifyInstance): void {
 }
 
 /** Upcoming and current ones; past blocks are history the panel does not need. */
-function listTimeOffs(request: FastifyRequest) {
+function listTimeOffs(request: FastifyRequest, reply: FastifyReply) {
+  const query = professionalQuery.safeParse(request.query);
+  if (!query.success) return notFound(reply);
+  const { professionalId } = query.data;
   return tenantOf(request).withTenant(async (tx) => ({
     timeOffs: await tx.timeOff.findMany({
-      where: { endsAt: { gt: new Date() } },
+      where: { endsAt: { gt: new Date() }, ...(professionalId ? { professionalId } : {}) },
       orderBy: { startsAt: 'asc' },
       select: SELECT,
     }),
@@ -67,7 +87,8 @@ function periodOf(body: Body, timezone: string) {
 }
 
 async function insertTimeOff(tx: Tx, tenant: TenantContext, body: Body) {
-  const professional = await tx.professional.findFirstOrThrow({ orderBy: { createdAt: 'asc' } });
+  const professional = await professionalOf(tx, body.professionalId);
+  if (!professional) return null;
   const { timezone } = await tx.tenant.findUniqueOrThrow({
     where: { id: tenant.tenantId },
     select: { timezone: true },
@@ -87,6 +108,7 @@ async function insertTimeOff(tx: Tx, tenant: TenantContext, body: Body) {
   // The panel warns: existing appointments inside the period are not cancelled by it.
   const conflicts = await tx.appointment.count({
     where: {
+      professionalId: professional.id,
       status: { not: AppointmentStatus.cancelled },
       startsAt: { lt: period.endsAt },
       endsAt: { gt: period.startsAt },

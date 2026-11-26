@@ -18,11 +18,13 @@ import { Button } from '@/components/ui/button';
 
 interface SectionProps {
   timezone: string;
+  /** Whose blocks and vacations; absent: the first professional's. */
+  professionalId?: string | undefined;
 }
 
 /** RF-41 and RF-14: upcoming blocks and vacations, with the form to add one. */
-export function TimeOffSection({ timezone }: Readonly<SectionProps>) {
-  const offs = useTimeOffs();
+export function TimeOffSection({ timezone, professionalId }: Readonly<SectionProps>) {
+  const offs = useTimeOffs(professionalId);
   return (
     <section className="grid gap-3">
       <h2 className="px-4 text-lg md:px-0">{Copy.offHeading}</h2>
@@ -31,14 +33,24 @@ export function TimeOffSection({ timezone }: Readonly<SectionProps>) {
       {offs.isError && (
         <LoadError message={CommonCopy.loadFailed} onRetry={() => void offs.refetch()} />
       )}
-      {offs.data && <TimeOffList timeOffs={offs.data.timeOffs} timezone={timezone} />}
+      {offs.data && (
+        <TimeOffList
+          timeOffs={offs.data.timeOffs}
+          timezone={timezone}
+          professionalId={professionalId}
+        />
+      )}
     </section>
   );
 }
 
-function TimeOffList({ timeOffs, timezone }: Readonly<SectionProps & { timeOffs: TimeOffItem[] }>) {
+function TimeOffList({
+  timeOffs,
+  timezone,
+  professionalId,
+}: Readonly<SectionProps & { timeOffs: TimeOffItem[] }>) {
   const edit = useEditing();
-  const create = useCreateTimeOff();
+  const create = useCreateTimeOff(professionalId);
   return (
     <div className="grid gap-3 px-4 md:px-0">
       {timeOffs.length === 0 && edit.editing !== NEW_ITEM && (

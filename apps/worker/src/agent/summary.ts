@@ -58,7 +58,7 @@ export async function refreshSummary(deps: SummaryDeps, scope: Scope): Promise<v
 async function messagesOutOfWindow(tx: Tx, conversationId: string) {
   const conversation = await tx.conversation.findUniqueOrThrow({ where: { id: conversationId } });
   const window = await tx.message.findMany({
-    where: { conversationId },
+    where: { conversationId, imported: false },
     orderBy: { createdAt: 'desc' },
     take: HISTORY_LIMIT,
     select: { createdAt: true },
@@ -67,7 +67,7 @@ async function messagesOutOfWindow(tx: Tx, conversationId: string) {
   if (window.length < HISTORY_LIMIT || !oldestKept) return null;
   const after = conversation.summaryUntil ?? new Date(0);
   const messages = await tx.message.findMany({
-    where: { conversationId, createdAt: { gt: after, lt: oldestKept } },
+    where: { conversationId, imported: false, createdAt: { gt: after, lt: oldestKept } },
     orderBy: { createdAt: 'asc' },
   });
   return messages.length ? { messages, previous: conversation.summary } : null;

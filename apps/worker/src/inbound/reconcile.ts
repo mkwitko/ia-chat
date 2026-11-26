@@ -21,6 +21,7 @@ export async function findStaleMessages(db: Db, now: Date): Promise<StaleMessage
       tx.message.aggregate({
         where: {
           direction: MessageDirection.outbound,
+          imported: false,
           status: { in: [MessageStatus.sent, MessageStatus.pending] },
           createdAt: { lt: before },
         },

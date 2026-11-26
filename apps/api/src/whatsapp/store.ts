@@ -1,6 +1,7 @@
 import { randomInt } from 'node:crypto';
 import { Provider, encryptToken, translateProviderError } from '@app/core';
-import { ChannelKind, ChannelStatus, type Tx } from '@app/db';
+import { ChannelKind, ChannelStatus, HistoryImportState, type Tx } from '@app/db';
+import { historyOffer } from './history-import.ts';
 import { SetupStep, isReady } from './steps.ts';
 
 const PIN_LIMIT = 1_000_000;
@@ -24,6 +25,7 @@ export async function saveChannel(tx: Tx, input: SavedSignup) {
   const { tenantId, tokenKey, wabaId, phoneNumberId } = input;
   const existing = await tx.channel.findFirst({ where: { phoneNumberId } });
   const data = {
+    ...historyOfferOf(existing, input.coexistence),
     kind: ChannelKind.cloud_api,
     status: ChannelStatus.pending,
     phoneNumberId,
@@ -40,6 +42,16 @@ export async function saveChannel(tx: Tx, input: SavedSignup) {
     : tx.channel.create({ data: { tenantId, ...data } });
 }
 
+/** E-24b: a coexistence number gets one import offer; a later reconnection keeps what happened. */
+function historyOfferOf(
+  existing: { historyImport: HistoryImportState } | null,
+  coexistence: boolean,
+) {
+  if (!coexistence) return { historyImport: HistoryImportState.none };
+  if (existing && existing.historyImport !== HistoryImportState.none) return {};
+  return { historyImport: HistoryImportState.offered, onboardedAt: new Date() };
+}
+
 /** The tenant's number connected by Embedded Signup, the most recent one. */
 export function signupChannel(tx: Tx) {
   return tx.channel.findFirst({
@@ -54,6 +66,9 @@ interface ChannelRow {
   coexistence: boolean;
   setupDone: string[];
   setupError: string | null;
+  historyImport: HistoryImportState;
+  onboardedAt: Date | null;
+  historyProgress: number | null;
 }
 
 /** What the panel shows: never the token nor the PIN. */
@@ -68,6 +83,7 @@ export function channelView(row: ChannelRow | null) {
     coexistence: row.coexistence,
     ready: isReady(row.setupDone),
     paymentMethod: row.setupDone.includes(SetupStep.paymentMethod),
+    history: historyOffer(row),
     error,
   };
 }

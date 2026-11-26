@@ -96,7 +96,14 @@ export {
 export { externalBusyOf, type CalendarLink, type CalendarResolver } from './calendar/link.ts';
 export { listUpcoming } from './agenda/upcoming.ts';
 export { loadScope, slotsIn } from './agenda/availability.ts';
-export { recordOffers, wasOfferedBefore } from './agenda/offers.ts';
+export {
+  findProfessional,
+  performersOf,
+  slotsAcross,
+  type Performer,
+  type ProfessionalSlot,
+} from './agenda/professionals.ts';
+export { offeredBefore, recordOffers, wasOfferedBefore } from './agenda/offers.ts';
 export { dayBounds, isoDay, localDayRange, tomorrowCount } from './agenda/day.ts';
 export { vacationReturn } from './agenda/vacation.ts';
 export {

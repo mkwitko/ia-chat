@@ -12,10 +12,12 @@ interface BodyProps {
   agenda: AgendaView;
   days: number;
   onNew: (target: BookingTarget) => void;
+  /** Professional names by id, when the agenda shows more than one professional. */
+  names?: ReadonlyMap<string, string> | undefined;
 }
 
 /** One section per day; a single day shows the "empty" state with the next step (RN-53). */
-export function AgendaBody({ agenda, days, onNew }: Readonly<BodyProps>) {
+export function AgendaBody({ agenda, days, onNew, names }: Readonly<BodyProps>) {
   const sections = Array.from({ length: days }, (_, index) => addDaysIso(agenda.from, index));
   const nothing = [agenda.appointments, agenda.timeOffs, agenda.waitlist].every(
     (list) => list.length === 0,
@@ -40,7 +42,14 @@ export function AgendaBody({ agenda, days, onNew }: Readonly<BodyProps>) {
   return (
     <div className={days > 1 ? WEEK_GRID : 'grid gap-4'}>
       {sections.map((day) => (
-        <DaySection key={day} day={day} agenda={agenda} showTitle={days > 1} onNew={onNew} />
+        <DaySection
+          key={day}
+          day={day}
+          agenda={agenda}
+          showTitle={days > 1}
+          onNew={onNew}
+          names={names}
+        />
       ))}
     </div>
   );
@@ -54,12 +63,12 @@ const covers = (
   timezone: string,
 ): boolean => dayOf(span.startsAt, timezone) <= day && day <= lastDayOf(span.endsAt, timezone);
 
-function DaySection({
-  day,
-  agenda,
-  showTitle,
-  onNew,
-}: Readonly<{ day: string; agenda: AgendaView; showTitle: boolean; onNew: BodyProps['onNew'] }>) {
+interface DayProps extends Omit<BodyProps, 'days'> {
+  day: string;
+  showTitle: boolean;
+}
+
+function DaySection({ day, agenda, showTitle, onNew, names }: Readonly<DayProps>) {
   const { timezone } = agenda;
   const items = agenda.appointments.filter((item) => dayOf(item.startsAt, timezone) === day);
   const offs = agenda.timeOffs.filter((off) => covers(off, day, timezone));
@@ -84,7 +93,13 @@ function DaySection({
       {items.length > 0 && (
         <ul className="divide-y border-y bg-card md:rounded-xl md:border md:shadow-card">
           {items.map((item) => (
-            <AppointmentRow key={item.id} item={item} timezone={timezone} onMove={onNew} />
+            <AppointmentRow
+              key={item.id}
+              item={item}
+              timezone={timezone}
+              onMove={onNew}
+              professional={names?.get(item.professionalId)}
+            />
           ))}
         </ul>
       )}

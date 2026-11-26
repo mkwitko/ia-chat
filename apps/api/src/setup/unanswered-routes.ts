@@ -26,7 +26,12 @@ const MAX_ANSWER = 2000;
 const MAX_GROUP = 200;
 const UNKNOWN = 'unknown';
 
-const PENDING = { source: KnowledgeSource.unanswered, answer: null, active: false } as const;
+// Questions the assistant could not answer, and frequent ones suggested from the imported history (E-24b).
+const PENDING = {
+  source: { in: [KnowledgeSource.unanswered, KnowledgeSource.history] },
+  answer: null,
+  active: false,
+};
 const ids = z.array(z.uuid()).min(1).max(MAX_GROUP);
 const approveSchema = z
   .object({

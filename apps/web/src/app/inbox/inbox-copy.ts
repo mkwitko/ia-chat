@@ -54,6 +54,8 @@ export const ConversationCopy = {
   notFound: 'Esta conversa não existe mais ou não é do seu consultório.',
   empty: 'Nenhuma mensagem nesta conversa ainda.',
   messages: 'Mensagens da conversa',
+  fromPhone: 'Você (celular)',
+  imported: 'Do histórico do WhatsApp',
   mediaUnavailable: 'Não foi possível baixar este arquivo. Peça ao paciente para reenviar.',
   mediaPending: 'Baixando o arquivo…',
   audioPlayer: 'Áudio do paciente',

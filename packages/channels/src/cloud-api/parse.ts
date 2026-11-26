@@ -8,6 +8,7 @@ import {
 } from '../types.ts';
 import { toE164 } from '../phone.ts';
 import { toContent } from './content.ts';
+import { historyEvents, stateSyncEvents } from './history.ts';
 import {
   changesSchema,
   webhookSchema,
@@ -20,6 +21,8 @@ import {
 export const WebhookField = {
   messages: 'messages',
   echoes: 'smb_message_echoes',
+  history: 'history',
+  stateSync: 'smb_app_state_sync',
   accountUpdate: 'account_update',
 } as const;
 
@@ -63,6 +66,8 @@ function eventsOf(field: string, value: WebhookValue): InboundEvent[] {
   }
   if (field === WebhookField.echoes) return (value.message_echoes ?? []).map(ownerEcho);
   if (field === WebhookField.accountUpdate) return channelState(value);
+  if (field === WebhookField.history) return historyEvents(value);
+  if (field === WebhookField.stateSync) return stateSyncEvents(value);
   return [];
 }
 

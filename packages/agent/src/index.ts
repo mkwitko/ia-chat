@@ -3,11 +3,13 @@ export {
   appointmentOutput,
   calendarOf,
   needsProfessional,
-  confirmationError,
+  confirmedSlot,
   failure,
   findService,
+  professionalArg,
   serviceMissing,
   ToolError,
+  wantedProfessional,
   type OfferContext,
 } from './agenda-support.ts';
 export { generateChecked } from './checked.ts';
