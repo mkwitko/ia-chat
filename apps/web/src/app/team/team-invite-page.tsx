@@ -1,3 +1,4 @@
+import { labelOf } from '@/i18n/messages';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,8 @@ export function TeamInvitePage() {
     return <p className="p-6 text-sm text-muted-foreground">{Copy.loading}</p>;
   if (invite.isError) return <InviteOnly message={Copy.invalid} />;
   const { state } = invite.data;
-  if (state !== PENDING) return <InviteOnly message={Copy.closed[state] ?? Copy.invalid} />;
+  if (state !== PENDING)
+    return <InviteOnly message={labelOf(Copy.closed, state) ?? Copy.invalid} />;
   const email = session.data?.user.email;
   if (!email) return <SignedOut id={id} invite={invite.data} />;
   return <Accept id={id} invite={invite.data} accountEmail={email} />;

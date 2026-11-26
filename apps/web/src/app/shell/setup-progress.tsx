@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { ChevronRight } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router';
 import { cn } from '@/lib/utils';
@@ -7,11 +9,15 @@ import { STEP_INFO } from '../onboarding/onboarding-copy';
 import { ProgressBar } from '../screens/progress-bar';
 import { progressOf, type SetupProgress } from './setup-model';
 
-export const SetupCopy = {
-  label: (done: number, total: number) => `Primeiros passos · ${String(done)} de ${String(total)}`,
-  next: 'Próximo passo',
-  continue: 'Continuar configuração',
-} as const;
+export const SetupCopy = defineMessages({
+  [Locale.ptBR]: {
+    label: (done: number, total: number) =>
+      `Primeiros passos · ${String(done)} de ${String(total)}`,
+    next: 'Próximo passo',
+    continue: 'Continuar configuração',
+  },
+  [Locale.enUS]: {},
+});
 
 /** Unfinished setup, or null once every step is settled (and while it loads). */
 export function useSetupProgress(): SetupProgress | null {

@@ -1,7 +1,8 @@
+import { locale } from '@/i18n/locale';
 // Dates of the agenda. Days travel as `YYYY-MM-DD` of the tenant's zone; instants as ISO strings.
 // Everything shown uses the tenant's timezone (RN-58), never the browser's.
 
-const LOCALE = 'pt-BR';
+const LOCALE = locale;
 const SWEDISH_ISO_DAY = 'sv-SE';
 const MS_PER_DAY = 86_400_000;
 const MINUTES_PER_HOUR = 60;

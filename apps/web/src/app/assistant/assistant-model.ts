@@ -1,29 +1,34 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { TopicStatus, type TopicSummary } from '../clinic/clinic-model';
 import { AssistantCopy } from './assistant-copy';
 import { Autonomy, type IdentityMode } from './settings-api';
 
 // The values of the "Assistente" summary, in plain words (owner, 26/11/2026).
 
-export const AssistantSummaryCopy = {
-  title: 'Assistente',
-  intro: 'Como o assistente conversa com os pacientes e o que ele sabe responder.',
-  autonomy: 'Quanto ele faz sozinho',
-  identity: 'Como ele se apresenta',
-  tone: 'Jeito de escrever',
-  knowledge: 'O que ele sabe responder',
-  messages: 'Mensagens automáticas',
-  test: 'Testar o assistente',
-  testHint: 'Converse com ele como se fosse um paciente. Nada é enviado.',
-  toneDone: 'Escreve do seu jeito',
-  toneDefault: 'Ainda no jeito padrão',
-  answers: (count: number) => (count === 1 ? '1 resposta' : `${String(count)} respostas`),
-  waiting: (count: number) =>
-    count === 1 ? '1 pergunta esperando você' : `${String(count)} perguntas esperando você`,
-  followUpOn: 'Lembrar quem parou de responder: ligado',
-  reviewOn: 'Pedir avaliação no Google: ligado',
-  allOff: 'Nenhuma ligada',
-  join: ' · ',
-} as const;
+export const AssistantSummaryCopy = defineMessages({
+  [Locale.ptBR]: {
+    title: 'Assistente',
+    intro: 'Como o assistente conversa com os pacientes e o que ele sabe responder.',
+    autonomy: 'Quanto ele faz sozinho',
+    identity: 'Como ele se apresenta',
+    tone: 'Jeito de escrever',
+    knowledge: 'O que ele sabe responder',
+    messages: 'Mensagens automáticas',
+    test: 'Testar o assistente',
+    testHint: 'Converse com ele como se fosse um paciente. Nada é enviado.',
+    toneDone: 'Escreve do seu jeito',
+    toneDefault: 'Ainda no jeito padrão',
+    answers: (count: number) => (count === 1 ? '1 resposta' : `${String(count)} respostas`),
+    waiting: (count: number) =>
+      count === 1 ? '1 pergunta esperando você' : `${String(count)} perguntas esperando você`,
+    followUpOn: 'Lembrar quem parou de responder: ligado',
+    reviewOn: 'Pedir avaliação no Google: ligado',
+    allOff: 'Nenhuma ligada',
+    join: ' · ',
+  },
+  [Locale.enUS]: {},
+});
 
 const Copy = AssistantSummaryCopy;
 const labelOf = <T extends string>(list: readonly { value: T; label: string }[], value: T) =>

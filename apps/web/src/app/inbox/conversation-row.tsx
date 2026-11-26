@@ -1,3 +1,4 @@
+import { locale } from '@/i18n/locale';
 import { NavLink } from 'react-router';
 import { cn } from '@/lib/utils';
 import { conversationPath } from '@/routes';
@@ -6,8 +7,8 @@ import { InboxCopy, TypePreview } from './inbox-copy';
 import { StateBadge } from './state-badge';
 
 const INITIALS_MAX = 2;
-const TIME = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' });
-const DAY = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' });
+const TIME = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' });
+const DAY = new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit' });
 const MS_PER_DAY = 86_400_000;
 
 export const displayName = (item: Pick<ConversationSummary, 'name' | 'phone'>) =>

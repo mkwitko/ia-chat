@@ -1,3 +1,4 @@
+import { labelOf } from '@/i18n/messages';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api';
@@ -9,7 +10,7 @@ import { PrefillReview } from './prefill-review';
 const MAX_SOURCE = 4_000;
 
 const errorText = (error: Error) =>
-  (error instanceof ApiError && error.code ? Copy.errors[error.code] : undefined) ??
+  (error instanceof ApiError && error.code ? labelOf(Copy.errors, error.code) : undefined) ??
   Copy.genericError;
 
 /** Spec 09, "Onde te encontram": one field, then the review screen with what was found. */

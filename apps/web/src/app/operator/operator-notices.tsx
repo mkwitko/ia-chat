@@ -1,3 +1,4 @@
+import { locale } from '@/i18n/locale';
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
 import { Route } from '@/routes';
@@ -31,7 +32,7 @@ export function OperatorAccessNotice() {
             {Copy.ownerNotice.line(
               grant.operatorEmail,
               grant.reason,
-              new Date(grant.expiresAt).toLocaleString('pt-BR'),
+              new Date(grant.expiresAt).toLocaleString(locale),
             )}
           </li>
         ))}

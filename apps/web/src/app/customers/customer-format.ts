@@ -1,7 +1,8 @@
+import { locale } from '@/i18n/locale';
 import { CustomersCopy } from './customers-copy';
 import type { CustomerSummary } from './customers-types';
 
-const LOCALE = 'pt-BR';
+const LOCALE = locale;
 const DAY = new Intl.DateTimeFormat(LOCALE, { day: '2-digit', month: '2-digit' });
 const DAY_TIME = new Intl.DateTimeFormat(LOCALE, {
   day: '2-digit',

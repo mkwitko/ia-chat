@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { Button } from '@/components/ui/button';
 import { commitOrRestore, useLeaving } from '@/components/ui/undo';
 import { feedback } from '../setup/feedback';
@@ -9,14 +11,17 @@ import { useRemoveWaitlist, type WaitlistItem } from './agenda-api';
 // When a time frees up, the assistant offers it to the first in line; the owner can take
 // someone off the list.
 
-const Copy = {
-  heading: 'Lista de espera',
-  intro: 'Se um horário vagar, o assistente avisa o primeiro da lista.',
-  until: (day: string) => `até ${day}`,
-  remove: 'Tirar da lista',
-  removeLabel: (name: string) => `Tirar ${name} da lista de espera`,
-  removed: 'Removido da lista de espera.',
-} as const;
+const Copy = defineMessages({
+  [Locale.ptBR]: {
+    heading: 'Lista de espera',
+    intro: 'Se um horário vagar, o assistente avisa o primeiro da lista.',
+    until: (day: string) => `até ${day}`,
+    remove: 'Tirar da lista',
+    removeLabel: (name: string) => `Tirar ${name} da lista de espera`,
+    removed: 'Removido da lista de espera.',
+  },
+  [Locale.enUS]: {},
+});
 
 interface SectionProps {
   items: WaitlistItem[];

@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useId } from 'react';
 import { notifyError } from '@/lib/notify';
@@ -9,14 +11,17 @@ const PATH = '/api/notifications/weekly-report';
 const KEY = ['weekly-report'] as const;
 const PUT = 'PUT';
 
-export const WeeklyReportCopy = {
-  heading: 'Notificações',
-  label: 'Resumo da semana',
-  hint: 'Toda segunda, às 8h, por e-mail e notificação: conversas respondidas, agendamentos do assistente, comparecimentos, valor recuperado e perguntas esperando você. Sem nome de paciente.',
-  failed: 'Não conseguimos salvar. Tente de novo.',
-  on: 'Ligado',
-  off: 'Desligado',
-} as const;
+export const WeeklyReportCopy = defineMessages({
+  [Locale.ptBR]: {
+    heading: 'Notificações',
+    label: 'Resumo da semana',
+    hint: 'Toda segunda, às 8h, por e-mail e notificação: conversas respondidas, agendamentos do assistente, comparecimentos, valor recuperado e perguntas esperando você. Sem nome de paciente.',
+    failed: 'Não conseguimos salvar. Tente de novo.',
+    on: 'Ligado',
+    off: 'Desligado',
+  },
+  [Locale.enUS]: {},
+});
 
 interface Setting {
   enabled: boolean;

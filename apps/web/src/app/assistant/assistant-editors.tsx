@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/locale';
+import { defineMessages } from '@/i18n/messages';
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
@@ -20,10 +22,13 @@ import {
 const FORBIDDEN = 403;
 const BACK = { to: Route.assistant, label: AssistantSummaryCopy.title };
 
-export const EditorIntro = {
-  autonomy: 'Você pode mudar quando quiser.',
-  identity: 'O que o paciente lê na primeira mensagem.',
-} as const;
+export const EditorIntro = defineMessages({
+  [Locale.ptBR]: {
+    autonomy: 'Você pode mudar quando quiser.',
+    identity: 'O que o paciente lê na primeira mensagem.',
+  },
+  [Locale.enUS]: {},
+});
 
 const nameOf = (draft: AssistantSettings) => draft.assistantName.trim() || DEFAULT_ASSISTANT_NAME;
 
