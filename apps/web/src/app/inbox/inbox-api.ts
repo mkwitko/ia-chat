@@ -46,11 +46,20 @@ export interface ConversationSummary {
   lastMessage: { author: Author; type: MessageType; text: string | null; at: string } | null;
 }
 
+export const MediaState = {
+  pending: 'pending',
+  stored: 'stored',
+  unavailable: 'unavailable',
+} as const;
+export type MediaState = (typeof MediaState)[keyof typeof MediaState];
+
 export interface MessageView {
   id: string;
   author: Author;
   type: MessageType;
   text: string | null;
+  /** Audio, image or document (E-10); `url` only once the file is stored. */
+  media: { state: MediaState; mime: string; url: string | null } | null;
   at: string;
 }
 

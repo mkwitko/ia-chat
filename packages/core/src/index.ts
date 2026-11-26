@@ -49,4 +49,13 @@ export * from './reminders/templates.ts';
 export * from './billing/index.ts';
 export * from './whatsapp/signup.ts';
 export * from './meta/pricing.ts';
+export * from './media/info.ts';
+export {
+  createMediaStore,
+  mediaKey,
+  r2Config,
+  r2EnvSchema,
+  type MediaStore,
+  type R2Config,
+} from './media/store.ts';
 export * from './profile/business-profile.ts';

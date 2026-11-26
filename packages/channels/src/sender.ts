@@ -49,7 +49,10 @@ async function targetOf(tx: Tx, config: SenderConfig, conversationId: string): P
 }
 
 /** The channel's own token when it has one, else ours. */
-function tokenOf(config: SenderConfig, stored: string | null): string | undefined {
+export function tokenOf(
+  config: Pick<SenderConfig, 'accessToken' | 'readChannelToken'>,
+  stored: string | null,
+): string | undefined {
   return stored && config.readChannelToken ? config.readChannelToken(stored) : config.accessToken;
 }
 

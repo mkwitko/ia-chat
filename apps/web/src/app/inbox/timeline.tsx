@@ -3,10 +3,12 @@ import { shortTime } from './conversation-row';
 import {
   Author,
   Control,
+  MediaState,
   type ConversationDetail,
   type ControlEvent,
   type MessageView,
 } from './inbox-api';
+import { MessageMedia } from './message-media';
 import { AuthorCopy, ConversationCopy as Copy, TypePreview } from './inbox-copy';
 
 // Spec 10, "Conversa": authorship by label and position, never by color alone (RN-55).
@@ -70,8 +72,10 @@ const SIDE: Record<Author, string> = {
   [Author.system]: 'justify-self-center bg-muted text-muted-foreground',
 };
 
-function bodyOf({ type, text }: MessageView): string {
+function bodyOf({ type, text, media }: MessageView): string {
   if (text) return text;
+  if (media)
+    return type === AUDIO && media.state === MediaState.stored ? Copy.audioNoTranscript : '';
   if (type === AUDIO) return Copy.audioNoTranscript;
   const label = TypePreview[type];
   return label ? Copy.mediaNote(label) : '';
@@ -91,6 +95,7 @@ function Bubble({ message }: Readonly<{ message: MessageView }>) {
       <p className={cn('text-xs font-semibold', LABEL[message.author])}>
         {AuthorCopy[message.author]}
       </p>
+      <MessageMedia message={message} />
       <p className="text-base break-words whitespace-pre-wrap">{bodyOf(message)}</p>
       <time
         dateTime={message.at}

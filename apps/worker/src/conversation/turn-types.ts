@@ -27,7 +27,12 @@ export type ReminderKind = (typeof ReminderKind)[keyof typeof ReminderKind];
 export interface TurnMessage {
   id: string;
   type: MessageType;
+  /** Text, caption or audio transcript. */
   text: string | null;
+  /** RF-24: the media failed for good (or never arrived in time). */
+  mediaUnavailable?: boolean;
+  /** Spec 03: the audio was cut at three minutes. */
+  audioTruncated?: boolean;
 }
 
 export interface TurnReply {

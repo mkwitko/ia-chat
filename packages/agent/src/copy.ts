@@ -41,6 +41,14 @@ export const AgentCopy = {
   vacation: (returnDate: string) =>
     `O consultório está de férias e volta a atender em ${returnDate}. Avise o paciente dessa data e só ofereça horários a partir dela.`,
   unsupported: 'Não consegui abrir essa mensagem. Pode escrever em texto, por favor?',
+  /** Image or document alone (RN-22, spec 03): nothing is read, the professional looks. */
+  mediaReceived: 'Recebi o arquivo. O profissional vai ver e te responder por aqui.',
+  /** RF-24: the media could not be fetched or understood. */
+  mediaUnavailable:
+    'Não consegui abrir esse arquivo ou áudio. Pode reenviar ou escrever em texto, por favor?',
+  /** Spec 03: audio past three minutes, only the first three were transcribed. */
+  audioTruncated:
+    'Seu áudio passou de 3 minutos, então só consegui ouvir os 3 primeiros. Se faltou algo, é só escrever ou mandar um áudio mais curto.',
   /** First answer of a conversation; null in the professional mode (it speaks as them). */
   identification: ({ identity, assistantName, professionalName }: Persona): string | null => {
     if (identity === Identity.professional) return null;

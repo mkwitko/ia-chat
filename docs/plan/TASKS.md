@@ -176,10 +176,11 @@ Spec: `03-whatsapp-e-conversa.md` (duas formas de conexão, motor).
 - [ ] A mesma suíte de contrato do E-09 passa neste adaptador
 
 ### E-10 Mídia e áudio
-- [ ] Job imediato de download para o R2, com caminho por tenant e URL assinada
-- [ ] Novas tentativas e estado "mídia indisponível"
-- [ ] Transcrição pelo AI Gateway; corte em 3 minutos com aviso
-- [ ] Conduta por tipo de conteúdo conforme a tabela da especificação
+- [x] Job imediato de download para o R2, com caminho por tenant e URL assinada
+- [x] Novas tentativas e estado "mídia indisponível"
+- [x] Transcrição pelo AI Gateway; corte em 3 minutos com aviso
+- [x] Conduta por tipo de conteúdo conforme a tabela da especificação
+- [ ] Transcrição real com áudio de paciente (chamada paga, precisa de aprovação): só os testes com modelo falso rodaram
 
 ### E-11 Turnos
 Spec: `03-whatsapp-e-conversa.md` (entrega natural).

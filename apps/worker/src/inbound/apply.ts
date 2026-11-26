@@ -15,6 +15,7 @@ import { onPatientMessage, type TurnRequest } from '../conversation/schedule.ts'
 import { resolveContact } from './contacts.ts';
 import { countMessage, MessageCategory, type UsageNotice } from '../usage/counters.ts';
 import { contentColumns } from './message-row.ts';
+import { mediaToFetch } from './media-request.ts';
 import { recordMetaUsage } from './meta-usage.ts';
 
 const WINDOW_MS = 86_400_000; // Meta customer service window: 24 h from the patient's last message
@@ -63,6 +64,8 @@ export interface InboundResult {
   turns: TurnRequest[];
   /** Franchise warnings to push after the transaction commits (E-18). */
   usage: UsageNotice[];
+  /** Messages whose media the media job must fetch (E-10), queued after commit. */
+  media: string[];
 }
 
 export async function applyInboundEvents(
@@ -70,7 +73,7 @@ export async function applyInboundEvents(
   { tenantId, channelId, events }: InboundScope,
 ): Promise<InboundResult> {
   const ordered = [...events].sort((a, b) => a.at.getTime() - b.at.getTime()); // RF-23: provider time
-  const result: InboundResult = { alerts: [], turns: [], usage: [] };
+  const result: InboundResult = { alerts: [], turns: [], usage: [], media: [] };
   for (const event of ordered) await applyOne(tx, { tenantId, channelId, event, result });
   return result;
 }
@@ -95,6 +98,7 @@ async function applyOne(tx: Tx, { tenantId, channelId, event, result }: ApplyOne
     await syncStage(tx, { tenantId, contactId: stored.contactId, now: new Date() });
     if (stored.turn) result.turns.push(stored.turn);
     if (stored.usage) result.usage.push(stored.usage);
+    if (stored.media) result.media.push(stored.media);
     return;
   }
   await applyStatus(tx, channelId, event);
@@ -113,6 +117,7 @@ interface Stored {
   contactId: string;
   turn: TurnRequest | null;
   usage: UsageNotice | null;
+  media: string | null;
 }
 
 async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage): Promise<Stored> {
@@ -133,7 +138,8 @@ async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage
     },
     skipDuplicates: true, // unique (tenant, channel, provider_message_id): RF-22
   });
-  if (count === 0) return { contactId: contact.id, turn: null, usage: null };
+  if (count === 0) return { contactId: contact.id, turn: null, usage: null, media: null };
+  const media = await mediaToFetch(tx, { channelId, providerMessageId: event.providerMessageId });
   const fromPatient = event.kind === InboundKind.message;
   const usage = await countMessage(tx, {
     tenantId,
@@ -144,7 +150,7 @@ async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage
   });
   const updated = await touchConversation(tx, conversation, event);
   if (fromPatient)
-    return { contactId: contact.id, turn: await onPatientMessage(tx, updated, now), usage };
+    return { contactId: contact.id, turn: await onPatientMessage(tx, updated, now), usage, media };
   // RF-30: the owner answered from the phone; same transaction as the message.
   await setControl(tx, {
     tenantId,
@@ -153,7 +159,7 @@ async function storeMessage(tx: Tx, { tenantId, channelId, event }: StoreMessage
     reason: ControlReason.ownerEcho,
     actor: { type: ActorType.user },
   });
-  return { contactId: contact.id, turn: null, usage };
+  return { contactId: contact.id, turn: null, usage, media };
 }
 
 /** Spec 01: a new conversation starts after more than 24 h without messages. */

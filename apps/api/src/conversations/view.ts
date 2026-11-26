@@ -6,7 +6,9 @@ import {
   type MessageType,
   type Tx,
 } from '@app/db';
+import { MediaState, readMediaInfo } from '@app/core';
 import * as z from 'zod';
+import { mediaUrl } from './media-route.ts';
 
 // Spec 10, "Conversas": who has the conversation, in words the professional uses.
 
@@ -43,6 +45,8 @@ export interface MessageView {
   author: Author;
   type: MessageType;
   text: string | null;
+  /** Audio, image or document: the panel opens it through MEDIA_PATH once stored. */
+  media: { state: MediaState; mime: string; url: string | null } | null;
   at: Date;
 }
 
@@ -113,6 +117,13 @@ export async function listConversations(tx: Tx): Promise<ConversationSummary[]> 
 
 const DETAIL_MESSAGES = 200;
 
+/** `url` is the media route (a redirect to a signed R2 URL); only once the file is stored. */
+function mediaView(media: unknown, url: string): MessageView['media'] {
+  const info = readMediaInfo(media);
+  if (!info) return null;
+  return { state: info.state, mime: info.mime, url: info.state === MediaState.stored ? url : null };
+}
+
 export interface ControlEvent {
   at: Date;
   to: ConversationControl;
@@ -150,6 +161,7 @@ export async function readConversation(tx: Tx, conversationId: string) {
       author: AUTHOR_BY_COLUMN[m.author],
       type: m.type,
       text: m.text,
+      media: mediaView(m.media, mediaUrl(conversationId, m.id)),
       at: m.createdAt,
     })),
     events: audit.map((entry) => controlEvent(entry.createdAt, entry.after)),
