@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronLeft } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
@@ -42,7 +43,8 @@ export function EditorScreen({ title, intro, back, children }: Readonly<EditorSc
 export function MoreOptions({
   children,
   label = EditorCopy.moreOptions,
-}: Readonly<{ children: ReactNode; label?: string }>) {
+  flush = false,
+}: Readonly<{ children: ReactNode; label?: string; flush?: boolean }>) {
   return (
     <details className="group rounded-xl border bg-card">
       <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 px-4 font-medium [&::-webkit-details-marker]:hidden">
@@ -52,7 +54,9 @@ export function MoreOptions({
           aria-hidden="true"
         />
       </summary>
-      <div className="grid gap-5 border-t pt-4 pb-5 md:px-4">{children}</div>
+      <div className={cn('grid gap-5 border-t pt-4 pb-5 md:px-4', !flush && 'px-4')}>
+        {children}
+      </div>
     </details>
   );
 }

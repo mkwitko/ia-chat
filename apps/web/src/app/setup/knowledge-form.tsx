@@ -4,6 +4,7 @@ import type { KnowledgeInput } from './setup-api';
 import { KnowledgeCopy as Copy } from './setup-copy';
 
 interface KnowledgeFormProps {
+  onRemove?: (() => void) | undefined;
   initial?: KnowledgeInput;
   pending: boolean;
   onSubmit: (input: KnowledgeInput) => void;
@@ -15,6 +16,7 @@ export function KnowledgeForm({
   pending,
   onSubmit,
   onCancel,
+  onRemove,
 }: Readonly<KnowledgeFormProps>) {
   const [question, setQuestion] = useState(initial?.question ?? '');
   const [answer, setAnswer] = useState(initial?.answer ?? '');
@@ -44,7 +46,7 @@ export function KnowledgeForm({
         maxLength={2000}
         placeholder={Copy.answerPlaceholder}
       />
-      <FormActions pending={pending} onCancel={onCancel} />
+      <FormActions pending={pending} onCancel={onCancel} onRemove={onRemove} />
     </form>
   );
 }

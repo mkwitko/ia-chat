@@ -72,6 +72,9 @@ function PlaceRow({ place, main, edit }: Readonly<RowProps>) {
         initial={place}
         pending={update.isPending}
         onCancel={edit.close}
+        onRemove={() => {
+          confirmRemove(Copy.removeConfirm(place.name), remove.mutate, place.id, removeFeedback);
+        }}
         onSubmit={(body) => {
           update.mutate({ id: place.id, body }, edit.done);
         }}
@@ -92,22 +95,20 @@ function PlaceRow({ place, main, edit }: Readonly<RowProps>) {
         onEdit={() => {
           edit.open(place.id);
         }}
-        onRemove={() => {
-          confirmRemove(Copy.removeConfirm(place.name), remove.mutate, place.id, removeFeedback);
-        }}
       />
     </div>
   );
 }
 
 interface FormProps {
+  onRemove?: (() => void) | undefined;
   initial?: Place;
   pending: boolean;
   onSubmit: (body: PlaceInput) => void;
   onCancel: () => void;
 }
 
-function PlaceForm({ initial, pending, onSubmit, onCancel }: Readonly<FormProps>) {
+function PlaceForm({ initial, pending, onSubmit, onCancel, onRemove }: Readonly<FormProps>) {
   const [name, setName] = useState(initial?.name ?? '');
   const [address, setAddress] = useState(initial?.address ?? '');
   const [arrival, setArrival] = useState(initial?.arrivalInstructions ?? '');
@@ -143,7 +144,7 @@ function PlaceForm({ initial, pending, onSubmit, onCancel }: Readonly<FormProps>
         onChange={setArrival}
         maxLength={1000}
       />
-      <FormActions pending={pending} onCancel={onCancel} />
+      <FormActions pending={pending} onCancel={onCancel} onRemove={onRemove} />
     </form>
   );
 }

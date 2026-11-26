@@ -9,6 +9,7 @@ const MAX_MINUTES = 600;
 const NO_PRICE = '';
 
 interface ServiceFormProps {
+  onRemove?: (() => void) | undefined;
   initial?: ServiceInput;
   pending: boolean;
   onSubmit: (input: ServiceInput) => void;
@@ -16,8 +17,9 @@ interface ServiceFormProps {
 }
 
 /** Create or edit one service; the price is typed in reais and stored in cents. */
-export function ServiceForm({ initial, pending, onSubmit, onCancel }: Readonly<ServiceFormProps>) {
-  const form = useServiceForm(initial);
+export function ServiceForm(props: Readonly<ServiceFormProps>) {
+  const { pending, onSubmit, onCancel, onRemove } = props;
+  const form = useServiceForm(props.initial);
   return (
     <form
       className="grid gap-4 rounded-xl border bg-card p-4"
@@ -43,7 +45,12 @@ export function ServiceForm({ initial, pending, onSubmit, onCancel }: Readonly<S
         </p>
       )}
       <VisibleCheckbox checked={form.visible} onChange={form.setVisible} />
-      <FormActions pending={pending} disabled={form.priceCents === null} onCancel={onCancel} />
+      <FormActions
+        pending={pending}
+        disabled={form.priceCents === null}
+        onCancel={onCancel}
+        onRemove={onRemove}
+      />
     </form>
   );
 }

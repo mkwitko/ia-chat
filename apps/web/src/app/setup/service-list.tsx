@@ -58,6 +58,9 @@ function ServiceItem({
         initial={service}
         pending={update.isPending}
         onCancel={edit.close}
+        onRemove={() => {
+          confirmRemove(Copy.removeConfirm(service.name), archive.mutate, service.id, feedback);
+        }}
         onSubmit={(body) => {
           update.mutate({ id: service.id, body }, edit.done);
         }}
@@ -76,9 +79,6 @@ function ServiceItem({
       <RowActions
         onEdit={() => {
           edit.open(service.id);
-        }}
-        onRemove={() => {
-          confirmRemove(Copy.removeConfirm(service.name), archive.mutate, service.id, feedback);
         }}
       />
     </div>

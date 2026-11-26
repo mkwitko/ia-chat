@@ -62,7 +62,7 @@ function Content({ customer }: Readonly<{ customer: CustomerDetail }>) {
       <AppointmentsSection appointments={customer.appointments} />
       <PackagesSection customerId={customer.id} />
       <div className="px-4 pt-8 md:px-0">
-        <MoreOptions label={Copy.moreLabel}>
+        <MoreOptions flush label={Copy.moreLabel}>
           <Note>{Copy.autoStatus}</Note>
           <OriginSection customer={customer} />
           <ConsentSection

@@ -15,11 +15,17 @@ import { useSignOut } from './use-sign-out';
 
 /** Bottom bar on the phone, sidebar from md up (spec 10, "Navegação"). */
 export function Navigation({ pending }: Readonly<{ pending: number }>) {
-  const onHome = useLocation().pathname === Route.home;
+  const { pathname } = useLocation();
+  const onHome = pathname === Route.home;
+  // The guided setup is one task per screen: on the phone the tab bar steps aside.
+  const inSetup = pathname.startsWith(Route.onboarding);
   return (
     <nav
       aria-label={NavCopy.label}
-      className="fixed inset-x-0 bottom-0 z-10 border-t bg-card pb-[env(safe-area-inset-bottom)] md:static md:inset-auto md:flex md:w-64 md:shrink-0 md:flex-col md:overflow-y-auto md:gap-5 md:border-t-0 md:border-r md:px-3 md:py-4"
+      className={cn(
+        inSetup && 'max-md:hidden',
+        'fixed inset-x-0 bottom-0 z-10 border-t bg-card pb-[env(safe-area-inset-bottom)] md:static md:inset-auto md:flex md:w-64 md:shrink-0 md:flex-col md:overflow-y-auto md:gap-5 md:border-t-0 md:border-r md:px-3 md:py-4',
+      )}
     >
       <TenantHeader />
       <div className="hidden md:block">

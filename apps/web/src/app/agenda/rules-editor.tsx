@@ -6,6 +6,9 @@ import { feedback } from '../setup/feedback';
 import { FormActions } from '../setup/fields';
 import { AvailabilityCopy as Copy } from './agenda-copy';
 import { useSaveRules, type RuleWindow } from './agenda-api';
+import { hoursSummary } from '../clinic/clinic-model';
+import { MoreOptions } from '../screens/editor-screen';
+import { QuickHours } from './quick-hours';
 import { NEW_WINDOW, WEEK_ORDER, validWindows } from './rules-model';
 
 /** RF-40: weekly windows, more than one per day. Saved all at once; the API replaces the set. */
@@ -23,6 +26,7 @@ export function RulesEditor(props: Readonly<EditorProps>) {
   const [rules, setRules] = useState(props.initial);
   const save = useSaveRules(props.professionalId);
   const valid = validWindows(rules);
+  const changed = JSON.stringify(rules) !== JSON.stringify(props.initial);
   return (
     <form
       className="grid gap-3"
@@ -37,22 +41,43 @@ export function RulesEditor(props: Readonly<EditorProps>) {
         });
       }}
     >
-      <ul className="divide-y rounded-xl border bg-card">
-        {WEEK_ORDER.map((weekday) => (
-          <WeekdayRow key={weekday} weekday={weekday} rules={rules} onChange={setRules} />
-        ))}
-      </ul>
+      <p className="font-medium">{Copy.nowLabel(hoursSummary(props.initial).value)}</p>
+      <QuickHours rules={rules} onChange={setRules} />
+      <WeekList rules={rules} onChange={setRules} />
       {!valid && (
         <p role="alert" className="text-sm text-danger">
           {Copy.invalidWindows}
         </p>
       )}
+      {changed && <Draft rules={rules} />}
       <FormActions
         pending={save.isPending}
         disabled={!valid || (onSaved !== undefined && rules.length === 0)}
         {...(saveLabel ? { saveLabel } : {})}
       />
     </form>
+  );
+}
+
+/** Exceptions (lunch break, Saturday morning) one tap away; the week stays short. */
+function WeekList({ rules, onChange }: Readonly<Omit<RowProps, 'weekday'>>) {
+  return (
+    <MoreOptions flush label={Copy.dayByDay}>
+      <ul className="divide-y border-y md:rounded-xl md:border">
+        {WEEK_ORDER.map((weekday) => (
+          <WeekdayRow key={weekday} weekday={weekday} rules={rules} onChange={onChange} />
+        ))}
+      </ul>
+    </MoreOptions>
+  );
+}
+
+/** Unsaved hours, named as such next to "Salvar". */
+function Draft({ rules }: Readonly<{ rules: RuleWindow[] }>) {
+  return (
+    <p className="text-sm font-medium text-attention">
+      {Copy.afterSave(hoursSummary(rules).value)}
+    </p>
   );
 }
 
@@ -151,11 +176,12 @@ function WindowRow({ name, rule, onPatch, onRemove }: Readonly<WindowProps>) {
       <Button
         type="button"
         variant="ghost"
-        size="icon"
+        className="text-danger"
         aria-label={`${name}: ${Copy.removeWindow}`}
         onClick={onRemove}
       >
         <Trash2 aria-hidden="true" />
+        {Copy.removeShort}
       </Button>
     </div>
   );
