@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import type { Origin } from '../customers/customers-types';
+import type { RecoveredWeek } from './recovered';
 
 // Mirrors GET /api/results; the web does not import server code.
 
@@ -27,6 +28,7 @@ export interface ResultsView {
   attendance: { attended: number; noShow: number; unmarked: number };
   recovered: number;
   repeatBookings: number;
+  recoveredMoney: { count: number; valueCents: number; afterHours: number; weeks: RecoveredWeek[] };
 }
 
 export const useResults = (period: Period) =>
