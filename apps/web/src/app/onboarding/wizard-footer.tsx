@@ -103,6 +103,12 @@ interface FooterProps {
   onConnect: () => void;
 }
 
+function primaryLabel(page: Page): string {
+  if (page === Page.activation) return Copy.activate;
+  if (page === Page.liveTest) return Copy.seeSummary;
+  return Copy.next;
+}
+
 /** The filled button: "Continuar", "Ligar o assistente", or "Conectar o WhatsApp" when it is missing. */
 function PrimaryAction(props: Readonly<FooterProps>) {
   const { page, view, ready, pending, onNext, onConnect } = props;
@@ -127,7 +133,7 @@ function PrimaryAction(props: Readonly<FooterProps>) {
           else setAsked(true);
         }}
       >
-        {page === Page.activation ? Copy.activate : Copy.next}
+        {primaryLabel(page)}
       </Button>
       {asked && !ready && props.missing && (
         <p role="alert" className="text-sm font-medium text-attention">
