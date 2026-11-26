@@ -36,6 +36,7 @@ import { logEmailSender } from './trial/log-sender.ts';
 import { sweepTrials } from './trial/sweep.ts';
 import { startReminderSweep } from './reminders/wiring.ts';
 import { startBilling } from './billing/wiring.ts';
+import { startTenantDeletion } from './retention/wiring.ts';
 
 const WORKER_READY = 'worker ready';
 const RECONCILE_CODE = 'no_status_after_1h';
@@ -177,6 +178,9 @@ await boss.work(TRIAL_SWEEP_QUEUE.name, async () => {
 // E-25: reconciliation with Asaas, overdue ladder and overage, once a day.
 await startBilling({ boss, db, alert, email: trialEmail, panelUrl: webOrigin, log: appLog.info });
 
+// E-26 (RF-63): accounts closed for 30 days are erased, once a day.
+await startTenantDeletion({ boss, db, alert, log: appLog.info });
+
 // E-22 (RF-46, RF-47): confirmations and reminders, every minute.
 await startReminderSweep({
   boss,
@@ -187,9 +191,7 @@ await startReminderSweep({
   tokenKey: process.env.META_TOKEN_KEY,
   log: appLog.info,
 });
-
 await startMediaWorker({ boss, db, nodeEnv: env.NODE_ENV, source: process.env, log: appLog });
-
 const turns = await startTurnWorker({
   boss,
   db,

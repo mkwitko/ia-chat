@@ -57,6 +57,8 @@ export const BILLING_RECONCILE_QUEUE: QueueDefinition = { name: 'billing.reconci
 
 /** E-10 (RF-24): downloads one inbound media to R2 and, for audio, transcribes it. */
 export const MEDIA_QUEUE: QueueDefinition = { name: 'media.fetch' };
+/** E-26 (RF-63): daily erasure of the data of accounts closed for 30 days. */
+export const TENANT_DELETION_QUEUE: QueueDefinition = { name: 'retention.tenant_deletion' };
 
 /** Every queue the app uses, created by `pnpm db:migrate` with our retry defaults. Stages add theirs here. */
 export const QUEUES: readonly QueueDefinition[] = [
@@ -71,4 +73,5 @@ export const QUEUES: readonly QueueDefinition[] = [
   REMINDER_SWEEP_QUEUE,
   BILLING_RECONCILE_QUEUE,
   MEDIA_QUEUE,
+  TENANT_DELETION_QUEUE,
 ];

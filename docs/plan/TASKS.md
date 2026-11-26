@@ -54,10 +54,10 @@ Não é código. Quem faz é você; começa já.
 - [ ] Olhar a reputação dos dois no Reclame Aqui e falar com o comercial (bloqueio de saldo, suporte)
 
 ### E-00e Jurídico
-- [ ] Minutas: termos de uso, aviso de privacidade, contrato de operador, lista de suboperadores
+- [x] Minutas: termos de uso, aviso de privacidade, contrato de operador, lista de suboperadores (versão 1.0 aprovada pelo dono em 25/11/2026, sem advogado)
 - [ ] Cláusulas-padrão da ANPD com cada provedor de IA
-- [ ] Termo de ciência da conexão por QR code
-- [ ] Termo de consentimento do piloto para depoimento e uso de números
+- [x] Termo de ciência da conexão por QR code
+- [x] Termo de consentimento do piloto para depoimento e uso de números
 
 ### E-00f Nome e contas
 - [ ] Escolher o nome (a skill `founder-brand` ajuda) e conferir marca no INPI
@@ -341,9 +341,11 @@ Spec: `05-agenda-e-pagamentos.md` (assinatura do SaaS).
 ### E-26 Produção
 Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
 - [ ] Escolher o provedor pelos critérios da especificação
+  - Feito: comparação de três opções em `02-arquitetura.md`. Falta o dono escolher e criar a conta.
 - [ ] API, worker, Postgres e gateway na rede privada; deploy automatizado
-- [ ] Arquivamento de WAL no R2, backup completo e diferencial, cifrados
-- [ ] Script de restauração em ponto no tempo num servidor descartável, executado com sucesso
+  - Feito no código: `docker/Dockerfile`, `docker/edge/` (Caddy com HTTPS), `docker-compose.prod.yml` (sem porta do Postgres exposta, serviço `migrate`), `.github/workflows/deploy.yml` (GHCR + SSH, desligado sem os segredos `DEPLOY_*`). Falta o servidor, o DNS e os segredos; o gateway de WhatsApp (WAHA) entra no compose quando o canal QR for ativado.
+- [x] Arquivamento de WAL no R2, backup completo e diferencial, cifrados (pgBackRest, `docker/postgres/`; semanal completo, diário diferencial, 4 completos retidos)
+- [x] Script de restauração em ponto no tempo num servidor descartável, executado com sucesso (`scripts/restore-pitr.sh`; ensaio completo contra MinIO local em `scripts/test-backup-drill.sh`, passou em 25/11/2026). Falta rodar contra o bucket real do R2 no primeiro deploy
 - [ ] Alertas: WAL atrasado, disco, fila parada, canal desconectado, falha de entrega, erro de webhook
   - Feito no código: `alert(evento, contexto)` (log, Sentry e "Erros recentes" em `/operador`) para tarefa esgotada, falha de entrega, erro de webhook, turno abortado, erro de fila e rotina com falha; `GET /health` e `GET /ready` na API, `GET /ready` no worker (`WORKER_HEALTH_PORT`).
   - Falta (precisa de conta ou servidor): regras de alerta no Sentry/Axiom, monitor externo em `/ready`, e os alertas de WAL, disco e canal desconectado.
@@ -351,6 +353,8 @@ Spec: `02-arquitetura.md` (RN-10 a RN-16), `06-seguranca-e-lgpd.md`.
   - Feito no código: lista única de redação nos logs e `beforeSend` do Sentry (API, worker e painel), com testes. Falta: o cofre de segredos e criar as contas (`SENTRY_DSN`, `VITE_SENTRY_DSN`, `AXIOM_TOKEN`, `AXIOM_DATASET`).
 - [ ] Retenção de `messages.text` (H-34, M-03): rotina que apaga o texto após `MESSAGE_TEXT_RETENTION_DAYS` (90) da última mensagem da conversa, mantendo os metadados, e exclusão sob pedido do titular; teste com relógio falso. Prazo final depende do parecer jurídico (E-00e)
 - [ ] Procedimento de incidente e de recuperação total, escritos
+  - Recuperação total e ensaio de restauração em `docs/ops/producao.md`; falta o procedimento de incidente.
+- [x] Eliminação de contas encerradas após 30 dias (RF-63): rotina diária, testada (`apps/worker/src/retention`, spec 06)
 - [ ] Teste de carga: rajada de webhooks de 100 clientes
 
 ### E-27 Painel do operador
@@ -391,7 +395,8 @@ Spec: `09-site-aquisicao-suporte.md`.
 - [ ] Revisão com `impeccable`
 
 ### S-02 Páginas legais
-- [ ] Termos, privacidade, contrato de operador, suboperadores, cookies, a partir das minutas de E-00e
+- [x] Termos, privacidade, contrato de operador, suboperadores e aviso ao paciente, renderizados de `docs/legal/` (`/termos`, `/privacidade`, `/contrato-de-operador`, `/suboperadores`, `/aviso-ao-paciente`, `/termo-conexao-qr`), com links no rodapé
+- [ ] Política de cookies (só quando o site passar a usar cookies)
 
 ### S-03 Número de demonstração
 - [ ] Tenant de consultório fictício num número nosso, pela conexão oficial

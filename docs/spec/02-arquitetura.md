@@ -72,6 +72,15 @@ Requisitos do Postgres próprio. São dados de saúde e de agenda, então nenhum
 
 - Fastify e workers de longa duração rodam em Node comum. BullMQ não roda em Cloudflare Workers, e o atraso máximo do Cloudflare Queues é 24 horas, insuficiente para lembretes.
 - API, worker, Postgres e gateway de WhatsApp ficam no mesmo provedor, no Brasil, em rede privada. O provedor é escolhido na etapa E-26 pelos critérios: datacenter no Brasil, rede privada, volume persistente com snapshot, e custo. Candidatos: Fly.io em GRU com volume, ou VPS em São Paulo com Docker Compose.
+- **Provedor da E-26 (nota de 25/11/2026; ainda não escolhido).** O pacote de produção (`docker-compose.prod.yml`, `docs/ops/producao.md`) roda em qualquer VPS Linux com Docker. Máquina de referência: 2 vCPU, 4 GB, disco de 80 GB ou mais, São Paulo. Preços de lista consultados em 25/11/2026, sem criar conta em nenhum:
+
+  | Opção | Preço por mês (2 vCPU, 4 GB) | Observação |
+  |---|---|---|
+  | AWS Lightsail, sa-east-1 | US$ 24 (IPv4 público); US$ 20 só com IPv6 | Preço da página oficial; São Paulo traz metade da franquia de transferência (2 TB). Snapshots à parte |
+  | Vultr, São Paulo (VC2 compartilhada) | cerca de US$ 30 | Dado de agregadores (Cloud Mercato, Valebyte); confirmar em vultr.com. Alta frequência: cerca de US$ 36 |
+  | Magalu Cloud, São Paulo | não verificado | A página de preços é uma calculadora dinâmica; cobra em reais. Pedir cotação |
+
+  Custo adicional comum a todas: R2 para os backups (poucos GB: menos de US$ 1 por mês) e snapshot do disco do provedor, se quiser. Critério de desempate: cobrança em reais e suporte em português (Magalu) contra maturidade e snapshot fácil (Lightsail, Vultr). Qualquer um serve porque nada no pacote depende do provedor; trocar é restaurar o backup (RN-16).
 - **Fila: pg-boss.** Jobs transacionais no mesmo banco, sem Redis. `ponytail:` teto estimado em algumas centenas de jobs por segundo; migrar para Redis + BullMQ se a latência de fila passar de 2 segundos no p95.
 - Timers por conversa (agrupamento de mensagens) são jobs com `startAfter` e chave única por conversa.
 

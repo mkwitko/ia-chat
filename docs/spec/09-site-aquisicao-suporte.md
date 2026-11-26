@@ -99,7 +99,7 @@ Fluxo guiado, um passo por vez, nesta ordem (decisão do dono, 25/11/2026), com 
 - Organização por tarefa: começar, WhatsApp, agenda, pagamentos, assistente, conta e cobrança, privacidade.
 - Cada artigo responde a uma pergunta, com passos e capturas de tela.
 - A mesma base alimenta o assistente de suporte.
-- Páginas legais: termos de uso, privacidade, contrato de operador, lista de suboperadores, política de cookies.
+- Páginas legais, renderizadas de `docs/legal/` (fonte única; a coleção `legal` do Astro lê os arquivos): `/termos`, `/privacidade` (URL estável, usada no cadastro do app da Meta), `/contrato-de-operador`, `/suboperadores`, `/aviso-ao-paciente` e `/termo-conexao-qr`. Links no rodapé de todas as páginas. Política de cookies: o site não usa cookies de rastreio; sai quando passar a usar.
 - Página de status pública com histórico de incidentes.
 
 ## Suporte

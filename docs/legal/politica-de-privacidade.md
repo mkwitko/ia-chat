@@ -1,21 +1,10 @@
 # Política de Privacidade — Consultório Aberto
 
-> **MINUTA — revisar com advogado antes de publicar.**
->
-> Pontos em aberto para o advogado:
->
-> 1. Bases legais escolhidas para cada finalidade (tabela da seção 4).
-> 2. Prazos de guarda de registros de acesso (Marco Civil, art. 15) e documentos fiscais.
-> 3. Indicação do encarregado e eventual dispensa como agente de pequeno porte.
-> 4. Transferência internacional dos dados dos nossos clientes (observabilidade e e-mail).
-> 5. Provedor de e-mail ainda não definido.
-> 6. Preencher dados da empresa.
-
-Versão: [DATA DA VERSÃO]
+**Versão 1.0 — vigente a partir de 25/11/2026**
 
 ## 1. A quem se aplica
 
-1.1. Esta política explica como [RAZÃO SOCIAL], CNPJ [CNPJ], [ENDEREÇO] ("nós"), trata os dados pessoais de:
+1.1. Esta política explica como Mauricio de Oliveira Kwitko, CNPJ 40.585.767/0001-44, Rua Castro Alves, 1015, Independência, Porto Alegre (RS), CEP 90430-131 ("nós"), trata os dados pessoais de:
 
 a) **clientes e usuários do painel**: profissionais e pequenos negócios que contratam o Consultório Aberto e as pessoas da equipe que eles cadastram;
 
@@ -27,7 +16,7 @@ b) **visitantes do site** e quem entra na lista de espera.
 
 ## 2. Encarregado
 
-2.1. Encarregado pelo tratamento de dados pessoais: [NOME DO ENCARREGADO], [E-MAIL DO ENCARREGADO].
+2.1. Encarregado pelo tratamento de dados pessoais: Mauricio de Oliveira Kwitko, mauriciokwt@gmail.com.
 
 ## 3. Dados que tratamos
 
@@ -57,7 +46,7 @@ b) **visitantes do site** e quem entra na lista de espera.
 
 ## 5. Com quem compartilhamos
 
-5.1. Usamos prestadores de serviço que tratam dados em nosso nome, listados em [suboperadores.md](suboperadores.md). Para os dados desta política, os principais são: hospedagem e banco de dados (servidor no Brasil), Cloudflare (armazenamento e verificação anti-robô), Asaas (cobrança), Google (login), Sentry e Axiom (erros e registros técnicos, sem conteúdo de mensagem) e o provedor de e-mail [A DEFINIR].
+5.1. Usamos prestadores de serviço que tratam dados em nosso nome, listados em [suboperadores.md](suboperadores.md). Para os dados desta política, os principais são: hospedagem e banco de dados (servidor no Brasil), Cloudflare (armazenamento e verificação anti-robô), Asaas (cobrança), Google (login), Sentry e Axiom (erros e registros técnicos, sem conteúdo de mensagem) e o provedor de e-mail transacional.
 
 5.2. Compartilhamos dados com autoridades quando a lei ou ordem judicial exigir.
 
@@ -72,9 +61,9 @@ b) **visitantes do site** e quem entra na lista de espera.
 | Dado | Prazo |
 | --- | --- |
 | Dados da conta | Enquanto o contrato durar e por 30 dias após o fim, para exportação; depois eliminados |
-| Registros de acesso | 6 meses (Marco Civil, art. 15) [CONFIRMAR] |
-| Dados fiscais e de cobrança | Pelo prazo da legislação fiscal [CONFIRMAR] |
-| Registros de auditoria | [PRAZO A DEFINIR], sem conteúdo de conversa |
+| Registros de acesso | 6 meses (Marco Civil, art. 15) |
+| Dados fiscais e de cobrança | Pelo prazo da legislação fiscal |
+| Registros de auditoria | 12 meses, sem conteúdo de conversa |
 | Lista de espera | Até o convite ou até o pedido de saída |
 
 ## 8. Segurança
