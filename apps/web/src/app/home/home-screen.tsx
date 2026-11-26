@@ -3,7 +3,7 @@ import { EmptyState } from '../screens/empty-state';
 import { HelpArticle } from '../screens/screen-help';
 import { Screen } from '../screens/screen';
 import { SimulatorLink } from '../simulator/simulator-link';
-import { AttentionSection, hasAttention } from './attention-section';
+import { AttentionSection, EndingSection, hasAttention, ToMarkSection } from './attention-section';
 import { MonthSummary, QuickActions, TodaySection } from './day-sections';
 import { useHome, type HomeView } from './home-api';
 import { HomeCopy as Copy } from './home-copy';
@@ -42,6 +42,8 @@ function Content({ home }: Readonly<{ home: HomeView }>) {
       <div>
         <AttentionSection home={home} />
         <TodaySection home={home} />
+        <ToMarkSection home={home} />
+        <EndingSection home={home} />
       </div>
       <div>
         <QuickActions />

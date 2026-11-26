@@ -7,7 +7,7 @@ import { ConversationRow } from '../inbox/conversation-row';
 import { InboxState } from '../inbox/inbox-api';
 import { CardList, Note, Section } from '../screens/section';
 import { HomeCopy as Copy } from './home-copy';
-import type { EndingPackage, HomeAppointment, HomeView } from './home-api';
+import type { HomeView } from './home-api';
 
 export const hasAttention = ({ attention, toConfirm, notBooked }: HomeView) =>
   attention.conversations.length > 0 ||
@@ -17,6 +17,8 @@ export const hasAttention = ({ attention, toConfirm, notBooked }: HomeView) =>
   attention.endingPackages.length > 0 ||
   toConfirm.length > 0 ||
   notBooked.recoverable > 0;
+
+const TO_MARK_SHOWN = 3;
 
 export const ROW_LINK =
   'flex min-h-14 items-center gap-3 px-4 py-2 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring';
@@ -61,13 +63,13 @@ function countsOf({ attention, toConfirm, notBooked }: HomeView) {
 /** Spec 10, "Início": only what needs the owner, one list; empty items are not shown. */
 export function AttentionSection({ home }: Readonly<{ home: HomeView }>) {
   const { attention } = home;
-  if (!hasAttention(home))
+  const counts = countsOf(home);
+  if (attention.conversations.length === 0 && counts.length === 0)
     return (
       <Section title={Copy.attentionHeading}>
         <Note>{Copy.allClear}</Note>
       </Section>
     );
-  const counts = countsOf(home);
   return (
     <Section title={Copy.attentionHeading}>
       <CardList>
@@ -80,19 +82,18 @@ export function AttentionSection({ home }: Readonly<{ home: HomeView }>) {
           <CountLink key={item.to} to={item.to} label={item.label} />
         ))}
       </CardList>
-      {attention.toMark.length > 0 && <ToMark items={attention.toMark} timezone={home.timezone} />}
-      {attention.endingPackages.length > 0 && <Ending items={attention.endingPackages} />}
     </Section>
   );
 }
 
-function ToMark({
-  items,
-  timezone,
-}: Readonly<{ items: readonly HomeAppointment[]; timezone: string }>) {
+/** Past appointments still without "Compareceu/Faltou", the first few with the buttons. */
+export function ToMarkSection({ home }: Readonly<{ home: HomeView }>) {
+  const items = home.attention.toMark.slice(0, TO_MARK_SHOWN);
+  const { timezone } = home;
+  if (items.length === 0) return null;
   return (
     <>
-      <h3 className="px-4 pt-6 pb-2 text-base md:px-0">{Copy.toMarkHeading}</h3>
+      <h2 className="px-4 pt-6 pb-2 text-lg md:px-0">{Copy.toMarkHeading}</h2>
       <CardList>
         {items.map((item) => (
           <li
@@ -115,10 +116,12 @@ function ToMark({
 }
 
 /** Research 09 #7: the client's latest package with one session left or just used up. */
-function Ending({ items }: Readonly<{ items: readonly EndingPackage[] }>) {
+export function EndingSection({ home }: Readonly<{ home: HomeView }>) {
+  const items = home.attention.endingPackages;
+  if (items.length === 0) return null;
   return (
     <>
-      <h3 className="px-4 pt-6 pb-2 text-base md:px-0">{Copy.endingHeading}</h3>
+      <h2 className="px-4 pt-6 pb-2 text-lg md:px-0">{Copy.endingHeading}</h2>
       <CardList>
         {items.map((item) => (
           <li key={item.id}>
