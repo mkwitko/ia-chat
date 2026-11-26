@@ -1,5 +1,6 @@
 import type { AgentProfile } from '@app/ai';
 import { parsePolicy, Sensitivity, type SpecialtyPolicy } from '@app/core';
+import { businessOf } from './business.ts';
 import type { Plan, Tx } from '@app/db';
 import { cancellationText, hoursLines } from './hours.ts';
 import { HEALTH_URGENCY_TERMS } from './prefilter.ts';
@@ -49,6 +50,7 @@ interface ProfileSources {
     assistantName: string;
     identityMode: AgentProfile['identity'];
     cancelNoticeMinutes: number;
+    businessProfile: unknown;
   };
   policy: SpecialtyPolicy;
   specialty: string | undefined;
@@ -58,12 +60,13 @@ async function loadProfile(
   tx: Tx,
   { tenant, policy, specialty }: ProfileSources,
 ): Promise<AgentProfile> {
-  const professional = await tx.professional.findFirst({ orderBy: { createdAt: 'asc' } });
+  const team = await tx.professional.findMany({ orderBy: { createdAt: 'asc' } });
+  const professional = team[0];
   const services = await tx.service.findMany({
     where: { active: true, visibleToPatient: true },
     orderBy: { name: 'asc' },
   });
-  const location = await tx.location.findFirst({ orderBy: { createdAt: 'asc' } });
+  const [location, ...otherPlaces] = await tx.location.findMany({ orderBy: { createdAt: 'asc' } });
   const knowledge = await tx.knowledgeItem.findMany({
     where: { active: true, answer: { not: null } },
     orderBy: { createdAt: 'asc' },
@@ -88,6 +91,7 @@ async function loadProfile(
     address: location?.address,
     arrival: location?.arrivalInstructions ?? undefined,
     knowledge: knowledge.map((item) => ({ question: item.question, answer: item.answer ?? '' })),
+    business: businessOf(tenant.businessProfile, { team, otherPlaces }),
   };
 }
 
