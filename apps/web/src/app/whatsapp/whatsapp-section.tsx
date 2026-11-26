@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Route } from '@/routes';
 import { ApiError } from '@/lib/api';
 import { runEmbeddedSignup } from './embedded-signup';
+import { HistoryImport } from './history-import';
 import {
   WhatsappError,
   useFinishSignup,
@@ -73,6 +74,7 @@ function ChannelState({ channel }: Readonly<{ channel: WhatsappChannel }>) {
         {channel.displayPhone ? Copy.connected(channel.displayPhone) : Copy.connectedNoPhone}
       </p>
       {channel.coexistence && <p className="text-sm">{Copy.coexistence}</p>}
+      {channel.coexistence && <HistoryImport history={channel.history} />}
       {!channel.paymentMethod && (
         <>
           <PaymentPrompt />

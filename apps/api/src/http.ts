@@ -49,6 +49,8 @@ export const ErrorCode = {
   pageUnreadable: 'page_unreadable',
   suggestOff: 'suggest_off',
   suggestFailed: 'suggest_failed',
+  historyNotOffered: 'history_not_offered',
+  historyWindowClosed: 'history_window_closed',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

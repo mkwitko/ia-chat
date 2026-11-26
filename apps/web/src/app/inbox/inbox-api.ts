@@ -61,6 +61,10 @@ export interface MessageView {
   /** Audio, image or document (E-10); `url` only once the file is stored. */
   media: { state: MediaState; mime: string; url: string | null } | null;
   at: string;
+  /** E-24b: from the WhatsApp history; read-only context. */
+  imported: boolean;
+  /** The owner wrote it in the WhatsApp Business app. */
+  sentFromPhone: boolean;
 }
 
 export interface ControlEvent {

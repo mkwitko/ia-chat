@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { graphCaller } from './client.ts';
+import { graphCaller, type GraphCall } from './client.ts';
 
 // Embedded Signup as a Tech Provider (E-24, Meta docs read 25/11/2026): exchange the code for the
 // client's business token, then act on the client's WABA with that token.
@@ -48,6 +48,10 @@ export async function exchangeSignupCode(input: CodeExchange): Promise<string> {
   return tokenSchema.parse(await call(`oauth/access_token?${query.toString()}`)).access_token;
 }
 
+/** Meta's `smb_app_data` sync types: each can be requested once per onboarding, within 24 h. */
+export const AppDataSync = { contacts: 'smb_app_state_sync', history: 'history' } as const;
+export type AppDataSync = (typeof AppDataSync)[keyof typeof AppDataSync];
+
 export const templateKey = (name: string, language: string) => `${name}${KEY_SEPARATOR}${language}`;
 
 export type BusinessClient = ReturnType<typeof createBusinessClient>;
@@ -80,21 +84,35 @@ export function createBusinessClient(config: {
       );
       return Boolean(funding);
     },
+    /** Coexistence (E-24b): asks Meta to send the phone book or the history as webhooks. */
+    async requestAppData(phoneNumberId: string, syncType: AppDataSync): Promise<void> {
+      await call(`${phoneNumberId}/smb_app_data`, {
+        messaging_product: PRODUCT,
+        sync_type: syncType,
+      });
+    },
     async templateKeys(wabaId: string): Promise<Set<string>> {
       const path = `${wabaId}/message_templates?fields=name,language&limit=${String(TEMPLATE_PAGE)}`;
       const { data } = templatesSchema.parse(await call(path));
       return new Set(data.map((one) => templateKey(one.name, one.language)));
     },
-    async createTemplate(wabaId: string, template: SignupTemplate): Promise<void> {
-      await call(`${wabaId}/message_templates`, {
-        name: template.name,
-        language: template.language,
-        category: CATEGORY,
-        parameter_format: PARAMETER_FORMAT,
-        components: [
-          { type: BODY, text: template.body, example: { body_text: [[...template.example]] } },
-        ],
-      });
-    },
+    createTemplate: (wabaId: string, template: SignupTemplate) =>
+      createTemplate(call, wabaId, template),
   };
+}
+
+async function createTemplate(
+  call: GraphCall,
+  wabaId: string,
+  template: SignupTemplate,
+): Promise<void> {
+  await call(`${wabaId}/message_templates`, {
+    name: template.name,
+    language: template.language,
+    category: CATEGORY,
+    parameter_format: PARAMETER_FORMAT,
+    components: [
+      { type: BODY, text: template.body, example: { body_text: [[...template.example]] } },
+    ],
+  });
 }

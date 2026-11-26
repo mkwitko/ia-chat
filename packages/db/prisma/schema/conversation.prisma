@@ -94,6 +94,11 @@ model Message {
   providerTimestamp DateTime?        @map("provider_timestamp") @db.Timestamptz
   status            MessageStatus
   errorCode         String?          @map("error_code")
+  /// E-24b: came from the coexistence history sync. Read-only context for the owner: never read by
+  /// the assistant, never counted, never answered. created_at is the original time.
+  imported          Boolean          @default(false)
+  /// Written by the owner in the Business app (smb_message_echoes or imported history).
+  sentFromPhone     Boolean          @default(false) @map("sent_from_phone")
   createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz
 
   tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)

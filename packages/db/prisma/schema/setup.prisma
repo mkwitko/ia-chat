@@ -23,26 +23,45 @@ model Professional {
   @@map("professionals")
 }
 
+/// E-24b. offered: waiting for the owner; requested: asked Meta, webhooks arriving; declined: the
+/// owner said no here; unavailable: the owner did not share it in the Business app (Meta 2593109).
+enum HistoryImportState {
+  none
+  offered
+  requested
+  declined
+  unavailable
+  done
+}
+
 model Channel {
-  id             String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  tenantId       String        @map("tenant_id") @db.Uuid
-  kind           ChannelKind
-  status         ChannelStatus @default(pending)
-  displayPhone   String?       @map("display_phone")
-  phoneNumberId  String?       @map("phone_number_id")
-  wabaId         String?       @map("waba_id")
-  coexistence    Boolean       @default(false)
-  gatewaySession String?       @map("gateway_session")
+  id                  String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId            String             @map("tenant_id") @db.Uuid
+  kind                ChannelKind
+  status              ChannelStatus      @default(pending)
+  displayPhone        String?            @map("display_phone")
+  phoneNumberId       String?            @map("phone_number_id")
+  wabaId              String?            @map("waba_id")
+  coexistence         Boolean            @default(false)
+  gatewaySession      String?            @map("gateway_session")
   /// Business token from the Embedded Signup code exchange, encrypted (META_TOKEN_KEY).
-  accessTokenEnc String?       @map("access_token_enc")
+  accessTokenEnc      String?            @map("access_token_enc")
   /// Two-step verification PIN we set when registering the number, encrypted.
-  registerPinEnc String?       @map("register_pin_enc")
+  registerPinEnc      String?            @map("register_pin_enc")
   /// Embedded Signup steps already done at Meta (subscribed, registered, templates, payment_method).
-  setupDone      String[]      @default([]) @map("setup_done")
+  setupDone           String[]           @default([]) @map("setup_done")
   /// Meta error code of the last failed step; null when the last run went through.
-  setupError     String?       @map("setup_error")
-  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  setupError          String?            @map("setup_error")
+  /// E-24b: where the coexistence history import stands (none for numbers without coexistence).
+  historyImport       HistoryImportState @default(none) @map("history_import")
+  /// When the coexistence onboarding finished: Meta allows the sync request for 24 h from here.
+  onboardedAt         DateTime?          @map("onboarded_at") @db.Timestamptz
+  /// When the owner authorized the import in the panel (the request to Meta follows at once).
+  historyAuthorizedAt DateTime?          @map("history_authorized_at") @db.Timestamptz
+  /// Share of the history received so far (0 to 100), from the `history` webhooks.
+  historyProgress     Int?               @map("history_progress")
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 

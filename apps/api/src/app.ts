@@ -122,7 +122,11 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
   registerSupportRoutes(app, { whatsapp: env.SUPPORT_WHATSAPP, email: env.SUPPORT_EMAIL });
-  registerWhatsappSignupRoutes(app, { config: whatsappSignupConfig(env), fetch: deps.metaFetch });
+  registerWhatsappSignupRoutes(app, {
+    config: whatsappSignupConfig(env),
+    fetch: deps.metaFetch,
+    gateway: deps.simulatorGateway,
+  });
   return app;
 }
 

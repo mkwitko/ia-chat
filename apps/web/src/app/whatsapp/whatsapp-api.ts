@@ -16,6 +16,25 @@ export interface FriendlyError {
   action: string;
 }
 
+/** E-24b: where the import of the WhatsApp Business app's history stands. */
+export const HistoryState = {
+  none: 'none',
+  offered: 'offered',
+  expired: 'expired',
+  requested: 'requested',
+  declined: 'declined',
+  unavailable: 'unavailable',
+  done: 'done',
+} as const;
+export type HistoryState = (typeof HistoryState)[keyof typeof HistoryState];
+
+export interface HistoryImport {
+  state: HistoryState;
+  /** ISO time until which Meta lets us ask for it; only while offered. */
+  expiresAt: string | null;
+  progress: number | null;
+}
+
 export interface WhatsappChannel {
   status: ChannelStatus;
   displayPhone: string | null;
@@ -23,6 +42,7 @@ export interface WhatsappChannel {
   ready: boolean;
   /** Spec 03 step 3: a card is on the client's WhatsApp account at Meta. */
   paymentMethod: boolean;
+  history: HistoryImport;
   error: FriendlyError | null;
 }
 
@@ -65,3 +85,14 @@ export const useFinishSignup = () =>
   useWrite((result: SignupResult) => api(`${BASE}/connect`, { method: POST, body: result }));
 
 export const useRetrySetup = () => useWrite(() => api(`${BASE}/retry`, { method: POST, body: {} }));
+
+const HISTORY = `${BASE}/history-import`;
+
+export const useDecideHistory = () =>
+  useWrite((authorize: boolean) => api(HISTORY, { method: POST, body: { authorize } }));
+
+/** "IA sugere" over the imported history: how many frequent questions went to the assistant's list. */
+export const useSuggestFromHistory = () =>
+  useMutation({
+    mutationFn: () => api<{ added: number }>(`${HISTORY}/suggestions`, { method: POST, body: {} }),
+  });
