@@ -19,6 +19,8 @@ model Tenant {
   reminderOffsetsMinutes Int[]        @default([1440, 120]) @map("reminder_offsets_minutes")
   /// M-09: after a "faltou", ask the client when to reschedule (owner's switch, off by default).
   noShowFollowUp         Boolean      @default(false) @map("no_show_follow_up")
+  /// M-11: the short code this business gives to others; created on first use.
+  referralCode           String?      @unique @map("referral_code")
   /// M-10: one message to a lead that went quiet (owner's switch, off by default).
   leadFollowUp           Boolean      @default(false) @map("lead_follow_up")
   leadFollowUpDays       Int          @default(2) @map("lead_follow_up_days")
@@ -156,8 +158,11 @@ model WaitlistEntry {
   email     String   @unique
   name      String?
   specialty String?
+  /// M-11: the code of the business that shared the link (valid codes only); attribution, never a contact.
+  referralCode String? @map("referral_code")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
+  @@index([referralCode])
   @@map("waitlist_entries")
 }
 

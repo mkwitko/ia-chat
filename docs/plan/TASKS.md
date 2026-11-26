@@ -530,8 +530,8 @@ Spec: 11, 03. Bloqueio: código; Meta para fora da janela de 24 h (E-00b); depen
 
 ### M-11 Indicação (P1)
 Spec: 11 ("Modelo de indicação"), H-27. Bloqueio: código; recompensa é decisão do dono.
-- [ ] Código e link por negócio assinante; registro de cadastro por código; tela mínima em Configurações
-- [ ] **(teste primeiro)** Nenhum caminho de código envia mensagem a um indicado
+- [x] Código e link por negócio assinante; registro de cadastro por código; tela mínima em Configurações Feito (H-49): Configurações > Indique e ganhe; `?ref=` no formulário da lista de espera; contagem por código; sem recompensa
+- [x] **(teste primeiro)** Nenhum caminho de código envia mensagem a um indicado Feito: `referral.test.ts` confere que o cadastro com código só gera a confirmação do próprio pedido, nenhuma mensagem ou agendamento, e que os módulos de indicação não importam nenhum remetente
 - Pronto quando: um cadastro com código aparece como indicação do negócio que o gerou.
 
 ### M-12 Avaliações e relatório simples (P1)

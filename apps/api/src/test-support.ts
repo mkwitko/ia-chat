@@ -11,6 +11,7 @@ import { createInvite } from './invites/invite-store.ts';
 import { INVITE_COOKIE } from './invites/signup-gate.ts';
 import { MemoryOutbox } from './email/outbox.ts';
 import type { PageFetcher } from './onboarding/prefill/safe-fetch.ts';
+import type { TurnstileVerifier } from './waitlist/turnstile.ts';
 import type { EnqueueInbound } from './webhooks/store.ts';
 
 // Test-only helpers: a real app on the dev database, with a fake mailbox.
@@ -56,6 +57,7 @@ export interface TestAppOptions {
   billing?: BillingProvider;
   prefillFetch?: PageFetcher;
   waha?: WahaConfig;
+  verifyTurnstile?: TurnstileVerifier;
 }
 
 export async function startTestApp(
@@ -78,6 +80,7 @@ export async function startTestApp(
     ...(options.metaFetch ? { metaFetch: options.metaFetch } : {}),
     ...(options.prefillFetch ? { prefillFetch: options.prefillFetch } : {}),
     ...(options.waha ? { waha: options.waha } : {}),
+    ...(options.verifyTurnstile ? { verifyTurnstile: options.verifyTurnstile } : {}),
   });
   register(app);
   await app.ready();

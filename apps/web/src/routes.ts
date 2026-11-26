@@ -27,6 +27,7 @@ export const Route = {
   billing: '/mais/assinatura',
   team: '/mais/equipe',
   growth: '/mais/retorno',
+  referral: '/mais/indicacao',
   support: '/mais/ajuda',
   teamInvite: '/convite-equipe/:id',
   operator: '/operador',
