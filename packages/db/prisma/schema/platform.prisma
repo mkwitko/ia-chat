@@ -15,6 +15,8 @@ model Tenant {
   nightlySummaryMinute Int       @default(1200) @map("nightly_summary_minute")
   /// RF-47: minutes before the appointment of each reminder; default 24 h and 2 h.
   reminderOffsetsMinutes Int[]   @default([1440, 120]) @map("reminder_offsets_minutes")
+  /// M-09: after a "faltou", ask the client when to reschedule (owner's switch, off by default).
+  noShowFollowUp      Boolean      @default(false) @map("no_show_follow_up")
   /// How the assistant introduces itself (spec 04, "Identificação").
   assistantName       String       @default("Assistente virtual") @map("assistant_name")
   /// How the assistant presents itself (owner decision, 24/11/2026; spec 01 "Limites").
@@ -79,6 +81,8 @@ model Tenant {
   appointments      Appointment[]
   scheduledMessages ScheduledMessage[]
   payments          Payment[]
+  slotWaitlistEntries SlotWaitlistEntry[]
+  slotOffers        SlotOffer[]
   aiUsages          AiUsage[]
   metaUsages        MetaMessageUsage[]
   usageCounters     UsageCounter[]

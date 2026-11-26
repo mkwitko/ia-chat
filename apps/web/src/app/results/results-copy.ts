@@ -28,11 +28,16 @@ export const ResultsCopy = {
   },
   booked: {
     title: 'Agendamentos feitos',
-    formula: 'Atendimentos marcados no período, por você ou pelo assistente.',
+    formula:
+      'Atendimentos novos marcados no período, por você ou pelo assistente. Remarcações contam à parte.',
+  },
+  rescheduled: {
+    title: 'Remarcações',
+    formula: 'Atendimentos cancelados ou movidos que o cliente marcou de novo no período.',
   },
   cancelled: {
     title: 'Cancelamentos',
-    formula: 'Atendimentos cancelados no período.',
+    formula: 'Atendimentos cancelados no período que não foram remarcados.',
   },
   noShow: {
     title: 'Faltas',

@@ -27,6 +27,7 @@ model Contact {
   conversations     Conversation[]     @relation("Conversation_contact")
   appointments      Appointment[]      @relation("Appointment_contact")
   scheduledMessages ScheduledMessage[] @relation("ScheduledMessage_contact")
+  slotWaitlistEntries SlotWaitlistEntry[] @relation("SlotWaitlistEntry_contact")
   stageEvents       ContactStageEvent[] @relation("ContactStageEvent_contact")
   consentEvents     ConsentEvent[]      @relation("ConsentEvent_contact")
 

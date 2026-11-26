@@ -2,10 +2,11 @@ import { Button } from '@/components/ui/button';
 import { EmptyState } from '../screens/empty-state';
 import { AgendaCopy as Copy } from './agenda-copy';
 import { addDaysIso, dayOf, dayTitle, lastDayOf } from './agenda-dates';
-import type { AgendaView, TimeOffItem } from './agenda-api';
+import type { AgendaView } from './agenda-api';
 import { AppointmentRow } from './appointment-row';
 import { BookingKind, type BookingTarget } from './booking-form';
 import { TimeOffNote } from './time-off-note';
+import { WaitlistSection } from './waitlist-section';
 
 interface BodyProps {
   agenda: AgendaView;
@@ -16,7 +17,10 @@ interface BodyProps {
 /** One section per day; a single day shows the "empty" state with the next step (RN-53). */
 export function AgendaBody({ agenda, days, onNew }: Readonly<BodyProps>) {
   const sections = Array.from({ length: days }, (_, index) => addDaysIso(agenda.from, index));
-  if (days === 1 && agenda.appointments.length === 0 && agenda.timeOffs.length === 0)
+  const nothing = [agenda.appointments, agenda.timeOffs, agenda.waitlist].every(
+    (list) => list.length === 0,
+  );
+  if (days === 1 && nothing)
     return (
       <EmptyState
         {...Copy.emptyDay}
@@ -44,8 +48,11 @@ export function AgendaBody({ agenda, days, onNew }: Readonly<BodyProps>) {
 
 const WEEK_GRID = 'grid gap-6 md:grid-cols-2 md:gap-x-4 xl:grid-cols-3 2xl:grid-cols-4';
 
-const covers = (off: TimeOffItem, day: string, timezone: string) =>
-  dayOf(off.startsAt, timezone) <= day && day <= lastDayOf(off.endsAt, timezone);
+const covers = (
+  span: { startsAt: string; endsAt: string },
+  day: string,
+  timezone: string,
+): boolean => dayOf(span.startsAt, timezone) <= day && day <= lastDayOf(span.endsAt, timezone);
 
 function DaySection({
   day,
@@ -56,6 +63,9 @@ function DaySection({
   const { timezone } = agenda;
   const items = agenda.appointments.filter((item) => dayOf(item.startsAt, timezone) === day);
   const offs = agenda.timeOffs.filter((off) => covers(off, day, timezone));
+  const waiting = agenda.waitlist.filter((item) =>
+    covers({ startsAt: item.windowStart, endsAt: item.windowEnd }, day, timezone),
+  );
   return (
     <section aria-label={dayTitle(day)} className="grid min-w-0 content-start gap-2 *:min-w-0">
       {showTitle && (
@@ -66,7 +76,7 @@ function DaySection({
       {offs.map((off) => (
         <TimeOffNote key={off.id} off={off} timezone={timezone} />
       ))}
-      {items.length === 0 && showTitle && (
+      {items.length === 0 && (showTitle || waiting.length > 0) && (
         <p className="mx-4 rounded-xl border border-dashed px-4 py-3 text-sm text-muted-foreground md:mx-0">
           {Copy.emptyWeek}
         </p>
@@ -78,6 +88,7 @@ function DaySection({
           ))}
         </ul>
       )}
+      <WaitlistSection items={waiting} timezone={timezone} compact={showTitle} />
     </section>
   );
 }

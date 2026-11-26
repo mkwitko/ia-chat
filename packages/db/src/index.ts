@@ -99,6 +99,20 @@ export { recordOffers, wasOfferedBefore } from './agenda/offers.ts';
 export { dayBounds, isoDay, localDayRange, tomorrowCount } from './agenda/day.ts';
 export { vacationReturn } from './agenda/vacation.ts';
 export {
+  joinWaitlist,
+  removeWaitlistEntry,
+  waitlistBetween,
+  type JoinRequest,
+} from './agenda/waitlist.ts';
+export {
+  claimSlotOffer,
+  expireWaitlist,
+  freedSlots,
+  OFFER_TTL_MINUTES,
+  skipSlotOffer,
+  type ClaimedOffer,
+} from './agenda/slot-offers.ts';
+export {
   AgendaError,
   AgendaFailure,
   MAX_FUTURE_APPOINTMENTS,

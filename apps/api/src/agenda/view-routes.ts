@@ -16,6 +16,7 @@ import { ErrorCode, HttpStatus } from '../http.ts';
 import { notFound, tenantOf } from '../setup/guarded.ts';
 import { calendarOf } from './booking-routes.ts';
 import { daySchema, toLocalDate } from './schemas.ts';
+import { waitlistView } from './waitlist-routes.ts';
 
 // Spec 10, "Agenda": what the day and week views show, the free slots a tap books, and the
 // patients a manual booking can pick.
@@ -65,7 +66,7 @@ function listAgenda(request: FastifyRequest, reply: FastifyReply) {
 }
 
 async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date }) {
-  const [appointments, timeOffs] = await Promise.all([
+  const [appointments, timeOffs, waitlist] = await Promise.all([
     tx.appointment.findMany({
       where: { status: { not: AppointmentStatus.cancelled }, startsAt: { gte: start, lt: end } },
       include: { service: true, contact: true },
@@ -76,6 +77,7 @@ async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date })
       orderBy: { startsAt: 'asc' },
       select: { id: true, startsAt: true, endsAt: true, kind: true, reason: true },
     }),
+    waitlistView(tx, { start, end }),
   ]);
   return {
     appointments: appointments.map((row) => ({
@@ -91,6 +93,7 @@ async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date })
       patientPhone: row.contact.phoneE164,
     })),
     timeOffs,
+    waitlist,
   };
 }
 

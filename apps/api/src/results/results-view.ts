@@ -17,13 +17,23 @@ export interface ResultsInput {
   now: Date;
 }
 
-/** Bookings made, cancellations made, and the attendance marks of appointments held in the period. */
+/**
+ * Bookings made, cancellations made, and the attendance marks of appointments held in the period.
+ * Metric 8 (M-09): a remarcação (a booking that replaces a cancelled one) counts apart from both.
+ */
 async function appointmentCounts(tx: Tx, { range, now }: { range: Range; now: Date }) {
   const created = { gte: range.start, lt: range.end };
   const held = { gte: range.start, lt: now < range.end ? now : range.end };
-  const [booked, cancelled, attended, noShow, unmarked] = await Promise.all([
-    tx.appointment.count({ where: { createdAt: created } }),
-    tx.appointment.count({ where: { status: AppointmentStatus.cancelled, updatedAt: created } }),
+  const [booked, rescheduled, cancelled, attended, noShow, unmarked] = await Promise.all([
+    tx.appointment.count({ where: { createdAt: created, rescheduledFromId: null } }),
+    tx.appointment.count({ where: { createdAt: created, rescheduledFromId: { not: null } } }),
+    tx.appointment.count({
+      where: {
+        status: AppointmentStatus.cancelled,
+        updatedAt: created,
+        rescheduledTo: { is: null },
+      },
+    }),
     tx.appointment.count({ where: { startsAt: created, status: AppointmentStatus.completed } }),
     tx.appointment.count({ where: { startsAt: created, status: AppointmentStatus.no_show } }),
     tx.appointment.count({
@@ -33,7 +43,7 @@ async function appointmentCounts(tx: Tx, { range, now }: { range: Range; now: Da
       },
     }),
   ]);
-  return { booked, cancelled, attendance: { attended, noShow, unmarked } };
+  return { counts: { booked, rescheduled, cancelled }, attendance: { attended, noShow, unmarked } };
 }
 
 /**
@@ -73,7 +83,7 @@ export async function readResults(tx: Tx, { tenantId, period, now }: ResultsInpu
     referrals: origins.find((row) => row.origin === ContactOrigin.referral)?._count ?? 0,
     firstResponse: response,
     escalation: { handedOff, total: conversations },
-    appointments: { booked: appointments.booked, cancelled: appointments.cancelled },
+    appointments: appointments.counts,
     attendance: appointments.attendance,
     recovered,
     repeatBookings: repeat,

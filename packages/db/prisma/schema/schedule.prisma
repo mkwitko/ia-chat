@@ -18,6 +18,8 @@ model Appointment {
   idempotencyKey String?                  @map("idempotency_key")
   googleEventId  String?                  @map("google_event_id")
   calendarSync   CalendarSyncState        @default(none) @map("calendar_sync")
+  /// M-09 (metric 8): the cancelled appointment this one replaces; set only on a remarcação.
+  rescheduledFromId String?               @map("rescheduled_from_id") @db.Uuid
   createdAt      DateTime                 @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
@@ -26,11 +28,14 @@ model Appointment {
   contact      Contact      @relation("Appointment_contact", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict)
   service      Service      @relation("Appointment_service", fields: [tenantId, serviceId], references: [tenantId, id], onDelete: Restrict)
   location     Location?    @relation("Appointment_location", fields: [tenantId, locationId], references: [tenantId, id], onDelete: Restrict)
+  rescheduledFrom Appointment? @relation("Appointment_rescheduled", fields: [tenantId, rescheduledFromId], references: [tenantId, id], onDelete: Restrict)
+  rescheduledTo   Appointment? @relation("Appointment_rescheduled")
 
   scheduledMessages ScheduledMessage[] @relation("ScheduledMessage_appointment")
   payments          Payment[]          @relation("Payment_appointment")
 
   @@unique([tenantId, id])
+  @@unique([tenantId, rescheduledFromId])
   @@index([tenantId, professionalId])
   @@index([tenantId, contactId])
   @@map("appointments")

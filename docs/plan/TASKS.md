@@ -513,8 +513,9 @@ Spec: 05, 11 (métrica 9). Bloqueio: código.
 
 ### M-09 Cancelamento com remarcação e lista de espera (P1)
 Spec: 05, 11. Bloqueio: código; depende de E-22 e M-01.
-- [ ] Ao cancelar, oferecer remarcação; marcar remarcação à parte (métrica 8)
-- [ ] Lista de espera de horários: cliente entra, horário liberado avisa o primeiro, com checagem de opt-out; sem disparo em massa
+- [x] Ao cancelar, oferecer remarcação; marcar remarcação à parte (métrica 8) Feito: `cancelar` devolve `proximo_passo`; `appointments.rescheduled_from_id`; Resultados com Remarcações à parte
+- [x] Lista de espera de horários: cliente entra, horário liberado avisa o primeiro, com checagem de opt-out; sem disparo em massa Feito: `entrar_lista_de_espera`, `slot_waitlist_entries`/`slot_offers`, varredura de minuto com oferta de 30 min, trava de envio, opt-out e janela; lista por dia na Agenda
+- [x] Falta: mensagem opcional perguntando quando remarcar (interruptor do dono, padrão desligado), só na primeira falta
 - Pronto quando: um cancelamento libera o horário para o primeiro da lista em teste.
 
 ### M-10 Recuperação de lead e follow-up (P1)

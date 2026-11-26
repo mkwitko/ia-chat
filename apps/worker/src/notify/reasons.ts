@@ -9,6 +9,8 @@ export const NotifyReason = {
   draftReminder: 'draft_reminder',
   usageWarning: 'usage_warning',
   usageFull: 'usage_full',
+  waitlistSlot: 'waitlist_slot',
+  noShow: 'no_show',
 } as const;
 export type NotifyReason = (typeof NotifyReason)[keyof typeof NotifyReason];
 
@@ -61,6 +63,14 @@ const COPY: Record<NotifyReason, Copy> = {
   usage_full: {
     title: 'As conversas do mês acabaram',
     body: 'O atendimento continua. O que passar da franquia é cobrado como excedente.',
+  },
+  waitlist_slot: {
+    title: 'Horário livre para a lista de espera',
+    body: 'Abriu um horário e um cliente da lista não pôde ser avisado pelo assistente. Toque para falar com ele.',
+  },
+  no_show: {
+    title: 'Cliente faltou',
+    body: 'O assistente não pôde perguntar sobre a remarcação. Toque para falar com o cliente.',
   },
 };
 

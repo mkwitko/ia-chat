@@ -115,6 +115,7 @@ function AgendaMetrics({ results }: Readonly<{ results: ResultsView }>) {
   return (
     <>
       <CountMetric {...Copy.booked} count={results.appointments.booked} />
+      <CountMetric {...Copy.rescheduled} count={results.appointments.rescheduled} />
       <CountMetric {...Copy.cancelled} count={results.appointments.cancelled} />
       <RateMetric
         {...Copy.noShow}

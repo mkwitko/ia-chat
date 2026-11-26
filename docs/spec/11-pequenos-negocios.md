@@ -37,7 +37,7 @@ Cada linha aponta o que existe hoje (inventário completo na auditoria) e a etap
 |---|---|---|
 | Lembretes e confirmações | AUSENTE | E-22 |
 | Gestão de cancelamento | PARCIAL | M-09 |
-| Lista de espera de agenda | AUSENTE | M-09 |
+| Lista de espera de agenda | IMPLEMENTADO (spec 05, "Cancelamento, lista de espera e falta") | M-09 |
 | Recuperação de lead | AUSENTE | M-10 |
 | Follow-up | AUSENTE (tipo `follow_up` existe, sem job) | M-10, Fase 4 |
 | Indicações | AUSENTE | M-11 |
@@ -140,7 +140,7 @@ Princípio: **medir antes de afirmar.** O piloto começa com uma linha de base e
 | 5 | Taxa de transferência | Conversas com `agent_handoff` ÷ conversas com mensagem de entrada | `audit_log` | Nada |
 | 6 | Agendamentos criados | Contagem de `appointments` criados no período, por `created_by` (`ai` ou `human`) | `appointments` | Nada |
 | 7 | Conversão de lead em agendamento | Contatos novos do período com ao menos um agendamento não cancelado ÷ contatos novos do período | `contacts`, `appointments` | Nada |
-| 8 | Cancelamentos | Agendamentos `cancelled` ÷ agendamentos do período; remarcações contadas à parte | `appointments.status` | Remarcação não tem marca própria: hoje altera o horário |
+| 8 | Cancelamentos | Agendamentos `cancelled` ÷ agendamentos do período; remarcações contadas à parte | `appointments.status`, `appointments.rescheduled_from_id` | Nada (M-09) |
 | 9 | Faltas (no-show) | `no_show` ÷ (`completed` + `no_show`) de agendamentos já passados | `appointments.status` | **Nenhuma rota grava `completed`/`no_show`** (M-08) |
 | 10 | Leads por origem | Contatos novos agrupados por origem | `contacts` | Campo de origem (M-06, em andamento) |
 | 11 | Leads por etapa | Contatos por etapa do funil, e tempo na etapa | `contacts` + histórico de etapa | Etapa (M-06, em andamento) |

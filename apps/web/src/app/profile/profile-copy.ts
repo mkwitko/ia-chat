@@ -20,6 +20,9 @@ export const ProfileCopy = {
   paymentLegend: 'Formas de pagamento aceitas',
   notice: 'Prazo para desmarcar',
   noticeHint: 'O assistente só desmarca ou remarca dentro deste prazo.',
+  noShow: 'Depois de uma falta, perguntar quando o cliente quer remarcar',
+  noShowHint:
+    'Quando você marca "Faltou", o assistente manda uma mensagem gentil uma vez. Só na primeira falta do cliente e só se a conversa estiver aberta; senão, você recebe um aviso.',
   policy: 'Regra de cancelamento, em palavras',
   policyHint: 'Ex.: consulta da manhã, avise até a noite anterior.',
   policyPlaceholder: 'Escreva como você explica a regra aos clientes',

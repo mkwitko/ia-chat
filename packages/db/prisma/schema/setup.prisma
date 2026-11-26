@@ -94,6 +94,7 @@ model Service {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
   appointments Appointment[] @relation("Appointment_service")
+  slotWaitlistEntries SlotWaitlistEntry[] @relation("SlotWaitlistEntry_service")
 
   @@unique([tenantId, id])
   @@map("services")

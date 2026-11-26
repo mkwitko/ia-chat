@@ -61,6 +61,7 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsA
 - Compromissos vindos do Google aparecem como ocupado, sem detalhes.
 - Acesso a disponibilidade, bloqueios e modo férias.
 - Implementação (E-23): lista feita à mão, sem Schedule-X (sem dependência nova): dia no celular e semana como sete seções de dia, a partir do dia escolhido (`/agenda?dia=AAAA-MM-DD&visao=semana`). Em vez de tocar num horário livre da grade, o botão "Novo agendamento" abre o formulário com os horários livres do dia (mesmo `availableSlots` do assistente) e o toque no atendimento abre remarcar e cancelar. Com o Google Agenda conectado (E-21) os horários ocupados lá saem da lista de livres; a seção "Google Agenda" da tela Disponibilidade conecta, escolhe a agenda, mostra o estado e desconecta, e uma faixa de alerta pede para reconectar quando o token cai. A tela "Disponibilidade, bloqueios e férias" (`/agenda/disponibilidade`) edita os horários da semana, os bloqueios, as férias e o horário do resumo noturno.
+- Lista de espera (M-09): cada dia mostra, abaixo dos atendimentos, quem pediu para ser avisado se abrir um horário (nome, serviço, até quando), com "Tirar da lista". Na semana a explicação some e ficam só os nomes. Entradas vêm só do assistente.
 
 ### Início
 
@@ -96,7 +97,7 @@ No atendimento que já começou, o profissional marca "Compareceu" ou "Faltou" (
 | Contatos novos e por origem | contatos criados no período |
 | Primeira resposta (mediana) | das conversas abertas no período (primeira mensagem do paciente dentro dele) que foram respondidas, o tempo até a primeira resposta do assistente ou do profissional |
 | Passaram para você (taxa de transferência) | conversas do período em que o controle foi para o profissional ÷ conversas do período |
-| Agendamentos feitos / cancelamentos | atendimentos criados / cancelados no período |
+| Agendamentos feitos / remarcações / cancelamentos | atendimentos novos criados / criados no lugar de um cancelado (M-09) / cancelados e não remarcados, no período |
 | Taxa de faltas | faltou ÷ (compareceu + faltou), só atendimentos com presença marcada; a tela diz quantos ficaram sem marca |
 | Recuperados | contatos que estavam em "Não agendou" e agendaram no período |
 | Retornos | atendimentos criados no período para quem já tinha comparecido antes |

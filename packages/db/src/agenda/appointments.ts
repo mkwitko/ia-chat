@@ -11,6 +11,7 @@ import { withStageSync } from '../customers/sync.ts';
 import { assertBelowLimit, assertNotice, assertOffered, LIVE } from './guards.ts';
 import { loadScope } from './availability.ts';
 import { toView } from './view.ts';
+import { rebookSource, settleWaitlist } from './waitlist.ts';
 import { cancelPendingMessages, scheduleMessages } from '../reminders/schedule.ts';
 import {
   AgendaError,
@@ -135,8 +136,14 @@ async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
       createdBy: req.createdBy,
       idempotencyKey: req.key,
       calendarSync: req.calendar ? CalendarSyncState.failed : CalendarSyncState.none,
+      rescheduledFromId: await rebookSource(tx, req),
     },
     include: { service: true },
+  });
+  await settleWaitlist(tx, {
+    contactId: req.contactId,
+    serviceId: service.id,
+    startsAt: req.startsAt,
   });
   await scheduleMessages(tx, { tenantId: req.tenantId, appointment: created, now: req.now });
   return toView(created);

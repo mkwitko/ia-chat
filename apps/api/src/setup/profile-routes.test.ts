@@ -64,6 +64,15 @@ describe('business profile', () => {
     expect(audits).toHaveLength(1);
   });
 
+  it('keeps the no-show message off by default and turns it on (M-09)', async () => {
+    const before = (await call('GET', '/api/profile')).json<{ noShowFollowUp: boolean }>();
+    expect(before.noShowFollowUp).toBe(false);
+    const payload = { ...PROFILE, noShowFollowUp: true };
+    expect((await call('PUT', '/api/profile', { payload })).statusCode).toBe(200);
+    const after = (await call('GET', '/api/profile')).json<{ noShowFollowUp: boolean }>();
+    expect(after.noShowFollowUp).toBe(true);
+  });
+
   it('refuses a fractional package price and lets the receptionist only read', async () => {
     const bad = { ...PROFILE, profile: { packages: [{ name: 'x', priceCents: 1.5 }] } };
     expect((await call('PUT', '/api/profile', { payload: bad })).statusCode).toBe(400);

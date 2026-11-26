@@ -23,7 +23,7 @@ export interface ResultsView {
   referrals: number;
   firstResponse: { sample: number; medianSeconds: number | null };
   escalation: { handedOff: number; total: number };
-  appointments: { booked: number; cancelled: number };
+  appointments: { booked: number; rescheduled: number; cancelled: number };
   attendance: { attended: number; noShow: number; unmarked: number };
   recovered: number;
   repeatBookings: number;
