@@ -13,6 +13,8 @@ export const Violation = {
   unknownPrice: 'unknown_price',
   unknownTime: 'unknown_time',
   unconfirmedAction: 'unconfirmed_action',
+  /** H-52: said the payment arrived without a paid deposit from a tool. */
+  unconfirmedPayment: 'unconfirmed_payment',
   forbiddenTerm: 'forbidden_term',
   clinicalConduct: 'clinical_conduct',
 } as const;
@@ -43,6 +45,11 @@ const SYSTEM_MARKUP = /<\/?[a-z_]+>|\{\s*"|\[\s*\{/i;
 const FIRST_PERSON_CLAIM = /\b(?:agendei|marquei|cancelei|desmarquei|remarquei)\b/gi;
 const STATE_CLAIM =
   /\b(?:está|esta|ficou|foi|estão|ficaram|foram) (?:agendad|marcad|cancelad|desmarcad|remarcad|confirmad)/gi;
+// "Recebemos o Pix", "o sinal foi confirmado": past tense only; "quando for confirmado" is fine.
+const PAYMENT_CLAIMS = [
+  /\b(?:recebi|recebemos|confirmei|confirmamos)\b[^.!?\n]{0,30}\b(?:pix|pagamento|sinal|transfer[êe]ncia|valor)\b/i,
+  /\b(?:pix|pagamento|sinal|transfer[êe]ncia)\b[^.!?\n]{0,20}\b(?:foi|est[áa]|ficou) (?:recebid|confirmad|compensad|aprovad)/i,
+];
 const CLINICAL = [
   /\btome\b/i,
   /relaxante muscular/i,
@@ -66,6 +73,10 @@ export function validateReply(text: string, rules: ReplyRules): Violation[] {
     priceViolation(text, rules),
     timeViolation(text, rules),
     claimViolation(text, rules.facts),
+    PAYMENT_CLAIMS.some((claim) => claim.test(text)) &&
+    !rules.facts.actions.includes(ActionKind.paid)
+      ? Violation.unconfirmedPayment
+      : null,
     rules.forbiddenTerms.some((term) => termPattern(term).test(text))
       ? Violation.forbiddenTerm
       : null,

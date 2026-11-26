@@ -106,6 +106,10 @@ model Payment {
   providerChargeId String?       @map("provider_charge_id")
   status           PaymentStatus @default(pending)
   paidAt           DateTime?     @map("paid_at") @db.Timestamptz
+  /// H-52: a pending deposit past this instant releases the slot (sweep, every minute).
+  expiresAt        DateTime?     @map("expires_at") @db.Timestamptz
+  /// When the professional was told that a deposit waits for their confirmation.
+  notifiedAt       DateTime?     @map("notified_at") @db.Timestamptz
   createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
 
   tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)

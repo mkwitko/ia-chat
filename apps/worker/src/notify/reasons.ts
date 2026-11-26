@@ -13,6 +13,8 @@ export const NotifyReason = {
   noShow: 'no_show',
   leadFollowUp: 'lead_follow_up',
   reviewRequest: 'review_request',
+  /** H-52: a Pix deposit waits for the professional's confirmation. */
+  depositPending: 'deposit_pending',
 } as const;
 export type NotifyReason = (typeof NotifyReason)[keyof typeof NotifyReason];
 
@@ -78,6 +80,10 @@ const COPY: Record<NotifyReason, Copy> = {
     title: 'Cliente sem resposta',
     body: 'O assistente não pôde fazer o contato de retorno combinado. Toque para falar com o cliente.',
   },
+  deposit_pending: {
+    title: 'Sinal para confirmar',
+    body: 'Um cliente marcou e vai pagar o sinal por Pix. Confira sua conta e confirme com um toque.',
+  },
   no_show: {
     title: 'Cliente faltou',
     body: 'O assistente não pôde perguntar sobre a remarcação. Toque para falar com o cliente.',
@@ -86,17 +92,22 @@ const COPY: Record<NotifyReason, Copy> = {
 
 const CONVERSATION_PATH = '/conversas/';
 const USAGE_PATH = '/mais/conta/plano-e-uso';
+const DEPOSITS_PATH = '/sinais';
 const USAGE_REASONS: ReadonlySet<NotifyReason> = new Set([
   NotifyReason.usageWarning,
   NotifyReason.usageFull,
 ]);
 
 export function buildNotice(reason: NotifyReason, conversationId: string): Notice {
-  const usage = USAGE_REASONS.has(reason); // about the account, not one conversation
+  const urgent = reason === NotifyReason.urgency;
+  // About the account (or a list), not one conversation.
+  if (USAGE_REASONS.has(reason)) return { ...COPY[reason], url: USAGE_PATH, tag: reason, urgent };
+  if (reason === NotifyReason.depositPending)
+    return { ...COPY[reason], url: DEPOSITS_PATH, tag: reason, urgent };
   return {
     ...COPY[reason],
-    url: usage ? USAGE_PATH : `${CONVERSATION_PATH}${conversationId}`,
-    tag: usage ? reason : conversationId,
-    urgent: reason === NotifyReason.urgency,
+    url: `${CONVERSATION_PATH}${conversationId}`,
+    tag: conversationId,
+    urgent,
   };
 }

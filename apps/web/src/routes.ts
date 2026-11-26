@@ -37,6 +37,8 @@ export const Route = {
   account: '/mais/conta',
   accountNotifications: '/mais/conta/avisos-e-aparencia',
   accountFeatures: '/mais/conta/recursos',
+  depositSettings: '/mais/conta/recursos/sinal',
+  deposits: '/sinais',
   referral: '/mais/conta/indique-e-ganhe',
   usage: '/mais/conta/plano-e-uso',
   billing: '/mais/conta/assinatura',

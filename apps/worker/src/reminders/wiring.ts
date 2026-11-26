@@ -1,6 +1,11 @@
 import { createChannelSender, createTemplateSender, wahaConfig } from '@app/channels';
-import { NodeEnv, channelTokenReader } from '@app/core';
-import { REMINDER_SWEEP_QUEUE, type Db } from '@app/db';
+import {
+  NodeEnv,
+  channelTokenReader,
+  googleCalendarConfig,
+  googleCalendarEnvSchema,
+} from '@app/core';
+import { REMINDER_SWEEP_QUEUE, createCalendarResolver, type Db } from '@app/db';
 import type { Alert } from '@app/observability';
 import type { PgBoss } from 'pg-boss';
 import type { Notifier } from '../notify/index.ts';
@@ -9,6 +14,7 @@ import { sweepReviewRequests } from '../leads/review-request.ts';
 import { sweepNoShows } from '../waitlist/no-show.ts';
 import { sweepWaitlist } from '../waitlist/offer-sweep.ts';
 import { sweepScheduledMessages } from './sweep.ts';
+import { sweepDeposits } from '../deposit/deposit-sweep.ts';
 
 const EVERY_MINUTE = '* * * * *';
 const SWEPT = 'reminder sweep done';
@@ -29,7 +35,7 @@ export interface ReminderWiring {
 
 /**
  * E-22: the minute sweep of due confirmations and reminders, through the same channel as turns.
- * M-09 rides on it: waitlist offers and the message after a no-show.
+ * M-09 rides on it: waitlist offers and the message after a no-show; H-52: Pix deposits.
  */
 export async function startReminderSweep(wiring: ReminderWiring): Promise<void> {
   const { boss, db, alert, log } = wiring;
@@ -41,6 +47,9 @@ export async function startReminderSweep(wiring: ReminderWiring): Promise<void> 
     log,
   };
   const channel = { send: createChannelSender(config), sendTemplate: createTemplateSender(config) };
+  // H-52: releasing an expired deposit also removes its Google event.
+  const google = googleCalendarConfig(googleCalendarEnvSchema.parse(process.env));
+  const calendar = google ? createCalendarResolver({ db, config: google, alert }) : undefined;
   await boss.schedule(REMINDER_SWEEP_QUEUE.name, EVERY_MINUTE);
   await boss.work(REMINDER_SWEEP_QUEUE.name, async () => {
     const now = new Date();
@@ -51,7 +60,8 @@ export async function startReminderSweep(wiring: ReminderWiring): Promise<void> 
     const noShows = await sweepNoShows(follow);
     const leads = await sweepLeadFollowUps(follow);
     const reviews = await sweepReviewRequests(follow);
-    if (waitlist.offered + waitlist.skipped + noShows + leads + reviews > 0)
-      log({ ...waitlist, noShows, leads, reviews }, FOLLOWED);
+    const deposits = await sweepDeposits({ ...follow, calendar });
+    if (waitlist.offered + waitlist.skipped + noShows + leads + reviews + deposits > 0)
+      log({ ...waitlist, noShows, leads, reviews, deposits }, FOLLOWED);
   });
 }

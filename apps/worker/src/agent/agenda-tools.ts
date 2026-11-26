@@ -15,6 +15,7 @@ import {
 import { cancelTool, confirmTool, listTool, outcome } from './appointment-tools.ts';
 import type { ToolContext } from './tools.ts';
 import { waitlistTool } from './waitlist-tool.ts';
+import { depositHold, depositOutput } from './deposit.ts';
 
 // Agenda plan tools (spec 04, "Ferramentas"; spec 05). Booking, moving and cancelling happen
 // only after the patient confirmed a slot offered in an earlier turn; the code checks it.
@@ -82,6 +83,7 @@ function bookTool(context: ToolContext) {
       const gate = await gateOf(context, choice);
       if (gate.refusal) return gate.refusal;
       await rememberName(context, nome_paciente);
+      const deposit = await depositHold(context, service);
       const result = await bookAppointment(db, {
         tenantId,
         contactId,
@@ -92,8 +94,12 @@ function bookTool(context: ToolContext) {
         createdBy: AppointmentCreator.ai,
         now,
         calendar: await calendarOf(context),
+        deposit,
       });
-      return outcome(context, result);
+      const done = outcome(context, result);
+      return deposit && result.ok
+        ? { ...done, ...(await depositOutput(context, result.value.id)) }
+        : done;
     },
   });
 }

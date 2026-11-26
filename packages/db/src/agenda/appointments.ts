@@ -14,6 +14,12 @@ import { toView } from './view.ts';
 import { rebookSource, settleWaitlist } from './waitlist.ts';
 import { cancelPendingMessages, scheduleMessages } from '../reminders/schedule.ts';
 import {
+  dropDeposit,
+  holdDeposit,
+  pendingDepositOf,
+  type DepositHold,
+} from '../deposit/deposits.ts';
+import {
   AgendaError,
   AgendaFailure,
   isExclusionViolation,
@@ -37,6 +43,8 @@ export interface BookRequest {
   now: Date;
   /** The tenant's connected calendar (E-21): availability is revalidated against it and the event written. */
   calendar?: CalendarLink | undefined;
+  /** H-52: hold the slot until the deposit is confirmed; no message goes out before that. */
+  deposit?: DepositHold | undefined;
 }
 
 export interface MoveRequest extends Omit<BookRequest, 'serviceId'> {
@@ -148,7 +156,9 @@ async function bookIn(tx: Tx, req: BookRequest): Promise<AppointmentView> {
     serviceId: service.id,
     startsAt: req.startsAt,
   });
-  await scheduleMessages(tx, { tenantId: req.tenantId, appointment: created, now: req.now });
+  if (req.deposit)
+    await holdDeposit(tx, { tenantId: req.tenantId, appointmentId: created.id, hold: req.deposit });
+  else await scheduleMessages(tx, { tenantId: req.tenantId, appointment: created, now: req.now });
   return toView(created);
 }
 
@@ -166,8 +176,10 @@ async function moveIn(tx: Tx, req: MoveRequest): Promise<AppointmentView> {
     data: { status: AppointmentStatus.cancelled },
   });
   await cancelPendingMessages(tx, old.id);
+  const waiting = await pendingDepositOf(tx, old.id);
   return bookIn(tx, {
     ...req,
+    deposit: waiting ? { paymentId: waiting.id } : undefined,
     serviceId: old.serviceId,
     professionalId: req.professionalId ?? old.professionalId,
   });
@@ -188,5 +200,6 @@ async function cancelIn(tx: Tx, req: CancelRequest): Promise<AppointmentView> {
     include: { service: true, professional: true },
   });
   await cancelPendingMessages(tx, found.id);
+  await dropDeposit(tx, found.id);
   return toView(updated);
 }

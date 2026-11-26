@@ -47,7 +47,9 @@ describe('notice text (RN-38)', () => {
       const notice = buildNotice(reason, conversationId);
       expect(JSON.stringify(notice)).not.toContain(SECRET_TEXT);
       const usage = reason === NotifyReason.usageWarning || reason === NotifyReason.usageFull;
-      expect(notice.url).toBe(usage ? '/mais/conta/plano-e-uso' : `/conversas/${conversationId}`);
+      const deposit = reason === NotifyReason.depositPending;
+      const url = deposit ? '/sinais' : `/conversas/${conversationId}`;
+      expect(notice.url).toBe(usage ? '/mais/conta/plano-e-uso' : url);
       expect(notice.title.length).toBeGreaterThan(0);
     }
     expect(buildNotice(NotifyReason.urgency, conversationId).urgent).toBe(true);

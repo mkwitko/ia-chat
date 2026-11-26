@@ -29,6 +29,8 @@ const VIOLATION_TEXT: Readonly<Record<Violation, string>> = {
   [Violation.unknownTime]: 'citou um horário que não veio de ferramenta',
   [Violation.unconfirmedAction]:
     'afirmou uma ação (agendar, cancelar, remarcar) sem a ferramenta confirmar',
+  [Violation.unconfirmedPayment]:
+    'disse que o pagamento ou o sinal foi recebido sem a ferramenta mostrar o sinal pago; diga que o profissional confirma o recebimento',
   [Violation.forbiddenTerm]: 'usou um termo proibido pela especialidade',
   [Violation.clinicalConduct]: 'deu orientação clínica',
 };

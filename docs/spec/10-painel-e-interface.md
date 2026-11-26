@@ -172,6 +172,11 @@ Contrato da API (estável; o assistente de configuração também usa):
 - `PUT /api/features` com `{ features: { <chave>: true | false } }` (uma ou mais chaves; só as enviadas mudam) → a mesma resposta do GET. Ligar recurso fora do plano: 422 `feature_not_in_plan`, nada salvo. Chave desconhecida ou corpo vazio: 400. Grava auditoria (`entity = features`).
 - Só o dono (permissão `features`): profissional e recepção recebem 403.
 
+### Sinal por Pix
+
+- `/mais/conta/recursos/sinal` (H-52), aberto pelo link abaixo do interruptor "Sinal por Pix" em Recursos: chave Pix, nome de quem recebe, cidade, prazo de reserva, regra de devolução e o valor do sinal por serviço. Só o dono. Com o recurso desligado, um aviso leva a Recursos.
+- `/sinais` ("Sinais para confirmar"), aberto pela notificação e pelo outro link em Recursos: um cartão por sinal pendente (cliente, serviço e horário, valor, "reservado até") com o botão "Recebi o Pix". Recepção também confirma (permissão de marcar agenda). Entrada pelo Início ou pela Agenda fica para depois, para não mexer nessas telas agora.
+
 ### Plano e uso
 
 - Plano atual, conversas usadas na franquia, previsão para o mês e o bloco "WhatsApp (Meta)": respostas grátis da Meta usadas no mês (ex.: "640 de 1.000"), mensagens com custo por categoria e custo estimado, `GET /api/usage/meta`. Texto: "Estimativa da Meta no seu cartão: R$ X". A Meta cobra no cartão do cliente; não entra na nossa fatura.

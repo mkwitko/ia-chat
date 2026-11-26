@@ -3,13 +3,16 @@ import {
   cancelAppointment,
   confirmAppointment,
   listUpcoming,
+  PaymentStatus,
   type AgendaResult,
+  type Db,
   type AppointmentView,
 } from '@app/db';
 import { tool } from 'ai';
 import * as z from 'zod';
 import { appointmentOutput, calendarOf, failure, needsProfessional, ToolError } from '@app/agent';
 import type { ToolContext } from './tools.ts';
+import { DEPOSIT_PAID, DEPOSIT_WAITING } from './deposit.ts';
 
 // Agenda tools on an existing appointment: cancel, confirm, list (spec 04, "Ferramentas").
 
@@ -67,9 +70,33 @@ export function listTool({ db, tenantId, contactId, now, timezone }: ToolContext
     inputSchema: z.object({}),
     execute: async () => {
       const upcoming = await listUpcoming(db, { tenantId, contactId, now });
-      return { agendamentos: upcoming.map((one) => appointmentOutput(one, timezone)) };
+      const deposits = await depositStates(db, tenantId, upcoming);
+      return {
+        agendamentos: upcoming.map((one) => ({
+          ...appointmentOutput(one, timezone),
+          ...(deposits.get(one.id) ? { situacao_sinal: deposits.get(one.id) } : {}),
+        })),
+      };
     },
   });
+}
+
+/** H-52: the deposit of each appointment, from the payments table only (never from an image). */
+async function depositStates(db: Db, tenantId: string, upcoming: readonly AppointmentView[]) {
+  const payments = await db.withTenant(tenantId, (tx) =>
+    tx.payment.findMany({
+      where: {
+        appointmentId: { in: upcoming.map((one) => one.id) },
+        status: { in: [PaymentStatus.pending, PaymentStatus.paid] },
+      },
+    }),
+  );
+  return new Map(
+    payments.map((payment) => [
+      payment.appointmentId,
+      payment.status === PaymentStatus.paid ? DEPOSIT_PAID : DEPOSIT_WAITING,
+    ]),
+  );
 }
 
 /** A late cancellation or move, or a calendar that failed, goes to the professional (RF-44, A-13). */

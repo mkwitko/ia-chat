@@ -22,3 +22,21 @@ enum FeatureKey {
   ocr_id_card
   ocr_medical_request
 }
+
+/// H-52 (spec 05, "Alternativa sem integração"): the professional's own Pix key for the patient's
+/// deposit. Money goes straight to their account; we never hold it.
+model DepositSettings {
+  tenantId     String   @id @map("tenant_id") @db.Uuid
+  /// Normalized key (packages/core normalizePixKey).
+  pixKey       String   @map("pix_key")
+  receiverName String   @map("receiver_name")
+  city         String
+  holdMinutes  Int      @default(30) @map("hold_minutes")
+  /// The professional's refund rule in words, said by the assistant when asked.
+  refundPolicy String?  @map("refund_policy")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@map("deposit_settings")
+}

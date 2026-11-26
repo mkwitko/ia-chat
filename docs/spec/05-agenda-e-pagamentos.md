@@ -127,6 +127,7 @@ Sem Google conectado, o plano Agenda funciona só com a agenda interna.
 Decisão revista em 24/11/2026 com a [pesquisa 06](../research/06-pagamentos.md). A subconta Asaas foi descartada para o sinal: exige período de avaliação limitado a 10 subcontas e depois homologação, pesado demais para profissional solo. Subcontas de Woovi e AbacatePay guardam o saldo na nossa conta, o que nos faria segurar dinheiro de paciente. Stripe proíbe Pix para serviços médicos (MCC 8099).
 
 - **Provedor do sinal: Mercado Pago por OAuth.** O profissional autoriza com um clique a conta que já tem ou cria. A cobrança é criada na conta dele e o valor liquida lá. Não recebemos nem guardamos dinheiro de paciente. Pix a 0,99% (preço de vitrine), pago por ele.
+- **Implementado primeiro (H-52, decisão do dono de 26/11/2026): chave manual.** Detalhe abaixo, em "Sinal com chave manual".
 - **Alternativa sem integração ("recebido manual"):** geramos o código Pix copia e cola com valor a partir da chave Pix do profissional, e ele confirma o recebimento com um toque no painel ou respondendo à notificação. Não tem confirmação automática nem expiração garantida. Serve para quem não quer conta no Mercado Pago e como primeira entrega do módulo.
 - Os dois ficam atrás de uma interface `DepositProvider` (`createCharge`, `getStatus`, `parseWebhook`), como o canal de WhatsApp. Segunda opção de integração, se necessário: PagBank Connect.
 - Fluxo:
@@ -134,9 +135,21 @@ Decisão revista em 24/11/2026 com a [pesquisa 06](../research/06-pagamentos.md)
   2. `criar_cobranca_sinal` gera a cobrança e devolve o código copia e cola.
   3. Webhook de pagamento confirmado muda para `confirmed` e dispara a confirmação ao paciente.
   4. Expirou sem pagar: horário liberado e paciente avisado, se a janela estiver aberta.
-- O assistente só afirma que o pagamento foi recebido se `payments.status = 'paid'`, gravado pelo webhook. Comprovante enviado por imagem não confirma nada; o assistente responde que a confirmação é automática e transfere se o paciente insistir.
+- O assistente só afirma que o pagamento foi recebido se `payments.status = 'paid'` (gravado pelo webhook ou, na chave manual, pelo toque do profissional). A validação de saída recusa "recebemos o Pix", "o sinal foi recebido" e parecidos sem uma ferramenta mostrar `situacao_sinal = pago`. Comprovante enviado por imagem não confirma nada (A-17); o assistente responde que o profissional confirma o recebimento.
 - Política de devolução do sinal é texto configurado pelo profissional. O estorno é feito por ele; o assistente não tem ferramenta de estorno.
 - Webhooks validados por token e idempotentes por identificador do evento.
+
+### Sinal com chave manual (H-52)
+
+Implementado em 26/11/2026, no plano Agenda (recurso `pix_deposit`, ver [01](01-produto-e-planos.md), "Recursos").
+
+- **Configuração** (Conta > Recursos > Sinal por Pix, só o dono, `GET/PUT /api/deposits/settings`): chave Pix (CPF, CNPJ, celular com +55, e-mail ou aleatória, validada e normalizada), nome de quem recebe, cidade, prazo de reserva (padrão 30 minutos, de 10 minutos a 24 horas), regra de devolução em palavras e o valor do sinal de cada serviço (`services.deposit_cents`; vazio = sem sinal). Tabela `deposit_settings`, uma por consultório, com RLS. A chave não entra na auditoria.
+- **Agendar com sinal:** com o recurso ligado, sinal no serviço e chave salva, `agendar` grava o agendamento (vivo, ocupa o horário e a constraint como qualquer outro, e cria o evento no Google) e um `payments` `pending` com `expires_at`. Confirmação e lembretes não são agendados. Divergência do fluxo acima: não há status `held` no agendamento; "segurado" é agendamento vivo com pagamento `pending`, para não mexer nas consultas que listam agendamentos vivos.
+- **Código Pix:** BR Code estático (EMV do Banco Central, CRC-16/CCITT-FALSE) gerado em `packages/core/src/deposit/brcode.ts` com chave, nome e cidade (só ASCII, cortados em 25 e 15 caracteres), valor e o id do pagamento como referência (`txid`, 25 caracteres). Testado contra o exemplo do manual do Banco Central (CRC `1D3D`). Vai numa mensagem própria, logo depois da resposta, escrita pelo código; no modo "aprovar" vai no fim do rascunho. A ferramenta devolve ao modelo o valor, o prazo (`expira_em`) e a regra de devolução, e manda não escrever o código.
+- **Confirmação:** a varredura de cada minuto avisa o profissional uma vez por sinal novo (push "Sinal para confirmar", sem conteúdo, abre `/sinais`). Em `/sinais` (`GET /api/deposits`) cada sinal tem "Recebi o Pix" (`POST /api/deposits/:id/confirm`, quem pode marcar agenda): o pagamento vira `paid` e a confirmação e os lembretes do agendamento são agendados na hora. Prazo vencido responde 409 `deposit_expired`.
+- **Prazo vencido:** a mesma varredura marca o pagamento `expired`, cancela o agendamento (como o profissional, sem antecedência mínima; remove o evento do Google) e avisa o paciente com texto fixo só dentro da janela de 24 horas e com o assistente no controle (mesmo caminho da oferta da lista de espera).
+- **Remarcar e cancelar:** remarcar leva o pagamento pendente para o novo agendamento (continua segurado, mesmo prazo); cancelar marca o pendente como `expired`. Sinal já pago fica no agendamento antigo (ponto em aberto: levar junto).
+- Interface `DepositProvider` (`packages/core/src/deposit/provider.ts`) com `createCharge`; a implementação manual devolve `confirmsAutomatically = false`. O Mercado Pago entra atrás dela no plano Pro.
 
 ### Pontos em aberto
 
