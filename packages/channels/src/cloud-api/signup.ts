@@ -16,7 +16,6 @@ const tokenSchema = z.object({ access_token: z.string().min(1) });
 const phonesSchema = z.object({
   data: z.array(z.object({ id: z.string(), display_phone_number: z.string().optional() })),
 });
-const fundingSchema = z.object({ primary_funding_id: z.string().optional() });
 const templatesSchema = z.object({
   data: z.array(z.object({ name: z.string(), language: z.string() })),
 });
@@ -73,16 +72,6 @@ export function createBusinessClient(config: {
     /** Not for coexistence numbers: they are already registered by the Business app. */
     async register(phoneNumberId: string, pin: string): Promise<void> {
       await call(`${phoneNumberId}/register`, { messaging_product: PRODUCT, pin });
-    },
-    /**
-     * Spec 03 step 3: the client pays Meta with their own card. nv: `primary_funding_id` on the
-     * WABA node is our reading of the Graph reference; confirm with the first real client.
-     */
-    async hasPaymentMethod(wabaId: string): Promise<boolean> {
-      const { primary_funding_id: funding } = fundingSchema.parse(
-        await call(`${wabaId}?fields=primary_funding_id`),
-      );
-      return Boolean(funding);
     },
     /** Coexistence (E-24b): asks Meta to send the phone book or the history as webhooks. */
     async requestAppData(phoneNumberId: string, syncType: AppDataSync): Promise<void> {

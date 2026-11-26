@@ -41,7 +41,6 @@ export interface WhatsappChannel {
   coexistence: boolean;
   ready: boolean;
   /** Spec 03 step 3: a card is on the client's WhatsApp account at Meta. */
-  paymentMethod: boolean;
   history: HistoryImport;
   error: FriendlyError | null;
 }
