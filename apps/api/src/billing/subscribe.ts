@@ -1,4 +1,12 @@
-import { dateKey, MS_PER_DAY, PLANS, PlanId, previousMonth, type BillingProvider } from '@app/core';
+import {
+  dateKey,
+  MS_PER_DAY,
+  PLANS,
+  PlanId,
+  previousMonth,
+  SELLABLE_PLANS,
+  type BillingProvider,
+} from '@app/core';
 import { TenantStatus, type Tx } from '@app/db';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
@@ -11,7 +19,8 @@ import { fail, providerFailed } from './failures.ts';
 export const ENTITY = 'subscription';
 const DESCRIPTION = 'Assinatura Consultório Aberto';
 
-export const planBody = z.object({ plan: z.enum(PlanId) }).strict();
+/** Only plans on sale: Pro and Clínica wait until their features exist (spec 01, "Preços"). */
+export const planBody = z.object({ plan: z.enum(SELLABLE_PLANS) }).strict();
 
 interface TenantRow {
   id: string;

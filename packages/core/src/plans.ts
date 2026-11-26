@@ -24,6 +24,15 @@ export const PLANS = {
   [PlanId.clinica]: { franchise: 1000, overageCents: 35, monthlyCents: 69_700 },
 } as const satisfies Record<PlanId, PlanTerms>;
 
+/** Plans a customer can subscribe to now; Pro and Clínica wait for their features (spec 01). */
+export const SELLABLE_PLANS = [PlanId.essencial, PlanId.agenda] as const;
+
+/** Professionals included in Clínica; the other plans have one and no add-on (founder/pricing.md). */
+export const CLINICA_INCLUDED_PROFESSIONALS = 2;
+
+/** Each Clínica professional beyond the included ones adds this price and franchise. */
+export const EXTRA_PROFESSIONAL = { franchise: 250, monthlyCents: 14_700 } as const;
+
 /** Share of the franchise that triggers the first warning (spec 01). */
 export const WARNING_PERCENT = 80;
 const FULL_PERCENT = 100;

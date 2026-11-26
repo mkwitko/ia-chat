@@ -1,0 +1,13 @@
+{
+  "id": "P011",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Perdi cliente essa semana por demorar a responder, então o problema é real. Mas eu já pago uma ajudante para cuidar do WhatsApp, e não quero que uma IA fale com paciente meu sem eu ver antes; mensagem errada sobre horário ou pagamento me custa cliente.",
+  "objection": "Meus clientes preferem falar com gente. Se a IA responder errado ou parecer robô, eu perco a confiança que levei anos para construir.",
+  "would_change_my_mind": "Ver a IA atendendo de verdade no meu número, com a minha agenda e os meus preços, e eu aprovando cada resposta por um tempo sem nenhum erro.",
+  "price_too_cheap": 79,
+  "price_cheap": 129,
+  "price_expensive": 197,
+  "price_too_expensive": 247
+}

@@ -1,69 +1,71 @@
-# Marketing (posicionamento revisto, 25/11/2026)
+# Marketing (25/11/2026)
 
-Base: `founder/idea.md`, `competitors.md`, `panel/results.md` (simulado, ver aviso lá) e `docs/spec/07`. Sem dados reais de compra: tudo abaixo é plano a testar. `<nome>` = o nome escolhido em `brand.md`.
+Base: `panel/results.md` (simulado: 0 de 18 compram; confiança 11, hábito 4, preço 3), `competitors.md` (relido em 25/11/2026), `offer.md`, `pricing.md`, `cfo.md`. Nenhum dado real de compra. Nome decidido pelo dono: **Consultório Aberto**. Briefing da landing page em `landing-brief.md`.
 
 ## Posicionamento
 
-Modelo: Para <segmento>, que <problema>, <negócio> é a <categoria> que <lacuna>, ao contrário de <alternativa mais próxima>.
+Modelo: Para <segmento>, que <problema>, <negócio> é a <categoria> que <lacuna>, ao contrário de <alternativa>.
 
-1. Para o dono de pequeno negócio com hora marcada que perde cliente por não responder o WhatsApp enquanto atende, <nome> é a recepcionista virtual com IA que transforma conversa em horário marcado e traz de volta quem sumiu, ao contrário dos chatbots genéricos que você mesmo precisa montar.
-2. Para o profissional autônomo que atende sozinho, <nome> é a recepção que marca no seu Google Agenda enquanto você trabalha, ao contrário de sistemas de gestão com IA vendida à parte.
-3. Para quem já usa WhatsApp Business, <nome> responde e agenda sem você trocar de número, ao contrário de ferramentas que exigem migrar a conta.
+1. Para o profissional de saúde e bem-estar que atende sozinho e perde paciente porque não consegue responder o WhatsApp durante o atendimento, o Consultório Aberto é a recepcionista com IA que responde e marca no seu Google Agenda, no mesmo número, começando com você aprovando cada resposta, ao contrário dos chatbots que você precisa montar sozinho e vigiar.
+2. Para quem já responde tudo pelo celular, o Consultório Aberto é a recepção que marca no seu Google Agenda enquanto você atende, configurada com você em um áudio, ao contrário das IAs de clínica vendidas por cotação e com implantação demorada.
+3. Para o dono de negócio de hora marcada, o Consultório Aberto transforma conversa em horário marcado sem trocar seu número, ao contrário de sistemas de gestão com IA vendida à parte.
 
-**Recomendada: a 1.** Cobre a decisão do dono (conversa que vira horário e recuperação) e responde a duas objeções simuladas (montar sozinho, trocar número). Hipótese: validar nas 10 conversas de campo.
+**Recomendada: a 1.** Ataca o motivo n.º 1 dos "não" do painel (confiança: 11 de 18), diz o resultado em palavras do comprador e casa com o nome (consultório). O segmento-alvo inicial é saúde e bem-estar solo (quiropraxia, acupuntura, fisioterapia, psicologia, nutrição), porque o piloto e as indicações vêm dali; salão e estética ficam para depois do piloto. O painel não mostrou segmento que compra mais (todos 0%), então a escolha é pelo canal de indicação, não por dado de compra. Suposição registrada.
+
+**Frase curta (título):** "Seu WhatsApp responde e marca na sua agenda enquanto você atende."
+**Linha de apoio:** "No mesmo número. Nada sai sem você aprovar, até você querer."
 
 ## Canais (começar com 2)
 
 | Canal | Por que serve | Custo | Como saber que funcionou |
 |---|---|---|---|
-| Indicação do piloto e de clientes (boca a boca local) | O dono confia em outro dono; é a estratégia de `docs/spec/11` | Tempo, sem verba | Conversas marcadas e pilotos ativados por indicação |
-| Instagram do próprio negócio (conversa de exemplo anonimizada, demonstração em vídeo curto) | Donos de salão e estúdio já estão lá | Tempo; anúncio só depois | Mensagens diretas pedindo demonstração |
-| Parcerias locais (contador, fornecedor, associação do bairro) | Falam com muitos donos | Tempo | Indicações recebidas |
+| Indicação do piloto e de colegas de profissão | O painel repetiu "só compro se um colega usar" (P003, P014); confiança é o bloqueio | Tempo | Demonstrações marcadas por indicação |
+| Conversa de demonstração ao vivo (o profissional manda mensagem para um número de teste com dados fictícios) | Mostra o produto respondendo; responde a "quero ver antes" | Tempo; número de teste | Quem pede o convite depois da demonstração |
+| Instagram do fundador (bastidores e conversas de exemplo com dados fictícios) | Profissionais autônomos estão lá | Tempo | Mensagens diretas pedindo demonstração |
 
-Fora por enquanto: Google Ads (palavra de busca cara e público ainda não validado), TikTok e anúncio em massa. Reavaliar com dado do piloto.
+Fora por enquanto: anúncio pago (sem verba e sem prova), Google Ads, TikTok, compra de listas. Reavaliar com 10 pagantes.
 
-## Calendário (dia 0 = abertura do piloto; datas relativas porque a data não está definida)
+## Calendário (dia 0 = abertura do convite após o piloto; datas relativas)
 
-| Dia | Canal | Ação |
+| Dia | Canal | Ação e mensagem |
 |---|---|---|
-| -14 | Campo | 5 conversas com donos indicados pelo piloto |
-| -12 | Campo | Mais 5 conversas; anotar objeções reais |
-| -10 | Instagram | Post: o problema ("mensagem sem resposta") |
-| -7 | Site | Página simples com a promessa e o botão "Quero testar" |
-| -5 | Instagram | Post: a conversa de exemplo anonimizada |
-| -3 | Campo | Combinar condição de fundador com 3 interessados |
-| 0 | Todos | Abertura do piloto com o quiropraxista |
-| +1 a +7 | Instagram | Um post por dia: bastidores da configuração |
+| -14 | Campo | 5 conversas com profissionais indicados pelo piloto: "o que acontece com a mensagem que chega enquanto você atende?" |
+| -12 | Campo | Mais 5 conversas; anotar objeções literais |
+| -10 | Instagram | Post: o problema ("mensagem sem resposta às 21h") |
+| -7 | Site | Landing nova no ar (briefing em `landing-brief.md`) com "Pedir convite" |
+| -5 | Instagram | Vídeo: conversa de exemplo com dados fictícios, aprovação com um toque |
+| -3 | Campo | Demonstração ao vivo para 3 interessados |
+| 0 | Todos | Abertura dos convites (até 3 configurações por semana) |
+| +1 a +7 | Instagram | Bastidores: como é a configuração por áudio |
 | +3 | Campo | Pedir ao piloto 2 indicações |
-| +7 | Instagram | Resultado da primeira semana (só se for real) |
-| +10 | Campo | Demonstração para 3 indicados |
-| +14 | Instagram | Post: dúvidas que os donos fizeram |
-| +16 | Campo | Revisar objeções e preço |
+| +7 | Instagram | Primeira semana do piloto, só com número real e autorização escrita |
+| +10 | Campo | Demonstração para os indicados |
+| +14 | Instagram | Perguntas que os profissionais fizeram |
+| +16 | Campo | Revisar objeções e o teste de preço R$ 247 x R$ 297 |
 
-Sem novidade para postar: bastidores da configuração, pergunta da semana, antes e depois do WhatsApp (só com cliente real e autorizado).
+Sem novidade: bastidores, pergunta da semana, uma regra do produto explicada ("preço vem do seu cadastro").
 
-## Dez ganchos (cada um responde a uma objeção; só afirmar o que o produto faz)
+## Dez ganchos (cada um responde a uma objeção; só o que o produto faz)
 
-1. "Você atende. Quem responde o WhatsApp?" (perder cliente)
-2. "Cliente que manda mensagem às 21h marca com quem responde primeiro." (demora)
-3. "Seu número continua o mesmo." (trocar número)
-4. "Nada sai sem você aprovar, no começo." (medo de erro)
-5. "Preço e horário vêm do seu cadastro, não da cabeça da IA." (erro)
-6. "Funciona com o seu Google Agenda." (agenda)
-7. "Quem sumiu pode voltar: a recepção retoma a conversa." (recuperação; depende da etapa M-10 estar pronta)
-8. "Você assume a conversa com um toque." (impessoalidade)
-9. "Preço fechado no site. Sem proposta comercial." (cotação)
-10. "Sem aprender sistema novo." (esforço)
+1. "Você atende. Quem responde o WhatsApp?" (perder paciente)
+2. "Nada sai sem você aprovar. Até você querer." (confiança)
+3. "Preço e horário vêm do seu cadastro, não da cabeça da IA." (erro)
+4. "Seu número continua o mesmo." (trocar número)
+5. "Veja ela respondendo com os seus dados antes de ligar." (quero ver antes)
+6. "Você manda um áudio. A gente configura. Você aprova." (aprender sistema)
+7. "Sem taxa de implantação. 14 dias grátis." (preço)
+8. "A conta do mês, com a Meta, antes de você assinar." (custo total)
+9. "Você assume a conversa com um toque." (pacientes preferem gente)
+10. "A queixa do paciente fica só na conversa." (privacidade)
 
-## Orçamento e custo para ganhar um cliente
+## Orçamento e teto de custo por cliente
 
-Verba: **não definida** pelo dono. Sugestão como hipótese: zero verba paga até validar com indicação.
-Teto de custo por cliente (cálculo, não meta): margem bruta mensal estimada por `docs/spec/07` = mensalidade menos custo com franquia cheia: Essencial R$ 197 - R$ 34,22 = R$ 162,78; Agenda R$ 297 - R$ 50,98 = R$ 246,02 (estimativas de custo; premissas de volume são hipótese). Sem taxa de cancelamento medida, não dá para fixar um teto confiável; regra provisória: não gastar mais que a margem de 3 meses (R$ 488 no Essencial), marcada como suposição.
+Verba paga: **zero** até 10 pagantes (suposição conservadora; o dono não definiu verba). Teto calculado, não meta: contribuição de R$ 227,70 por cliente-mês (CFO) × 3 meses = **R$ 683** por cliente conquistado, enquanto não houver taxa de cancelamento medida.
 
 ## Três números por semana
 
-1. Conversas de campo e demonstrações marcadas. 2. Pilotos ativados e pagantes. 3. Indicações recebidas por piloto ativo. Gatilho para mudar algo: duas semanas seguidas sem nenhuma demonstração marcada. (Limiar sugerido, a ajustar.)
+1. Demonstrações feitas. 2. Testes com WhatsApp conectado. 3. Testes que viram pagantes no dia 15. Gatilho: duas semanas sem demonstração, ou 5 testes seguidos sem pagante, mudar a oferta ou o segmento.
 
 ## Regras
 
-Sem depoimento, antes e depois ou número de cliente que não exista. Sem prometer "mais clientes" ou faturamento. Sem alegar ser pessoa. Saúde: sem promessa de resultado clínico. Parcerias pagas: avisar. Não é parecer jurídico.
+Sem depoimento, número, logotipo ou "antes e depois" que não exista. Frases do painel são pesquisa simulada, nunca citação de cliente. Sem prometer mais pacientes ou faturamento. Sem alegar ser pessoa. Saúde: sem promessa de resultado clínico. Parceria paga: avisar. Não é parecer jurídico.

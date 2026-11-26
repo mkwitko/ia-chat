@@ -1,0 +1,13 @@
+{
+  "id": "P002",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Eu já respondo o WhatsApp no celular entre um atendimento e outro e dou conta. Não confio que uma IA fale com meus pacientes sem eu ver o que ela escreveu, e já pago um sistema de agenda, então não sei o que isso acrescenta.",
+  "objection": "Ninguém usa ainda; quem garante que funciona? Se a IA errar um horário ou um preço na frente de um paciente, quem paga o mico sou eu.",
+  "would_change_my_mind": "Ver outro autônomo de saúde, da minha área, usando por dois meses e dizendo que perdeu menos pacientes e que não precisou ajustar nada depois.",
+  "price_too_cheap": 60,
+  "price_cheap": 120,
+  "price_expensive": 180,
+  "price_too_expensive": 200
+}

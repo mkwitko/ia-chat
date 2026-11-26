@@ -2,10 +2,15 @@
 import Base from '../layouts/Base.astro';
 import PlansTable from '../components/PlansTable.astro';
 import Waitlist from '../components/Waitlist.astro';
-import { PLANS, WARNING_PERCENT } from '@app/core';
+import {
+  CLINICA_INCLUDED_PROFESSIONALS,
+  EXTRA_PROFESSIONAL,
+  PLANS,
+  WARNING_PERCENT,
+} from '@app/core';
 import { META_ESTIMATE_DATE, META_PROFILES } from '../lib/meta-estimate.ts';
 import { formatBrl, formatCount } from '../lib/money.ts';
-import { FEATURED_PLAN, SETUP_FEE_CENTS } from '../lib/plans-view.ts';
+import { FEATURED_PLAN } from '../lib/plans-view.ts';
 
 const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
 ---
@@ -43,11 +48,15 @@ const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
   </section>
 
   <section class="block prose" aria-labelledby="implantacao">
-    <h2 id="implantacao">Implantação, paga uma vez</h2>
+    <h2 id="implantacao">Configuração feita com você, sem taxa</h2>
     <p>
-      <strong class="num">{formatBrl(SETUP_FEE_CENTS)}</strong>. Deixamos o assistente pronto com
-      você: serviços, valores e horários, endereço, tom de voz, conexão do WhatsApp e da agenda
-      Google, e teste no simulador antes de atender pacientes.
+      Deixamos o assistente pronto com você: serviços, valores e horários, endereço, tom de voz,
+      conexão do WhatsApp e da agenda Google, e teste no simulador antes de atender pacientes.
+    </p>
+    <p>
+      O plano Clínica inclui {String(CLINICA_INCLUDED_PROFESSIONALS)} profissionais. Cada profissional
+      a mais custa <strong class="num">{formatBrl(EXTRA_PROFESSIONAL.monthlyCents)}</strong> por mês e
+      soma {formatCount(EXTRA_PROFESSIONAL.franchise)} conversas à franquia.
     </p>
   </section>
 

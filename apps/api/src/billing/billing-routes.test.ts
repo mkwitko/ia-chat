@@ -108,7 +108,9 @@ describe('subscription', () => {
     const view = (await call('GET', '/api/billing')).json<{ invoiceUrl: string }>();
     expect(view).toMatchObject({ enabled: true, subscribed: true, plan: 'agenda' });
     expect(view.invoiceUrl).toContain('fake.test');
-    expect((await call('POST', '/api/billing/subscription', { plan: 'pro' })).statusCode).toBe(409);
+    expect(
+      (await call('POST', '/api/billing/subscription', { plan: 'essencial' })).statusCode,
+    ).toBe(409);
   });
 
   it('refuses the webhook without the token', async () => {
@@ -138,9 +140,10 @@ describe('subscription', () => {
   });
 
   it('changes plan, then cancels and keeps working until the paid month ends', async () => {
-    expect((await call('PUT', '/api/billing/plan', { plan: 'pro' })).statusCode).toBe(200);
-    expect(fake.subscriptions.get(subscriptionId)?.cents).toBe(49_700);
-    expect((await row()).plan).toBe('pro');
+    expect((await call('PUT', '/api/billing/plan', { plan: 'pro' })).statusCode).toBe(400);
+    expect((await call('PUT', '/api/billing/plan', { plan: 'essencial' })).statusCode).toBe(200);
+    expect(fake.subscriptions.get(subscriptionId)?.cents).toBe(19_700);
+    expect((await row()).plan).toBe('essencial');
     expect((await call('DELETE', '/api/billing/subscription')).statusCode).toBe(200);
     expect(fake.subscriptions.get(subscriptionId)?.active).toBe(false);
     // The last paid invoice fell due on 2027-04-01: paid through 2027-05-01.

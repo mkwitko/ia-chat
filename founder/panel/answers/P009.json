@@ -1,0 +1,13 @@
+{
+  "id": "P009",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Já levei atendimento ruim de chatbot e não quero robô falando com minha cliente. Pagar R$ 497 de implantação e R$ 197 por mês sem ver funcionar com meus próprios olhos é muito para mim.",
+  "objection": "E se a IA responder errado ou inventar preço para o meu cliente?",
+  "would_change_my_mind": "Testar de graça e ver na prática que ela só responde com o preço e o horário que eu cadastrei e que nada sai sem eu aprovar.",
+  "price_too_cheap": 49,
+  "price_cheap": 97,
+  "price_expensive": 197,
+  "price_too_expensive": 247
+}

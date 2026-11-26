@@ -1,0 +1,13 @@
+{
+  "id": "P005",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Não compro uma recepcionista de robô pra falar com meus pacientes. Já tive chatbot que me deixou na mão e cliente de saúde quer falar com gente, não com máquina. Sem ver alguém usando de verdade, não arrisco R$ 497 de implantação mais mensalidade.",
+  "objection": "Quem garante que a IA não marca errado, não passa um preço errado ou não responde besteira pra um paciente, e que eu não vou ter que refazer tudo depois?",
+  "would_change_my_mind": "Ver uma clínica parecida usando por uns meses, com resultado comprovado (menos faltas ou mais horários preenchidos), e poder testar sem pagar a implantação.",
+  "price_too_cheap": 60,
+  "price_cheap": 150,
+  "price_expensive": 250,
+  "price_too_expensive": 350
+}

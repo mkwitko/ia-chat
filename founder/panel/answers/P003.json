@@ -1,0 +1,13 @@
+{
+  "id": "P003",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Ninguém da minha área me indicou isso ainda, e eu já tenho WhatsApp Business com resposta automática que cobre o básico. Pagar R$ 197 para uma IA responder pelo meu número, sem ter visto um colega usar, é um risco que não corro numa semana normal.",
+  "objection": "Medo de a IA falar besteira com paciente, marcar errado ou cobrar errado, e eu só descobrir depois que o cliente sumiu.",
+  "would_change_my_mind": "Uma colega de profissão que já usa me contar que funciona na prática e que ela não perdeu nenhum paciente com a IA respondendo.",
+  "price_too_cheap": 49,
+  "price_cheap": 99,
+  "price_expensive": 197,
+  "price_too_expensive": 250
+}
