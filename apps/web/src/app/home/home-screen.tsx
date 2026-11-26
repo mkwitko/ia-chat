@@ -40,13 +40,15 @@ function Content({ home }: Readonly<{ home: HomeView }>) {
   return (
     <div className="grid gap-x-12 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
       <div>
+        {/* Phone and tablet: the shortcuts right under the status card. */}
+        <QuickActions className="xl:hidden" />
         <AttentionSection home={home} />
         <TodaySection home={home} />
         <ToMarkSection home={home} />
         <EndingSection home={home} />
       </div>
       <div>
-        <QuickActions />
+        <QuickActions className="hidden pt-6 xl:grid" />
         <MonthSummary home={home} />
       </div>
     </div>

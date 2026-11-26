@@ -56,8 +56,7 @@ export const InboxCopy = defineMessages({
     hint: 'Aqui ficam as conversas do seu WhatsApp. As que precisam de você aparecem com o selo laranja. Toque numa conversa para ler e responder.',
     loadFailed: 'Não conseguimos carregar as conversas.',
     retry: 'Tentar de novo',
-    retryHint:
-      'Confira a internet e toque em "Tentar de novo". Se continuar, fale com a gente em Ajuda.',
+    retryHint: 'Confira a internet. Se continuar, fale com a gente em Ajuda.',
     emptyFilter: 'Nenhuma conversa neste filtro.',
     pickOne: 'Escolha uma conversa à esquerda para ler e responder.',
     unread: (count: number) =>

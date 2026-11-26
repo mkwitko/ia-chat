@@ -10,9 +10,12 @@ function Toaster(props: Readonly<ToasterProps>) {
       // Readable at arm's length: body-size text and a full-size "Desfazer" / "Tentar de novo".
       toastOptions={{
         classNames: {
-          toast: '!text-base !gap-3',
-          description: '!text-sm !text-muted-foreground',
-          actionButton: '!h-11 !rounded-lg !px-4 !text-sm !font-semibold',
+          // Text gets the full width; the action button sits on its own line under it.
+          toast: '!flex-wrap !text-base !gap-x-3 !gap-y-3',
+          content: '!flex-1 !basis-[calc(100%-2.5rem)]',
+          description: '!text-base !text-muted-foreground',
+          actionButton: '!ml-8 !h-11 !rounded-lg !px-4 !text-base !font-semibold',
+          closeButton: '!size-7',
         },
       }}
       style={

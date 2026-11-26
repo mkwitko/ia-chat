@@ -9,17 +9,22 @@ import { takeFailedChange } from './query';
 export const NotifyCopy = defineMessages({
   [Locale.ptBR]: {
     retry: 'Tentar de novo',
-    hint: 'Confira a internet e tente de novo. Se continuar, fale com a gente em Ajuda.',
+    hint: 'Confira a internet. Se continuar, fale com a gente em Ajuda.',
     saved: 'Alterações salvas.',
   },
   [Locale.enUS]: {},
 });
+
+const ERROR_MS = 10_000;
 
 /** An error toast: the message, what to do, and "Tentar de novo" when a change just failed. */
 export function notifyError(message: string, hint: string = NotifyCopy.hint) {
   const retry = takeFailedChange();
   return toast.error(message, {
     description: hint,
+    // With a retry the message stays until it is used or closed; otherwise 10 s to read it.
+    duration: retry ? Number.POSITIVE_INFINITY : ERROR_MS,
+    closeButton: true,
     ...(retry && {
       action: {
         label: NotifyCopy.retry,
