@@ -16,11 +16,10 @@ const NOT_CANCELLED = { not: AppointmentStatus.cancelled };
 export interface AgendaScope {
   timezone: string;
   cancelNoticeMinutes: number;
-  professionalId: string;
   locationId: string | null;
 }
 
-/** The tenant's agenda owner. ponytail: first professional; multi-professional arrives with the Clínica plan. */
+/** The tenant's agenda settings; a tenant without a professional has no agenda. */
 export async function loadScope(tx: Tx): Promise<AgendaScope> {
   const professional = await tx.professional.findFirst({ orderBy: { createdAt: 'asc' } });
   if (!professional) throw new AgendaFailure(AgendaError.noProfessional);
@@ -30,9 +29,24 @@ export async function loadScope(tx: Tx): Promise<AgendaScope> {
   return {
     timezone: tenant.timezone,
     cancelNoticeMinutes: tenant.cancelNoticeMinutes,
-    professionalId: professional.id,
     locationId: location?.id ?? null,
   };
+}
+
+/**
+ * H-42: the tenant's Google Calendar (E-21) is the first professional's. The others run on the
+ * panel's rules only, so their bookings neither read nor write it.
+ */
+export async function calendarFor(
+  tx: Tx,
+  { professionalId, calendar }: { professionalId: string; calendar?: CalendarLink | undefined },
+): Promise<CalendarLink | undefined> {
+  if (!calendar) return undefined;
+  const first = await tx.professional.findFirst({
+    orderBy: { createdAt: 'asc' },
+    select: { id: true },
+  });
+  return first?.id === professionalId ? calendar : undefined;
 }
 
 const minuteOf = (time: Date): number =>
@@ -45,7 +59,7 @@ export interface SlotWindow {
   from: Date;
   to: Date;
   now: Date;
-  /** The tenant's connected calendar: its busy time is subtracted (E-21). */
+  /** The tenant's connected calendar: its busy time is subtracted for its owner (E-21, H-42). */
   calendar?: CalendarLink | undefined;
 }
 
@@ -64,7 +78,9 @@ export async function slotsIn(tx: Tx, window: SlotWindow): Promise<Interval[]> {
         endsAt: { gt: from },
       },
     }),
-    externalBusyOf(calendar, { from, to: new Date(to.getTime() + longest) }),
+    calendarFor(tx, { professionalId, calendar }).then((link) =>
+      externalBusyOf(link, { from, to: new Date(to.getTime() + longest) }),
+    ),
   ]);
   return availableSlots({
     rules: rules.map(toRule),

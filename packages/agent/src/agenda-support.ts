@@ -1,12 +1,14 @@
 import { toLocalIso } from '@app/core';
 import {
   AgendaError,
-  wasOfferedBefore,
+  findProfessional,
+  offeredBefore,
   type AppointmentView,
   type CalendarResolver,
   type Db,
   type Tx,
 } from '@app/db';
+import * as z from 'zod';
 import { AgentCopy } from './copy.ts';
 import type { ToolEffects } from './shared-tools.ts';
 
@@ -46,26 +48,56 @@ export interface Gate {
   serviceId: string;
   startsAt: Date;
   confirmed: boolean;
+  /** The professional the client named, if any: the offer must have been with them. */
+  professionalId?: string | undefined;
 }
+
+export type GateResult =
+  | { ok: false; error: string }
+  | { ok: true; professionalId: string | undefined };
 
 /**
  * The code, not the model, enforces the confirmation: the patient said yes (the model's flag)
- * to a slot the assistant offered in an earlier turn. Returns the error to hand back, if any.
+ * to a slot the assistant offered in an earlier turn. On success, who serves: the named
+ * professional, else the one the slot was offered with.
  */
-export async function confirmationError(
-  context: OfferContext,
-  gate: Gate,
-): Promise<string | undefined> {
-  if (!gate.confirmed) return ToolError.notConfirmed;
-  const offered = await context.db.withTenant(context.tenantId, (tx) =>
-    wasOfferedBefore(tx, {
+export async function confirmedSlot(context: OfferContext, gate: Gate): Promise<GateResult> {
+  if (!gate.confirmed) return { ok: false, error: ToolError.notConfirmed };
+  const offer = await context.db.withTenant(context.tenantId, (tx) =>
+    offeredBefore(tx, {
       conversationId: context.conversationId,
       serviceId: gate.serviceId,
       startsAt: gate.startsAt,
       turnStartedAt: context.now,
+      professionalId: gate.professionalId,
     }),
   );
-  return offered ? undefined : ToolError.notOffered;
+  if (!offer) return { ok: false, error: ToolError.notOffered };
+  return { ok: true, professionalId: gate.professionalId ?? offer.professionalId };
+}
+
+export const professionalArg = z
+  .string()
+  .min(1)
+  .optional()
+  .describe('nome do profissional, só se o cliente pediu um');
+
+export type Wanted =
+  | { ok: true; id: string | undefined }
+  | { ok: false; refusal: { erro: string; profissionais: string[] } };
+
+/** The professional the client named; an unknown name returns the team to choose from. */
+export async function wantedProfessional(tx: Tx, name: string | undefined): Promise<Wanted> {
+  if (!name) return { ok: true, id: undefined };
+  const { found, team } = await findProfessional(tx, name);
+  if (found) return { ok: true, id: found.id };
+  return {
+    ok: false,
+    refusal: {
+      ...failure(AgendaError.professionalNotFound),
+      profissionais: team.map((one) => one.name),
+    },
+  };
 }
 
 const plain = (text: string): string =>
@@ -91,6 +123,7 @@ export function appointmentOutput(view: AppointmentView, timezone: string) {
   return {
     id: view.id,
     servico: view.serviceName,
+    ...(view.professionalName ? { profissional: view.professionalName } : {}),
     status: view.status,
     ...slotOutput({ start: view.startsAt, end: view.endsAt }, timezone),
   };

@@ -42,7 +42,7 @@ function mark(
     tx.appointment.update({
       where: { id: target.appointmentId },
       data,
-      include: { service: true },
+      include: { service: true, professional: true },
     }),
   );
 }
