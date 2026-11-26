@@ -47,3 +47,18 @@ export function validWindows(rules: readonly RuleWindow[]): boolean {
     return !(next?.weekday === rule.weekday && timeToMinute(next.start) < timeToMinute(rule.end));
   });
 }
+
+/** The window most days share (with those days), or null when there are no hours yet. */
+export function commonWindow(
+  rules: readonly RuleWindow[],
+): { window: { start: string; end: string }; days: number[] } | null {
+  const byWindow = new Map<string, number[]>();
+  for (const rule of rules) {
+    const key = `${rule.start}-${rule.end}`;
+    byWindow.set(key, [...(byWindow.get(key) ?? []), rule.weekday]);
+  }
+  const [best] = [...byWindow.entries()].toSorted((a, b) => b[1].length - a[1].length);
+  if (!best) return null;
+  const [start = '', end = ''] = best[0].split('-');
+  return { window: { start, end }, days: best[1] };
+}

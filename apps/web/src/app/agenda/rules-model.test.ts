@@ -1,5 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { applyToDays, validWindows } from './rules-model';
+import { applyToDays, commonWindow, validWindows } from './rules-model';
+
+describe('commonWindow', () => {
+  it('finds the window most days share', () => {
+    const rules = [1, 2, 3].map((weekday) => ({ weekday, start: '08:00', end: '12:00' }));
+    rules.push({ weekday: 6, start: '09:00', end: '11:00' });
+    expect(commonWindow(rules)).toEqual({
+      window: { start: '08:00', end: '12:00' },
+      days: [1, 2, 3],
+    });
+  });
+
+  it('is null without hours', () => {
+    expect(commonWindow([])).toBeNull();
+  });
+});
 
 describe('the same hours on several days', () => {
   it('replaces only the chosen days', () => {
