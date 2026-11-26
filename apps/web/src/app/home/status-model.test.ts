@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { StatusKind, topStatus, type StatusInputs } from './status-model';
+import { isUrgent, StatusKind, topStatus, type StatusInputs } from './status-model';
 
 const action = { label: 'Abrir', to: '/x' };
 const base: StatusInputs = {
@@ -41,5 +41,14 @@ describe('topStatus', () => {
 
   it('offers a tip when everything else is settled', () => {
     expect(topStatus({ ...base, tip: { title: 'Tom de voz', action } }).kind).toBe(StatusKind.tip);
+  });
+});
+
+describe('isUrgent', () => {
+  it('keeps "all fine" and tips out of the top of Início', () => {
+    expect(isUrgent(topStatus(base))).toBe(false);
+    expect(isUrgent(topStatus({ ...base, tip: { title: 'Tom de voz', action } }))).toBe(false);
+    expect(isUrgent(topStatus({ ...base, trialDaysLeft: 2 }))).toBe(true);
+    expect(isUrgent(topStatus({ ...base, problems: [{ title: 'WhatsApp', action }] }))).toBe(true);
   });
 });

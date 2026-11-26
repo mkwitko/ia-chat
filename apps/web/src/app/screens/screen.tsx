@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { useOnboarding } from '../onboarding/onboarding-api';
 import { FirstVisitHint, HelpLink, type HelpArticle } from './screen-help';
 
 export const ScreenWidth = { full: 'full', form: 'form' } as const;
@@ -13,7 +14,7 @@ interface ScreenProps {
   className?: string;
   /** The help article behind the "?" next to the title. */
   help?: HelpArticle;
-  /** Shown once, on the first visit to this screen. */
+  /** Shown once, on the first visit to this screen after the setup is done. */
   hint?: string;
   /** The screen's one main action, at the right of the title. */
   action?: ReactNode;
@@ -22,6 +23,8 @@ interface ScreenProps {
 /** Screen frame: title, help, and content across the whole work area, fluid side padding. */
 export function Screen(props: Readonly<ScreenProps>) {
   const { title, children, width = ScreenWidth.full, className, help, hint, action } = props;
+  // During setup the first screen already holds the next step: the tips wait until it is done.
+  const setupDone = useOnboarding().data?.current === null;
   return (
     <section
       className={cn(
@@ -39,7 +42,7 @@ export function Screen(props: Readonly<ScreenProps>) {
           </div>
         )}
       </div>
-      {hint && help && <FirstVisitHint id={help} text={hint} />}
+      {hint && help && setupDone && <FirstVisitHint id={help} text={hint} />}
       {children}
     </section>
   );

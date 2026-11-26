@@ -56,3 +56,9 @@ export function topStatus(inputs: StatusInputs): TopStatus {
   if (inputs.tip) return { kind: StatusKind.tip, ...inputs.tip };
   return { kind: StatusKind.ok };
 }
+
+/** What cannot wait goes above "Precisa de você"; an "all fine" or a tip waits at the bottom. */
+export const isUrgent = (status: TopStatus): boolean =>
+  status.kind === StatusKind.problem ||
+  status.kind === StatusKind.setup ||
+  status.kind === StatusKind.trialEnding;

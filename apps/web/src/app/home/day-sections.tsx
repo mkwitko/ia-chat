@@ -1,12 +1,7 @@
-import { CalendarPlus, Sparkles } from 'lucide-react';
 import { Link } from 'react-router';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { formatCents } from '@/lib/money';
 import { Route } from '@/routes';
 import { timeLabel } from '../agenda/agenda-dates';
 import { AppointmentStatusLabel } from '../customers/customers-labels';
-import { moneyOf, Shown } from '../results/results-model';
 import { CardList, Note, Section } from '../screens/section';
 import { ROW_LINK } from './attention-section';
 import { HomeCopy as Copy } from './home-copy';
@@ -47,44 +42,14 @@ export function TodaySection({ home }: Readonly<{ home: HomeView }>) {
   );
 }
 
-const QUICK = [
-  { to: NEW_BOOKING_PATH, label: Copy.quick.newBooking, icon: CalendarPlus },
-  { to: Route.simulator, label: Copy.quick.tryAssistant, icon: Sparkles },
-] as const;
-
-/** Three shortcuts to what is done most often from Início. */
-export function QuickActions({ className }: Readonly<{ className?: string }>) {
+/** Início's one way to the rest of the month (Resultados). */
+export function ResultsLink() {
   return (
-    <nav
-      aria-label={Copy.quick.label}
-      className={cn('grid gap-2 px-4 sm:grid-cols-2 md:px-0 xl:grid-cols-1', className)}
+    <Link
+      to={Route.results}
+      className="mx-4 mt-6 flex min-h-11 w-fit items-center gap-1 font-semibold underline underline-offset-4 md:mx-0"
     >
-      {QUICK.map(({ to, label, icon: Icon }) => (
-        <Button key={to} asChild variant="outline" className="justify-start">
-          <Link to={to}>
-            <Icon className="size-5" strokeWidth={1.75} aria-hidden="true" />
-            {label}
-          </Link>
-        </Button>
-      ))}
-    </nav>
-  );
-}
-
-/** The month in one sentence, with the way to the full numbers. */
-export function MonthSummary({ home }: Readonly<{ home: HomeView }>) {
-  const { recovered, month } = home;
-  const money = moneyOf(recovered.count, recovered.valueCents, recovered.minSample);
-  return (
-    <Section title={Copy.monthHeading}>
-      <Note>{Copy.month(month.contacts, month.booked)}</Note>
-      {money.kind === Shown.ok && <Note>{Copy.recovered(formatCents(money.cents))}</Note>}
-      <Link
-        to={Route.results}
-        className="flex min-h-11 w-fit items-center px-4 font-semibold underline underline-offset-4 md:px-0"
-      >
-        {Copy.seeResults}
-      </Link>
-    </Section>
+      {Copy.seeResults}
+    </Link>
   );
 }

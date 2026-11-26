@@ -28,7 +28,7 @@ Barra inferior no celular, lateral no computador. Cinco itens (a versão enxuta 
 
 Decisão (25/11/2026): não há aba "Resultados". Os números do piloto ficam numa seção "Resultados do mês" (`/resultados`), aberta pelo botão "Ver resultados" no Início, para não passar de cinco itens e não virar painel de métricas. "Mais" continua com o nome e os itens de configuração que já tinha.
 
-Volta à configuração (decisão do dono, 25/11/2026): enquanto a configuração guiada tiver passo pendente, "Primeiros passos · X de N" com barra de progresso fica no topo da lateral (computador), numa faixa fina sob os alertas (celular) e como primeira linha de Mais; o Início mostra "Próximo passo" com o passo atual e um botão. Tudo some quando a configuração termina. O cartão e a faixa saem de Meu consultório, que mostra a sua própria contagem ("Faltam N itens"), para não haver dois números diferentes na mesma tela. `/configuracao` não é aba: o item ativo é Mais.
+Volta à configuração (decisão do dono, 25/11/2026): enquanto a configuração guiada tiver passo pendente, "Primeiros passos · X de N" com barra de progresso fica no topo da lateral (computador), como primeira linha de Mais (a faixa fina do celular saiu na rodada 3, 26/11/2026: lotava a primeira tela de toda página); o Início mostra "Próximo passo" com o passo atual e um botão. Tudo some quando a configuração termina. O cartão e a faixa saem de Meu consultório, que mostra a sua própria contagem ("Faltam N itens"), para não haver dois números diferentes na mesma tela. `/configuracao` não é aba: o item ativo é Mais.
 
 Lateral no computador (decisão do dono, 26/11/2026): nome do consultório, o cartão de configuração (quando pendente), Início, Conversas, Agenda, Clientes e o grupo recolhível **Configurações** no lugar de Mais. O grupo abre sozinho quando uma página de ajuste está ativa. No rodapé, a situação do atendimento em palavras, "Aparência" e Sair. No celular, Mais abre a mesma lista.
 
@@ -38,9 +38,9 @@ Atalhos de teclado (computador, 26/11/2026): "/" procura um cliente, "n" abre um
 
 Textos e idioma (decisão do dono, 26/11/2026): todo texto do painel mora em recursos por idioma (`defineMessages` em `apps/web/src/i18n`), com pt-BR como padrão e en-US como esqueleto que cai no pt-BR chave a chave. Dicionário tipado próprio, sem biblioteca: as mensagens já eram objetos e funções (plurais, valores), o compilador confere cada chave, e nenhuma dependência resolve isso em menos linhas. Datas, números e dinheiro sempre por `Intl` com o idioma ativo. A escolha do idioma (`ca-locale` no navegador) é lida ao abrir; ainda não há seletor na tela (só pt-BR é produto).
 
-Ajuda na tela (26/11/2026): cada tela do dia a dia tem um "?" ao lado do título que abre o artigo da Central de ajuda sobre ela, e uma dica curta na primeira visita, que some com "Entendi" (guardada no navegador).
+Ajuda na tela (26/11/2026): cada tela do dia a dia tem um "?" ao lado do título que abre o artigo da Central de ajuda sobre ela, e uma dica curta na primeira visita, que some com "Entendi" (guardada no navegador). Rodada 3: a dica só aparece depois que a configuração termina; antes, a primeira tela já tem o próximo passo.
 
-Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento (no máximo uma faixa por vez; com alerta, a faixa "Primeiros passos" do celular espera): WhatsApp desconectado, Google expirado, pagamento da Meta ausente, assinatura vencida, franquia estourada. Cada alerta tem um botão que leva à correção.
+Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento (no máximo uma faixa por vez): WhatsApp desconectado, Google expirado, pagamento da Meta ausente, assinatura vencida, franquia estourada. Cada alerta tem um botão que leva à correção.
 
 ## Telas
 
@@ -82,12 +82,13 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento (no má
 
 Substitui o antigo "Hoje" (`/inicio`; `/hoje` redireciona). Redesenho de 26/11/2026 (dono: "uma tarefa por tela", usuário extremamente leigo): uma área de situação, depois uma lista do que fazer.
 
-- **Quadro de situação** (um só, no topo): mostra a coisa mais importante agora, com um botão. Ordem: o que impede o atendimento (teste terminado, WhatsApp desconectado, Google expirado, notificações desligadas) em vermelho; senão o próximo passo da configuração com a barra; senão o fim do teste nos últimos 3 dias; senão uma sugestão de melhoria (uma por vez, no lugar da antiga lista "Para deixar o assistente ainda melhor"); senão "Tudo funcionando". Embaixo, sempre, a situação em palavras: assistente, WhatsApp e dias de teste. No Início a faixa de alerta do topo não aparece, porque o quadro já mostra o mesmo alerta; a faixa de teste ativo saiu de todas as telas (a contagem mora no quadro e no rodapé da lateral).
-- **Precisa de você**: conversas aguardando, respostas para aprovar (sem repetir as que já aparecem como conversa), atendimentos das próximas 48 h sem confirmação, perguntas que o assistente não soube e quem conversou e não agendou e pode ser retomado (link para Clientes; nenhuma mensagem sai sozinha daqui). Depois, "Veio ou faltou?" (atendimentos que já passaram, com os dois botões ali mesmo) e "Pacotes no fim" (H-43). Item vazio some; sem nada, "Nada esperando por você agora".
+Rodada 3 (26/11/2026, celular cheio demais): o quadro só fica no topo quando algo não pode esperar (problema, configuração pendente, fim do teste); "Tudo funcionando" e a sugestão descem para o fim (no computador, a coluna da direita, sob Hoje). Saíram os atalhos e o "Este mês": o Início termina com um link só, "Ver como foi o mês" (Resultados). "Pacotes no fim" virou uma linha de Precisa de você ("N clientes com o pacote no fim", abre o cliente ou a lista).
+
+- **Quadro de situação** (um só): mostra a coisa mais importante agora, com um botão. Ordem: o que impede o atendimento (teste terminado, WhatsApp desconectado, Google expirado, notificações desligadas) em vermelho; senão o próximo passo da configuração com a barra; senão o fim do teste nos últimos 3 dias; senão uma sugestão de melhoria (uma por vez, no lugar da antiga lista "Para deixar o assistente ainda melhor"); senão "Tudo funcionando". Embaixo, sempre, a situação em palavras: assistente, WhatsApp e dias de teste. No Início a faixa de alerta do topo não aparece, porque o quadro já mostra o mesmo alerta; a faixa de teste ativo saiu de todas as telas (a contagem mora no quadro e no rodapé da lateral).
+- **Precisa de você**: conversas aguardando, respostas para aprovar (sem repetir as que já aparecem como conversa), atendimentos das próximas 48 h sem confirmação, perguntas que o assistente não soube e quem conversou e não agendou e pode ser retomado (link para Clientes; nenhuma mensagem sai sozinha daqui). e os clientes com o pacote no fim (H-43). Depois, "Veio ou faltou?" (atendimentos que já passaram, com os dois botões ali mesmo). Item vazio some; sem nada, "Nada esperando por você agora".
 - **Hoje**: os atendimentos do dia.
 - **Primeiro atendimento do assistente**: na primeira vez que alguém marcado pelo assistente comparece, um cartão jade com o visto que entra uma vez ("O assistente marcou um atendimento sozinho, e a pessoa veio.") e "Que bom!"; aparece uma vez por navegador.
-- **Atalhos**: Novo agendamento (`/agenda?novo=1` abre o formulário), Ver conversas, Testar o assistente.
-- **Este mês**: uma frase (contatos e agendamentos; o valor recuperado, H-41, quando há amostra) e "Ver resultados". Os números completos e "Como calculamos" ficam em Resultados.
+- **Ver como foi o mês**: o único link para os números (Resultados). Novo agendamento fica na Agenda e na tecla "n"; testar o assistente, em Mais › Assistente.
 
 ### Clientes
 

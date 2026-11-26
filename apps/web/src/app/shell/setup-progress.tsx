@@ -1,6 +1,5 @@
 import { Locale } from '@/i18n/locale';
 import { defineMessages } from '@/i18n/messages';
-import { ChevronRight } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router';
 import { cn } from '@/lib/utils';
 import { Route } from '@/routes';
@@ -25,7 +24,7 @@ export function useSetupProgress(): SetupProgress | null {
   return data ? progressOf(data, (step) => STEP_INFO[step].title) : null;
 }
 
-/** The card and the strip step aside where the page already shows the setup (wizard, Início, the settings pages). */
+/** The sidebar card steps aside where the page already shows the setup (wizard, Início, the settings pages). */
 function useShownProgress(): SetupProgress | null {
   const progress = useSetupProgress();
   const { pathname } = useLocation();
@@ -52,28 +51,6 @@ export function SetupProgressCard() {
       <span className="text-xs font-semibold">{label}</span>
       <ProgressBar value={progress.done} total={progress.total} label={label} />
       <span className="truncate text-xs text-muted-foreground">{progress.currentTitle}</span>
-    </NavLink>
-  );
-}
-
-/** Phone: a thin strip under the alerts while setup is unfinished. */
-export function SetupStrip() {
-  const progress = useShownProgress();
-  if (!progress) return null;
-  const label = SetupCopy.label(progress.done, progress.total);
-  return (
-    <NavLink
-      to={Route.onboarding}
-      className="flex min-h-11 items-center gap-3 border-b bg-card px-4 md:hidden"
-    >
-      <span className="shrink-0 text-xs font-semibold">{label}</span>
-      <ProgressBar
-        value={progress.done}
-        total={progress.total}
-        label={label}
-        className="min-w-0 flex-1"
-      />
-      <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
     </NavLink>
   );
 }
