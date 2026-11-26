@@ -26,7 +26,7 @@ export function TextField({
   ...rest
 }: Readonly<FieldProps & InputProps>) {
   return (
-    <div className="grid gap-2">
+    <div className="grid max-w-2xl gap-2">
       <Label htmlFor={id}>{label}</Label>
       <Input
         id={id}
@@ -55,7 +55,7 @@ export function AreaField({
   ...rest
 }: Readonly<FieldProps & AreaProps>) {
   return (
-    <div className="grid gap-2">
+    <div className="grid max-w-2xl gap-2">
       <Label htmlFor={id}>{label}</Label>
       <Textarea
         id={id}

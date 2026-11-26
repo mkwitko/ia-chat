@@ -2,6 +2,8 @@ import { InviteState, NodeEnv } from '@app/core';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { AUTH_BASE_PATH } from '../auth/auth.ts';
+import type { EmailSender } from '../email/outbox.ts';
+import { onboardingInviteEmail } from '../email/templates.ts';
 import type { ApiEnv } from '../env.ts';
 import { ErrorCode, HttpStatus } from '../http.ts';
 import { requireOperator } from '../operator/operator-guard.ts';
@@ -12,6 +14,7 @@ import {
   publicInvite,
   resendInvite,
   type InviteChange,
+  type InviteView,
 } from './invite-store.ts';
 import { INVITE_COOKIE } from './signup-gate.ts';
 
@@ -29,6 +32,7 @@ const LogEvent = {
   created: 'invite.created',
   resent: 'invite.resent',
   cancelled: 'invite.cancelled',
+  emailFailed: 'invite.email_failed',
 } as const;
 
 const createBody = z
@@ -44,6 +48,7 @@ export interface InviteRouteConfig {
   /** Panel origin: the link is `${webOrigin}/convite/${token}`. */
   webOrigin: string;
   secureCookie: boolean;
+  email: EmailSender;
 }
 
 declare module 'fastify' {
@@ -55,9 +60,10 @@ declare module 'fastify' {
 export function registerInviteRoutes(
   app: FastifyInstance,
   env: Pick<ApiEnv, 'WEB_ORIGIN' | 'NODE_ENV'>,
+  email: EmailSender,
 ): void {
   const secureCookie = env.NODE_ENV === NodeEnv.production;
-  app.decorate('invites', { webOrigin: env.WEB_ORIGIN, secureCookie });
+  app.decorate('invites', { webOrigin: env.WEB_ORIGIN, secureCookie, email });
   const preHandler = requireOperator;
   app.get(OPERATOR_PATH, { preHandler }, (request) => listInvites(request.server.db, new Date()));
   app.post(OPERATOR_PATH, { preHandler }, create);
@@ -89,7 +95,26 @@ async function create(request: FastifyRequest, reply: FastifyReply) {
     now: new Date(),
   });
   request.log.info({ inviteId: invite.id, operatorId: operatorId(request) }, LogEvent.created);
-  return reply.code(HttpStatus.created).send({ invite, link: linkFor(request, token) });
+  const link = linkFor(request, token);
+  const emailed = await emailLink(request, invite, link);
+  return reply.code(HttpStatus.created).send({ invite, link, emailed });
+}
+
+/** Sends the link to the invite's address, when it has one. A failure leaves "Copiar link". */
+async function emailLink(request: FastifyRequest, invite: InviteView, url: string) {
+  if (!invite.email) return false;
+  const message = onboardingInviteEmail({
+    to: invite.email,
+    url,
+    practiceName: invite.practiceName,
+  });
+  try {
+    await request.server.invites.email.send(message);
+    return true;
+  } catch (error) {
+    request.log.warn({ inviteId: invite.id, err: error }, LogEvent.emailFailed);
+    return false;
+  }
 }
 
 async function change(request: FastifyRequest, reply: FastifyReply, event: string) {
@@ -109,7 +134,8 @@ async function change(request: FastifyRequest, reply: FastifyReply, event: strin
   if (!result) return reply.code(HttpStatus.conflict).send({ error: ErrorCode.inviteClosed });
   request.log.info({ inviteId: input.id, operatorId: input.operatorId }, event);
   const link = result.token ? linkFor(request, result.token) : null;
-  return { invite: result.invite, link };
+  const emailed = link ? await emailLink(request, result.invite, link) : false;
+  return { invite: result.invite, link, emailed };
 }
 
 /** The invite page: state and practice name; a pending link also arms the sign-up cookie. */
