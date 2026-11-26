@@ -29,6 +29,7 @@ import { registerTeamInviteRoutes } from './team/team-invite-routes.ts';
 import { registerOnboardingRoutes } from './onboarding/onboarding-routes.ts';
 import { registerPrefillRoutes } from './onboarding/prefill/prefill-routes.ts';
 import { fetchPage, type PageFetcher } from './onboarding/prefill/safe-fetch.ts';
+import { registerSupportRoutes } from './support/support-routes.ts';
 import { registerTrialRoutes } from './trial/trial-routes.ts';
 import { registerKnowledgeRoutes } from './setup/knowledge-routes.ts';
 import { registerUnansweredRoutes } from './setup/unanswered-routes.ts';
@@ -118,6 +119,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
   }
   registerBillingWebhook(app, env.ASAAS_WEBHOOK_TOKEN);
   registerBillingRoutes(app, deps.billing);
+  registerSupportRoutes(app, { whatsapp: env.SUPPORT_WHATSAPP, email: env.SUPPORT_EMAIL });
   registerWhatsappSignupRoutes(app, { config: whatsappSignupConfig(env), fetch: deps.metaFetch });
   return app;
 }

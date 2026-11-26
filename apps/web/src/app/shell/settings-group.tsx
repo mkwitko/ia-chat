@@ -1,8 +1,7 @@
-import { ChevronDown, ExternalLink, Settings } from 'lucide-react';
+import { ChevronDown, Settings } from 'lucide-react';
 import { useId, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { MoreCopy, NavCopy } from '@/copy';
-import { HELP_URL } from '@/lib/config';
 import { cn } from '@/lib/utils';
 import { Route } from '@/routes';
 import type { MoreRow } from '../screens/more-item-link';
@@ -74,15 +73,6 @@ export function SettingsGroup() {
 }
 
 function SettingsLink({ row }: Readonly<{ row: MoreRow }>) {
-  if (row.helpLink) {
-    if (!HELP_URL) return null;
-    return (
-      <a href={HELP_URL} target="_blank" rel="noreferrer" className={ROW}>
-        <span className="flex-1">{row.label}</span>
-        <ExternalLink className="size-3.5" aria-hidden="true" />
-      </a>
-    );
-  }
   if (!row.to) return null;
   return (
     <NavLink
