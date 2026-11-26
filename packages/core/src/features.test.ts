@@ -15,21 +15,22 @@ describe('features (H-51)', () => {
   });
 
   it('is on by default when the plan includes it', () => {
-    expect(stateOf(PlanId.agenda, Feature.ocrIdCard)).toMatchObject({
+    expect(planIncludes(PlanId.agenda, Feature.ocrIdCard)).toBe(false);
+    expect(stateOf(PlanId.pro, Feature.ocrIdCard)).toMatchObject({
       included: true,
       enabled: true,
     });
   });
 
   it('keeps the exam summary off until the owner turns it on (health data)', () => {
-    expect(stateOf(PlanId.agenda, Feature.ocrMedicalRequest)?.enabled).toBe(false);
+    expect(stateOf(PlanId.pro, Feature.ocrMedicalRequest)?.enabled).toBe(false);
     const on = { [Feature.ocrMedicalRequest]: true };
-    expect(stateOf(PlanId.agenda, Feature.ocrMedicalRequest, on)?.enabled).toBe(true);
+    expect(stateOf(PlanId.pro, Feature.ocrMedicalRequest, on)?.enabled).toBe(true);
   });
 
   it('follows the owner when included', () => {
     const off = { [Feature.ocrIdCard]: false };
-    expect(stateOf(PlanId.agenda, Feature.ocrIdCard, off)?.enabled).toBe(false);
+    expect(stateOf(PlanId.pro, Feature.ocrIdCard, off)?.enabled).toBe(false);
   });
 
   it('is never on outside the plan, whatever was saved, and says which plan has it', () => {

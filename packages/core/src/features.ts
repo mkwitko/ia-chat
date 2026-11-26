@@ -2,7 +2,8 @@ import { PlanId } from './plans.ts';
 
 // Recursos (owner decision, 26/11/2026; spec 01 "Recursos", H-51): features the owner turns on
 // and off. A feature outside the tenant's plan is never on. Inside it, it is on unless the owner
-// turned it off (or it is off by default). The panel, the API and the worker read this catalog; nothing else decides.
+// turned it off (or it is off by default). The panel, the API and the worker read this
+// catalog; nothing else decides.
 
 export const Feature = {
   audioTranscription: 'audio_transcription',
@@ -18,8 +19,8 @@ export const FEATURE_PLAN = {
   [Feature.audioTranscription]: PlanId.essencial,
   [Feature.pixDeposit]: PlanId.agenda,
   [Feature.ocrPixReceipt]: PlanId.agenda,
-  [Feature.ocrIdCard]: PlanId.agenda,
-  [Feature.ocrMedicalRequest]: PlanId.agenda,
+  [Feature.ocrIdCard]: PlanId.pro,
+  [Feature.ocrMedicalRequest]: PlanId.pro,
 } as const satisfies Record<Feature, PlanId>;
 
 /**

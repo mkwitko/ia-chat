@@ -65,7 +65,7 @@ describe('features API', () => {
   });
 
   it('turns an included feature off and on, with audit', async () => {
-    await setPlan(Plan.agenda);
+    await setPlan(Plan.pro);
     const off = await call('PUT', { features: { [Feature.ocrIdCard]: false } });
     expect(off.statusCode).toBe(200);
     expect(stateOf(off.json<View>(), Feature.ocrIdCard)?.enabled).toBe(false);
@@ -89,7 +89,7 @@ describe('features API', () => {
   });
 
   it('does not leak one tenant choices into another', async () => {
-    await setPlan(Plan.agenda);
+    await setPlan(Plan.pro);
     await call('PUT', { features: { [Feature.ocrMedicalRequest]: true } });
     const rows = await ctx.db.withTenant(tenantId, (tx) => tx.featureSetting.findMany());
     expect(rows.every((row) => row.tenantId === tenantId)).toBe(true);
