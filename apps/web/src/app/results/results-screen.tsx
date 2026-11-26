@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Route } from '@/routes';
-import { cn } from '@/lib/utils';
+import { dateFormat } from '@/i18n/locale';
 import { OriginLabel } from '../customers/customers-labels';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
+import { MoreOptions } from '../screens/editor-screen';
+import { ChoicePills } from '../screens/choice-pills';
 import { Screen } from '../screens/screen';
+import { HelpArticle } from '../screens/screen-help';
 import { CardList, Note, Section } from '../screens/section';
 import { CountMetric, DurationMetric, MetricGrid, RateMetric } from './metric';
 import { RecoveredCard, RecoveredWeeks } from './recovered';
@@ -14,7 +17,7 @@ import { ResultsCopy as Copy } from './results-copy';
 import { durationOf, rateOf } from './results-model';
 
 const PERIODS = [Period.month, Period.lastMonth, Period.last90Days] as const;
-const DATE = new Intl.DateTimeFormat('pt-BR', {
+const DATE = dateFormat({
   day: '2-digit',
   month: '2-digit',
   year: 'numeric',
@@ -25,7 +28,7 @@ export function ResultsScreen() {
   const [period, setPeriod] = useState<Period>(Period.month);
   const results = useResults(period);
   return (
-    <Screen title={Copy.title}>
+    <Screen title={Copy.title} help={HelpArticle.results} hint={Copy.hint}>
       <BackLink to={Route.home} label={Copy.back} />
       <PeriodPicker value={period} onChange={setPeriod} />
       {results.isPending && <ListSkeleton />}
@@ -42,31 +45,13 @@ function PeriodPicker({
   onChange,
 }: Readonly<{ value: Period; onChange: (period: Period) => void }>) {
   return (
-    <fieldset className="flex gap-2 overflow-x-auto [scrollbar-width:none] px-4 py-2 md:px-0">
-      <legend className="sr-only">{Copy.periodLabel}</legend>
-      {PERIODS.map((period) => (
-        <label
-          key={period}
-          className={cn(
-            'flex min-h-11 shrink-0 cursor-pointer items-center rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring',
-            value === period
-              ? 'border-primary bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground',
-          )}
-        >
-          <input
-            type="radio"
-            name="results-period"
-            className="sr-only"
-            checked={value === period}
-            onChange={() => {
-              onChange(period);
-            }}
-          />
-          {Copy.periods[period]}
-        </label>
-      ))}
-    </fieldset>
+    <ChoicePills
+      name="results-period"
+      legend={Copy.periodLabel}
+      options={PERIODS.map((period) => ({ value: period, label: Copy.periods[period] }))}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
 
@@ -76,66 +61,77 @@ function Content({ results }: Readonly<{ results: ResultsView }>) {
     <div className="pb-10">
       <Note>{since ? Copy.baseline(since) : Copy.baselineNoDate}</Note>
       <RecoveredSection results={results} />
-      <Section title={Copy.conversations.title}>
+      <Section title={Copy.mainTitle}>
         <MetricGrid>
           <CountMetric {...Copy.conversations} count={results.conversations} />
-          <CountMetric {...Copy.newContacts} count={results.newContacts} />
+          <CountMetric {...Copy.booked} count={results.appointments.booked} />
+          <NoShowMetric results={results} />
           <ResponseMetrics results={results} />
         </MetricGrid>
       </Section>
-      <Section title={Copy.booked.title}>
-        <MetricGrid>
-          <AgendaMetrics results={results} />
-        </MetricGrid>
-        <div className="pt-2">
+      <div className="px-4 pt-8 md:px-0">
+        <MoreOptions label={Copy.allNumbers}>
+          <RecoveredWeeks
+            weeks={results.recoveredMoney.weeks}
+            withMoney={results.recoveredMoney.count >= results.minSample}
+          />
+          <MetricGrid>
+            <CountMetric {...Copy.newContacts} count={results.newContacts} />
+            <RateMetric
+              {...Copy.escalation}
+              rate={rateOf(
+                results.escalation.handedOff,
+                results.escalation.total,
+                results.minSample,
+              )}
+            />
+            <AgendaMetrics results={results} />
+          </MetricGrid>
           <Note>{Copy.requestsNote}</Note>
-        </div>
-      </Section>
-      <OriginSection results={results} />
+          <OriginSection results={results} />
+        </MoreOptions>
+      </div>
     </div>
   );
 }
 
 function RecoveredSection({ results }: Readonly<{ results: ResultsView }>) {
-  const { weeks, ...totals } = results.recoveredMoney;
-  const figure = { ...totals, minSample: results.minSample };
+  const { count, valueCents, afterHours } = results.recoveredMoney;
+  const figure = { count, valueCents, afterHours, minSample: results.minSample };
   return (
     <div className="pt-4">
       <RecoveredCard title={RecoveredCopy.resultsTitle} figure={figure} />
-      <RecoveredWeeks weeks={weeks} withMoney={totals.count >= results.minSample} />
     </div>
   );
 }
 
 function ResponseMetrics({ results }: Readonly<{ results: ResultsView }>) {
-  const { minSample, firstResponse, escalation } = results;
+  const { minSample, firstResponse } = results;
   return (
-    <>
-      <DurationMetric
-        {...Copy.firstResponse}
-        duration={durationOf(firstResponse.medianSeconds, firstResponse.sample, minSample)}
-        sampleNote={Copy.firstResponse.sample}
-      />
-      <RateMetric
-        {...Copy.escalation}
-        rate={rateOf(escalation.handedOff, escalation.total, minSample)}
-      />
-    </>
+    <DurationMetric
+      {...Copy.firstResponse}
+      duration={durationOf(firstResponse.medianSeconds, firstResponse.sample, minSample)}
+      sampleNote={Copy.firstResponse.sample}
+    />
+  );
+}
+
+function NoShowMetric({ results }: Readonly<{ results: ResultsView }>) {
+  const { attended, noShow, unmarked } = results.attendance;
+  return (
+    <RateMetric
+      {...Copy.noShow}
+      rate={rateOf(noShow, attended + noShow, results.minSample)}
+      detail={Copy.noShow.unmarked(unmarked)}
+    />
   );
 }
 
 function AgendaMetrics({ results }: Readonly<{ results: ResultsView }>) {
-  const { attended, noShow, unmarked } = results.attendance;
   return (
     <>
-      <CountMetric {...Copy.booked} count={results.appointments.booked} />
       <CountMetric {...Copy.rescheduled} count={results.appointments.rescheduled} />
       <CountMetric {...Copy.cancelled} count={results.appointments.cancelled} />
-      <RateMetric
-        {...Copy.noShow}
-        rate={rateOf(noShow, attended + noShow, results.minSample)}
-        detail={Copy.noShow.unmarked(unmarked)}
-      />
       <CountMetric {...Copy.recovered} count={results.recovered} />
       <CountMetric {...Copy.repeatBookings} count={results.repeatBookings} />
     </>

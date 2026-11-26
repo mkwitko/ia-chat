@@ -34,10 +34,10 @@ export function Metric({ title, value, formula, detail, missing }: Readonly<Metr
   );
 }
 
-/** Hairline grid of metrics: one column on the phone, up to three on the computer. */
+/** Hairline grid of metrics: one column on the phone, two from sm. */
 export function MetricGrid({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ul className="grid overflow-hidden border-y bg-card sm:grid-cols-2 md:rounded-xl md:border md:shadow-card xl:grid-cols-3">
+    <ul className="grid overflow-hidden border-y bg-card sm:grid-cols-2 md:rounded-xl md:border md:shadow-card">
       {children}
     </ul>
   );

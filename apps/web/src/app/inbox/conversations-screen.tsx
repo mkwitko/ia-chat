@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { EmptyCopy, NavCopy } from '@/copy';
-import { cn } from '@/lib/utils';
+import { useNavigate, useParams } from 'react-router';
+import { Shortcut, useShortcut } from '@/lib/shortcuts';
+import { conversationPath } from '@/routes';
 import { EmptyState, GhostRows } from '../screens/empty-state';
 import { SimulatorLink } from '../simulator/simulator-link';
+import { ChoicePills } from '../screens/choice-pills';
 import { Screen } from '../screens/screen';
 import { HelpArticle } from '../screens/screen-help';
 import { ConversationRow } from './conversation-row';
@@ -68,38 +71,38 @@ interface FilterBarProps {
   items: readonly ConversationSummary[];
 }
 
-/** Pills that wrap (no hidden sideways scroll), each with how many conversations it holds. */
+/** Shared pills, each with how many conversations it holds. */
 function FilterBar({ value, onChange, items }: Readonly<FilterBarProps>) {
+  const options = FILTERS.map((option) => ({
+    value: option.value,
+    label: FilterCopy.count(option.label, applyFilter(items, option.value).length),
+  }));
   return (
-    <fieldset className="flex flex-wrap gap-2 px-4 py-2 md:px-0">
-      <legend className="sr-only">{FilterCopy.label}</legend>
-      {FILTERS.map((option) => (
-        <label
-          key={option.value}
-          className={cn(
-            'flex min-h-11 shrink-0 cursor-pointer items-center rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring',
-            value === option.value
-              ? 'border-primary bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground',
-          )}
-        >
-          <input
-            type="radio"
-            name="inbox-filter"
-            className="sr-only"
-            checked={value === option.value}
-            onChange={() => {
-              onChange(option.value);
-            }}
-          />
-          {FilterCopy.count(option.label, applyFilter(items, option.value).length)}
-        </label>
-      ))}
-    </fieldset>
+    <ChoicePills
+      name="inbox-filter"
+      legend={FilterCopy.label}
+      options={options}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
 
+/** "j" and "k" open the next and the previous conversation of the list on screen. */
+function useListKeys(items: readonly ConversationSummary[]) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const go = (step: number) => () => {
+    const at = items.findIndex((item) => item.id === id);
+    const next = items[Math.min(Math.max(at + step, 0), items.length - 1)];
+    if (next) void navigate(conversationPath(next.id));
+  };
+  useShortcut(Shortcut.next, go(1), items.length > 0);
+  useShortcut(Shortcut.previous, go(-1), items.length > 0);
+}
+
 function List({ items }: Readonly<{ items: readonly ConversationSummary[] }>) {
+  useListKeys(items);
   if (items.length === 0)
     return (
       <p className="px-4 py-6 text-sm text-muted-foreground md:px-0">{InboxCopy.emptyFilter}</p>

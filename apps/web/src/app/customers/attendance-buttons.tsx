@@ -1,3 +1,4 @@
+import { labelOf } from '@/i18n/messages';
 import { toast } from 'sonner';
 import { notifyError } from '@/lib/notify';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,8 @@ const OUTCOMES = [
 ] as const;
 
 function failure(error: Error): string {
-  const known = error instanceof ApiError && error.code ? Copy.attendanceErrors[error.code] : null;
+  const known =
+    error instanceof ApiError && error.code ? labelOf(Copy.attendanceErrors, error.code) : null;
   return known ?? Copy.attendanceFailed;
 }
 

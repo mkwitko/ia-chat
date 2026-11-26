@@ -39,17 +39,20 @@ export function EditorScreen({ title, intro, back, children }: Readonly<EditorSc
 }
 
 /** Progressive disclosure: the optional fields stay folded until asked for. */
-export function MoreOptions({ children }: Readonly<{ children: ReactNode }>) {
+export function MoreOptions({
+  children,
+  label = EditorCopy.moreOptions,
+}: Readonly<{ children: ReactNode; label?: string }>) {
   return (
     <details className="group rounded-xl border bg-card">
       <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 px-4 font-medium [&::-webkit-details-marker]:hidden">
-        {EditorCopy.moreOptions}
+        {label}
         <ChevronDown
           className="size-4 text-muted-foreground transition-transform group-open:rotate-180 motion-reduce:transition-none"
           aria-hidden="true"
         />
       </summary>
-      <div className="grid gap-5 border-t px-4 pt-4 pb-5">{children}</div>
+      <div className="grid gap-5 border-t pt-4 pb-5 md:px-4">{children}</div>
     </details>
   );
 }

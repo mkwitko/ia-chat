@@ -92,7 +92,7 @@ export function RecoveredWeeks({
               className="flex min-h-11 items-center justify-between gap-4 px-4 py-2"
             >
               <span>{Copy.week(row.week)}</span>
-              <span className="text-right tabular-nums">
+              <span className="text-right whitespace-nowrap tabular-nums">
                 <span className={withMoney ? 'text-muted-foreground' : 'font-semibold'}>
                   {Copy.weekCount(row.count)}
                 </span>
