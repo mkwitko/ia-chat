@@ -6,26 +6,42 @@ import { requireTenant } from '../auth/tenant-guard.ts';
 import { audit, AuditAction } from './audit.ts';
 import { parsed, tenantOf } from './guarded.ts';
 
-// M-04 (spec 11): the business profile. Name and the cancellation minutes live on the tenant;
-// the rest is one validated JSON column the assistant reads (packages with prices in cents).
+// M-04 (spec 11): the business profile. Name, the cancellation minutes and the no-show switch
+// (M-09) live on the tenant; the rest is one validated JSON column the assistant reads
+// (packages with prices in cents).
 
 const PATH = '/api/profile';
 const ENTITY = 'business_profile';
 const MAX_NAME = 120;
 const MAX_NOTICE_MINUTES = 10_080; // a week
-const SELECT = { name: true, cancelNoticeMinutes: true, businessProfile: true } as const;
+const SELECT = {
+  name: true,
+  cancelNoticeMinutes: true,
+  noShowFollowUp: true,
+  businessProfile: true,
+} as const;
 
 const bodySchema = z
   .object({
     name: z.string().trim().min(1).max(MAX_NAME),
     cancelNoticeMinutes: z.int().min(0).max(MAX_NOTICE_MINUTES),
+    /** M-09: ask the client when to reschedule after a "faltou" (absent: unchanged). */
+    noShowFollowUp: z.boolean().optional(),
     profile: businessProfileSchema,
   })
   .strict();
 
-const viewOf = (row: { name: string; cancelNoticeMinutes: number; businessProfile: unknown }) => ({
+interface ProfileRow {
+  name: string;
+  cancelNoticeMinutes: number;
+  noShowFollowUp: boolean;
+  businessProfile: unknown;
+}
+
+const viewOf = (row: ProfileRow) => ({
   name: row.name,
   cancelNoticeMinutes: row.cancelNoticeMinutes,
+  noShowFollowUp: row.noShowFollowUp,
   profile: parseBusinessProfile(row.businessProfile),
 });
 
@@ -56,6 +72,7 @@ async function saveProfile(request: FastifyRequest, reply: FastifyReply) {
       data: {
         name: body.name,
         cancelNoticeMinutes: body.cancelNoticeMinutes,
+        ...(body.noShowFollowUp === undefined ? {} : { noShowFollowUp: body.noShowFollowUp }),
         businessProfile: body.profile,
       },
       select: SELECT,

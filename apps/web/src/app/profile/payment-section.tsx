@@ -33,6 +33,12 @@ export function PaymentSection({ view, onChange }: Readonly<PaymentProps>) {
           onChange({ ...view, cancelNoticeMinutes });
         }}
       />
+      <NoShowToggle
+        checked={view.noShowFollowUp}
+        onChange={(noShowFollowUp) => {
+          onChange({ ...view, noShowFollowUp });
+        }}
+      />
       <AreaField
         id="profile-policy"
         label={Copy.policy}
@@ -113,6 +119,31 @@ export function NoticeSelect({
       </select>
       <p id="profile-notice-hint" className="text-sm text-muted-foreground">
         {Copy.noticeHint}
+      </p>
+    </div>
+  );
+}
+
+function NoShowToggle({
+  checked,
+  onChange,
+}: Readonly<{ checked: boolean; onChange: (value: boolean) => void }>) {
+  return (
+    <div className="grid gap-1">
+      <label className="flex min-h-11 items-center gap-3 text-sm font-medium">
+        <input
+          type="checkbox"
+          className="size-5 shrink-0 accent-primary"
+          aria-describedby="profile-no-show-hint"
+          checked={checked}
+          onChange={(event) => {
+            onChange(event.target.checked);
+          }}
+        />
+        {Copy.noShow}
+      </label>
+      <p id="profile-no-show-hint" className="pl-8 text-sm text-muted-foreground">
+        {Copy.noShowHint}
       </p>
     </div>
   );

@@ -24,6 +24,7 @@ import {
   availabilityTool,
 } from '@app/agent';
 import type { ToolContext } from './tools.ts';
+import { waitlistTool } from './waitlist-tool.ts';
 
 // Agenda plan tools (spec 04, "Ferramentas"; spec 05). Booking, moving and cancelling happen
 // only after the patient confirmed a slot offered in an earlier turn; the code checks it.
@@ -31,6 +32,9 @@ import type { ToolContext } from './tools.ts';
 export { AgendaToolName };
 
 const MAX_NAME_LENGTH = 80;
+/** M-09: a cancel by the client turns into a rebooking offer in the same conversation. */
+const OFFER_REBOOK =
+  'Pergunte se o cliente quer remarcar. Se quiser, use consultar_horarios e siga o fluxo de agendamento; se nenhum horário servir, ofereça a lista de espera.';
 
 const confirmed = z
   .boolean()
@@ -45,6 +49,7 @@ export function agendaTools(context: ToolContext): ToolSet {
     [AgendaToolName.cancel]: cancelTool(context),
     [AgendaToolName.confirm]: confirmTool(context),
     [AgendaToolName.list]: listTool(context),
+    [AgendaToolName.waitlist]: waitlistTool(context),
   };
 }
 
@@ -52,7 +57,7 @@ function bookTool(context: ToolContext) {
   const { db, tenantId, contactId, turnId, now } = context;
   return tool({
     description:
-      'Agenda o horário que o paciente escolheu e confirmou. O horário precisa ter sido oferecido por consultar_horarios em uma mensagem anterior.',
+      'Agenda o horário que o paciente escolheu e confirmou. O horário precisa ter sido oferecido em uma mensagem anterior (por consultar_horarios ou pelo aviso da lista de espera).',
     inputSchema: z.object({
       servico: z.string().min(1),
       inicio: instant,
@@ -148,7 +153,8 @@ function cancelTool(context: ToolContext) {
         now,
         calendar: await calendarOf(context),
       });
-      return outcome(context, result);
+      const done = outcome(context, result);
+      return result.ok ? { ...done, proximo_passo: OFFER_REBOOK } : done;
     },
   });
 }

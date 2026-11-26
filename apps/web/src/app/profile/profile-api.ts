@@ -33,6 +33,8 @@ export interface BusinessProfile {
 export interface ProfileView {
   name: string;
   cancelNoticeMinutes: number;
+  /** M-09: after a "faltou", the assistant asks the client when to reschedule. */
+  noShowFollowUp: boolean;
   profile: BusinessProfile;
 }
 

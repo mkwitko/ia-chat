@@ -30,11 +30,21 @@ export interface TimeOffItem {
   endsAt: string;
   reason: string | null;
 }
+/** M-09: a client waiting for a slot of this service to open inside the window. */
+export interface WaitlistItem {
+  id: string;
+  serviceName: string;
+  patientName: string | null;
+  patientPhone: string | null;
+  windowStart: string;
+  windowEnd: string;
+}
 export interface AgendaView {
   timezone: string;
   from: string;
   appointments: AppointmentItem[];
   timeOffs: TimeOffItem[];
+  waitlist: WaitlistItem[];
 }
 export interface Slot {
   startsAt: string;
@@ -80,6 +90,7 @@ export const Path = {
   patients: '/api/patients',
   availability: '/api/availability',
   timeOffs: '/api/time-offs',
+  waitlist: '/api/agenda/waitlist',
 } as const;
 
 export const useAgenda = (from: string | undefined, days: number) =>
@@ -158,6 +169,8 @@ export const useCreateTimeOff = () =>
   useWrite([Path.timeOffs, Path.agenda], (body: TimeOffInput) =>
     api<{ conflicts: number }>(Path.timeOffs, { method: Method.post, body }),
   );
+export const useRemoveWaitlist = () =>
+  useWrite([Path.agenda], (id: string) => api(`${Path.waitlist}/${id}`, { method: Method.delete }));
 export const useRemoveTimeOff = () =>
   useWrite([Path.timeOffs, Path.agenda], (id: string) =>
     api(`${Path.timeOffs}/${id}`, { method: Method.delete }),

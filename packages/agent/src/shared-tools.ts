@@ -17,6 +17,7 @@ export const AgendaToolName = {
   cancel: 'cancelar',
   confirm: 'confirmar_presenca',
   list: 'listar_agendamentos_do_paciente',
+  waitlist: 'entrar_lista_de_espera',
 } as const;
 
 export const OK = { ok: true } as const;
