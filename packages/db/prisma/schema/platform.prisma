@@ -15,6 +15,8 @@ model Tenant {
   nightlySummaryMinute   Int          @default(1200) @map("nightly_summary_minute")
   /// Weekly report to the owner (Monday 08:00 local, e-mail and push); counts only. Opt-out in Mais.
   weeklyReport           Boolean      @default(true) @map("weekly_report")
+  /// Round 3 (26/11/2026): when someone of the account closed Início's "first booking" card; it never shows again.
+  firstBookingSeenAt     DateTime?    @map("first_booking_seen_at") @db.Timestamptz
   /// RF-47: minutes before the appointment of each reminder; default 24 h and 2 h.
   reminderOffsetsMinutes Int[]        @default([1440, 120]) @map("reminder_offsets_minutes")
   /// M-09: after a "faltou", ask the client when to reschedule (owner's switch, off by default).
