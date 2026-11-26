@@ -5,7 +5,8 @@ import {
   dayBounds,
   loadScope,
   localDayRange,
-  slotsIn,
+  slotsAcross,
+  type CalendarLink,
   type Tx,
 } from '@app/db';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -33,7 +34,11 @@ const rangeQuery = z.object({
   from: daySchema.optional(),
   days: z.coerce.number().int().min(1).max(MAX_DAYS).default(1),
 });
-const slotsQuery = z.object({ day: daySchema, serviceId: z.uuid() });
+const slotsQuery = z.object({
+  day: daySchema,
+  serviceId: z.uuid(),
+  professionalId: z.uuid().optional(),
+});
 const patientsQuery = z.object({ q: z.string().trim().max(MAX_QUERY).default('') });
 
 export function registerAgendaViewRoutes(app: FastifyInstance): void {
@@ -65,8 +70,18 @@ function listAgenda(request: FastifyRequest, reply: FastifyReply) {
   });
 }
 
+const TIME_OFF_SELECT = {
+  id: true,
+  startsAt: true,
+  endsAt: true,
+  kind: true,
+  reason: true,
+  professionalId: true,
+} as const;
+
+/** Every professional's agenda; the panel filters by professional (spec 10, "Agenda"). */
 async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date }) {
-  const [appointments, timeOffs, waitlist] = await Promise.all([
+  const [appointments, timeOffs, waitlist, professionals] = await Promise.all([
     tx.appointment.findMany({
       where: { status: { not: AppointmentStatus.cancelled }, startsAt: { gte: start, lt: end } },
       include: { service: true, contact: true },
@@ -75,11 +90,13 @@ async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date })
     tx.timeOff.findMany({
       where: { startsAt: { lt: end }, endsAt: { gt: start } },
       orderBy: { startsAt: 'asc' },
-      select: { id: true, startsAt: true, endsAt: true, kind: true, reason: true },
+      select: TIME_OFF_SELECT,
     }),
     waitlistView(tx, { start, end }),
+    tx.professional.findMany({ orderBy: { createdAt: 'asc' }, select: { id: true, name: true } }),
   ]);
   return {
+    professionals,
     appointments: appointments.map((row) => ({
       id: row.id,
       startsAt: row.startsAt,
@@ -89,6 +106,7 @@ async function agendaBetween(tx: Tx, { start, end }: { start: Date; end: Date })
       calendarSync: row.calendarSync,
       serviceId: row.serviceId,
       serviceName: row.service.name,
+      professionalId: row.professionalId,
       patientName: row.contact.name,
       patientPhone: row.contact.phoneE164,
     })),
@@ -103,24 +121,7 @@ async function freeSlots(request: FastifyRequest, reply: FastifyReply) {
   const tenant = tenantOf(request);
   const calendar = await calendarOf(request, tenant);
   const slots = await tenant
-    .withTenant(async (tx) => {
-      if ((await tx.professional.count()) === 0) return [];
-      const scope = await loadScope(tx);
-      const service = await tx.service.findFirst({
-        where: { id: query.data.serviceId, active: true },
-      });
-      if (!service) return null;
-      const { start, end } = dayBounds(toLocalDate(query.data.day), scope.timezone);
-      const now = new Date();
-      return slotsIn(tx, {
-        ...scope,
-        durationMinutes: service.durationMinutes,
-        calendar,
-        from: start > now ? start : now,
-        to: end,
-        now,
-      });
-    })
+    .withTenant((tx) => slotsOfDay(tx, { query: query.data, calendar }))
     .catch((error: unknown) => {
       // Google could not be read: no slots are offered (A-13).
       if (error instanceof AgendaFailure) return error;
@@ -129,7 +130,37 @@ async function freeSlots(request: FastifyRequest, reply: FastifyReply) {
   if (slots instanceof AgendaFailure)
     return reply.code(HttpStatus.conflict).send({ error: slots.code });
   if (!slots) return notFound(reply);
-  return { slots: slots.map(({ start, end }) => ({ startsAt: start, endsAt: end })) };
+  return {
+    slots: slots.map((slot) => ({
+      startsAt: slot.start,
+      endsAt: slot.end,
+      professionalId: slot.professionalId,
+      professionalName: slot.professionalName,
+    })),
+  };
+}
+
+/** One day of free slots of a service, every professional who performs it (or the one asked). */
+async function slotsOfDay(
+  tx: Tx,
+  { query, calendar }: { query: z.infer<typeof slotsQuery>; calendar: CalendarLink | undefined },
+) {
+  if ((await tx.professional.count()) === 0) return [];
+  const scope = await loadScope(tx);
+  const service = await tx.service.findFirst({ where: { id: query.serviceId, active: true } });
+  if (!service) return null;
+  const { start, end } = dayBounds(toLocalDate(query.day), scope.timezone);
+  const now = new Date();
+  return slotsAcross(tx, {
+    serviceId: service.id,
+    professionalId: query.professionalId,
+    timezone: scope.timezone,
+    durationMinutes: service.durationMinutes,
+    calendar,
+    from: start > now ? start : now,
+    to: end,
+    now,
+  });
 }
 
 async function findPatients(request: FastifyRequest, reply: FastifyReply) {

@@ -10,6 +10,8 @@ export const AgendaError = {
   tooLateToCancel: 'cancelamento_fora_do_prazo',
   limitReached: 'limite_de_agendamentos',
   noProfessional: 'sem_profissional',
+  /** The named professional does not exist or does not perform the service. */
+  professionalNotFound: 'profissional_nao_encontrado',
   notMarkable: 'presenca_indisponivel',
   notStarted: 'atendimento_nao_comecou',
   /** Google Calendar could not be read: nothing is offered or booked (spec 05, A-13). */
@@ -36,6 +38,8 @@ export interface AppointmentView {
   startsAt: Date;
   endsAt: Date;
   serviceName: string;
+  /** Present when the query included the professional (assistant tools). */
+  professionalName?: string | undefined;
   status: string;
 }
 

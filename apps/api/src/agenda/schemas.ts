@@ -1,4 +1,5 @@
 import { MINUTES_PER_DAY, type LocalDate } from '@app/core';
+import type { Tx } from '@app/db';
 import * as z from 'zod';
 
 // Shared request shapes of the agenda routes (spec 05, spec 10 "Agenda").
@@ -37,4 +38,14 @@ export function minuteOfColumn(time: Date): number {
 
 export function endMinuteOfColumn(time: Date): number {
   return minuteOfColumn(time) || MINUTES_PER_DAY;
+}
+
+/** Spec 05, "Agenda por profissional": which professional's hours, blocks or slots. */
+export const professionalQuery = z.object({ professionalId: z.uuid().optional() });
+
+/** The professional asked for, else the first one (a one-professional tenant's agenda owner). */
+export function professionalOf(tx: Tx, id: string | undefined) {
+  return id
+    ? tx.professional.findUnique({ where: { id } })
+    : tx.professional.findFirst({ orderBy: { createdAt: 'asc' } });
 }

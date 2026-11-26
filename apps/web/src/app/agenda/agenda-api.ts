@@ -20,6 +20,7 @@ export interface AppointmentItem {
   calendarSync: string;
   serviceId: string;
   serviceName: string;
+  professionalId: string;
   patientName: string | null;
   patientPhone: string | null;
 }
@@ -29,6 +30,7 @@ export interface TimeOffItem {
   startsAt: string;
   endsAt: string;
   reason: string | null;
+  professionalId: string;
 }
 /** M-09: a client waiting for a slot of this service to open inside the window. */
 export interface WaitlistItem {
@@ -39,8 +41,14 @@ export interface WaitlistItem {
   windowStart: string;
   windowEnd: string;
 }
+export interface ProfessionalRef {
+  id: string;
+  name: string;
+}
 export interface AgendaView {
   timezone: string;
+  /** Oldest first; more than one turns on the filter and the labels (spec 10, "Agenda"). */
+  professionals: ProfessionalRef[];
   from: string;
   appointments: AppointmentItem[];
   timeOffs: TimeOffItem[];
@@ -49,6 +57,8 @@ export interface AgendaView {
 export interface Slot {
   startsAt: string;
   endsAt: string;
+  professionalId: string;
+  professionalName: string;
 }
 export interface Patient {
   id: string;
@@ -63,6 +73,7 @@ export interface RuleWindow {
 export interface AvailabilityView {
   timezone: string;
   nightlySummaryMinute: number;
+  professionalId: string | null;
   rules: RuleWindow[];
 }
 export interface TimeOffInput {
@@ -77,6 +88,7 @@ export type PatientChoice = { contactId: string } | { newPatient: { name: string
 export interface BookInput {
   key: string;
   serviceId: string;
+  professionalId: string;
   startsAt: string;
   patient: PatientChoice;
 }
@@ -118,16 +130,21 @@ export const usePatients = (q: string) =>
     queryFn: () => api<{ patients: Patient[] }>(`${Path.patients}?${new URLSearchParams({ q })}`),
   });
 
-export const useAvailability = () =>
+/** Without a professional: the first one's (a one-professional tenant's agenda). */
+const ofProfessional = (path: string, professionalId?: string) =>
+  professionalId ? `${path}?${new URLSearchParams({ professionalId })}` : path;
+const withProfessional = (professionalId?: string) => (professionalId ? { professionalId } : {});
+
+export const useAvailability = (professionalId?: string) =>
   useQuery({
-    queryKey: [Path.availability],
-    queryFn: () => api<AvailabilityView>(Path.availability),
+    queryKey: [Path.availability, professionalId],
+    queryFn: () => api<AvailabilityView>(ofProfessional(Path.availability, professionalId)),
   });
 
-export const useTimeOffs = () =>
+export const useTimeOffs = (professionalId?: string) =>
   useQuery({
-    queryKey: [Path.timeOffs],
-    queryFn: () => api<{ timeOffs: TimeOffItem[] }>(Path.timeOffs),
+    queryKey: [Path.timeOffs, professionalId],
+    queryFn: () => api<{ timeOffs: TimeOffItem[] }>(ofProfessional(Path.timeOffs, professionalId)),
   });
 
 /** One mutation per action; every query under the same base is reloaded after. */
@@ -157,17 +174,23 @@ export const useCancel = () =>
   );
 // The guided setup's hours step waits for a saved grid (H-39).
 const ONBOARDING = '/api/onboarding';
-export const useSaveRules = () =>
+export const useSaveRules = (professionalId?: string) =>
   useWrite([Path.availability, Path.agenda, ONBOARDING], (rules: RuleWindow[]) =>
-    api(Path.availability, { method: Method.put, body: { rules } }),
+    api(Path.availability, {
+      method: Method.put,
+      body: { rules, ...withProfessional(professionalId) },
+    }),
   );
 export const useSaveSummaryTime = () =>
   useWrite([Path.availability], (minute: number) =>
     api(Path.summary, { method: Method.put, body: { minute } }),
   );
-export const useCreateTimeOff = () =>
+export const useCreateTimeOff = (professionalId?: string) =>
   useWrite([Path.timeOffs, Path.agenda], (body: TimeOffInput) =>
-    api<{ conflicts: number }>(Path.timeOffs, { method: Method.post, body }),
+    api<{ conflicts: number }>(Path.timeOffs, {
+      method: Method.post,
+      body: { ...body, ...withProfessional(professionalId) },
+    }),
   );
 export const useRemoveWaitlist = () =>
   useWrite([Path.agenda], (id: string) => api(`${Path.waitlist}/${id}`, { method: Method.delete }));

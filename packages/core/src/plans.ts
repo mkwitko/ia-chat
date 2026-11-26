@@ -33,6 +33,19 @@ export const CLINICA_INCLUDED_PROFESSIONALS = 2;
 /** Each Clínica professional beyond the included ones adds this price and franchise. */
 export const EXTRA_PROFESSIONAL = { franchise: 250, monthlyCents: 14_700 } as const;
 
+/** One professional on every plan but Clínica, which has no ceiling (extras are billed). */
+const SINGLE_PROFESSIONAL = 1;
+
+/** Whether a tenant with `count` professionals may add one more. */
+export function canAddProfessional(plan: PlanId, count: number): boolean {
+  return plan === PlanId.clinica || count < SINGLE_PROFESSIONAL;
+}
+
+/** Clínica professionals beyond the included ones, each billed at EXTRA_PROFESSIONAL. */
+export function extraProfessionals(plan: PlanId, count: number): number {
+  return plan === PlanId.clinica ? Math.max(0, count - CLINICA_INCLUDED_PROFESSIONALS) : 0;
+}
+
 /** Share of the franchise that triggers the first warning (spec 01). */
 export const WARNING_PERCENT = 80;
 const FULL_PERCENT = 100;

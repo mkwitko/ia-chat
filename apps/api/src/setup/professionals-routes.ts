@@ -1,3 +1,4 @@
+import { canAddProfessional, PlanId } from '@app/core';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as z from 'zod';
 import { Permission } from '../auth/access.ts';
@@ -6,8 +7,8 @@ import { ErrorCode, HttpStatus } from '../http.ts';
 import { audit, AuditAction } from './audit.ts';
 import { notFound, parsed, tenantOf } from './guarded.ts';
 
-// M-04: who serves in the business. The first professional owns the agenda the assistant books;
-// the others are named to the client and handed off (docs/research/09, feature #16).
+// M-04: who serves in the business. Each professional has their own agenda (spec 05, "Agenda por
+// profissional"); how many fit depends on the plan (only Clínica has more than one).
 
 const PATH = '/api/professionals';
 const ITEM_PATH = '/api/professionals/:id';
@@ -36,6 +37,11 @@ async function addProfessional(request: FastifyRequest, reply: FastifyReply) {
   if (!input) return reply;
   const { tenant, body } = input;
   const created = await tenant.withTenant(async (tx) => {
+    const { plan } = await tx.tenant.findUniqueOrThrow({
+      where: { id: tenant.tenantId },
+      select: { plan: true },
+    });
+    if (!canAddProfessional(PlanId[plan], await tx.professional.count())) return null;
     const row = await tx.professional.create({
       data: { name: body.name, tenantId: tenant.tenantId },
       select: SELECT,
@@ -48,6 +54,7 @@ async function addProfessional(request: FastifyRequest, reply: FastifyReply) {
     });
     return row;
   });
+  if (!created) return reply.code(HttpStatus.conflict).send({ error: ErrorCode.planLimit });
   return reply.code(HttpStatus.created).send(created);
 }
 
@@ -92,9 +99,10 @@ async function removeProfessional(request: FastifyRequest, reply: FastifyReply) 
     if (!before) return notFound(reply);
     const used =
       before.id === first?.id ||
-      (await tx.appointment.count({ where: { professionalId: before.id } })) > 0 ||
-      (await tx.availabilityRule.count({ where: { professionalId: before.id } })) > 0;
+      (await tx.appointment.count({ where: { professionalId: before.id } })) > 0;
     if (used) return reply.code(HttpStatus.conflict).send({ error: ErrorCode.inUse });
+    // Their hours, blocks and services go with them; the service links cascade.
+    await tx.availabilityRule.deleteMany({ where: { professionalId: before.id } });
     await tx.timeOff.deleteMany({ where: { professionalId: before.id } });
     await tx.professional.delete({ where: { id: before.id } });
     await audit(tx, tenant, {

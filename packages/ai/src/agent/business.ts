@@ -59,10 +59,9 @@ export function businessLines(
   ].filter(Boolean);
 }
 
-// ponytail: booking stays on the first professional's agenda; routing per professional is
-// feature #16 of docs/research/09 (plano Clínica). Until then the others are handed off.
+/** Spec 05, "Agenda por profissional": each professional has an agenda; the tools pick it. */
 function teamLine(team: readonly string[]): string {
-  return `Profissionais: ${team.join(LIST_JOIN)}. A agenda que você consulta e marca é a de ${team[0] ?? ''}; pedido de horário com outro profissional, passe a conversa para a equipe.`;
+  return `Profissionais: ${team.join(LIST_JOIN)}. Se o cliente pedir um profissional, passe o nome em \`profissional\` nas ferramentas de agenda; se não pedir, ofereça os horários de quem faz o serviço e diga o nome do profissional junto de cada horário.`;
 }
 
 function contactLine(business: AgentBusiness): string {

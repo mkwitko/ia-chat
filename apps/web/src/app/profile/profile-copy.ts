@@ -49,11 +49,14 @@ export const ProfileCopy = {
   main: 'Principal',
   teamHeading: 'Quem atende',
   teamIntro:
-    'O assistente apresenta todos. Por enquanto ele agenda só na agenda de quem está em primeiro; pedidos para os outros passam para você.',
+    'Cada profissional tem os próprios horários, bloqueios e serviços. O assistente marca na agenda de quem o cliente pedir, ou oferece os horários de quem faz o serviço.',
   teamName: 'Nome',
   addProfessional: 'Adicionar profissional',
-  agendaOwner: 'Agenda do assistente',
-  inUse: 'Não dá para remover: há agendamentos ou horários ligados a ele.',
+  agendaOwner: 'Usa o Google Agenda conectado',
+  hours: 'Horários e serviços',
+  inUse: 'Não dá para remover: há agendamentos ligados a este profissional, ou é o primeiro.',
+  planLimit:
+    'Seu plano inclui um profissional. Mais profissionais fazem parte do plano Clínica; fale com a gente.',
   removeConfirm: (name: string) => `Remover "${name}"?`,
   minutes: (value: number) => `${String(value)} min`,
 } as const;

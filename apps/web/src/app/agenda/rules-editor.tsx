@@ -14,11 +14,14 @@ interface EditorProps {
   /** The guided setup confirms and advances with one tap. */
   onSaved?: () => void;
   saveLabel?: string;
+  /** Whose hours; absent: the first professional's. */
+  professionalId?: string | undefined;
 }
 
-export function RulesEditor({ initial, onSaved, saveLabel }: Readonly<EditorProps>) {
-  const [rules, setRules] = useState(initial);
-  const save = useSaveRules();
+export function RulesEditor(props: Readonly<EditorProps>) {
+  const { onSaved, saveLabel } = props;
+  const [rules, setRules] = useState(props.initial);
+  const save = useSaveRules(props.professionalId);
   const valid = validWindows(rules);
   return (
     <form

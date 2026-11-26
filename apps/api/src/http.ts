@@ -41,6 +41,8 @@ export const ErrorCode = {
   whatsappTaken: 'whatsapp_taken',
   whatsappFailed: 'whatsapp_failed',
   inUse: 'in_use',
+  /** The plan has no room for another professional (founder/pricing.md). */
+  planLimit: 'plan_limit',
   prefillOff: 'prefill_off',
   prefillFailed: 'prefill_failed',
   pasteText: 'paste_text',

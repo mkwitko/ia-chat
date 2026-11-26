@@ -14,18 +14,18 @@ function periodOf(minuteOfDay: number): string {
 }
 
 /** Round-robin over (day, period) buckets, so no day or period hogs the list. */
-export function pickSpread(
-  slots: readonly Interval[],
+export function pickSpread<T extends Interval>(
+  slots: readonly T[],
   { timezone, max = MAX_OPTIONS }: { timezone: string; max?: number },
-): Interval[] {
-  const buckets = new Map<string, Interval[]>();
+): T[] {
+  const buckets = new Map<string, T[]>();
   for (const slot of slots) {
     const { year, month, day, minuteOfDay } = localParts(slot.start, timezone);
     const key = [year, month, day, periodOf(minuteOfDay)].join('-');
     buckets.set(key, [...(buckets.get(key) ?? []), slot]);
   }
   const queues = [...buckets.values()];
-  const picked: Interval[] = [];
+  const picked: T[] = [];
   for (let round = 0; picked.length < max && queues.some((q) => q.length > round); round += 1) {
     for (const queue of queues) {
       const slot = queue[round];

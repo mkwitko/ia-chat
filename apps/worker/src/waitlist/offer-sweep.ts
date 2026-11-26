@@ -98,7 +98,7 @@ async function offerOnce(tx: Tx, deps: WaitlistDeps, run: SlotRun) {
       conversationId: sent.conversationId,
       serviceId: offer.serviceId,
       now: deps.now,
-      slots: [offer.startsAt],
+      slots: [{ start: offer.startsAt }],
     });
   else
     await skipSlotOffer(tx, {
