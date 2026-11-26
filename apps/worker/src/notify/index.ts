@@ -6,6 +6,7 @@ import {
   createNotifier,
   pushEnvSchema,
   vapidFrom,
+  type Deliver,
   type Logger,
   type NotifierDeps,
   type Notifier,
@@ -51,4 +52,9 @@ export function startSummaryNotifier(setup: NotifierSetup): SummaryNotifier {
   const deliver = createDelivery(deps(setup));
   return ({ tenantId, ...summary }) =>
     deliver(tenantId, buildSummaryNotice(summary), { reason: SUMMARY_REASON });
+}
+
+/** The same delivery for any owner notice built elsewhere (the weekly report). */
+export function startDelivery(setup: NotifierSetup): Deliver {
+  return createDelivery(deps(setup));
 }

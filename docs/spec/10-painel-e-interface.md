@@ -66,6 +66,7 @@ Faixa de alerta no topo, acima de tudo, quando algo impede o atendimento: WhatsA
 
 Substitui o antigo "Hoje" (`/inicio`; `/hoje` redireciona).
 
+- **Recuperado este mês** (H-41): no topo, a soma do preço dos serviços dos atendimentos que o assistente agendou e que você marcou "Compareceu", com a contagem ao lado e "Como calculamos" num toque; abaixo de 5 atendimentos, "Ainda sem dados".
 - **O mês em quatro números**, todos contados do banco e cada um um link para onde agir: contatos no mês (Clientes), agendamentos (Agenda), aguardando retorno (Conversas) e cancelamentos (Agenda). Cancelamento conta no dia em que foi feito.
 - **O que precisa de você**: conversas aguardando, rascunhos para aprovar, perguntas que o assistente não soube, atendimentos que já passaram sem "compareceu/faltou" marcado (com os dois botões ali mesmo) e atendimentos das próximas 48 h ainda sem confirmação. Item vazio some; sem nada, "Tudo em dia".
 - **Hoje**: os atendimentos do dia.
@@ -101,6 +102,7 @@ No atendimento que já começou, o profissional marca "Compareceu" ou "Faltou" (
 | Recuperados | contatos que estavam em "Não agendou" e agendaram no período |
 | Retornos | atendimentos criados no período para quem já tinha comparecido antes |
 | Indicações | contatos criados no período com origem indicação |
+| Dinheiro recuperado (H-41) | atendimentos agendados pelo assistente, marcados "Compareceu" e com início no período, somados pelo preço do serviço; quantos foram agendados com o consultório fechado; detalhe por semana (segunda a domingo, hora local). Estimativa pela tabela de preços, não valor recebido |
 
 Aviso fixo de linha de base: os números começam na data do primeiro registro; para comparar com antes do assistente, o profissional anota hoje o que tem. Pedidos de agendamento ainda não são medidos (nada os registra).
 
@@ -160,6 +162,7 @@ Fora da navegação do cliente, em endereço e autenticação próprios: convite
 | Agendamento novo, remarcado ou cancelado | Configurável | Sim |
 | Franquia a 80% e a 100% | Sim | Faixa de alerta |
 | Agenda de amanhã | Sim, no horário configurado | Não |
+| Resumo da semana (H-41) | Sim, segunda às 8h, e e-mail ao dono; desliga em Mais > Notificações | Não |
 
 ## Processo de design
 

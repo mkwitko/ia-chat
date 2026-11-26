@@ -35,3 +35,13 @@ export function formatSeconds(seconds: number): string {
   const rest = minutes % MINUTES_PER_HOUR;
   return rest === 0 ? `${String(hours)} h` : `${String(hours)} h ${String(rest)} min`;
 }
+
+export type Money =
+  | { kind: typeof Shown.ok; count: number; cents: number }
+  | { kind: typeof Shown.insufficient; count: number };
+
+/** "Dinheiro recuperado": the sum is shown only from `minSample` attended bookings on. */
+export function moneyOf(count: number, cents: number, minSample: number): Money {
+  if (count < minSample || count === 0) return { kind: Shown.insufficient, count };
+  return { kind: Shown.ok, count, cents };
+}
