@@ -553,6 +553,11 @@ Gerador de página, Google Meu Negócio, campanhas, automações avançadas, ins
 - [x] Tela da base: grupos, aprovar, descartar, "IA sugere resposta" sob clique, com validação de valor e horário
 - [x] Contador em Início (lista) e em Mais; corrige a lista, que lia itens ativos enquanto o assistente grava inativos
 
+### SMB-06 Equipe: convite da recepção
+- [x] **(teste primeiro)** Permissões: a recepção não convida, cancela, muda função nem remove, e não vê cobrança; dono convida, reenvia, cancela, muda função e remove (`apps/api/src/team/team.test.ts`)
+- [x] Tela Mais > Equipe e página `/convite-equipe/:id` (cadastro ou login, aceite); `?next=` no login
+- [x] Item "Convidar a secretária" da lista de Início deixa de ser "em breve"
+
 ### SMB-02 Dinheiro recuperado e relatório semanal (pesquisa 09 #1 e #2)
 - [x] **(teste primeiro)** Cálculo: agendados pelo assistente, "Compareceu", preço do serviço, por semana local, com o consultório fechado (`packages/db/src/results/recovered.test.ts`)
 - [x] Início: "Recuperado este mês" com a contagem e "Como calculamos"; Resultados: total e detalhe por semana; "Ainda sem dados" abaixo de 5

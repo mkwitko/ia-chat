@@ -137,6 +137,14 @@ M-04 (`/mais/perfil`, H-38): nome, o que faz, telefone, site, rede social, link 
 - Plano atual, conversas usadas na franquia, previsão para o mês e o bloco "WhatsApp (Meta)": respostas grátis da Meta usadas no mês (ex.: "640 de 1.000"), mensagens com custo por categoria e custo estimado, `GET /api/usage/meta`. Texto: "Estimativa da Meta no seu cartão: R$ X". A Meta cobra no cartão do cliente; não entra na nossa fatura.
 - Teto de excedente, troca de plano, faturas, cancelamento.
 
+### Equipe
+
+- Só o dono vê a linha e a tela (Mais > Equipe). A recepção e o profissional não veem.
+- **Convidar**: e-mail e função (Recepção ou Profissional). É o convite de organização do Better Auth (`invite-member`), com as permissões de `apps/api/src/auth/access.ts`: só o dono convida, cancela convite, muda função e remove. O e-mail sai pelo remetente de e-mail do sistema (Resend em produção; em desenvolvimento vai para o log, sem o conteúdo).
+- **Lista**: convites pendentes (aguardando resposta ou vencido) com "Reenviar" (mesmo convite, novo e-mail) e "Cancelar convite"; quem já está na equipe, com a função (troca entre Recepção e Profissional) e "Remover". O dono não se remove nem muda a própria função.
+- **Aceitar** (`/convite-equipe/:id`, o link do e-mail): a página lê o convite (`GET /api/team-invites/:id`: consultório, e-mail, função, estado) e, sem sessão, oferece criar a conta com o e-mail convidado (Google ou e-mail e senha; o convite pendente libera o cadastro, H-37) ou entrar (`/entrar?next=`). Com sessão, "Aceitar convite" entra na equipe e abre o Início. Se a conta logada tem outro e-mail, a página avisa e oferece trocar de conta. Convite aceito, cancelado, recusado ou vencido mostra o motivo.
+- A lista de Início mostra "Convidar a secretária" até haver mais alguém na equipe ou um convite pendente.
+
 ### Onboarding
 
 O convite (`/convite/:token`) confere o link (página amigável se inválido, vencido, usado ou cancelado) e leva à criação da conta (Google ou e-mail); `/criar-conta` sem convite explica que o acesso é por convite e aponta para a lista de espera. Depois, os seis passos de [09](09-site-aquisicao-suporte.md) como um fluxo só, um passo por tela, nesta ordem: onde seus clientes acham você (pré-preenchimento com revisão, área, CPF/CNPJ), conectar WhatsApp (com a mensagem de boas-vindas), serviços e pacotes, horários (com Google Agenda), teste com seus dados, ativação (com instalar e notificações). O trabalho de cada passo é feito no próprio passo. Depois da ativação, a lista "Para deixar o assistente ainda melhor" fica no Início até ser cumprida. Barra de progresso ("Passo X de N"), botão Voltar, continuar depois. O botão de ativar fica desligado até o WhatsApp conectar.

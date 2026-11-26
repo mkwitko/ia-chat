@@ -1,5 +1,6 @@
 import { useState, type SubmitEvent } from 'react';
 import { useNavigate } from 'react-router';
+import { nextPath } from './next-path';
 import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
 import { loginErrorMessage } from './login-error';
@@ -26,7 +27,7 @@ export function useEmailLogin() {
       setError(loginErrorMessage(failure.code));
       return;
     }
-    void navigate(Route.conversations, { replace: true });
+    void navigate(nextPath(window.location.search) ?? Route.conversations, { replace: true });
   }
 
   return { error, pending, submit };

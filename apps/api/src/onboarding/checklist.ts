@@ -11,13 +11,20 @@ export interface Checklist {
   packages: number;
   /** Questions the assistant could not answer that still wait for an answer. */
   unanswered: number;
+  /** Someone besides the owner has access, or an invitation is on its way. */
+  team: boolean;
 }
 
+const OWNER_ONLY = 1;
+const INVITATION_PENDING = 'pending';
+
 export async function checklistOf(tx: Tx, tenantId: string): Promise<Checklist> {
-  const [tenant, professional, unanswered] = await Promise.all([
+  const [tenant, professional, unanswered, members, invitations] = await Promise.all([
     tx.tenant.findUniqueOrThrow({ where: { id: tenantId }, select: { businessProfile: true } }),
     tx.professional.findFirst({ orderBy: { createdAt: 'asc' }, select: { toneOfVoice: true } }),
     pendingCount(tx),
+    tx.membership.count({ where: { tenantId } }),
+    tx.invitation.count({ where: { tenantId, status: INVITATION_PENDING } }),
   ]);
   const profile = parseBusinessProfile(tenant.businessProfile);
   return {
@@ -25,5 +32,6 @@ export async function checklistOf(tx: Tx, tenantId: string): Promise<Checklist> 
     reviewLink: Boolean(profile.reviewLink),
     packages: profile.packages.length,
     unanswered,
+    team: members > OWNER_ONLY || invitations > 0,
   };
 }

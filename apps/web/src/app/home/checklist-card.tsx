@@ -16,7 +16,6 @@ export const ChecklistCopy = {
       ? `Responder ${String(unanswered)} pergunta(s) que o assistente não soube`
       : 'Cadastrar pacotes e perguntas frequentes',
   team: 'Convidar a secretária',
-  soon: 'Em breve',
 } as const;
 
 interface Item {
@@ -35,6 +34,7 @@ function itemsOf({ checklist }: OnboardingView): Item[] {
       done: checklist.unanswered === 0 && checklist.packages > 0,
       to: checklist.unanswered > 0 ? Route.knowledge : Route.profile,
     },
+    { label: ChecklistCopy.team, done: checklist.team, to: Route.team },
   ];
 }
 
@@ -58,11 +58,6 @@ export function ChecklistCard() {
             <ChecklistRow item={item} />
           </li>
         ))}
-        <li className="flex min-h-11 items-center gap-3 text-muted-foreground">
-          <Circle className="size-4" aria-hidden="true" />
-          <span className="flex-1">{ChecklistCopy.team}</span>
-          <span className="text-xs">{ChecklistCopy.soon}</span>
-        </li>
       </ul>
     </section>
   );
