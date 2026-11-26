@@ -27,35 +27,35 @@ export const UsageCopy = {
   title: 'Plano e uso',
   empty: {
     title: 'Nenhuma conversa neste mês ainda',
-    body: 'Quando os pacientes escreverem, o uso aparece aqui, com o quanto falta para a franquia do seu plano.',
+    body: 'Quando os pacientes escreverem, o uso aparece aqui, com quanto ainda resta das conversas do seu plano.',
   },
   planLine: (plan: string, monthlyCents: number) =>
     `Plano ${plan} · ${formatCents(monthlyCents)} por mês`,
   usedLine: (used: number, franchise: number) =>
     `${used.toLocaleString('pt-BR')} de ${franchise.toLocaleString('pt-BR')} conversas`,
-  percentLine: (percent: number) => `${String(percent)}% da franquia`,
-  barLabel: 'Conversas usadas na franquia do mês',
+  percentLine: (percent: number) => `${String(percent)}% das conversas do plano`,
+  barLabel: 'Conversas do plano usadas no mês',
   conversationHelp:
     'Uma conversa é uma sequência de mensagens com o mesmo paciente, sem intervalo maior que 24 horas.',
   warning: 'Você já usou 80% das conversas do mês. O atendimento segue normal.',
-  full: 'As conversas do plano acabaram. O atendimento continua e o que passar é cobrado como excedente.',
+  full: 'As conversas do plano acabaram. O atendimento continua, e as conversas a mais são cobradas à parte.',
   restricted:
-    'O teto de excedente foi atingido. O assistente só avisa o paciente que você responde em breve, e as conversas passam para você.',
-  overageHeading: 'Excedente do mês',
+    'Você chegou ao limite de gasto extra que escolheu. O assistente só avisa o paciente que você responde em breve, e as conversas passam para você.',
+  overageHeading: 'Conversas a mais neste mês',
   overageLine: (conversations: number, cents: number) =>
-    `${String(conversations)} conversas acima da franquia, estimativa de ${formatCents(cents)} na próxima fatura.`,
-  overageNone: 'Nenhuma conversa acima da franquia.',
-  capHeading: 'Teto de excedente',
+    `${String(conversations)} conversas além do plano, cerca de ${formatCents(cents)} na próxima fatura.`,
+  overageNone: 'Nenhuma conversa além do plano.',
+  capHeading: 'Limite de gasto extra',
   capHint:
-    'Valor máximo de excedente que você aceita pagar no mês, em reais. Deixe em branco para não ter teto. Ao atingir, o assistente para de responder e avisa o paciente que você responde em breve.',
-  capLabel: 'Teto (R$)',
-  capPlaceholder: 'Sem teto',
+    'Quanto, no máximo, você aceita pagar por conversas a mais no mês. Em branco, sem limite. Ao chegar nele, o assistente para de responder e avisa o paciente que você responde em breve.',
+  capLabel: 'Limite (R$)',
+  capPlaceholder: 'Sem limite',
   capInvalid: 'Digite o valor em reais, por exemplo 100 ou 100,50.',
   capCurrent: (cents: number | null) =>
-    cents === null ? 'Hoje: sem teto.' : `Hoje: ${formatCents(cents)} por mês.`,
-  capForbidden: 'Só o dono da conta pode mudar o teto.',
-  capSaveFailed: 'Não conseguimos salvar o teto. Tente de novo.',
-  capSaved: 'Teto salvo.',
+    cents === null ? 'Hoje: sem limite.' : `Hoje: ${formatCents(cents)} por mês.`,
+  capForbidden: 'Só o dono da conta pode mudar o limite.',
+  capSaveFailed: 'Não conseguimos salvar o limite. Tente de novo.',
+  capSaved: 'Limite salvo.',
   meta: {
     heading: 'WhatsApp (Meta)',
     freeLine: (used: number, free: number) =>

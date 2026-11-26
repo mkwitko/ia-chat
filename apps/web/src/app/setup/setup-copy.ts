@@ -44,7 +44,7 @@ export const ServicesCopy = {
 } as const;
 
 export const ToneCopy = {
-  title: 'Tom de voz',
+  title: 'Jeito de escrever',
   intro:
     'O assistente escreve como você. Responda às perguntas e cole algumas mensagens reais suas.',
   name: 'Seu nome, como os pacientes conhecem',
@@ -71,7 +71,7 @@ export const ToneCopy = {
 } as const;
 
 export const KnowledgeCopy = {
-  title: 'Base de conhecimento',
+  title: 'O que ele sabe responder',
   intro: 'Perguntas que os pacientes fazem e as respostas que o assistente deve dar.',
   unansweredHeading: 'Perguntas que o assistente não soube',
   unansweredHint:

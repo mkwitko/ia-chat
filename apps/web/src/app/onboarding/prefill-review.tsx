@@ -11,17 +11,19 @@ import { ReviewHours, ReviewPackages, ReviewServices } from './review-lists';
 interface ReviewProps {
   found: PrefillSuggestion;
   onClose: () => void;
+  /** After saving (the wizard moves on); defaults to closing. */
+  onSaved?: () => void;
 }
 
 /** "Encontramos isto, confere?": one screen, every field editable, nothing saved before the tap. */
-export function PrefillReview({ found, onClose }: Readonly<ReviewProps>) {
+export function PrefillReview({ found, onClose, onSaved = onClose }: Readonly<ReviewProps>) {
   const [draft, setDraft] = useState<ReviewDraft>(() => draftOf(found));
   const apply = useApplyPrefill();
   const set = (field: Field) => (value: string) => {
     setDraft({ ...draft, [field]: value });
   };
   const save = () => {
-    apply.mutate(draft, { onSuccess: onClose, onError: notifySaveError });
+    apply.mutate(draft, { onSuccess: onSaved, onError: notifySaveError });
   };
   return (
     <section aria-labelledby="review-title" className="grid gap-5 border-t pt-5">

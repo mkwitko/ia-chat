@@ -11,7 +11,8 @@ export function SpecialtyPicker({ view }: Readonly<{ view: OnboardingView }>) {
   const choose = useChooseSpecialty();
   return (
     <fieldset className="grid gap-3">
-      <legend className="mb-3 text-sm font-semibold">{Copy.specialtyLabel}</legend>
+      {/* The screen title asks the question; the legend names the group for screen readers. */}
+      <legend className="sr-only">{Copy.specialtyLabel}</legend>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {view.specialties.map((option) => {
           const checked = view.specialty === option.specialty;

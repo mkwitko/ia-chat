@@ -3,7 +3,7 @@ import { PrefillError } from './onboarding-api';
 // Copy of "Onde te encontram" and of the review screen (spec 09), pt-BR.
 
 export const PrefillCopy = {
-  sourceLabel: 'Link do site ou do Google Maps, ou o texto da bio do Instagram',
+  sourceLabel: 'Endereço do site, do Google Maps ou texto do Instagram',
   sourceHint: 'Do Instagram, copie e cole o texto da bio: não abrimos redes sociais.',
   sourcePlaceholder: 'www.seunegocio.com.br',
   search: 'Buscar meus dados',

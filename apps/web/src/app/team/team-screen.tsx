@@ -5,8 +5,7 @@ import { authClient } from '@/lib/auth-client';
 import { Route } from '@/routes';
 import { ListSkeleton, LoadError } from '../inbox/query-states';
 import { BackLink } from '../screens/back-link';
-import { cn } from '@/lib/utils';
-import { Screen, SETTINGS_COLUMNS } from '../screens/screen';
+import { Screen } from '../screens/screen';
 import { TextField } from '../setup/fields';
 import { CommonCopy } from '../setup/setup-copy';
 import { useInvite, useInvitations, useMembers } from './team-api';
@@ -44,12 +43,10 @@ function TeamContent() {
       />
     );
   return (
-    <div className={cn(SETTINGS_COLUMNS, 'pt-4 pb-10')}>
+    <div className="grid gap-10 pt-4 pb-10 md:max-w-2xl">
+      <MemberRows items={members.data} />
+      <InviteRows items={invitations.data} />
       <InviteForm />
-      <div className="grid gap-10">
-        <InviteRows items={invitations.data} />
-        <MemberRows items={members.data} />
-      </div>
     </div>
   );
 }

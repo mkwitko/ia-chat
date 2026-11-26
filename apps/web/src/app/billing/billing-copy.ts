@@ -24,7 +24,7 @@ export const BillingCopy = {
   payInvoice: 'Pagar a fatura',
   choosePlan: 'Escolha o plano',
   planLine: (franchise: number, overageCents: number) =>
-    `${franchise.toLocaleString('pt-BR')} conversas por mês, excedente de ${formatCents(overageCents)} por conversa`,
+    `${franchise.toLocaleString('pt-BR')} conversas por mês, e ${formatCents(overageCents)} por conversa a mais`,
   price: (cents: number) => `${formatCents(cents)} por mês`,
   current: 'Plano atual',
   subscribe: 'Assinar este plano',

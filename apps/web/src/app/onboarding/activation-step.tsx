@@ -7,14 +7,14 @@ import { OnboardingCopy } from './onboarding-copy';
 
 export const ActivationCopy = {
   phoneHeading: 'No seu celular',
-  install: 'Instalar o painel na tela inicial',
+  install: 'Pôr um atalho na tela do celular',
   installHint:
-    'Abre como um app e recebe avisos. No iPhone: Compartilhar > Adicionar à Tela de Início.',
-  installed: 'Painel instalado',
-  notify: 'Permitir notificações',
+    'Abre como um aplicativo. No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início".',
+  installed: 'Atalho criado neste celular',
+  notify: 'Receber avisos no celular',
   notifyHint: 'Para saber na hora quando um rascunho espera sua aprovação ou alguém pede você.',
-  notifyOn: 'Notificações ligadas neste aparelho',
-  notifyBlocked: 'Notificações bloqueadas no navegador. Libere nas configurações do site.',
+  notifyOn: 'Avisos ligados neste celular',
+  notifyBlocked: 'Os avisos estão bloqueados neste navegador. Libere nas configurações do site.',
 } as const;
 
 interface InstallPrompt extends Event {
@@ -64,19 +64,19 @@ function InstallRow() {
   const installed = window.matchMedia(STANDALONE).matches;
   return (
     <div className="grid gap-1">
-      {installed ? (
-        <Done text={ActivationCopy.installed} />
-      ) : (
+      {installed && <Done text={ActivationCopy.installed} />}
+      {/* No install prompt here (iPhone, desktop): only the how-to, never a dead button. */}
+      {!installed && prompt && (
         <Button
           variant="outline"
           className="justify-self-start"
-          disabled={!prompt}
-          onClick={() => void prompt?.prompt()}
+          onClick={() => void prompt.prompt()}
         >
           <Download aria-hidden="true" />
           {ActivationCopy.install}
         </Button>
       )}
+      {!installed && !prompt && <p className="font-medium">{ActivationCopy.install}</p>}
       {!installed && <p className="text-sm text-muted-foreground">{ActivationCopy.installHint}</p>}
     </div>
   );
@@ -86,19 +86,21 @@ function NotifyRow() {
   const state = usePushState().data;
   const subscribe = usePushSubscribe();
   if (state?.subscribed) return <Done text={ActivationCopy.notifyOn} />;
+  // Without push on this browser there is nothing to tap: say nothing rather than grey out.
+  if (!state?.available) return null;
   return (
     <div className="grid gap-1">
       <Button
         variant="outline"
         className="justify-self-start"
-        disabled={!state?.available || state.blocked}
+        disabled={state.blocked}
         onClick={() => void subscribe()}
       >
         <Bell aria-hidden="true" />
         {ActivationCopy.notify}
       </Button>
       <p className="text-sm text-muted-foreground">
-        {state?.blocked ? ActivationCopy.notifyBlocked : ActivationCopy.notifyHint}
+        {state.blocked ? ActivationCopy.notifyBlocked : ActivationCopy.notifyHint}
       </p>
     </div>
   );

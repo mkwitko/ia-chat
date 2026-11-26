@@ -21,7 +21,7 @@ interface ChoiceListProps<T extends string> {
 export function ChoiceList<T extends string>(props: Readonly<ChoiceListProps<T>>) {
   const { name, legend, choices, value, onChange, disabled } = props;
   return (
-    <fieldset className="grid gap-2 px-4 md:px-0" disabled={disabled}>
+    <fieldset className="grid gap-2" disabled={disabled}>
       <legend className="pb-2 text-base font-semibold">{legend}</legend>
       {choices.map((choice) => (
         <label

@@ -3,7 +3,7 @@ import { SourceKind } from './simulator-api';
 // Spec 10, "Simulador": pt-BR copy, written for the professional.
 
 export const SimulatorCopy = {
-  title: 'Simulador',
+  title: 'Testar o assistente',
   intro: 'Converse com o assistente como se fosse um paciente e veja como ele responde.',
   notice:
     'Nada aqui é enviado a pacientes nem aparece nas suas conversas. Não escreva dados de pacientes reais.',

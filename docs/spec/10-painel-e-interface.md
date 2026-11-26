@@ -113,9 +113,14 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
 
 ### Assistente
 
-- Nível de autonomia: automático, aprovar antes de enviar, desligado. A descrição de cada nível diz o que acontece na prática.
-- Tom de voz: mensagens de exemplo e as quatro perguntas.
-- Base de conhecimento: perguntas e respostas.
+`/mais/assistente`, resumo no padrão de ajustes (decisão do dono, 26/11/2026), uma linha por assunto, cada uma com o seu editor:
+
+- **Quanto ele faz sozinho** (`/autonomia`): automático, aprovar antes de enviar, desligado. A descrição de cada nível diz o que acontece na prática. "Desligado" aparece como "Falta configurar".
+- **Como ele se apresenta** (`/apresentacao`): como assistente virtual (com o nome), como a recepção ou como você, com a prévia da primeira mensagem.
+- **Jeito de escrever** (`/tom`, era "Tom de voz"): mensagens de exemplo e as quatro perguntas. "Opcional" até ser preenchido.
+- **O que ele sabe responder** (`/base`, era "Base de conhecimento"): perguntas e respostas; "Falta configurar" enquanto houver pergunta esperando você.
+- **Mensagens automáticas** (`/retorno`, era "Retorno e avaliações"): retorno a quem sumiu e pedido de avaliação.
+- **Testar o assistente** (`/simulador`, era "Simulador").
 - **Perguntas que o assistente não soube**: o assistente registra a pergunta (`registrar_duvida_sem_resposta`) como item inativo, sem resposta, de origem `unanswered`. A tela agrupa as parecidas (normalização de caixa, acento, pontuação e palavras de ligação; iguais ou com metade das palavras em comum) e mostra "Perguntada N vezes", as mais repetidas primeiro. O dono escreve ou edita a resposta e aprova: vira um item ativo da base, que o assistente passa a usar, e as cópias do grupo somem. "Descartar" remove o grupo. O botão "IA sugere resposta" (só ao clicar; usa o perfil do negócio, sem preços nem dados de paciente) devolve um rascunho para editar; se o rascunho trouxer valor ou horário, é trocado por um aviso para usar o perfil e a agenda. Só o dono aprova, descarta e pede sugestão. O número de grupos pendentes aparece na lista de Início ("Responder N perguntas") e como contador na linha Assistente de Mais.
 - **Simulador**: conversa de teste que não envia nada ao WhatsApp, com a indicação de qual informação o assistente usou.
   - Roda o mesmo caminho do turno real (pré-filtros, prompt, validação da saída; código em `packages/agent`), sem conversa, contato nem mensagem gravados: a conversa de teste vive só na tela. O que sai de cada resposta ("O que o assistente usou") vem das chamadas de ferramenta e da comparação da resposta com os dados cadastrados (serviço e preço, endereço, como chegar, base de conhecimento), nunca do que o modelo diz ter usado.
@@ -154,7 +159,7 @@ Aviso fixo de linha de base: os números começam na data do primeiro registro; 
 
 ### Onboarding
 
-O convite (`/convite/:token`) confere o link (página amigável se inválido, vencido, usado ou cancelado) e leva à criação da conta (Google ou e-mail); `/criar-conta` sem convite explica que o acesso é por convite e aponta para a lista de espera. Depois, os seis passos de [09](09-site-aquisicao-suporte.md) como um fluxo só, um passo por tela, nesta ordem: onde seus clientes acham você (pré-preenchimento com revisão, área, CPF/CNPJ), conectar WhatsApp (com a mensagem de boas-vindas), serviços e pacotes, horários (com Google Agenda), teste com seus dados, ativação (com instalar e notificações). O trabalho de cada passo é feito no próprio passo. Depois da ativação, a lista "Para deixar o assistente ainda melhor" fica no Início até ser cumprida. Barra de progresso ("Passo X de N"), botão Voltar, continuar depois. O botão de ativar fica desligado até o WhatsApp conectar.
+O convite (`/convite/:token`) confere o link (página amigável se inválido, vencido, usado ou cancelado) e leva à criação da conta (Google ou e-mail); `/criar-conta` sem convite explica que o acesso é por convite e aponta para a lista de espera. Depois, os seis passos de [09](09-site-aquisicao-suporte.md) como um **assistente de configuração de verdade** (decisão do dono, 26/11/2026): uma pergunta por tela, "Passo X de 8" com barra no topo, sem a lista de passos ao lado, botões grandes, "Voltar" e, onde dá para deixar para depois, "Pular por agora" (onde seus clientes acham você, WhatsApp, teste). O primeiro passo do servidor vira três telas: "Qual é a sua área?", "Onde seus pacientes acham você?" (pré-preenchimento com revisão; salvar a revisão já avança) e "Qual é o seu CPF ou CNPJ?". Depois: WhatsApp, serviços e pacotes, horários (o próprio botão confirma e avança; o Google Agenda ficou em Meu consultório), teste com seus dados e ativação (com instalar e notificações). No fim, a tela "Pronto!" com o único próximo passo, "Ver as conversas", e "Mudar alguma coisa" (Meu consultório). A mensagem de boas-vindas colada saiu do passo do WhatsApp e mora em Meu consultório › Nome e apresentação › Mais opções. Depois da ativação, a lista "Para deixar o assistente ainda melhor" fica no Início até ser cumprida. Enquanto a configuração está aberta, o cartão e a faixa "Primeiros passos · X de N" somem, para não haver duas contagens. O botão de ativar fica desligado até o WhatsApp conectar.
 
 ### Operador (interno)
 

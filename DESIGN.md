@@ -84,6 +84,7 @@ Cada cor de estado tem o seu fundo `-soft` (`#FEF0E1` / `#2E1E10`, `#F1ECFC` / `
 
 - **Resumo de ajustes** (`SummaryScreen` + `SummaryList`): título, uma linha de para que serve, "Faltam N itens" ou "Tudo pronto por aqui.", e a lista. Cada linha (80 px de alvo) tem ícone de traço, o assunto em 16 px/500, o valor atual em palavras em `--ink-2` (até duas linhas) e a situação com ícone e texto: "Feito" (visto, `--ok`), "Falta configurar" (alerta, `--attention`) ou "Opcional" (`--ink-2`). À direita, "Editar ›"; a primeira linha que falta configurar leva o botão cheio "Configurar", o único da tela. A linha inteira é o link.
 - **Editor** (`EditorScreen`): "‹ {resumo}" no topo, título, uma linha de explicação, os campos essenciais, "Mais opções" (um `<details>` em cartão, fechado) com o resto, e embaixo "Salvar" (cheio, largura total no celular) e "Voltar" (fantasma). Salvou: aviso "Alterações salvas." e volta ao resumo.
+- **Configuração inicial** (`/configuracao`): uma pergunta por tela na mesma coluna de 560 px. No topo, "Passo X de 8" e a barra jade; depois a pergunta em 28 px, uma linha de por quê, o trabalho do passo, e embaixo, separado por uma linha, "Continuar" (cheio, largura total no celular), "Pular por agora" e "Voltar" (fantasmas). Sem lista de passos ao lado. Fim: círculo jade-claro com visto, "Pronto!", uma frase e "Ver as conversas".
 
 ## Movimento
 

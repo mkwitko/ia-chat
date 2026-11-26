@@ -124,3 +124,14 @@ export function whatsappSummary(channel: WhatsappChannel | null): TopicSummary {
   const value = channel.displayPhone ? Copy.connectedTo(channel.displayPhone) : Copy.connected;
   return { value, status: TopicStatus.done };
 }
+
+const LOAD_FAILED: TopicSummary = { value: Copy.loadFailed, status: TopicStatus.todo };
+
+/** The row's value once its query answers; a failed query says so instead of loading forever. */
+export function summaryOf<T>(
+  query: { data: T | undefined; isError: boolean },
+  read: (data: T) => TopicSummary | null,
+): TopicSummary | null | undefined {
+  if (query.data !== undefined) return read(query.data);
+  return query.isError ? LOAD_FAILED : undefined;
+}
