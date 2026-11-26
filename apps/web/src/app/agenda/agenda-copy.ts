@@ -104,7 +104,7 @@ export const AvailabilityCopy = defineMessages({
         ? 'Usar este horário no dia marcado'
         : `Usar este horário nos ${String(days)} dias marcados`,
     quickHint:
-      'Depois, ajuste um dia ou outro na lista abaixo (por exemplo, o intervalo do almoço). Nada é salvo até você tocar em Salvar.',
+      'Depois, se precisar, mude um dia só em "Ajustar dia a dia" (por exemplo, o intervalo do almoço). Nada é salvo até você tocar em Salvar.',
     quickInvalid: 'Marque pelo menos um dia e confira se o fim vem depois do início.',
     addWindow: 'Adicionar horário',
     removeWindow: 'Remover horário',
