@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { asBody } from '../fixtures/cloud-webhooks.ts';
 import {
   contactsSync,
@@ -14,6 +14,10 @@ const eventsOf = (payload: object) =>
   parseCloudWebhook(asBody(payload)).flatMap((batch) => batch.events);
 
 describe('coexistence history webhooks', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('turns each thread message into a history message, owner or patient', () => {
     const messages = eventsOf(historyChunk).filter(
       (event) => event.kind === InboundKind.historyMessage,
@@ -73,6 +77,8 @@ describe('coexistence history webhooks', () => {
   });
 
   it('re-reads the stored raw part into the same events (worker side)', () => {
+    // Progress events carry `new Date()`: a frozen clock keeps a millisecond tick from failing it.
+    vi.useFakeTimers({ now: new Date('2027-01-01T12:00:00Z') });
     const [batch] = parseCloudWebhook(asBody(historyChunk));
     expect(parseCloudChanges(batch?.raw)).toEqual(batch?.events);
   });
