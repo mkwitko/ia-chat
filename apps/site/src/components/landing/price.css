@@ -1,0 +1,138 @@
+/* Landing, section 8 (Price.astro). Plans on hairlines with the hero's lane-label column; the
+   example month as a ruler split between the plan (ink) and Meta (graphite). */
+.pricing {
+  padding-top: 96px;
+}
+.pricing h2 {
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  margin: 0 0 32px;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.pricing .layout {
+  display: grid;
+  gap: 40px;
+}
+.pricing .layout > * {
+  min-width: 0;
+}
+.pricing .plan {
+  display: grid;
+  gap: 4px;
+  padding: 20px 0 24px;
+  border-top: 1px solid var(--line-strong);
+}
+.pricing .plan h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.pricing .plan.main h3 {
+  color: var(--ink);
+}
+.pricing .amount {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+}
+.pricing .n {
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.pricing .main .n {
+  font-size: clamp(64px, 18vw, 128px);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+}
+.pricing .per {
+  font-size: 17px;
+  color: var(--ink-2);
+}
+.pricing .does {
+  margin: 8px 0 0;
+  color: var(--ink-2);
+  max-width: 40ch;
+}
+.pricing .fr {
+  color: var(--ink);
+  font-weight: 500;
+}
+.pricing .all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line-strong);
+  width: 100%;
+  font-weight: 500;
+}
+.pricing .all svg,
+.pricing .terms svg {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 200ms var(--ease-out);
+}
+.pricing .all:hover svg {
+  transform: translateX(3px);
+}
+
+.pricing .terms {
+  display: grid;
+  gap: 6px;
+  list-style: none;
+  margin: 20px 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+}
+.pricing .terms li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pricing .btn {
+  width: 100%;
+}
+
+@media (min-width: 960px) {
+  .pricing {
+    padding-top: 144px;
+  }
+  .pricing h2 {
+    margin-bottom: 48px;
+  }
+  .pricing .layout {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 48px;
+    align-items: start;
+  }
+  .pricing .plan {
+    grid-template-columns: 132px minmax(0, 1fr);
+    column-gap: 16px;
+    padding: 24px 0 28px;
+  }
+  .pricing .plan h3 {
+    padding-top: 6px;
+  }
+  .pricing .amount,
+  .pricing .does {
+    grid-column: 2;
+  }
+  .pricing .plan h3 {
+    grid-row: 1 / 3;
+  }
+  .pricing .all {
+    padding-left: 148px;
+  }
+}

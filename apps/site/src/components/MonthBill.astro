@@ -1,0 +1,30 @@
+---
+import { PlanId } from '@app/core';
+import { exampleBill } from '../lib/example-bill.ts';
+import './month-bill.css';
+
+// The example month (founder/landing-brief.md, section 8), on the landing and on /precos: the
+// featured plan plus the Meta estimate, drawn as one ruler. Extra content (terms, action) goes in
+// the slot.
+const bill = exampleBill(PlanId.agenda);
+---
+
+<div class="bill">
+  <h3>Um mês de {bill.conversations} conversas no Agenda</h3>
+  <div class="ruler" aria-hidden="true" style={`--plan: ${String(bill.planPercent)}%`}>
+    <span class="seg s-plan"></span><span class="seg s-meta"></span>
+  </div>
+  <dl>
+    <div><dt><i class="key k-plan"></i>Plano Agenda</dt><dd>{bill.planPrice}</dd></div>
+    <div>
+      <dt><i class="key k-meta"></i>Meta, pago direto no seu cartão</dt>
+      <dd>cerca de {bill.metaAbout}</dd>
+    </div>
+    <div class="total"><dt>Total do mês</dt><dd>cerca de {bill.totalAbout}</dd></div>
+  </dl>
+  <p class="fine">
+    As primeiras {bill.freeReplies} respostas do mês são grátis na Meta. É estimativa: depende da
+    tabela da Meta e do seu volume. <a href="/calculadora">Calcule o seu mês</a>.
+  </p>
+  <slot />
+</div>

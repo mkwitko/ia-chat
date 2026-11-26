@@ -45,7 +45,8 @@ Dados do negócio do profissional, não de paciente. E-mail e registro técnico 
 - Lembretes: 1 dia antes e 2 horas antes, conforme sugerido.
 - Tem CNPJ, mas atende como pessoa física. Quiropraxia e acupuntura não exigem registro em conselho. O registro técnico não aparece nas mensagens, por decisão dele.
 - Celular Android. O PWA com notificações funciona no Chrome do Android; instalamos junto com ele.
-- Topa dar depoimento e autorizar o uso dos números do piloto. Isso ainda precisa ser feito por escrito.
+- Topa dar depoimento e autorizar o uso dos números do piloto. O depoimento e os números de resultado ainda precisam de autorização por escrito.
+- Serviço e preço no site: o dono autorizou, em 26/11/2026, mostrar no exemplo do topo da página inicial o serviço real "Primeira consulta (quiropraxia ou acupuntura)", 60 min, R$ 250,00. O paciente e as mensagens continuam fictícios; nunca usar paciente real. O rótulo do exemplo diz que serviço e preço são reais e a conversa é ilustrativa.
 
 ## Pendentes
 

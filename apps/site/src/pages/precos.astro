@@ -2,22 +2,23 @@
 import Base from '../layouts/Base.astro';
 import PlanCards from '../components/PlanCards.astro';
 import PlansTable from '../components/PlansTable.astro';
+import MonthBill from '../components/MonthBill.astro';
+import Invite from '../components/landing/Invite.astro';
 import { PLANS, WARNING_PERCENT } from '@app/core';
-import { exampleBill } from '../lib/example-bill.ts';
 import { META_ESTIMATE_DATE, META_PROFILES } from '../lib/meta-estimate.ts';
 import { formatBrl, formatCount } from '../lib/money.ts';
 import { FEATURED_PLAN } from '../lib/plans-view.ts';
 
 const overage = formatBrl(PLANS[FEATURED_PLAN].overageCents);
-const bill = exampleBill(FEATURED_PLAN);
 ---
 
 <Base
   title="Preços"
   description="Mensalidade com franquia de conversas, sem taxa de implantação. Veja a conta de um mês com o custo da Meta somado."
   path="/precos"
+  bleed
 >
-  <section class="hero">
+  <section class="p-hero wrap">
     <h1>Preço aberto, sem taxa de implantação.</h1>
     <p class="lede prose">
       14 dias grátis, sem fidelidade. A configuração é feita com você e está incluída em todo plano.
@@ -26,20 +27,25 @@ const bill = exampleBill(FEATURED_PLAN);
     </p>
   </section>
 
-  <section class="block" aria-label="Planos">
+  <section class="block wrap" aria-labelledby="planos">
+    <h2 id="planos" class="sr-only">Planos</h2>
     <PlanCards />
   </section>
 
-  <section class="block prose" aria-labelledby="conta">
-    <h2 id="conta">Um mês de {bill.conversations} conversas no plano Agenda</h2>
-    <p>
-      {bill.planPrice} do plano + cerca de {bill.metaAbout} pagos direto à Meta no seu cartão = cerca
-      de <strong class="num">{bill.totalAbout}</strong> no mês. As primeiras {bill.freeReplies} respostas
-      do mês são grátis na Meta.
-    </p>
+  <section class="block wrap split" aria-labelledby="franquia">
+    <div class="prose">
+      <h2 id="franquia">Franquia e excedente</h2>
+      <p>
+        Com {String(WARNING_PERCENT)}% da franquia usada, você recebe um aviso no painel e no
+        WhatsApp. Passou de 100%, o atendimento continua e cada conversa a mais entra na fatura
+        seguinte, por exemplo {overage} no plano Agenda. Você define um teto para o excedente: ao
+        atingi-lo, o assistente avisa o paciente que você responde em breve e notifica você.
+      </p>
+    </div>
+    <MonthBill />
   </section>
 
-  <section class="block" aria-labelledby="comparar">
+  <section class="block wrap" aria-labelledby="comparar">
     <h2 id="comparar">Compare os planos</h2>
     <PlansTable />
     <p class="muted small">
@@ -48,17 +54,7 @@ const bill = exampleBill(FEATURED_PLAN);
     </p>
   </section>
 
-  <section class="block prose" aria-labelledby="franquia">
-    <h2 id="franquia">Franquia e excedente</h2>
-    <p>
-      Com {String(WARNING_PERCENT)}% da franquia usada, você recebe um aviso no painel e no WhatsApp.
-      Passou de 100%, o atendimento continua e cada conversa a mais entra na fatura seguinte, por
-      exemplo {overage} no plano Agenda. Você define um teto para o excedente: ao atingi-lo, o
-      assistente avisa o paciente que você responde em breve e notifica você.
-    </p>
-  </section>
-
-  <section class="block" aria-labelledby="meta">
+  <section class="block wrap" aria-labelledby="meta">
     <h2 id="meta">Custo da Meta, pago por você</h2>
     <p class="prose">
       As mensagens que o assistente envia ativamente pelo WhatsApp oficial, como lembretes, têm
@@ -96,19 +92,56 @@ const bill = exampleBill(FEATURED_PLAN);
     </p>
   </section>
 
-  <section class="block prose" aria-labelledby="extras">
-    <h2 id="extras">Módulos à parte</h2>
-    <ul>
-      <li><strong>Resposta em áudio:</strong> pacote de minutos, sob consulta.</li>
-      <li><strong>Documentos:</strong> base de conhecimento grande, por faixa de páginas, sob consulta.</li>
-    </ul>
+  <section class="block wrap" aria-labelledby="extras">
+    <div class="prose">
+      <h2 id="extras">Módulos à parte</h2>
+      <ul>
+        <li><strong>Resposta em áudio:</strong> pacote de minutos, sob consulta.</li>
+        <li>
+          <strong>Documentos:</strong> base de conhecimento grande, por faixa de páginas, sob consulta.
+        </li>
+      </ul>
+    </div>
   </section>
 
-  <section class="block prose" aria-labelledby="pedir">
-    <h2 id="pedir">O acesso é por convite</h2>
-    <p>
-      Configuramos poucos consultórios por semana, com cuidado.{' '}
-      <a href="/#convite">Peça o seu convite na página inicial</a>.
-    </p>
-  </section>
+  <Invite />
 </Base>
+
+<style>
+  .p-hero {
+    padding-top: 48px;
+  }
+  .p-hero h1 {
+    font-size: clamp(40px, 8vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    max-width: 14ch;
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+  .block h2 {
+    font-size: clamp(28px, 3.6vw, 40px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .block {
+    padding: 72px var(--gutter) 0;
+  }
+  .split {
+    display: grid;
+    gap: 32px;
+  }
+  @media (min-width: 960px) {
+    .p-hero {
+      padding-top: 72px;
+    }
+    .block {
+      padding-top: 112px;
+    }
+    .split {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 48px;
+      align-items: start;
+    }
+  }
+</style>

@@ -7,6 +7,7 @@ import { formatBrl, formatBrlShort, formatCount } from './money.ts';
 
 const CENTS_PER_REAL = 100;
 const EXAMPLE_PROFILE_INDEX = 1;
+const PERCENT = 100;
 /** Service messages Meta does not charge each month (spec 07, "Meta, atendimento"). */
 export const META_FREE_REPLIES = 1_000;
 
@@ -17,6 +18,8 @@ export interface ExampleBill {
   metaAbout: string;
   totalAbout: string;
   freeReplies: string;
+  /** Share of the month's total that is the plan (the rest is Meta), for the bill's bar. */
+  planPercent: number;
 }
 
 function roundedReais(cents: number): string {
@@ -34,5 +37,6 @@ export function exampleBill(plan: PlanId = PlanId.agenda): ExampleBill {
     metaAbout: roundedReais(profile.metaCents),
     totalAbout: roundedReais(planCents + profile.metaCents),
     freeReplies: formatCount(META_FREE_REPLIES),
+    planPercent: Math.round((planCents / (planCents + profile.metaCents)) * PERCENT),
   };
 }

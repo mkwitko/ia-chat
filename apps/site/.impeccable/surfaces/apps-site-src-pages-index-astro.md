@@ -20,3 +20,5 @@ FIRST VIEWPORT: Desktop: headline across 8 columns at ~84px, support + "Pedir co
 FORM: Dual-track timeline, candidate 6 of 7 on the ordered list (dealt lead); raises: scale contrast from variable-font-specimen (huge display vs. small tabular labels), numbered-figure honesty from patent-drawing-sheet (every demo labelled as fictitious example). seed: none (unavailable)
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
+ROUND 2 (26/11/2026): Price, FAQ, founder and invite brought into the same world: plans on hairlines with the 132px lane-label column, the example month as one ruler (MonthBill, also on /precos), FAQ with a sticky heading column and a way out, founder portrait, invite with next steps, field-level errors, recoverable send errors and a done panel. The hero now uses the pilot's real service and price (owner, 26/11/2026); patient and conversation stay fictitious and the label says so.

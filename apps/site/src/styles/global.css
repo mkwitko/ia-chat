@@ -15,6 +15,8 @@
   --attention: #b54708;
   --attention-soft: #fef0e1;
   --danger: #c0251b;
+  --danger-soft: #fdecea;
+  --ok: #067647;
   /* The inverted stage (always dark) used by the rules band. */
   --stage: #09090b;
   --stage-ink: #f2f2f3;
@@ -47,6 +49,8 @@
     --attention: #f5a05a;
     --attention-soft: #2e1e10;
     --danger: #ff8a80;
+    --danger-soft: #3a1715;
+    --ok: #4ed08a;
     --stage: #141417;
     --stage-line: #3f3f46;
     --elevation: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px -16px rgb(0 0 0 / 70%);
