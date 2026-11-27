@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mkwitko/Saas-Foundry/schemas/foundry-state.schema.json",
+  "title": "SaaS Foundry project state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "project_id", "project_mode", "workflow", "initialized_at", "updated_at", "status", "last_run", "next_action"],
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "project_id": { "type": ["string", "null"] },
+    "repository": { "type": ["string", "null"], "format": "uri" },
+    "project_mode": { "enum": ["new", "existing"] },
+    "workflow": { "const": "foundry-run" },
+    "initialized_at": { "type": "string", "format": "date-time" },
+    "stage": { "type": ["string", "null"] },
+    "selected_task": { "enum": ["auto", "full", "idea", "product", "sales", "growth", "review", null] },
+    "current_bottleneck": { "type": ["string", "null"] },
+    "status": { "enum": ["ready", "running", "blocked", "completed", "needs_owner"] },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "last_run": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["run_id", "started_at", "status", "task", "agent", "modules_selected", "modules_completed", "blockers"],
+      "properties": {
+        "run_id": { "type": "string", "minLength": 1 },
+        "started_at": { "type": "string", "format": "date-time" },
+        "completed_at": { "type": ["string", "null"] },
+        "exit_code": { "type": ["integer", "null"] },
+        "signal": { "type": ["string", "null"] },
+        "status": { "enum": ["running", "completed", "blocked", "failed"] },
+        "task": { "enum": ["auto", "full", "idea", "product", "sales", "growth", "review"] },
+        "agent": { "enum": ["claude", "codex", "opencode"] },
+        "runner_pid": { "type": ["integer", "null"] },
+        "branch": { "type": ["string", "null"] },
+        "commit": { "type": ["string", "null"] },
+        "summary_path": { "type": ["string", "null"] },
+        "modules_selected": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "modules_completed": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "next_action": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["title", "owner", "requires_approval"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "reason": { "type": ["string", "null"] },
+        "owner": { "enum": ["founder", "agent", "customer", "specialist"] },
+        "due_date": { "type": ["string", "null"], "format": "date" },
+        "requires_approval": { "type": "boolean" }
+      }
+    },
+    "pending_approvals": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "completed_modules": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}
