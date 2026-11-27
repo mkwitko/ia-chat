@@ -1,0 +1,289 @@
+schema_version: "1.0"
+updated_at: "2026-11-27T10:36:00-03:00"
+artifacts:
+  - id: business-strategy
+    contract_id: business-strategy
+    path: founder/business-plan.md
+    owner: founder
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 90
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, foundry]
+    consumers: [product-strategy, marketing-skills, sales-pipeline, founder-operations]
+    depends_on: []
+    evidence_ids: [product-foundation]
+    sources:
+      - kind: repository
+        reference: founder/business-plan.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+        note: "Canonical business plan mapped; last content-modified timestamp not inferred."
+    notes: "Mapped to existing founder source of truth. Review freshness before strategic reuse."
+  - id: icp-and-buyer
+    contract_id: icp-and-buyer
+    path: founder/marketing.md
+    owner: founder
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 45
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, customer-research-loop, foundry]
+    consumers: [marketing-skills, impeccable, sales-pipeline, product-strategy, acquisition-engine]
+    depends_on: [business-strategy]
+    evidence_ids: [pilot-volume-reported, synthetic-buyer-panel]
+    sources:
+      - kind: repository
+        reference: founder/marketing.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/customer.json
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/piloto.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "ICP is an explicit early segment hypothesis, not a validated market segment."
+  - id: product-brief
+    contract_id: product-brief
+    path: PRODUCT.md
+    owner: product
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 60
+    sensitivity: internal
+    change_policy: owner_approval
+    producers: [founder-skill, product-strategy, customer-intelligence-loop]
+    consumers: [impeccable, engineering-quality, marketing-skills, sales-pipeline]
+    depends_on: [icp-and-buyer]
+    evidence_ids: [product-foundation]
+    sources:
+      - kind: repository
+        reference: PRODUCT.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "Existing product contract retained; no duplicate product brief created."
+  - id: design-system-and-ux
+    contract_id: design-system-and-ux
+    path: DESIGN.md
+    owner: design
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 45
+    sensitivity: internal
+    change_policy: safe_additive
+    producers: [impeccable, product-design, visual-quality-audit]
+    consumers: [product-strategy, engineering-quality, marketing-skills]
+    depends_on: [icp-and-buyer, product-brief]
+    evidence_ids: [product-foundation]
+    sources:
+      - kind: repository
+        reference: DESIGN.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: docs/brand.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: apps/web/.impeccable/surfaces/apps-web.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "Impeccable design decisions already exist; keep them canonical and review per surface."
+  - id: positioning-and-offer
+    contract_id: positioning-and-offer
+    path: founder/marketing.md
+    owner: founder
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, marketing-skills]
+    consumers: [conversion-optimization, sales-pipeline, launch-and-distribution, product-strategy]
+    depends_on: [business-strategy, icp-and-buyer, product-brief]
+    evidence_ids: [synthetic-buyer-panel, unit-economics-estimate]
+    sources:
+      - kind: repository
+        reference: founder/marketing.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/offer.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/pricing.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "Offer and prices are owner decisions/hypotheses; simulated price response is not willingness-to-pay evidence."
+  - id: website-and-conversion
+    contract_id: website-and-conversion
+    path: founder/landing-brief.md
+    owner: marketing
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 30
+    sensitivity: public
+    change_policy: safe_additive
+    producers: [marketing-skills, impeccable, conversion-optimization]
+    consumers: [founder-skill, sales-pipeline, analytics-instrumentation]
+    depends_on: [icp-and-buyer, positioning-and-offer, design-system-and-ux]
+    evidence_ids: [product-foundation]
+    sources:
+      - kind: repository
+        reference: founder/landing-brief.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: apps/site/src/pages/index.astro
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "The live page and its existing brief remain canonical; no duplicate landing-page spec."
+  - id: acquisition-and-channel-plan
+    contract_id: acquisition-and-channel-plan
+    path: founder/launch.md
+    owner: marketing
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [marketing-skills, acquisition-engine, founder-skill]
+    consumers: [sales-pipeline, founder-operations, analytics-instrumentation]
+    depends_on: [icp-and-buyer, positioning-and-offer]
+    evidence_ids: [channel-hypotheses]
+    sources:
+      - kind: repository
+        reference: founder/launch.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/marketing.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "Referral and live-demo channels are hypotheses; no channel performance is yet established."
+  - id: sales-playbook
+    contract_id: sales-playbook
+    path: founder/board.md
+    owner: sales
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, foundry-sales-review]
+    consumers: [marketing-skills, retention-and-customer-success, founder-operations]
+    depends_on: [icp-and-buyer, positioning-and-offer]
+    evidence_ids: [pilot-proof-gap]
+    sources:
+      - kind: repository
+        reference: founder/board.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/pitch.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/launch.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "Board conditions and pitch assets are the current sales source; no CRM lead records are imported."
+  - id: metrics-and-events
+    contract_id: metrics-and-events
+    path: docs/observabilidade.md
+    owner: analytics
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [analytics-instrumentation, customer-intelligence-loop, foundry]
+    consumers: [founder-skill, marketing-skills, sales-pipeline, product-strategy, retention-and-customer-success]
+    depends_on: [icp-and-buyer, product-brief]
+    evidence_ids: [product-foundation]
+    sources:
+      - kind: repository
+        reference: docs/observabilidade.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: apps/api/src/operator/funnel.ts
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: apps/api/src/operator/overview.ts
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "Existing operator aggregates cover onboarding progress, usage, cost, margin, failed turns and handoffs. Attribution and time-to-first-booking need a verified event map."
+  - id: customer-intelligence
+    contract_id: customer-intelligence
+    path: null
+    owner: customer-success
+    status: missing
+    version: 0
+    updated_at: null
+    review_after_days: 14
+    sensitivity: confidential
+    change_policy: propose_only
+    producers: [customer-research-loop, customer-intelligence-loop, customer-support-loop]
+    consumers: [founder-skill, product-strategy, impeccable, marketing-skills, sales-pipeline]
+    depends_on: [metrics-and-events]
+    evidence_ids: []
+    sources: []
+    notes: "No sanitized, aggregate customer-intelligence artifact exists yet. Do not ingest raw WhatsApp conversations or patient records."
+  - id: experiments-and-results
+    contract_id: experiments-and-results
+    path: .foundry/evidence.yaml
+    owner: foundry
+    status: proposed
+    version: 1
+    updated_at: "2026-11-27T10:36:00-03:00"
+    review_after_days: 14
+    sensitivity: internal
+    change_policy: safe_additive
+    producers: [foundry, marketing-skills, product-strategy, sales-pipeline]
+    consumers: [founder-skill, marketing-skills, product-strategy, customer-intelligence-loop]
+    depends_on: [metrics-and-events]
+    evidence_ids: [pilot-proof-gap, channel-hypotheses]
+    sources:
+      - kind: repository
+        reference: .foundry/evidence.yaml
+        checked_at: "2026-11-27T10:36:00-03:00"
+        note: "Initial evidence and proposed experiment ledger; no experiment is marked running."
+    notes: "The evidence ledger is the canonical experiment record until a dedicated backlog is justified."
+  - id: decisions-and-assumptions
+    contract_id: decisions-and-assumptions
+    path: docs/spec/README.md
+    owner: founder
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 90
+    sensitivity: confidential
+    change_policy: propose_only
+    producers: [founder-skill, foundry]
+    consumers: [all_capabilities]
+    depends_on: []
+    evidence_ids: [synthetic-buyer-panel, pilot-proof-gap]
+    sources:
+      - kind: repository
+        reference: docs/spec/README.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+      - kind: repository
+        reference: founder/board.md
+        checked_at: "2026-11-27T10:36:00-03:00"
+    notes: "Existing product decisions stay authoritative; Foundry records proposals and links rather than silently rewriting them."
+  - id: revenue-pipeline
+    contract_id: revenue-pipeline
+    path: .foundry/revenue/pipeline.yaml
+    owner: sales
+    status: current
+    version: 1
+    updated_at: "2026-11-27T10:36:00-03:00"
+    review_after_days: 7
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [revenue-acquisition-engine, founder-skill]
+    consumers: [founder-operations, marketing-skills, analytics-instrumentation, continuous-improvement-engine]
+    depends_on: [icp-and-buyer, positioning-and-offer, metrics-and-events]
+    evidence_ids: [channel-hypotheses]
+    sources:
+      - kind: repository
+        reference: .foundry/revenue/pipeline.yaml
+        checked_at: "2026-11-27T10:36:00-03:00"
+        note: "Initialized with channel hypotheses only; lead list intentionally empty."
+    notes: "No prospects added because no company-level lead research and contact permission have been recorded."
