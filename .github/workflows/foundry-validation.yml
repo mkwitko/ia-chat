@@ -3,21 +3,8 @@ name: SaaS Foundry validation
 on:
   push:
     branches: [main]
-    paths:
-      - ".foundry/**"
-      - ".github/workflows/foundry-validation.yml"
-      - "docs/spec/**"
-      - "founder/**"
-      - "PRODUCT.md"
-      - "DESIGN.md"
   pull_request:
-    paths:
-      - ".foundry/**"
-      - "docs/spec/**"
-      - "founder/**"
-      - "PRODUCT.md"
-      - "DESIGN.md"
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 permissions:
   contents: read
