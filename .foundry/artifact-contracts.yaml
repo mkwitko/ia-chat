@@ -1,0 +1,161 @@
+schema_version: "1.0"
+# Canonical artifact contracts. These describe ownership and handoffs, not mandatory files.
+# During adoption, map each contract to an existing source of truth before creating anything.
+artifacts:
+  - id: business-strategy
+    title: Business strategy
+    default_path: .foundry/strategy/business.md
+    owner: founder
+    producers: [founder-skill, foundry]
+    consumers: [product-strategy, marketing-skills, sales-pipeline, founder-operations]
+    depends_on: []
+    invalidated_by: [new_business_model, major_market_shift, repeated_buyer_disconfirmation]
+    review_after_days: 90
+    sensitivity: confidential
+    change_policy: owner_approval
+
+  - id: icp-and-buyer
+    title: Ideal customer profile and buyer evidence
+    default_path: .foundry/strategy/icp-and-positioning.md
+    owner: founder
+    producers: [founder-skill, customer-research-loop, foundry]
+    consumers: [marketing-skills, impeccable, sales-pipeline, product-strategy, acquisition-engine]
+    depends_on: [business-strategy]
+    invalidated_by: [new_paid_customer_segment, repeated_disqualification, material_channel_mismatch]
+    review_after_days: 45
+    sensitivity: confidential
+    change_policy: owner_approval
+
+  - id: product-brief
+    title: Product brief and value outcomes
+    default_path: .foundry/product/product-brief.md
+    owner: product
+    producers: [founder-skill, product-strategy, customer-intelligence-loop]
+    consumers: [impeccable, engineering-quality, marketing-skills, sales-pipeline]
+    depends_on: [icp-and-buyer]
+    invalidated_by: [validated_new_job_to_be_done, material_scope_change, repeated_activation_failure]
+    review_after_days: 60
+    sensitivity: internal
+    change_policy: owner_approval
+
+  - id: design-system-and-ux
+    title: Design system, screen inventory and UX decisions
+    default_path: .foundry/product/design-system-and-ux.md
+    owner: design
+    producers: [impeccable, product-design, visual-quality-audit]
+    consumers: [product-strategy, engineering-quality, marketing-skills]
+    depends_on: [icp-and-buyer, product-brief]
+    invalidated_by: [new_product_surface, design_system_change, accessibility_regression]
+    review_after_days: 45
+    sensitivity: internal
+    change_policy: safe_additive
+
+  - id: positioning-and-offer
+    title: Positioning, offer and pricing
+    default_path: .foundry/strategy/offer-and-pricing.md
+    owner: founder
+    producers: [founder-skill, marketing-skills]
+    consumers: [conversion-optimization, sales-pipeline, launch-and-distribution, product-strategy]
+    depends_on: [business-strategy, icp-and-buyer, product-brief]
+    invalidated_by: [pricing_change, new_segment, offer_change, repeated_sales_objection]
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+
+  - id: website-and-conversion
+    title: Website messaging and conversion surfaces
+    default_path: .foundry/growth/website-and-conversion.md
+    owner: marketing
+    producers: [marketing-skills, impeccable, conversion-optimization]
+    consumers: [founder-skill, sales-pipeline, analytics-instrumentation]
+    depends_on: [icp-and-buyer, positioning-and-offer, design-system-and-ux]
+    invalidated_by: [offer_change, landing_page_release, conversion_experiment_result]
+    review_after_days: 30
+    sensitivity: public
+    change_policy: safe_additive
+
+  - id: acquisition-and-channel-plan
+    title: Acquisition channels and distribution plan
+    default_path: .foundry/growth/acquisition-plan.md
+    owner: marketing
+    producers: [marketing-skills, acquisition-engine, founder-skill]
+    consumers: [sales-pipeline, founder-operations, analytics-instrumentation]
+    depends_on: [icp-and-buyer, positioning-and-offer]
+    invalidated_by: [channel_policy_change, poor_channel_economics, new_buyer_segment]
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+
+  - id: sales-playbook
+    title: Sales process, qualification and objection handling
+    default_path: .foundry/growth/sales-playbook.md
+    owner: sales
+    producers: [founder-skill, foundry-sales-review]
+    consumers: [marketing-skills, retention-and-customer-success, founder-operations]
+    depends_on: [icp-and-buyer, positioning-and-offer]
+    invalidated_by: [new_objection_pattern, sales_process_change, new_pricing]
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+
+  - id: metrics-and-events
+    title: Metrics dictionary, event taxonomy and funnel definitions
+    default_path: .foundry/growth/funnel-and-metrics.md
+    owner: analytics
+    producers: [analytics-instrumentation, customer-intelligence-loop, foundry]
+    consumers: [founder-skill, marketing-skills, sales-pipeline, product-strategy, retention-and-customer-success]
+    depends_on: [icp-and-buyer, product-brief]
+    invalidated_by: [event_schema_change, funnel_definition_change, analytics_source_change]
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+
+  - id: customer-intelligence
+    title: Sanitized customer feedback and lifecycle insights
+    default_path: .foundry/customer/customer-intelligence.md
+    owner: customer-success
+    producers: [customer-research-loop, customer-intelligence-loop, customer-support-loop]
+    consumers: [founder-skill, product-strategy, impeccable, marketing-skills, sales-pipeline]
+    depends_on: [metrics-and-events]
+    invalidated_by: [new_customer_cohort, repeated_support_theme, cancellation_pattern]
+    review_after_days: 14
+    sensitivity: confidential
+    change_policy: propose_only
+
+  - id: experiments-and-results
+    title: Experiment backlog and observed outcomes
+    default_path: .foundry/growth/experiment-backlog.yaml
+    owner: foundry
+    producers: [foundry, marketing-skills, product-strategy, sales-pipeline]
+    consumers: [founder-skill, marketing-skills, product-strategy, customer-intelligence-loop]
+    depends_on: [metrics-and-events]
+    invalidated_by: [experiment_completed, metric_definition_changed, target_segment_changed]
+    review_after_days: 14
+    sensitivity: internal
+    change_policy: safe_additive
+
+  - id: decisions-and-assumptions
+    title: Strategic decisions, assumptions and supersession history
+    default_path: .foundry/decisions/log.md
+    owner: founder
+    producers: [founder-skill, foundry]
+    consumers: [all_capabilities]
+    depends_on: []
+    invalidated_by: [new_disconfirming_evidence, owner_decision, material_context_change]
+    review_after_days: 90
+    sensitivity: confidential
+    change_policy: propose_only
+
+# Project-local extension: the revenue engine needs a canonical pipeline artifact.
+
+  - id: revenue-pipeline
+    title: Company-level revenue pipeline and channel experiments
+    default_path: .foundry/revenue/pipeline.yaml
+    owner: sales
+    producers: [revenue-acquisition-engine, founder-skill]
+    consumers: [founder-operations, marketing-skills, analytics-instrumentation, continuous-improvement-engine]
+    depends_on: [icp-and-buyer, positioning-and-offer, metrics-and-events]
+    invalidated_by: [icp_change, offer_change, permission_change, stage_definition_change]
+    review_after_days: 7
+    sensitivity: confidential
+    change_policy: owner_approval
