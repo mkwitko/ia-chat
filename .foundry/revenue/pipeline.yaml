@@ -1,0 +1,23 @@
+schema_version: "0.1"
+updated_at: "2026-11-27T10:36:00-03:00"
+# Company-level pipeline only. No personal contact details, patient data or raw conversations.
+leads: []
+channels:
+  - id: warm-referrals
+    channel: "Warm, permission-based professional referrals"
+    hypothesis: "A measured pilot outcome plus a trusted introduction will reduce the trust barrier and create qualified demos with solo health professionals."
+    status: proposed
+    primary_metric: "Qualified demos booked from permissioned introductions (absolute count)."
+    result: null
+  - id: live-demo
+    channel: "Live product demonstration with fictitious patient data"
+    hypothesis: "Seeing the assistant respond and request owner approval in a controlled demo will address the trust objection better than a feature list."
+    status: proposed
+    primary_metric: "Demo attendees who explicitly request a pilot invitation (absolute count)."
+    result: null
+  - id: founder-instagram
+    channel: "Founder-led educational Instagram content"
+    hypothesis: "Short, truthful demonstrations using fictitious data may generate inbound demo requests from solo health professionals."
+    status: proposed
+    primary_metric: "Qualified inbound demo requests attributed to Instagram (absolute count)."
+    result: null
