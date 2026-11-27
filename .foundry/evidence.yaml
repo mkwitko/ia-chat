@@ -1,0 +1,156 @@
+schema_version: "0.1"
+updated_at: "2026-11-27T10:36:00-03:00"
+claims:
+  - id: product-foundation
+    claim: "The repository contains a working multi-app product foundation: Fastify API and worker, React/Vite panel, Astro public site, PostgreSQL/Prisma, AI gateway, onboarding, WhatsApp adapters, scheduling and operator aggregates."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: "CLAUDE.md; package.json; apps/api/src; apps/web/src; apps/site/src; packages/"
+    checked_at: "2026-11-27T10:36:00-03:00"
+    published_at: null
+    segment: null
+    sample_size: null
+    confidence: high
+    limitations:
+      - "Repository implementation does not prove production reliability, customer adoption or commercial demand."
+      - "No production database, patient data or raw conversations were inspected."
+    falsifier: "A clean build or test run showing core advertised capabilities are absent or broken."
+    review_after_days: 30
+    revalidate_on: [major_release, architecture_change]
+  - id: pilot-volume-reported
+    claim: "The pilot chiropractor reports approximately five new people and fifty WhatsApp messages per day; these are different units and must not be treated as fifty unique leads."
+    evidence_class: E2
+    status: current
+    source_type: customer
+    source: "founder/piloto.md, atendimento hoje (reported 2026-11-25)"
+    checked_at: "2026-11-27T10:36:00-03:00"
+    published_at: null
+    segment: "single chiropractor pilot"
+    sample_size: 1
+    confidence: medium
+    limitations:
+      - "Self-reported by one pilot; not independently measured."
+      - "A message count is not a unique-person, qualified-lead or booking count."
+      - "Reconfirm before using as a public case-study claim."
+    falsifier: "A consented aggregate count from the pilot that materially differs."
+    review_after_days: 14
+    revalidate_on: [pilot_baseline_collected, pilot_scope_change]
+  - id: synthetic-buyer-panel
+    claim: "The documented synthetic panel recorded zero purchase decisions among eighteen valid simulated responses, with trust as the most frequent objection."
+    evidence_class: E6
+    status: current
+    source_type: simulation
+    source: "founder/marketing.md; founder/pricing.md; founder/board.md"
+    checked_at: "2026-11-27T10:36:00-03:00"
+    published_at: null
+    segment: "simulated solo health and wellness professionals"
+    sample_size: 18
+    confidence: high
+    limitations:
+      - "Synthetic/model-generated responses are not real buyer interviews or purchase behaviour."
+      - "Do not use this result as proof that the market will not buy."
+      - "Use only to prioritize a real trust and proof experiment."
+    falsifier: "Not falsifiable as market evidence; replace with real buyer behaviour."
+    review_after_days: 365
+    revalidate_on: [offer_change, segment_change]
+  - id: pilot-proof-gap
+    claim: "The founder board records that the pilot has not yet produced a measured outcome or approved testimonial suitable for peer acquisition."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: "founder/board.md, conditions checklist; founder/launch.md"
+    checked_at: "2026-11-27T10:36:00-03:00"
+    published_at: null
+    segment: "single pilot"
+    sample_size: 1
+    confidence: medium
+    limitations:
+      - "This describes the evidence recorded in the repository; it does not prove no activity exists outside it."
+      - "The board checklist must be refreshed after the pilot is measured."
+    falsifier: "A dated, consented pilot result and written testimonial permission."
+    review_after_days: 7
+    revalidate_on: [pilot_result_recorded, testimonial_permission_granted]
+  - id: unit-economics-estimate
+    claim: "The founder's current model estimates R$52.30 variable cost per customer-month, R$1,150 monthly fixed cost and break-even at six paying customers."
+    evidence_class: E5
+    status: current
+    source_type: estimate
+    source: "founder/pricing.md, CFO section"
+    checked_at: "2026-11-27T10:36:00-03:00"
+    published_at: null
+    segment: "current pricing and cost assumptions"
+    sample_size: null
+    confidence: medium
+    limitations:
+      - "Internal model, not reconciled against a full month of actual invoices and usage."
+      - "Exchange rate, model mix, Meta usage, tax and infrastructure assumptions may change."
+    falsifier: "A reconciled monthly cost and revenue report that changes the contribution or break-even estimate."
+    review_after_days: 30
+    revalidate_on: [provider_price_change, actual_invoice_available, usage_mix_change]
+  - id: channel-hypotheses
+    claim: "The current launch plan proposes warm referrals and live demonstrations as the first two acquisition channels; founder Instagram is a secondary option, not a proven source."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: "founder/marketing.md; founder/launch.md"
+    checked_at: "2026-11-27T10:36:00-03:00"
+    published_at: null
+    segment: "solo health and wellness professionals in Brazil"
+    sample_size: null
+    confidence: high
+    limitations:
+      - "These are documented channel hypotheses, not measured acquisition results."
+      - "A referral does not grant permission to contact the referred person."
+    falsifier: "Pilot and early customer data showing a different reachable channel with better qualified-demo economics."
+    review_after_days: 14
+    revalidate_on: [channel_experiment_completed, segment_change]
+decisions:
+  - id: focus-solo-health
+    decision: "Keep the first learning segment narrow: solo health and wellness professionals, starting with chiropractic and adjacent professionals reached through trusted, permission-based referrals."
+    owner: founder
+    status: accepted
+    decided_at: "2026-11-25T00:00:00-03:00"
+    evidence_ids: [pilot-volume-reported, synthetic-buyer-panel, pilot-proof-gap]
+    alternatives: ["General small businesses from day one", "Salons and aesthetics before ten paying customers"]
+    expected_outcome: "A clearer pilot, tighter demo and more comparable first ten customer conversations."
+    review_on: "2026-12-09"
+    review_trigger: "Revisit after pilot outcome and the first ten real buyer conversations."
+  - id: no-paid-spend-before-proof
+    decision: "Keep paid acquisition spend at zero until ten paying customers and a repeatable acquisition path are demonstrated."
+    owner: founder
+    status: accepted
+    decided_at: "2026-11-25T00:00:00-03:00"
+    evidence_ids: [channel-hypotheses, unit-economics-estimate]
+    alternatives: ["Start paid ads immediately", "Buy contact lists"]
+    expected_outcome: "Preserve cash while validating trust, activation, delivery effort and contribution margin."
+    review_on: null
+    review_trigger: "Ten paying customers and a measured acquisition channel with acceptable contribution economics."
+  - id: pilot-proof-before-peer-expansion
+    decision: "Do not open peer referrals or publish a pilot case study until the pilot outcome is measured and written permission for the specific claim is recorded."
+    owner: founder
+    status: accepted
+    decided_at: "2026-11-25T00:00:00-03:00"
+    evidence_ids: [pilot-proof-gap]
+    alternatives: ["Publish an unverified testimonial", "Invite peers before a measured pilot result"]
+    expected_outcome: "Build trust with a verifiable and permissioned proof point rather than an unsupported claim."
+    review_on: "2026-12-09"
+    review_trigger: "Pilot result and explicit written permission are available."
+experiments:
+  - id: pilot-first-value-baseline
+    hypothesis: "If the assistant is configured and controlled correctly, the pilot will complete at least one useful assistant-handled interaction and ideally one assistant-created booking without the owner typing the booking."
+    status: proposed
+    owner: founder
+    target_segment: "One chiropractor pilot"
+    intervention: "Confirm pilot readiness, record aggregate milestone timestamps and counts for WhatsApp connection, setup completion, first approved assistant reply and first assistant-created booking. Use no patient text or clinical details."
+    primary_metric: "First assistant-created booking completed (absolute count; denominator is the single pilot account)."
+    guardrails:
+      - "Do not collect or store raw patient messages, phone numbers, names, diagnoses or clinical details in Foundry."
+      - "Keep approval-before-send enabled throughout the first measurement window."
+      - "Record the time-to-first-useful-interaction as a secondary metric, with an explicit start and end event."
+      - "No testimonial or public claim without specific written permission."
+      - "Do not infer statistical significance from one pilot."
+    started_at: null
+    decision_date: "2026-12-04"
+    result: null
+    decision: null
