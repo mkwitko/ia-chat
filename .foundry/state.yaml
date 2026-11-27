@@ -1,0 +1,23 @@
+schema_version: "0.1"
+project_id: ia-chat
+repository: "https://github.com/mkwitko/ia-chat"
+project_mode: existing
+workflow: foundry-run
+initialized_at: "2026-11-27T10:36:00-03:00"
+stage: pilot-preparation
+selected_task: growth
+current_bottleneck: "Real-pilot proof and a measurable path from permissioned referral/demo to activation and paid conversion."
+status: needs_owner
+updated_at: "2026-11-27T10:36:00-03:00"
+last_run: null
+next_action:
+  title: "Confirm the pilot measurement window and record the first-value baseline."
+  reason: "The product foundation and channel hypotheses exist, but the repository does not yet contain a measured pilot outcome or approved case study."
+  owner: founder
+  due_date: "2026-12-04"
+  requires_approval: true
+pending_approvals:
+  - "Confirm the pilot's measurement window and permission for aggregate operational metrics."
+  - "Approve any third-party contact or outbound message before it is sent."
+  - "Approve any public pilot result or testimonial claim in writing."
+completed_modules: []
