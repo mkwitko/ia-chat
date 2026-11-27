@@ -1,0 +1,20 @@
+schema_version: "0.1"
+project_id: "ia-chat"
+repository: "https://github.com/mkwitko/ia-chat"
+project_mode: existing
+workflow: foundry-run
+initialized_at: "2026-11-27T09:00:00-03:00"
+stage: pre_pilot
+selected_task: growth
+current_bottleneck: acquisition_and_activation_measurement
+status: ready
+updated_at: "2026-11-27T09:00:00-03:00"
+last_run: null
+next_action:
+  title: "Complete the first-party funnel source map and verify pilot-readiness gates"
+  reason: "The product has substantial functionality and a documented founder-led channel plan; the next constraint is connecting real prospect activity to activation and paid outcomes while closing explicit P0 acceptance gaps."
+  owner: founder
+  due_date: null
+  requires_approval: false
+pending_approvals: []
+completed_modules: []

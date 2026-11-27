@@ -1,0 +1,56 @@
+schema_version: "0.1"
+modules:
+  - id: shared-knowledge-contracts
+    outcome: "Mapped existing canonical strategy, product, design, offer, channel and metrics documents without creating duplicate business documents."
+    evidence: "Static inspection of the project specs, founder documents, PRODUCT.md and DESIGN.md; paths checked in the repository."
+    artifacts: [.foundry/artifacts.yaml, .foundry/artifact-contracts.yaml, .foundry/evidence.yaml]
+    checks:
+      - name: "Mapped canonical paths exist"
+        result: passed
+      - name: "Missing customer intelligence and sales playbook remain explicitly unknown"
+        result: passed
+      - name: "Registry runtime validation"
+        result: not_run
+    risks: ["Artifact freshness CLI has not yet been run from a local checkout."]
+    rollback: "Remove only the new .foundry registry and evidence files; preserve all product documents."
+    next_action: "Run foundry artifacts validate . and foundry artifacts status . locally."
+    owner: founder
+  - id: cross-skill-orchestration
+    outcome: "Recorded dependency relationships and owner-aware handoff boundaries for the existing project documents."
+    evidence: "Artifact registry dependencies and the first-cycle report; no canonical product document was changed."
+    artifacts: [.foundry/artifacts.yaml, .foundry/reports/first-cycle-2026-11-27.md]
+    checks:
+      - name: "Registry dependency references"
+        result: passed
+      - name: "Runtime transitive handoff plan"
+        result: not_run
+    risks: ["CLI runtime execution remains pending."]
+    rollback: "Revert the project-local registry and report; no application code or production data changed."
+    next_action: "Run foundry artifacts plan . --changed business-strategy and review the output."
+    owner: founder
+  - id: continuous-improvement-engine
+    outcome: "Created an evidence ledger and two proposed commercial experiments; no outcomes or customer intelligence were fabricated."
+    evidence: "Evidence IDs EVID-SIMULATION-001, EVID-PRICE-001, EVID-CHANNEL-001 and EVID-LAUNCH-TARGET-001."
+    artifacts: [.foundry/evidence.yaml, .foundry/reports/first-cycle-2026-11-27.md]
+    checks:
+      - name: "Evidence classes and limitations recorded"
+        result: passed
+      - name: "Improvement CLI report"
+        result: not_run
+    risks: ["No sanitized customer feedback aggregate or production analytics was available."]
+    rollback: "Mark proposed experiments stopped if the owner rejects them; preserve the historical evidence ledger."
+    next_action: "Run foundry improve report . and review proposed next action."
+    owner: founder
+  - id: revenue-acquisition-engine
+    outcome: "Created an empty company-level pipeline and recorded the existing permission-based referral, demo and Instagram channel hypotheses."
+    evidence: "EVID-CHANNEL-001, EVID-WAITLIST-001 and EVID-REFERRAL-001."
+    artifacts: [.foundry/revenue/pipeline.yaml, .foundry/reports/first-cycle-2026-11-27.md]
+    checks:
+      - name: "No personal contact details or patient records in pipeline"
+        result: passed
+      - name: "Revenue report CLI"
+        result: not_run
+    risks: ["No qualified B2B prospects or real conversion records have been supplied."]
+    rollback: "Keep the pipeline empty until company-level prospect evidence is available; do not copy patient contacts into it."
+    next_action: "Run foundry revenue report . and add only permission-safe company-level records."
+    owner: founder

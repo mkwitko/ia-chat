@@ -6,3 +6,10 @@ CLAUDE.md
 apps/site/dist/
 apps/site/.astro/
 founder/
+# SaaS Foundry's project-local YAML/JSON is validated by its schemas and CLI, not application Prettier.
+.foundry/*.yaml
+.foundry/*.json
+.foundry/**/*.yaml
+.foundry/**/*.json
+.foundry/reports/
+.foundry/shared-knowledge-and-artifact-contracts.md

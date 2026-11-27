@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mkwitko/Saas-Foundry/schemas/evidence-ledger.schema.json",
+  "title": "SaaS Foundry evidence ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "updated_at", "claims", "decisions", "experiments"],
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "claim", "evidence_class", "status", "source_type", "source", "checked_at", "confidence", "limitations", "review_after_days"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "claim": { "type": "string", "minLength": 1 },
+          "evidence_class": { "enum": ["E0", "E1", "E2", "E3", "E4", "E5", "E6"] },
+          "status": { "enum": ["current", "stale", "superseded"] },
+          "source_type": { "enum": ["repository", "web", "customer", "analytics", "interview", "estimate", "simulation", "unknown"] },
+          "source": { "type": "string" },
+          "checked_at": { "type": "string", "format": "date-time" },
+          "published_at": { "type": ["string", "null"], "format": "date-time" },
+          "segment": { "type": ["string", "null"] },
+          "sample_size": { "type": ["integer", "null"], "minimum": 0 },
+          "confidence": { "enum": ["low", "medium", "high"] },
+          "limitations": { "type": "array", "items": { "type": "string" } },
+          "falsifier": { "type": ["string", "null"] },
+          "review_after_days": { "type": "integer", "minimum": 0 },
+          "revalidate_on": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "decision", "owner", "status", "decided_at", "evidence_ids", "alternatives", "expected_outcome"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "decision": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["proposed", "accepted", "rejected", "superseded"] },
+          "decided_at": { "type": "string", "format": "date-time" },
+          "evidence_ids": { "type": "array", "items": { "type": "string" } },
+          "alternatives": { "type": "array", "items": { "type": "string" } },
+          "expected_outcome": { "type": "string" },
+          "review_on": { "type": ["string", "null"], "format": "date" },
+          "review_trigger": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "hypothesis", "status", "owner", "target_segment", "intervention", "primary_metric", "guardrails"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "hypothesis": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["proposed", "running", "completed", "stopped"] },
+          "owner": { "type": "string", "minLength": 1 },
+          "target_segment": { "type": "string" },
+          "intervention": { "type": "string" },
+          "primary_metric": { "type": "string" },
+          "guardrails": { "type": "array", "items": { "type": "string" } },
+          "started_at": { "type": ["string", "null"], "format": "date-time" },
+          "decision_date": { "type": ["string", "null"], "format": "date" },
+          "result": { "type": ["string", "null"] },
+          "decision": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
