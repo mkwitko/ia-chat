@@ -45,3 +45,17 @@ The scanner reads repository metadata and selected documentation only. It does n
 6. Keep outreach, publishing, production changes and spend under explicit human approval.
 
 The Foundry CLI v0.2 now provides local read-only scanning, deterministic planning and manifest diagnostics. This directory is the project manifest and governance pointer; the CLI itself remains in the separate SaaS Foundry repository.
+
+
+## SaaS Foundry — operação contínua
+
+O Foundry agora mantém contratos de artefatos, estado, evidências, aceitação e pipeline comercial neste diretório.
+
+- Registro canônico: .foundry/artifacts.yaml
+- Contratos e regras de handoff: .foundry/artifact-contracts.yaml
+- Evidências, decisões e experimentos: .foundry/evidence.yaml
+- Pipeline de receita por organização: .foundry/revenue/pipeline.yaml
+- Estado da operação: .foundry/state.yaml
+- Primeiro ciclo e prioridades: docs/ops/foundry-operating-cycle.md
+
+O registro aponta para PRODUCT.md, DESIGN.md, founder/* e docs/spec/* existentes; não cria cópias desses documentos. Status desconhecido significa que o caminho foi mapeado, mas a data original de atualização não foi presumida. O pipeline começa sem leads; adicione organizações somente após pesquisa e evidência reais. Não inclua dados pessoais, mensagens, dados de pacientes, tokens ou credenciais.
