@@ -66,3 +66,15 @@ The artifact, improvement and revenue commands are read-only. They do not modify
 8. Keep outreach, publishing, production changes, legal commitments and spend under explicit human approval.
 
 The initial source inventory was static and selective. Production behaviour, event reconciliation, browser acceptance and external provider readiness remain separate verification tasks.
+
+## Automated validation
+
+The workflow [`.github/workflows/foundry-validation.yml`](../.github/workflows/foundry-validation.yml) runs on changes to this project workspace and its canonical product/strategy sources. It:
+
+1. Parses all project-local YAML and JSON schemas.
+2. Validates artifact contracts, paths, dependencies and cycles.
+3. Calculates freshness and downstream handoffs.
+4. Generates the evidence-led improvement report.
+5. Reviews the company-level revenue pipeline.
+
+The workflow checks out a pinned SaaS Foundry commit (`a14f0f6`) for reproducibility. Update that pin deliberately when adopting a newer CLI release. The workflow has read-only repository permissions and does not access production systems or contact customers.
