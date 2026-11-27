@@ -69,7 +69,7 @@ The initial source inventory was static and selective. Production behaviour, eve
 
 ## Automated validation
 
-The workflow [`.github/workflows/foundry-validation.yml`](../.github/workflows/foundry-validation.yml) runs on changes to this project workspace and its canonical product/strategy sources. It:
+The workflow [`.github/workflows/foundry-validation.yml`](../.github/workflows/foundry-validation.yml) runs on every pull request and main-branch push. It:
 
 1. Parses all project-local YAML and JSON schemas.
 2. Validates artifact contracts, paths, dependencies and cycles.
