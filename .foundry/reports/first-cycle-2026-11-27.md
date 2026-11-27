@@ -26,7 +26,7 @@ The existing product CRM represents end customers/patients. It must not become a
 - Initial pilot vertical: chiropractor; referrals to adjacent local businesses are a channel hypothesis, not proof that those segments will buy.
 - Core promise: stop losing customers through unanswered messages, forgotten follow-up and disorganized scheduling.
 - Existing phrase: recepcionista com IA e assistente de crescimento para pequenos negócios.
-- The name `Consultório Aberto` remains a decision to revisit only with owner approval; the current code and brand should not be renamed as part of this cycle.
+- The owner-selected working brand is `Consultório Aberto`; the INPI trademark check remains a separate pending task. No rename or claim of trademark clearance is part of this cycle.
 
 ### Offer and price
 
