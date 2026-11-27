@@ -1,0 +1,170 @@
+schema_version: "0.1"
+updated_at: "2026-11-27T09:00:00-03:00"
+claims:
+  - id: EVID-STRATEGY-001
+    claim: "The current owner-defined target is small service businesses with appointment-based workflows; the first pilot is a chiropractor and expansion to other segments is deferred until evidence supports it."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: docs/spec/11-pequenos-negocios.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: "2026-11-25T12:00:00-03:00"
+    segment: small appointment-based service businesses
+    sample_size: null
+    confidence: high
+    limitations:
+      - "This is an owner-authored strategic choice, not proof of product-market fit."
+      - "The chiropractor is the first pilot vertical; adjacent segments have not been validated."
+    falsifier: "Repeated real-buyer disqualification or paid-retention evidence showing the target segment is not viable."
+    review_after_days: 45
+    revalidate_on: [new_paid_customer_segment, repeated_disqualification, material_channel_mismatch]
+  - id: EVID-SIMULATION-001
+    claim: "The simulated buyer panel recorded 0 purchases from 18 valid responses; trust was the most common objection (11 of 18)."
+    evidence_class: E6
+    status: current
+    source_type: simulation
+    source: founder/pricing.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: "2026-11-25T12:00:00-03:00"
+    segment: solo health and wellness professionals
+    sample_size: 18
+    confidence: high
+    limitations:
+      - "Synthetic buyer panel; not real interviews, purchases, conversion or willingness-to-pay evidence."
+      - "Use only to form hypotheses and prioritize real conversations."
+    falsifier: null
+    review_after_days: 3650
+    revalidate_on: [offer_change, segment_change, real_buyer_evidence]
+  - id: EVID-PRICE-001
+    claim: "The owner decision is to keep current plan prices, sell only Essencial and Agenda for now, include assisted setup at no fee, and test Agenda at R$ 247 versus R$ 297 with real prospects."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: founder/pricing.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: "2026-11-25T12:00:00-03:00"
+    segment: small appointment-based service businesses
+    sample_size: null
+    confidence: high
+    limitations:
+      - "This records a pricing decision and planned test, not validated price acceptance."
+      - "Pro and Clínica are not currently offered for subscription."
+    falsifier: "Real paid conversion and retention data that materially contradicts the current offer economics."
+    review_after_days: 30
+    revalidate_on: [new_pricing, repeated_sales_objection, paid_conversion_data]
+  - id: EVID-CHANNEL-001
+    claim: "The documented initial acquisition channels are permission-based referrals, live product demonstrations and founder-led Instagram; paid ads are deferred."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: founder/marketing.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: "2026-11-25T12:00:00-03:00"
+    segment: small appointment-based service businesses
+    sample_size: null
+    confidence: high
+    limitations:
+      - "These are planned channels; no repeatable channel performance is established."
+      - "A referral does not grant permission to contact a third party."
+    falsifier: "Real channel results showing a different channel is more efficient or the planned channels cannot produce qualified conversations."
+    review_after_days: 30
+    revalidate_on: [channel_policy_change, poor_channel_economics, new_buyer_segment]
+  - id: EVID-LAUNCH-TARGET-001
+    claim: "The launch plan sets a target of 6 WhatsApp-connected trials and 3 paid customers from 10 invited prospects; this is a pre-written success threshold, not an achieved result."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: founder/launch.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: "2026-11-25T12:00:00-03:00"
+    segment: first 10 invited small-business prospects
+    sample_size: 10
+    confidence: high
+    limitations:
+      - "The numbers are targets from a launch plan, not observed outcomes."
+      - "A ten-prospect cohort is too small for strong statistical claims."
+    falsifier: "The owner revises the launch threshold before the cohort begins."
+    review_after_days: 30
+    revalidate_on: [launch_plan_change, real_trial_results]
+  - id: EVID-ANALYTICS-001
+    claim: "The project defines pilot metrics and has operational observability, but the reviewed sources do not yet establish a complete privacy-safe funnel from marketing visit through paid subscription and retention."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: projects/ia-chat/first-cycle-2026-11-27.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: null
+    segment: SaaS acquisition and activation funnel
+    sample_size: null
+    confidence: medium
+    limitations:
+      - "Static inspection of selected routes and specifications; no production analytics, database or raw logs were inspected."
+      - "Existing first-party tables may cover additional milestones; source mapping remains an open task."
+    falsifier: "A complete tested event/query map already exists and reconciles every funnel stage."
+    review_after_days: 14
+    revalidate_on: [event_schema_change, funnel_definition_change, analytics_source_change]
+  - id: EVID-M05-001
+    claim: "The project task ledger still lists explicit Customers and Results permission definitions and role tests as incomplete."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: docs/plan/TASKS.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: null
+    segment: product security and access control
+    sample_size: null
+    confidence: high
+    limitations:
+      - "This is the current documented task status; the exact access-control implementation should be rechecked before changing it."
+    falsifier: "A later merged task update and tests demonstrate both permissions are complete."
+    review_after_days: 7
+    revalidate_on: [access_control_change, task_status_change]
+  - id: EVID-M07-001
+    claim: "The Results screen and route exist, but the task ledger says each displayed metric still needs reconciliation against the specification's reference queries."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: docs/plan/TASKS.md
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: null
+    segment: pilot measurement
+    sample_size: null
+    confidence: high
+    limitations:
+      - "A documented pending verification is not evidence that the calculations are wrong."
+    falsifier: "A verified test fixture proves every Results value matches its reference query."
+    review_after_days: 7
+    revalidate_on: results_query_change, metric_definition_change
+  - id: EVID-WAITLIST-001
+    claim: "The public waitlist route validates Turnstile, applies rate limiting, normalizes email and stores a referral code only when it matches an existing business."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: apps/api/src/waitlist/waitlist-routes.ts
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: null
+    segment: public acquisition
+    sample_size: null
+    confidence: high
+    limitations:
+      - "The implementation is not evidence of traffic, conversion or production activation."
+      - "Email and optional name fields are personal data and must remain outside Foundry reports and prospect files."
+    falsifier: "A code change removes one of these controls or tests fail."
+    review_after_days: 30
+    revalidate_on: waitlist_route_change, privacy_policy_change
+  - id: EVID-REFERRAL-001
+    claim: "The product referral route exposes a business code/link and counts waitlist signups; the owner shares the link manually and the module does not send messages."
+    evidence_class: E3
+    status: current
+    source_type: repository
+    source: apps/api/src/growth/referral-routes.ts
+    checked_at: "2026-11-27T09:00:00-03:00"
+    published_at: null
+    segment: customer referral
+    sample_size: null
+    confidence: high
+    limitations:
+      - "Referral signup counts do not establish activation, paid conversion or repeatability."
+    falsifier: "The referral module is changed to include additional lifecycle attribution or sending."
+    review_after_days: 30
+    revalidate_on: referral_flow_change
