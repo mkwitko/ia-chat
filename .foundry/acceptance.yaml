@@ -7,6 +7,10 @@ modules:
     checks:
       - name: "Mapped canonical paths exist"
         result: passed
+      - name: "Project JSON schemas parse"
+        result: passed
+      - name: "Application CI (lint, typecheck, tests and audit)"
+        result: passed
       - name: "Missing customer intelligence and sales playbook remain explicitly unknown"
         result: passed
       - name: "Registry runtime validation"
@@ -22,6 +26,8 @@ modules:
     checks:
       - name: "Registry dependency references"
         result: passed
+      - name: "Project JSON schemas parse"
+        result: passed
       - name: "Runtime transitive handoff plan"
         result: not_run
     risks: ["CLI runtime execution remains pending."]
@@ -35,6 +41,8 @@ modules:
     checks:
       - name: "Evidence classes and limitations recorded"
         result: passed
+      - name: "Evidence JSON schema parses"
+        result: passed
       - name: "Improvement CLI report"
         result: not_run
     risks: ["No sanitized customer feedback aggregate or production analytics was available."]
@@ -47,6 +55,8 @@ modules:
     artifacts: [.foundry/revenue/pipeline.yaml, .foundry/reports/first-cycle-2026-11-27.md]
     checks:
       - name: "No personal contact details or patient records in pipeline"
+        result: passed
+      - name: "Revenue pipeline JSON schema parses"
         result: passed
       - name: "Revenue report CLI"
         result: not_run
