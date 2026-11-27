@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mkwitko/Saas-Foundry/blob/main/schemas/artifact-registry.schema.json",
+  "title": "SaaS Foundry shared artifact registry",
+  "description": "Project-local index of canonical business, product, design, growth and operating artifacts. This indexes existing sources of truth; it does not require duplicating them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "updated_at", "artifacts"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "updated_at": { "type": ["string", "null"], "format": "date-time" },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact" }
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "contract_id", "path", "owner", "status", "version", "updated_at", "sensitivity", "change_policy", "producers", "consumers", "depends_on", "evidence_ids", "sources"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "contract_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "path": {
+          "description": "Repository-relative path to the canonical artifact. Null means the project has not mapped an existing source of truth yet.",
+          "type": ["string", "null"],
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"
+        },
+        "owner": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["current", "proposed", "stale", "superseded", "missing", "unknown", "not_applicable"] },
+        "version": { "type": "integer", "minimum": 0 },
+        "updated_at": { "type": ["string", "null"], "format": "date-time" },
+        "review_after_days": { "type": "integer", "minimum": 1, "maximum": 3650 },
+        "sensitivity": { "enum": ["public", "internal", "confidential", "restricted"] },
+        "change_policy": { "enum": ["safe_additive", "owner_approval", "propose_only"] },
+        "producers": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "consumers": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "depends_on": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "evidence_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "reference"],
+            "properties": {
+              "kind": { "enum": ["repository", "web", "customer_report", "metric", "decision", "other"] },
+              "reference": { "type": "string", "minLength": 1 },
+              "checked_at": { "type": ["string", "null"], "format": "date-time" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "supersedes": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}
