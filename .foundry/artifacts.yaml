@@ -1,0 +1,229 @@
+schema_version: "1.0"
+updated_at: "2026-11-27T09:00:00-03:00"
+artifacts:
+  - id: business-strategy
+    contract_id: business-strategy
+    path: docs/spec/11-pequenos-negocios.md
+    owner: founder
+    status: current
+    version: 1
+    updated_at: "2026-11-25T12:00:00-03:00"
+    review_after_days: 90
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, foundry]
+    consumers: [product-strategy, marketing-skills, sales-pipeline, founder-operations]
+    depends_on: []
+    evidence_ids: [EVID-STRATEGY-001]
+    sources:
+      - kind: repository
+        reference: docs/spec/11-pequenos-negocios.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Owner-authored strategy for small appointment-based service businesses; initial chiropractor pilot."
+  - id: icp-and-buyer
+    contract_id: icp-and-buyer
+    path: founder/marketing.md
+    owner: founder
+    status: current
+    version: 1
+    updated_at: "2026-11-25T12:00:00-03:00"
+    review_after_days: 45
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, customer-research-loop, foundry]
+    consumers: [marketing-skills, impeccable, sales-pipeline, product-strategy, acquisition-engine]
+    depends_on: [business-strategy]
+    evidence_ids: [EVID-STRATEGY-001, EVID-SIMULATION-001]
+    sources:
+      - kind: repository
+        reference: founder/marketing.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Initial ICP and channel rationale; simulation evidence is explicitly not market validation."
+  - id: product-brief
+    contract_id: product-brief
+    path: PRODUCT.md
+    owner: product
+    status: current
+    version: 1
+    updated_at: "2026-11-26T12:00:00-03:00"
+    review_after_days: 60
+    sensitivity: internal
+    change_policy: owner_approval
+    producers: [founder-skill, product-strategy, customer-intelligence-loop]
+    consumers: [impeccable, engineering-quality, marketing-skills, sales-pipeline]
+    depends_on: [icp-and-buyer]
+    evidence_ids: [EVID-STRATEGY-001]
+    sources:
+      - kind: repository
+        reference: PRODUCT.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Product purpose, users, constraints and brand commitments."
+  - id: design-system-and-ux
+    contract_id: design-system-and-ux
+    path: DESIGN.md
+    owner: design
+    status: current
+    version: 1
+    updated_at: "2026-11-25T12:00:00-03:00"
+    review_after_days: 45
+    sensitivity: internal
+    change_policy: safe_additive
+    producers: [impeccable, product-design, visual-quality-audit]
+    consumers: [product-strategy, engineering-quality, marketing-skills]
+    depends_on: [icp-and-buyer, product-brief]
+    evidence_ids: []
+    sources:
+      - kind: repository
+        reference: DESIGN.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Current approved visual direction and responsive interaction rules."
+  - id: positioning-and-offer
+    contract_id: positioning-and-offer
+    path: founder/offer.md
+    owner: founder
+    status: current
+    version: 1
+    updated_at: "2026-11-25T12:00:00-03:00"
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, marketing-skills]
+    consumers: [conversion-optimization, sales-pipeline, launch-and-distribution, product-strategy]
+    depends_on: [business-strategy, icp-and-buyer, product-brief]
+    evidence_ids: [EVID-SIMULATION-001, EVID-PRICE-001]
+    sources:
+      - kind: repository
+        reference: founder/offer.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Offer v2 is a founder hypothesis; the planned real-buyer retest has not been completed."
+      - kind: repository
+        reference: founder/pricing.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Prices are owner decisions; willingness to pay remains unvalidated."
+  - id: website-and-conversion
+    contract_id: website-and-conversion
+    path: docs/spec/09-site-aquisicao-suporte.md
+    owner: marketing
+    status: unknown
+    version: 1
+    updated_at: null
+    review_after_days: 30
+    sensitivity: public
+    change_policy: safe_additive
+    producers: [marketing-skills, impeccable, conversion-optimization]
+    consumers: [founder-skill, sales-pipeline, analytics-instrumentation]
+    depends_on: [icp-and-buyer, positioning-and-offer, design-system-and-ux]
+    evidence_ids: [EVID-WAITLIST-001, EVID-ANALYTICS-001]
+    sources:
+      - kind: repository
+        reference: docs/spec/09-site-aquisicao-suporte.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Canonical site and onboarding requirements; last source update date not established in this review."
+  - id: acquisition-and-channel-plan
+    contract_id: acquisition-and-channel-plan
+    path: founder/launch.md
+    owner: marketing
+    status: proposed
+    version: 1
+    updated_at: "2026-11-25T12:00:00-03:00"
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [marketing-skills, acquisition-engine, founder-skill]
+    consumers: [sales-pipeline, founder-operations, analytics-instrumentation]
+    depends_on: [icp-and-buyer, positioning-and-offer]
+    evidence_ids: [EVID-CHANNEL-001, EVID-LAUNCH-TARGET-001]
+    sources:
+      - kind: repository
+        reference: founder/launch.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Pre-launch plan and targets; no channel conversion results are recorded."
+  - id: sales-playbook
+    contract_id: sales-playbook
+    path: null
+    owner: sales
+    status: unknown
+    version: 0
+    updated_at: null
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [founder-skill, foundry-sales-review]
+    consumers: [marketing-skills, retention-and-customer-success, founder-operations]
+    depends_on: [icp-and-buyer, positioning-and-offer]
+    evidence_ids: []
+    sources: []
+    notes: "No canonical sales playbook or real-buyer objection log has been mapped. Reuse founder/launch.md until discovery conversations justify a dedicated source."
+  - id: metrics-and-events
+    contract_id: metrics-and-events
+    path: docs/spec/11-pequenos-negocios.md
+    owner: analytics
+    status: current
+    version: 1
+    updated_at: "2026-11-25T12:00:00-03:00"
+    review_after_days: 30
+    sensitivity: confidential
+    change_policy: owner_approval
+    producers: [analytics-instrumentation, customer-intelligence-loop, foundry]
+    consumers: [founder-skill, marketing-skills, sales-pipeline, product-strategy, retention-and-customer-success]
+    depends_on: [icp-and-buyer, product-brief]
+    evidence_ids: [EVID-ANALYTICS-001, EVID-M05-001, EVID-M07-001]
+    sources:
+      - kind: repository
+        reference: docs/spec/11-pequenos-negocios.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Pilot metrics are defined; end-to-end event and query mapping remains incomplete."
+  - id: customer-intelligence
+    contract_id: customer-intelligence
+    path: null
+    owner: customer-success
+    status: unknown
+    version: 0
+    updated_at: null
+    review_after_days: 14
+    sensitivity: confidential
+    change_policy: propose_only
+    producers: [customer-research-loop, customer-intelligence-loop, customer-support-loop]
+    consumers: [founder-skill, product-strategy, impeccable, marketing-skills, sales-pipeline]
+    depends_on: [metrics-and-events]
+    evidence_ids: []
+    sources: []
+    notes: "No sanitized customer intelligence aggregate was available for this cycle. Do not inspect or export patient conversations."
+  - id: experiments-and-results
+    contract_id: experiments-and-results
+    path: founder/launch.md
+    owner: founder
+    status: proposed
+    version: 1
+    updated_at: "2026-11-25T12:00:00-03:00"
+    review_after_days: 14
+    sensitivity: internal
+    change_policy: safe_additive
+    producers: [foundry, marketing-skills, product-strategy, sales-pipeline]
+    consumers: [founder-skill, marketing-skills, product-strategy, customer-intelligence-loop]
+    depends_on: [metrics-and-events]
+    evidence_ids: [EVID-LAUNCH-TARGET-001, EVID-PRICE-001]
+    sources:
+      - kind: repository
+        reference: founder/launch.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Pre-registered commercial tests only; no experiment is marked running or completed."
+  - id: decisions-and-assumptions
+    contract_id: decisions-and-assumptions
+    path: docs/spec/README.md
+    owner: founder
+    status: current
+    version: 1
+    updated_at: "2026-11-26T12:00:00-03:00"
+    review_after_days: 90
+    sensitivity: confidential
+    change_policy: propose_only
+    producers: [founder-skill, foundry]
+    consumers: [all_capabilities]
+    depends_on: []
+    evidence_ids: [EVID-STRATEGY-001, EVID-PRICE-001, EVID-CHANNEL-001]
+    sources:
+      - kind: repository
+        reference: docs/spec/README.md
+        checked_at: "2026-11-27T09:00:00-03:00"
+        note: "Canonical product decisions and assumptions; includes a recorded history of owner decisions."
