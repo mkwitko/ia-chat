@@ -1,0 +1,3 @@
+schema_version: "0.1"
+# Empty by design: no project module is marked complete until its checks are actually executed.
+modules: []
