@@ -22,7 +22,7 @@ jobs:
         with:
           repository: mkwitko/Saas-Foundry
           # Update this pin deliberately when the project adopts a newer Foundry release.
-          ref: a14f0f6ea9b6f225dcda5578a7a3af42dceb41cc
+          ref: a9e038fa728539523bf3c248ce852d21139598b3
           path: .tools/Saas-Foundry
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
