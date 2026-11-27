@@ -77,4 +77,4 @@ The workflow [`.github/workflows/foundry-validation.yml`](../.github/workflows/f
 4. Generates the evidence-led improvement report.
 5. Reviews the company-level revenue pipeline.
 
-The workflow checks out a pinned SaaS Foundry commit (`a14f0f6`) for reproducibility. Update that pin deliberately when adopting a newer CLI release. The workflow has read-only repository permissions and does not access production systems or contact customers.
+The workflow checks out a pinned SaaS Foundry commit (`a9e038f`) for reproducibility. Update that pin deliberately when adopting a newer CLI release. The workflow has read-only repository permissions and does not access production systems or contact customers.
