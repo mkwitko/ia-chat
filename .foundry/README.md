@@ -1,18 +1,30 @@
 # SaaS Foundry project context
 
-This directory registers this repository as an adopted project in [SaaS Foundry](https://github.com/mkwitko/Saas-Foundry).
+This directory registers `ia-chat` as an adopted existing project in [SaaS Foundry](https://github.com/mkwitko/Saas-Foundry).
 
 ## Canonical adoption artifacts
 
-- [Project manifest and full initial assessment](https://github.com/mkwitko/Saas-Foundry/tree/main/projects/ia-chat)
-- [Assessment](https://github.com/mkwitko/Saas-Foundry/blob/main/projects/ia-chat/assessment.md)
-- [Prioritized roadmap](https://github.com/mkwitko/Saas-Foundry/blob/main/projects/ia-chat/roadmap.md)
+- [Initial assessment](https://github.com/mkwitko/Saas-Foundry/blob/main/projects/ia-chat/assessment.md)
+- [Prioritized adoption roadmap](https://github.com/mkwitko/Saas-Foundry/blob/main/projects/ia-chat/roadmap.md)
+- [First operating cycle](./reports/first-cycle-2026-11-27.md)
 - [Module registry](https://github.com/mkwitko/Saas-Foundry/blob/main/catalog/modules.yaml)
 - [Security and provenance rules](https://github.com/mkwitko/Saas-Foundry/blob/main/docs/security-and-provenance.md)
 
+## Project-local operating state
+
+- `.foundry/state.yaml`: current bottleneck and next owner action.
+- `.foundry/artifacts.yaml`: canonical document map and dependency graph.
+- `.foundry/artifact-contracts.yaml`: pinned artifact ownership and handoff contracts.
+- `.foundry/evidence.yaml`: evidence, decisions and proposed experiments.
+- `.foundry/acceptance.yaml`: module acceptance and verification status.
+- `.foundry/revenue/pipeline.yaml`: company-level B2B prospect pipeline; intentionally empty until permission-safe prospect records exist.
+- `.foundry/reports/`: dated review outputs.
+
+The registry maps existing sources of truth; it must not create duplicate strategy, product, design or marketing documents. A status of `unknown` means the canonical path is known but its freshness or completeness has not been established. A proposed experiment is not running and has no result.
+
 ## Run the Foundry against this project
 
-From a local checkout of both repositories:
+From local checkouts of both repositories:
 
 ```bash
 cd ../Saas-Foundry
@@ -23,25 +35,34 @@ cd ../ia-chat
 foundry doctor .
 foundry scan . --format md
 foundry plan . --format md
+foundry artifacts validate .
+foundry artifacts status .
+foundry artifacts plan . --changed business-strategy
+foundry improve report .
+foundry revenue report .
 ```
 
 To use the Foundry checkout without linking the executable:
 
 ```bash
-node ../Saas-Foundry/bin/foundry.js doctor .
-node ../Saas-Foundry/bin/foundry.js scan . --format json --out /tmp/ia-chat-scan.json
-node ../Saas-Foundry/bin/foundry.js plan . --scan /tmp/ia-chat-scan.json
+node ../Saas-Foundry/bin/foundry.js artifacts validate .
+node ../Saas-Foundry/bin/foundry.js artifacts status .
+node ../Saas-Foundry/bin/foundry.js artifacts plan . --changed business-strategy
+node ../Saas-Foundry/bin/foundry.js improve report .
+node ../Saas-Foundry/bin/foundry.js revenue report .
 ```
 
-The scanner reads repository metadata and selected documentation only. It does not read arbitrary source bodies, `.env*`, secrets, production data, patient/customer message content, attachments or raw logs. The planner is advisory and does not change this repository.
+The artifact, improvement and revenue commands are read-only. They do not modify canonical documents, send messages, contact prospects, publish content, spend money, or access production databases. Run them from a local checkout with the repository dependencies installed.
 
-## Rules for future work
+## Privacy and operating rules
 
-1. Read the existing `CLAUDE.md`, `PRODUCT.md`, `DESIGN.md`, specs and founder documents before proposing changes.
-2. Keep those files as the project source of truth. SaaS Foundry adds an adoption and learning layer; it does not replace the product docs.
-3. Keep patient, clinical, production and secret data outside Foundry scans and analytics.
-4. Re-scan before making a new recommendation. The assessment is a dated snapshot, not a permanent truth.
-5. Do not add a tool, analytics vendor, CRM or growth feature until an observed gap justifies it.
-6. Keep outreach, publishing, production changes and spend under explicit human approval.
+1. Read `CLAUDE.md`, `PRODUCT.md`, `DESIGN.md`, specs and founder documents before proposing product changes.
+2. Keep existing product docs as the source of truth; Foundry adds an adoption and learning layer.
+3. Never put patient names, phone numbers, emails, symptoms, diagnoses, message bodies, transcripts, attachments or appointment notes in Foundry.
+4. Do not copy waitlist contacts or patient/customer records into the company-level B2B prospect pipeline.
+5. A referral is not permission to contact a third party. Require an introduction or explicit permission.
+6. Revalidate stale artifacts before making decisions; do not silently overwrite owner-controlled documents.
+7. Do not add an analytics vendor, CRM, paid channel or growth feature until an observed gap justifies it.
+8. Keep outreach, publishing, production changes, legal commitments and spend under explicit human approval.
 
-The Foundry CLI v0.2 now provides local read-only scanning, deterministic planning and manifest diagnostics. This directory is the project manifest and governance pointer; the CLI itself remains in the separate SaaS Foundry repository.
+The initial source inventory was static and selective. Production behaviour, event reconciliation, browser acceptance and external provider readiness remain separate verification tasks.
