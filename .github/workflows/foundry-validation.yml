@@ -1,0 +1,96 @@
+name: SaaS Foundry validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".foundry/**"
+      - ".github/workflows/foundry-validation.yml"
+      - "docs/spec/**"
+      - "founder/**"
+      - "PRODUCT.md"
+      - "DESIGN.md"
+  pull_request:
+    paths:
+      - ".foundry/**"
+      - "docs/spec/**"
+      - "founder/**"
+      - "PRODUCT.md"
+      - "DESIGN.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate project knowledge and growth workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Checkout pinned SaaS Foundry CLI
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: mkwitko/Saas-Foundry
+          # Update this pin deliberately when the project adopts a newer Foundry release.
+          ref: a14f0f6ea9b6f225dcda5578a7a3af42dceb41cc
+          path: .tools/Saas-Foundry
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+
+      - name: Install Foundry CLI dependencies
+        working-directory: .tools/Saas-Foundry
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Validate project-local YAML and JSON
+        working-directory: .tools/Saas-Foundry
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import path from "node:path";
+            import { parse } from "yaml";
+            const root = process.argv[1];
+            const yamlFiles = [
+              ".foundry/artifacts.yaml",
+              ".foundry/artifact-contracts.yaml",
+              ".foundry/evidence.yaml",
+              ".foundry/state.yaml",
+              ".foundry/acceptance.yaml",
+              ".foundry/workflow-routing.yaml",
+              ".foundry/revenue/pipeline.yaml"
+            ];
+            const jsonFiles = [
+              ".foundry/artifacts.schema.json",
+              ".foundry/evidence-ledger.schema.json",
+              ".foundry/state.schema.json",
+              ".foundry/acceptance.schema.json",
+              ".foundry/revenue-pipeline.schema.json"
+            ];
+            for (const file of yamlFiles) parse(fs.readFileSync(path.join(root, file), "utf8"));
+            for (const file of jsonFiles) JSON.parse(fs.readFileSync(path.join(root, file), "utf8"));
+            process.stdout.write("Project-local YAML and JSON parse successfully.\\n");
+          ' ../..
+
+      - name: Validate artifact contracts and dependencies
+        working-directory: .tools/Saas-Foundry
+        run: node bin/foundry.js artifacts validate ../..
+
+      - name: Calculate artifact freshness
+        working-directory: .tools/Saas-Foundry
+        run: node bin/foundry.js artifacts status ../..
+
+      - name: Generate downstream capability handoffs
+        working-directory: .tools/Saas-Foundry
+        run: node bin/foundry.js artifacts plan ../.. --changed business-strategy
+
+      - name: Run evidence-led improvement review
+        working-directory: .tools/Saas-Foundry
+        run: node bin/foundry.js improve report ../..
+
+      - name: Run permission-safe revenue pipeline review
+        working-directory: .tools/Saas-Foundry
+        run: node bin/foundry.js revenue report ../..
