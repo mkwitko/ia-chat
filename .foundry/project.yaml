@@ -53,6 +53,10 @@ modules:
     - activation-and-onboarding
     - retention-and-customer-success
     - customer-research-loop
+    - shared-knowledge-contracts
+    - cross-skill-orchestration
+    - continuous-improvement-engine
+    - revenue-acquisition-engine
   deferred:
     - seo-and-content
     - referrals-and-partnerships
@@ -60,6 +64,7 @@ modules:
     - conversion-optimization
     - revenue-operations
     - proof-and-advocacy
+    - customer-intelligence-loop
   already_satisfied:
     - positioning-and-offer
     - pricing-and-unit-economics
