@@ -1,0 +1,20 @@
+schema_version: "0.1"
+updated_at: "2026-11-27T09:00:00-03:00"
+# Company-level prospects only. Keep this empty until permission-safe prospect records exist.
+leads: []
+channels:
+  - id: pilot-referrals
+    channel: permission-based pilot referrals
+    hypothesis: "Warm introductions from the first pilot can create qualified conversations with similar appointment-based businesses."
+    status: proposed
+    primary_metric: qualified discovery conversations
+  - id: live-demo
+    channel: founder-led live demonstrations
+    hypothesis: "A live demonstration with fictitious data can reduce trust objections and create WhatsApp-connected trials."
+    status: proposed
+    primary_metric: WhatsApp-connected trials after demo
+  - id: founder-instagram
+    channel: founder-led Instagram
+    hypothesis: "Short product demonstrations and behind-the-scenes content can generate inbound demo requests from the initial segment."
+    status: proposed
+    primary_metric: qualified inbound demo requests
